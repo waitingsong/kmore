@@ -8,6 +8,8 @@
 .nyc_output
 .travis.yml
 .vscode
+.tsbuildinfo
+.tsbuildinfo.*
 
 appveyor.yml
 coverage
