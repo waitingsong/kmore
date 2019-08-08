@@ -4,4 +4,5 @@
 .git/
 app/public/
 app/view/
+node_modules*/
 
