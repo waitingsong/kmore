@@ -1,0 +1,65 @@
+import { basename } from '@waiting/shared-core'
+import * as assert from 'power-assert'
+
+import { kmore, DbModel } from '../src/index'
+
+import { config } from './test.config'
+import { TbListModel } from './test.model'
+
+
+const filename = basename(__filename)
+
+describe(filename, () => {
+  let db: DbModel<TbListModel>
+
+  before(async () => {
+    db = kmore<TbListModel>(config)
+  })
+  after(async () => {
+    await db.dbh.destroy() // !
+  })
+
+  describe('Should accessing db.<tables> works', () => {
+    it('with valid table value', async () => {
+      const { dbh, tables, refTables } = db
+
+      for (const tbAlias of Object.keys(tables)) {
+        assert(
+          tbAlias && typeof refTables[tbAlias] === 'function',
+          `Should db.${tbAlias} be typeof function, but not.`,
+        )
+      }
+    })
+
+    it('with valid table value', async () => {
+      const { dbh, tables, refTables } = db;
+
+      [
+        Math.random(),
+        Math.random().toString(),
+        'foo',
+        true,
+        false,
+        null,
+        void 0,
+        0,
+        123,
+        Symbol('foo'),
+      ].forEach((val) => {
+        // @ts-ignore
+        assert(typeof refTables[val] === 'undefined')
+
+        try {
+          // @ts-ignore
+          db[val]()
+        }
+        catch (ex) {
+          return
+        }
+        assert(false, 'Should throw error during accessing non exists props')
+      })
+    })
+  })
+
+})
+
