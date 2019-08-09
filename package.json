@@ -6,7 +6,11 @@
   "keywords": [
     "knex",
     "factory",
+    "sql",
+    "query",
     "postgres",
+    "postgresql",
+    "oracle",
     "connection",
     "AST",
     "typescript",
