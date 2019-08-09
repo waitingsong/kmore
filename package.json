@@ -52,7 +52,12 @@
     "all": true
   },
   "dependencies": {
-    "knex": "^0.19.0"
+    "@types/source-map-support": "^0.5.0",
+    "@waiting/shared-core": "^1.9.2",
+    "knex": "^0.19.0",
+    "rxjs": "^6.5.2",
+    "rxwalker": "^3.0.0",
+    "source-map-support": "^0.5.13"
   },
   "devDependencies": {
     "@types/mocha": "*",
@@ -81,6 +86,10 @@
     "ts-node": "^8.3.0",
     "typescript": "^3.5.0",
     "yargs": "^13.0.0"
+  },
+  "peerDependencies": {
+    "knex": ">=0.15.0",
+    "typescript": "^3.5.0"
   },
   "scripts": {
     "bp:add": "git remote add bp https://github.com/waitingsong/npm-base",
