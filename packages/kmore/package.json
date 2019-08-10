@@ -2,7 +2,7 @@
   "name": "kmore",
   "author": "waiting",
   "version": "0.1.0",
-  "description": "A Knex lite more factory of SQL query builder, with auto-generated type-safe tables accessor for Node.js",
+  "description": "A Knex little more factory of SQL query builder, with auto-generated type-safe tables accessor for Node.js",
   "keywords": [
     "knex",
     "factory",
@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
-  "homepage": "https://github.com/waitingsong/kmore#readme",
+  "homepage": "https://waitingsong.github.io/kmore/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/waitingsong/kmore.git"
