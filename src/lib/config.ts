@@ -11,10 +11,9 @@ export const initOptions: Options = {
   refTablesPrefix: 'reftb_',
 }
 
-
 export const initBuildSrcOpts: Required<BuildSrcOpts> = {
+  ...initOptions,
   baseDir: [],
-  callerFuncNames: initOptions.callerFuncNames,
   concurrent: 5,
 }
 

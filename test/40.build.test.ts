@@ -5,7 +5,7 @@ import {
   tap, finalize, catchError, defaultIfEmpty, mergeMap, mapTo,
 } from 'rxjs/operators'
 
-import { initOptions } from '../src/lib/config'
+import { initOptions, initBuildSrcOpts } from '../src/lib/config'
 import { buildSrcTablesFile, buildSource } from '../src/lib/build'
 import { genTbListTsFilePath, walkDirForCallerFuncTsFiles } from '../src/lib/util'
 
@@ -17,7 +17,7 @@ describe(filename, () => {
   describe('Should buildTablesFile() works', () => {
     it('with valid options', async () => {
       const path = './test/test.config.ts'
-      const targetPath = await buildSrcTablesFile(path, initOptions)
+      const targetPath = await buildSrcTablesFile(path, initBuildSrcOpts)
       const expectedPath = genTbListTsFilePath(pathResolve(path), initOptions.outputFileNameSuffix)
 
       assert(
@@ -44,7 +44,7 @@ describe(filename, () => {
             assert(path && path.length, 'path value invalid.')
           }),
           mergeMap((path) => {
-            return defer(() => buildSrcTablesFile(path, initOptions))
+            return defer(() => buildSrcTablesFile(path, initBuildSrcOpts))
           }, 2),
           tap((targetPath) => {
             console.log(`target: "${targetPath}"`)
@@ -75,7 +75,7 @@ describe(filename, () => {
             assert(path && path.length, 'path value invalid.')
           }),
           mergeMap((path) => {
-            return buildSrcTablesFile(path, initOptions)
+            return buildSrcTablesFile(path, initBuildSrcOpts)
           }),
           tap((targetPath) => {
             console.log(`target: "${targetPath}"`)

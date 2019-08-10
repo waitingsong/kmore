@@ -23,6 +23,13 @@ export interface Options {
   /** Default is reftb_  */
   refTablesPrefix: string
 }
+
+export interface BuildSrcOpts extends Partial<Options> {
+  baseDir: string[]
+  /** Default: 5 */
+  concurrent?: number
+}
+
 export interface PathReWriteRule extends Array<RegExp | string> {
   0: RegExp
   1: string
@@ -176,13 +183,6 @@ export interface GenInfoFromNodeOps {
   node: ts.CallExpression
   path: string
   retMap: LocalTypeMap
-}
-
-export interface BuildSrcOpts {
-  baseDir: string[]
-  callerFuncNames?: CallerFuncName | CallerFuncName[]
-  /** Default: 5 */
-  concurrent?: number
 }
 
 export interface MatchedSourceFile {
