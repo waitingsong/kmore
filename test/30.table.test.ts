@@ -12,7 +12,7 @@ const filename = basename(__filename)
 describe(filename, () => {
   let db: DbModel<TbListModel>
 
-  before(async () => {
+  before(() => {
     db = kmore<TbListModel>(config)
   })
   after(async () => {
@@ -21,7 +21,7 @@ describe(filename, () => {
 
   describe('Should accessing db.<tables> works', () => {
     it('with valid table value', async () => {
-      const { dbh, tables, rb } = db
+      const { tables, rb } = db
 
       for (const tbAlias of Object.keys(tables)) {
         assert(
@@ -32,7 +32,7 @@ describe(filename, () => {
     })
 
     it('with valid table value', async () => {
-      const { dbh, tables, rb } = db;
+      const { rb } = db;
 
       [
         Math.random(),

@@ -20,7 +20,7 @@ const filename = basename(__filename)
 describe(filename, () => {
   let db: DbModel<TbListModel>
 
-  before(async () => {
+  before(() => {
     db = kmore<TbListModel>(config)
   })
   after(async () => {

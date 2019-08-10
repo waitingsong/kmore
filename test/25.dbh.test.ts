@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore } from '../src/index'
+import { kmore, DbModel } from '../src/index'
 
 import { config } from './test.config'
 import { TbListModel, User } from './test.model'
@@ -10,11 +10,10 @@ import { TbListModel, User } from './test.model'
 const filename = basename(__filename)
 
 describe(filename, () => {
-  const db = kmore<TbListModel>(config)
-  const { tables } = db
+  let db: DbModel<TbListModel>
 
-  before(async () => {
-    assert(Object.isFrozen(db), 'Should db object is frozen')
+  before(() => {
+    db = kmore<TbListModel>(config)
   })
 
   after(async () => {
@@ -22,7 +21,9 @@ describe(filename, () => {
   })
 
   describe('Should insert table with db.dbh works', () => {
-    it(tables.tb_user, async () => {
+    it(db.tables.tb_user, async () => {
+      const { tables } = db
+
       await db.dbh<User>(tables.tb_user)
         .insert([ { name: 'user3', ctime: new Date() } ])
         .returning('uid')
