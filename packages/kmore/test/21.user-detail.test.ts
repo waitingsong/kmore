@@ -24,8 +24,8 @@ describe(filename, () => {
 
   describe('Should insert/read table with tables param in array works', () => {
     it('tb_user_detail', async () => {
-      const { refTables } = db
-      const { tb_user_detail } = db.refTables
+      const { rb } = db
+      const { tb_user_detail } = db.rb
 
       // insert
       await tb_user_detail()
@@ -42,14 +42,14 @@ describe(filename, () => {
           assert(false, err.message)
         })
 
-      const countRes = await refTables.tb_user_detail().count()
+      const countRes = await rb.tb_user_detail().count()
       assert(
         countRes && countRes[0] && countRes[0].count === '2',
         'Should count be "2"',
       )
 
       // validate insert result
-      await db.refTables.tb_user_detail().select('*')
+      await db.rb.tb_user_detail().select('*')
         .then((rows) => {
           validateUserDetailRows(rows)
           return rows
@@ -62,8 +62,8 @@ describe(filename, () => {
     })
 
     it('Should constraint violation works', async () => {
-      const { refTables } = db
-      const { tb_user_detail } = db.refTables
+      const { rb } = db
+      const { tb_user_detail } = db.rb
 
       // insert
       await tb_user_detail()
@@ -77,13 +77,13 @@ describe(filename, () => {
         })
 
       // validate insert result
-      const countRes = await refTables.tb_user_detail().count()
+      const countRes = await rb.tb_user_detail().count()
       assert(
         countRes && countRes[0] && countRes[0].count === '2',
         'Should count be "2"',
       )
 
-      await db.refTables.tb_user_detail().select('*')
+      await db.rb.tb_user_detail().select('*')
         .then((rows) => {
           validateUserDetailRows(rows)
           return rows

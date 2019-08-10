@@ -29,7 +29,7 @@ describe(filename, () => {
 
   describe('Should genTbListFromType() works', () => {
     it('with noraml type', () => {
-      const { tables, refTables } = db
+      const { tables, rb } = db
       const ret = genTbListFromType<TbListModel>()
 
       assert(ret && Object.keys(ret).length === Object.keys(tables).length)
@@ -39,7 +39,7 @@ describe(filename, () => {
     })
 
     it('with alias type', () => {
-      const { tables, refTables } = db
+      const { tables } = db
       const ret = genTbListFromType<TbListModelAlias>()
 
       assert(ret && Object.keys(ret).length === Object.keys(tables).length)
@@ -52,9 +52,9 @@ describe(filename, () => {
 
   describe('Should assignment of tablesRef name works', () => {
     it('normal', () => {
-      const { tables, refTables } = db
+      const { tables, rb } = db
       Object.keys(tables).forEach((tb) => {
-        const tbRef = refTables[tb]
+        const tbRef = rb[tb]
         assert(typeof tbRef === 'function')
         assert(tbRef.name === `${initOptions.refTablesPrefix}${tb}`)
       })

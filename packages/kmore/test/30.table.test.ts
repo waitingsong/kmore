@@ -21,18 +21,18 @@ describe(filename, () => {
 
   describe('Should accessing db.<tables> works', () => {
     it('with valid table value', async () => {
-      const { dbh, tables, refTables } = db
+      const { dbh, tables, rb } = db
 
       for (const tbAlias of Object.keys(tables)) {
         assert(
-          tbAlias && typeof refTables[tbAlias] === 'function',
+          tbAlias && typeof rb[tbAlias] === 'function',
           `Should db.${tbAlias} be typeof function, but not.`,
         )
       }
     })
 
     it('with valid table value', async () => {
-      const { dbh, tables, refTables } = db;
+      const { dbh, tables, rb } = db;
 
       [
         Math.random(),
@@ -47,7 +47,7 @@ describe(filename, () => {
         Symbol('foo'),
       ].forEach((val) => {
         // @ts-ignore
-        assert(typeof refTables[val] === 'undefined')
+        assert(typeof rb[val] === 'undefined')
 
         try {
           // @ts-ignore

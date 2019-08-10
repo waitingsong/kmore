@@ -3,7 +3,7 @@ import * as Knex from 'knex'
 
 import { defaultPropDescriptor, DbPropKeys, initOptions } from './config'
 import {
-  DbModel, DbTables, DbRefTables, Options, TTableListModel, Config,
+  DbModel, DbTables, DbRefBuilder, Options, TTableListModel, Config,
 } from './model'
 import { validateParamTables, createNullObject } from './util'
 import { loadTbListParamFromCallerInfo } from './tables'
@@ -16,12 +16,14 @@ const _Knex = Knex
  * Knex factory with type-safe tables accessor
  *
  * @description T = { user: {id: number, name: string} }
+ *  Initialize db connection and generate type-safe tables accessor (name and builder)
  *  will get
- *    - db.dbh for custom usage or transaction. eg. db.dbh<OtherType>('tb_other').select()
- *    - db.tables
- *    - db.refTables.user() => Knex.QueryBuilder<{id: number, name: string}>
+ *    - db.dbh : the connection instance of knex
+ *      eg. db.dbh<OtherType>('tb_other').select()
+ *    - db.tables : tables name accessor containing table key/value paris
+ *    - db.rb : tables builder accessor,
+ *      eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function kmore<T extends TTableListModel>(
   config: Config,
   options?: Partial<Options>,
@@ -80,21 +82,21 @@ function bindRefTables<T extends TTableListModel>(
   db: DbModel<T>,
 ): DbModel<T> {
 
-  const refTables: DbRefTables<T> = createNullObject()
+  const rb: DbRefBuilder<T> = createNullObject()
 
   Object.defineProperty(db, DbPropKeys.refTables, {
     ...propDescriptor,
-    value: refTables,
+    value: rb,
   })
 
   if (db.tables) {
     Object.keys(db.tables).forEach((refName) => {
-      Object.defineProperty(refTables, refName, {
+      Object.defineProperty(rb, refName, {
         ...propDescriptor,
         value: (): Knex.QueryBuilder => db.dbh(refName),
       })
       // @ts-ignore
-      Object.defineProperty(refTables[refName], 'name', {
+      Object.defineProperty(rb[refName], 'name', {
         ...propDescriptor,
         value: `${options.refTablesPrefix}${refName}`,
       })
