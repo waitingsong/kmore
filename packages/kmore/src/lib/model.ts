@@ -1,5 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import * as Knex from 'knex'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as ts from 'typescript'
 
 
