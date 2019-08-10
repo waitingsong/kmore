@@ -12,9 +12,8 @@ const filename = basename(__filename)
 describe(filename, () => {
   let db: DbModel<TbListModel>
 
-  before(async () => {
+  before(() => {
     db = kmore<TbListModel>(config)
-    assert(Object.isFrozen(db), 'Should db object is frozen')
   })
 
   after(async () => {
@@ -94,7 +93,6 @@ describe(filename, () => {
 
       return
     })
-
   })
 
 })
