@@ -2,7 +2,7 @@
   "name": "kmore",
   "author": "waiting",
   "version": "0.1.0",
-  "description": "A Knex little more factory with type-safe tables accessor",
+  "description": "A Knex lite more factory of SQL query builder, with auto-generated type-safe tables accessor for Node.js",
   "keywords": [
     "knex",
     "factory",
