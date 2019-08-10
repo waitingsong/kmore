@@ -1,6 +1,6 @@
 import * as sourceMapSupport from 'source-map-support'
 import { walk, EntryType } from 'rxwalker'
-import { from as ofrom, defer, of, Observable } from 'rxjs'
+import { from as ofrom, defer, of, Observable, iif } from 'rxjs'
 import { map, filter, mergeMap, catchError, mapTo } from 'rxjs/operators'
 import { readFileAsync } from '@waiting/shared-core'
 
@@ -319,12 +319,29 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     ...initBuildSrcOpts,
     ...options,
   }
+  const { baseDir } = opts
   const maxDepth = 99
   const concurrent = opts.concurrent && opts.concurrent > 0
     ? opts.concurrent
     : 5
 
-  const path$ = ofrom(opts.baseDir).pipe(
+  const dir$: Observable<string> = iif(
+    () => {
+      if (typeof baseDir === 'string') {
+        return true
+      }
+      else if (Array.isArray(baseDir)) {
+        return false
+      }
+      else {
+        throw new TypeError('Value of baseDir invalid, should be String or Array.')
+      }
+    },
+    of(baseDir as string),
+    ofrom(baseDir as string[]),
+  )
+
+  const path$ = dir$.pipe(
     mergeMap(path => walk(path, { maxDepth }), concurrent),
     filter(ev => ev.type === EntryType.file
       && ev.path.endsWith('.ts')
