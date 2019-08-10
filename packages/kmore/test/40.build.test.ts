@@ -1,6 +1,6 @@
 import { basename, pathResolve, normalize, rimraf } from '@waiting/shared-core'
 import * as assert from 'power-assert'
-import { of, defer, from as ofrom } from 'rxjs'
+import { of, defer, from as ofrom, Observable } from 'rxjs'
 import {
   tap, finalize, catchError, defaultIfEmpty, mergeMap, mapTo,
 } from 'rxjs/operators'
@@ -28,11 +28,11 @@ describe(filename, () => {
   })
 
 
-  describe('Should walkDirForTsFiles() works', () => {
-    const targetPathArr: string[] = []
+  describe('Should walkDirForCallerFuncTsFiles() works', () => {
+    const targetPathSet: Set<string> = new Set()
 
     it('with ./test', (done) => {
-      const baseDir = ['./test']
+      const baseDir = './test'
 
       walkDirForCallerFuncTsFiles({
         baseDir,
@@ -49,9 +49,59 @@ describe(filename, () => {
           tap((targetPath) => {
             console.log(`target: "${targetPath}"`)
             assert(targetPath && targetPath.length, 'path value invalid.')
-            targetPathArr.push(targetPath)
+            targetPathSet.add(targetPath)
           }),
-          finalize(done),
+          finalize(() => {
+            targetPathSet.clear()
+            done()
+          }),
+          catchError((err: Error) => {
+            assert(false, err.message)
+            return of('')
+          }),
+        )
+        .subscribe()
+
+      return
+    })
+
+    it('clean', (done) => {
+      cleanTargetPath(targetPathSet)
+        .pipe(
+          finalize(() => {
+            targetPathSet.clear()
+            done()
+          }),
+        )
+        .subscribe()
+
+      return
+    })
+
+    it('with [./test]', (done) => {
+      const baseDir = ['./test']
+
+      walkDirForCallerFuncTsFiles({
+        baseDir,
+      })
+        .pipe(
+          defaultIfEmpty(''),
+          tap((path) => {
+            // console.log(`src: "${path}"`)
+            assert(path && path.length, 'path value invalid.')
+          }),
+          mergeMap((path) => {
+            return defer(() => buildSrcTablesFile(path, initBuildSrcOpts))
+          }, 2),
+          tap((targetPath) => {
+            // console.log(`target: "${targetPath}"`)
+            assert(targetPath && targetPath.length, 'path value invalid.')
+            targetPathSet.add(targetPath)
+          }),
+          finalize(() => {
+            targetPathSet.clear()
+            done()
+          }),
           catchError((err: Error) => {
             assert(false, err.message)
             return of('')
@@ -80,9 +130,12 @@ describe(filename, () => {
           tap((targetPath) => {
             console.log(`target: "${targetPath}"`)
             // assert(targetPath && targetPath.length, 'path value invalid.')
-            targetPath && targetPathArr.push(targetPath)
+            targetPath && targetPathSet.add(targetPath)
           }),
-          finalize(done),
+          finalize(() => {
+            targetPathSet.clear()
+            done()
+          }),
           catchError((err: Error) => {
             assert(false, err.message)
             return of('')
@@ -94,22 +147,11 @@ describe(filename, () => {
     })
 
     it('clean', (done) => {
-      ofrom(targetPathArr)
+      cleanTargetPath(targetPathSet)
         .pipe(
-          mergeMap((path) => {
-            assert(path && path.length, 'File path empty')
-            const rm$ = defer(() => rimraf(path)).pipe(
-              mapTo(path),
-            )
-            return path ? rm$ : of('')
-          }),
-          tap((path) => {
-            path && console.log(`clean: "${path}"`)
-          }),
-          finalize(done),
-          catchError((err: Error) => {
-            assert(false, err.message)
-            return of('')
+          finalize(() => {
+            targetPathSet.clear()
+            done()
           }),
         )
         .subscribe()
@@ -171,3 +213,23 @@ describe(filename, () => {
     })
   })
 })
+
+function cleanTargetPath(targetPathSet: Set<string>): Observable<string> {
+  return ofrom(targetPathSet)
+    .pipe(
+      mergeMap((path) => {
+        assert(path && path.length, 'File path empty')
+        const rm$ = defer(() => rimraf(path)).pipe(
+          mapTo(path),
+        )
+        return path ? rm$ : of('')
+      }),
+      tap((path) => {
+        path && console.log(`clean: "${path}"`)
+      }),
+      catchError((err: Error) => {
+        assert(false, err.message)
+        return of('')
+      }),
+    )
+}

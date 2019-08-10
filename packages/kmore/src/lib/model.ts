@@ -25,7 +25,7 @@ export interface Options {
 }
 
 export interface BuildSrcOpts extends Partial<Options> {
-  baseDir: string[]
+  baseDir: string | string[]
   /** Default: 5 */
   concurrent?: number
 }
