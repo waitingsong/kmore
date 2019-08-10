@@ -21,17 +21,17 @@ describe(filename, () => {
   })
 
   describe('Should insert table with db.dbh works', () => {
-    it(db.tables.tb_user, async () => {
-      const { tables } = db
+    it('tb_user', async () => {
+      const { tables: t } = db
 
-      await db.dbh<User>(tables.tb_user)
+      await db.dbh<User>(t.tb_user)
         .insert([ { name: 'user3', ctime: new Date() } ])
         .returning('uid')
         .then((uids) => {
           assert(uids && uids.length === 1, uids.toString())
           return uids[0]
         })
-        .then(uid => db.dbh<User>(tables.tb_user)
+        .then(uid => db.dbh<User>(t.tb_user)
           .where('uid', uid)
           .del())
         .catch((err: Error) => {
