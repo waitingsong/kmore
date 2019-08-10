@@ -32,7 +32,7 @@ export const reservedTbListKeys: string[] = [
 export enum DbPropKeys {
   'dbh' = 'dbh',
   'tables' = 'tables',
-  'refTables' = 'refTables',
+  'refTables' = 'rb',
 }
 
 export const defaultPropDescriptor: PropertyDescriptor = {

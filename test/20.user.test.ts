@@ -23,11 +23,11 @@ describe(filename, () => {
 
   describe('Should insert/read table with tables param in object works', () => {
     it('tb_user', async () => {
-      const { refTables } = db
-      const { tb_user } = db.refTables
+      const { rb } = db
+      const { tb_user } = db.rb
 
       // insert
-      await db.refTables.tb_user()
+      await db.rb.tb_user()
         .insert([
           { name: 'user1', ctime: new Date() }, // ms
           { name: 'user2', ctime: 'now()' }, // μs
@@ -42,13 +42,13 @@ describe(filename, () => {
         })
 
       // validate insert result
-      const countRes = await db.refTables.tb_user().count()
+      const countRes = await db.rb.tb_user().count()
       assert(
         countRes && countRes[0] && countRes[0].count === '2',
         'Should count be "2"',
       )
 
-      const countRes2 = await refTables.tb_user().count()
+      const countRes2 = await rb.tb_user().count()
       assert(
         countRes2 && countRes2[0] && countRes2[0].count === '2',
         'Should count be "2"',

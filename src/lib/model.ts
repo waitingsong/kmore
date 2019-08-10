@@ -40,7 +40,7 @@ export interface PathReWriteRule extends Array<RegExp | string> {
 export interface DbModel<T extends TTableListModel> {
   readonly dbh: Knex
   readonly tables: DbTables<T>
-  readonly refTables: DbRefTables<T>
+  readonly rb: DbRefBuilder<T>
 }
 export type TTableListModel = object
 
@@ -89,7 +89,7 @@ export interface EmptyTbList {
 }
 
 /** Type of db.refTables */
-export type DbRefTables<T> = {
+export type DbRefBuilder<T> = {
   /** tbName: () => knex('tb_name') */
   [key in keyof T]: TbQueryBuilder<T[key]>
 }
