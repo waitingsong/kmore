@@ -3,7 +3,6 @@ import { mergeMap } from 'rxjs/operators'
 import { Observable, defer } from 'rxjs'
 
 import {
-  Options,
   TTableListModel,
   FilePath,
   DbTables,
@@ -34,7 +33,7 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
   const walk$ = walkDirForCallerFuncTsFiles(opts)
   const build$ = walk$.pipe(
     mergeMap((path) => {
-      return defer(() => buildSrcTablesFile(path, initOptions))
+      return defer(() => buildSrcTablesFile(path, opts))
     }, opts.concurrent),
   )
 
@@ -49,12 +48,17 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
  */
 export async function buildSrcTablesFile<T extends TTableListModel>(
   file: string,
-  options: Options,
+  options: BuildSrcOpts,
 ): Promise<FilePath> {
+
+  const opts: Required<BuildSrcOpts> = {
+    ...initBuildSrcOpts,
+    ...options,
+  }
 
   const ret: CallerTbListMap<T> = retrieveTypeFromFile<T>(file)
   if (ret && ret.size) {
-    const path = await saveFile<T>(options, ret)
+    const path = await saveFile<T>(ret, opts)
     return path.replace(/\\/gu, '/')
   }
   else {
@@ -88,7 +92,7 @@ function retrieveTypeFromFile<T extends TTableListModel>(
 
 function genTsCodeFromTypes<T extends TTableListModel>(
   inputMap: CallerTbListMap<T>,
-  options: Options,
+  options: Required<BuildSrcOpts>,
 ): [FilePath, string] {
 
   const { exportVarPrefix, outputFileNameSuffix } = options
@@ -112,8 +116,8 @@ function genTsCodeFromTypes<T extends TTableListModel>(
 
 /** Save tables of one file */
 async function saveFile<T extends TTableListModel>(
-  options: Options,
   inputMap: CallerTbListMap<T>,
+  options: Required<BuildSrcOpts>,
 ): Promise<FilePath> {
 
   const { outputBanner: outputPrefix } = options
