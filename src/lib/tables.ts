@@ -50,7 +50,7 @@ export function loadTbListFromJsBuiltFile<T extends TTableListModel>(
 
   const { outputFileNameSuffix, forceLoadTbListJsPathReplaceRules } = options
 
-  let path = caller.path.slice(0, -3) + `.${outputFileNameSuffix}.js`
+  let path = `${caller.path.slice(0, -3)}.${outputFileNameSuffix}.js`
   path = reWriteLoadingPath(path, forceLoadTbListJsPathReplaceRules)
 
   accessSync(path, constants.R_OK)
