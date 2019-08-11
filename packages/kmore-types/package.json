@@ -1,10 +1,11 @@
 {
-  "name": "npm-base",
+  "name": "kmore-types",
   "author": "waiting",
   "version": "0.0.1",
-  "description": "npm boilerplate",
+  "description": "Retrieve types info from ts file",
   "keywords": [
-    "种子项目",
+    "AST",
+    "compiler",
     "typescript",
     "ts"
   ],
@@ -18,12 +19,12 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bugs": {
-    "url": "https://github.com/waitingsong/npm-base/issues"
+    "url": "https://github.com/waitingsong/kmore-types/issues"
   },
-  "homepage": "https://github.com/waitingsong/npm-base#readme",
+  "homepage": "https://waitingsong.github.io/kmore-types/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waitingsong/npm-base.git"
+    "url": "git+https://github.com/waitingsong/kmore-types.git"
   },
   "license": "MIT",
   "nyc": {
@@ -48,7 +49,10 @@
     "all": true
   },
   "dependencies": {
-    "rxjs": "^6.5.2"
+    "@waiting/shared-core": "^2.0.1",
+    "rxjs": "^6.5.2",
+    "rxwalker": "^3.0.0",
+    "source-map-support": "^0.5.13"
   },
   "devDependencies": {
     "@types/mocha": "*",
@@ -56,6 +60,7 @@
     "@types/power-assert": "*",
     "@types/rewire": "*",
     "@types/rimraf": "*",
+    "@types/source-map-support": "*",
     "@types/yargs": "^13.0.0",
     "@waiting/eslint-config": "^1.10.0",
     "coveralls": "^3.0.5",
@@ -76,6 +81,9 @@
     "ts-node": "^8.3.0",
     "typescript": "^3.5.0",
     "yargs": "^13.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^3.5.0"
   },
   "scripts": {
     "bp:add": "git remote add bp https://github.com/waitingsong/npm-base",
