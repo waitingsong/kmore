@@ -5,7 +5,6 @@ import * as assert from 'power-assert'
 import { of } from 'rxjs'
 import { tap, finalize, catchError, defaultIfEmpty } from 'rxjs/operators'
 
-import { initOptions, initBuildSrcOpts } from '../src/lib/config'
 import { buildSource } from '../src/lib/build'
 
 
@@ -113,5 +112,36 @@ describe(filename, () => {
 
       return
     })
+
+    it('with opts outputFileNameSuffix', (done) => {
+      const path = './test/config/test.config2.ts'
+      const outputFileNameSuffix = 'foo' + Math.random().toString()
+
+      buildSource({
+        baseDirFile: path,
+        outputFileNameSuffix,
+      })
+        .pipe(
+          defaultIfEmpty(''),
+          tap((targetPath) => {
+            console.log(`target: "${targetPath}"`)
+            assert(targetPath && targetPath.length, 'target path value invalid.')
+            assert(targetPath.includes(outputFileNameSuffix))
+            accessSync(targetPath)
+            rimraf(targetPath)
+          }),
+          finalize(done),
+          catchError((err: Error) => {
+            assert(false, err.message)
+            return of('')
+          }),
+        )
+        .subscribe()
+
+      return
+    })
   })
+
+
 })
+
