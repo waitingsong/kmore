@@ -319,7 +319,7 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     ...initBuildSrcOpts,
     ...options,
   }
-  const { baseDir } = opts
+  const { baseDirFile: baseDir } = opts
   const maxDepth = 99
   const concurrent = opts.concurrent && opts.concurrent > 0
     ? opts.concurrent
