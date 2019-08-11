@@ -82,12 +82,6 @@ const config = [
     input: pkg.module,
     output: [
       {
-        banner,
-        format: 'es',
-        file: pkg.es2015,
-        sourcemap: true,
-      },
-      {
         file: pkg.main,
         amd: { id: name },
         banner,
@@ -98,10 +92,21 @@ const config = [
       },
     ],
   },
-
 ]
 
-if (production) {
+if (pkg.es2015) {
+  config[0].output.push(
+    {
+      banner,
+      format: 'es',
+      file: pkg.es2015,
+      sourcemap: true,
+    },
+
+  )
+}
+
+if (production && pkg.es2015) {
   config.push(
     // esm minify
     {
