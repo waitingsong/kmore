@@ -13,7 +13,7 @@ export const initOptions: Options = {
 
 export const initBuildSrcOpts: Required<BuildSrcOpts> = {
   ...initOptions,
-  baseDir: [],
+  baseDirFile: [],
   concurrent: 5,
 }
 
