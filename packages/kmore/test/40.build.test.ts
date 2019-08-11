@@ -1,171 +1,21 @@
+import { accessSync } from 'fs'
+
 import { basename, pathResolve, normalize, rimraf } from '@waiting/shared-core'
 import * as assert from 'power-assert'
-import { of, defer, from as ofrom, Observable } from 'rxjs'
-import {
-  tap, finalize, catchError, defaultIfEmpty, mergeMap, mapTo,
-} from 'rxjs/operators'
+import { of } from 'rxjs'
+import { tap, finalize, catchError, defaultIfEmpty } from 'rxjs/operators'
 
 import { initOptions, initBuildSrcOpts } from '../src/lib/config'
-import { buildSrcTablesFile, buildSource } from '../src/lib/build'
-import { genTbListTsFilePath, walkDirForCallerFuncTsFiles } from '../src/lib/util'
+import { buildSource } from '../src/lib/build'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
 
-  describe('Should buildTablesFile() works', () => {
-    it('with valid options', async () => {
-      const path = './test/test.config.ts'
-      const targetPath = await buildSrcTablesFile(path, initBuildSrcOpts)
-      const expectedPath = genTbListTsFilePath(pathResolve(path), initOptions.outputFileNameSuffix)
-
-      assert(
-        normalize(targetPath).toLowerCase() === normalize(expectedPath).toLowerCase(),
-        `retPath: ${targetPath}, expectedPath: ${expectedPath}`,
-      )
-    })
-  })
-
-
-  describe('Should walkDirForCallerFuncTsFiles() works', () => {
-    const targetPathSet: Set<string> = new Set()
-
-    it('with ./test', (done) => {
-      const baseDir = './test'
-
-      walkDirForCallerFuncTsFiles({
-        baseDir,
-      })
-        .pipe(
-          defaultIfEmpty(''),
-          tap((path) => {
-            console.log(`src: "${path}"`)
-            assert(path && path.length, 'path value invalid.')
-          }),
-          mergeMap((path) => {
-            return defer(() => buildSrcTablesFile(path, initBuildSrcOpts))
-          }, 2),
-          tap((targetPath) => {
-            console.log(`target: "${targetPath}"`)
-            assert(targetPath && targetPath.length, 'path value invalid.')
-            targetPathSet.add(targetPath)
-          }),
-          finalize(() => {
-            targetPathSet.clear()
-            done()
-          }),
-          catchError((err: Error) => {
-            assert(false, err.message)
-            return of('')
-          }),
-        )
-        .subscribe()
-
-      return
-    })
-
-    it('clean', (done) => {
-      cleanTargetPath(targetPathSet)
-        .pipe(
-          finalize(() => {
-            targetPathSet.clear()
-            done()
-          }),
-        )
-        .subscribe()
-
-      return
-    })
-
-    it('with [./test]', (done) => {
-      const baseDir = ['./test']
-
-      walkDirForCallerFuncTsFiles({
-        baseDir,
-      })
-        .pipe(
-          defaultIfEmpty(''),
-          tap((path) => {
-            // console.log(`src: "${path}"`)
-            assert(path && path.length, 'path value invalid.')
-          }),
-          mergeMap((path) => {
-            return defer(() => buildSrcTablesFile(path, initBuildSrcOpts))
-          }, 2),
-          tap((targetPath) => {
-            // console.log(`target: "${targetPath}"`)
-            assert(targetPath && targetPath.length, 'path value invalid.')
-            targetPathSet.add(targetPath)
-          }),
-          finalize(() => {
-            targetPathSet.clear()
-            done()
-          }),
-          catchError((err: Error) => {
-            assert(false, err.message)
-            return of('')
-          }),
-        )
-        .subscribe()
-
-      return
-    })
-
-    it.skip('with ./src/lib', (done) => {
-      const baseDir = ['./src/lib']
-
-      walkDirForCallerFuncTsFiles({
-        baseDir,
-      })
-        .pipe(
-          defaultIfEmpty(''),
-          tap((path) => {
-            console.log(`src: "${path}"`)
-            assert(path && path.length, 'path value invalid.')
-          }),
-          mergeMap((path) => {
-            return buildSrcTablesFile(path, initBuildSrcOpts)
-          }),
-          tap((targetPath) => {
-            console.log(`target: "${targetPath}"`)
-            // assert(targetPath && targetPath.length, 'path value invalid.')
-            targetPath && targetPathSet.add(targetPath)
-          }),
-          finalize(() => {
-            targetPathSet.clear()
-            done()
-          }),
-          catchError((err: Error) => {
-            assert(false, err.message)
-            return of('')
-          }),
-        )
-        .subscribe()
-
-      return
-    })
-
-    it('clean', (done) => {
-      cleanTargetPath(targetPathSet)
-        .pipe(
-          finalize(() => {
-            targetPathSet.clear()
-            done()
-          }),
-        )
-        .subscribe()
-
-      return
-    })
-  })
-
-
   describe('Should buildSource() works', () => {
-    const targetPathArr: string[] = []
-
-    it('with ./test', (done) => {
-      const baseDir = ['./test']
+    it('with dir ./test', (done) => {
+      const baseDir = './test'
 
       buildSource({
         baseDir,
@@ -175,7 +25,8 @@ describe(filename, () => {
           tap((targetPath) => {
             console.log(`target: "${targetPath}"`)
             assert(targetPath && targetPath.length, 'path value invalid.')
-            targetPathArr.push(targetPath)
+            accessSync(targetPath)
+            rimraf(targetPath)
           }),
           finalize(done),
           catchError((err: Error) => {
@@ -188,18 +39,44 @@ describe(filename, () => {
       return
     })
 
-    it('clean', (done) => {
-      ofrom(targetPathArr)
+    it('with dir [./test/config]', (done) => {
+      const baseDir = ['./test/config']
+
+      buildSource({
+        baseDir,
+      })
         .pipe(
-          mergeMap((path) => {
-            assert(path && path.length, 'File path empty')
-            const rm$ = defer(() => rimraf(path)).pipe(
-              mapTo(path),
-            )
-            return path ? rm$ : of('')
+          defaultIfEmpty(''),
+          tap((targetPath) => {
+            console.log(`target: "${targetPath}"`)
+            assert(targetPath && targetPath.length, 'path value invalid.')
+            accessSync(targetPath)
+            rimraf(targetPath)
           }),
-          tap((path) => {
-            path && console.log(`clean: "${path}"`)
+          finalize(done),
+          catchError((err: Error) => {
+            assert(false, err.message)
+            return of('')
+          }),
+        )
+        .subscribe()
+
+      return
+    })
+
+    it('with file ./test/config/test.config2.ts', (done) => {
+      const path = './test/config/test.config2.ts'
+
+      buildSource({
+        baseDir: path,
+      })
+        .pipe(
+          defaultIfEmpty(''),
+          tap((targetPath) => {
+            console.log(`target: "${targetPath}"`)
+            assert(targetPath && targetPath.length, 'path value invalid.')
+            accessSync(targetPath)
+            rimraf(targetPath)
           }),
           finalize(done),
           catchError((err: Error) => {
@@ -213,23 +90,3 @@ describe(filename, () => {
     })
   })
 })
-
-function cleanTargetPath(targetPathSet: Set<string>): Observable<string> {
-  return ofrom(targetPathSet)
-    .pipe(
-      mergeMap((path) => {
-        assert(path && path.length, 'File path empty')
-        const rm$ = defer(() => rimraf(path)).pipe(
-          mapTo(path),
-        )
-        return path ? rm$ : of('')
-      }),
-      tap((path) => {
-        path && console.log(`clean: "${path}"`)
-      }),
-      catchError((err: Error) => {
-        assert(false, err.message)
-        return of('')
-      }),
-    )
-}
