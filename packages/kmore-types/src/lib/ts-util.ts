@@ -163,6 +163,7 @@ export function matchSourceFileWithFilePath(
 }
 
 
+/** Retrieve node with specified position from caller */
 export function walkNodeWithPosition(options: WalkNodeWithPositionOps): ts.CallExpression | void {
   const visit = (node: ts.Node, opts: WalkNodeWithPositionOps): ts.CallExpression | void => {
     const { line, character } = opts.sourceFile.getLineAndCharacterOfPosition(node.getStart())
@@ -174,10 +175,11 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): ts.CallE
         const expression = node.expression as ts.Identifier | void
 
         if (expression) {
-          const matched = isCallerNameMatched(expression.getText(), options.matchFuncName)
-          if (matched) {
-            return node
-          }
+          // const matched = isCallerNameMatched(expression.getText(), options.matchFuncName)
+          // if (matched) {
+          //   return node
+          // }
+          return node
         }
 
         return // stop walk
@@ -196,6 +198,7 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): ts.CallE
 }
 
 
+/** Retrieve node with specified matchFuncName */
 export function walkNode(options: WalkNodeOps): Set<ts.CallExpression> {
   const ret: Set<ts.CallExpression> = new Set()
 
