@@ -72,60 +72,6 @@ export function validateTbName(tb: string): void {
   }
 }
 
-// export function parseTbList<T extends TTableListModel>(tbs: TbListParam): DbTables<T> {
-//   if (! tbs) {
-//     return {} as DbTables<never>
-//   }
-//   // else if (Array.isArray(tbs)) {
-//   //   return parseTbListArray<T>(tbs)
-//   // }
-//   else if (typeof tbs === 'object') {
-//     return parseTbListObject<T>(tbs)
-//   }
-//   else {
-//     throw TypeError('TbListParam invalid')
-//   }
-// }
-// function parseTbListObject<TL extends TTableListModel>(tbs: object): DbTables<TL> {
-//   const ret = createNullObject()
-
-//   if (! tbs) {
-//     return ret
-//   }
-
-//   Object.entries(tbs).forEach((item) => {
-//     const [tbName, alias] = item
-
-//     validateDuplicateProp(ret, tbName)
-
-//     // {tbName: alias}
-//     Object.defineProperty(ret, tbName, {
-//       ...defaultPropDescriptor,
-//       value: alias,
-//     })
-//   })
-
-//   return ret
-// }
-
-// function parseTbListArray<T extends object>(tbs: readonly string[]): DbTables<T> {
-//   const ret = Object.create(null)
-
-//   tbs.forEach((tb) => {
-//     const tbName = tb.toString()
-
-//     validateDuplicateProp(ret, tbName)
-
-//     // {tbName: tbName}
-//     Object.defineProperty(ret, tbName, {
-//       ...defaultPropDescriptor,
-//       value: tbName,
-//     })
-//   })
-
-//   return ret
-// }
-
 
 export function validateDuplicateProp(
   tbs: object,
