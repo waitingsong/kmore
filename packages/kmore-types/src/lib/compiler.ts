@@ -52,6 +52,7 @@ export function genTbListFromCaller<T extends TTableListModel>(
 ): DbTables<T> {
 
   const opts: RetrieveInfoFromTypeOpts = {
+    callerDistance: initOptions.callerDistance,
     callerFuncNames: initOptions.callerFuncNames,
     ...options ? options : {},
     caller,

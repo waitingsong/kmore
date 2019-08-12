@@ -2,8 +2,7 @@
 import * as ts from 'typescript'
 
 
-export interface Options {
-  callerFuncNames: CallerFuncName | CallerFuncName[]
+export interface Options extends GenTbListFromTypeOpts {
   /** Exported vaiable name preifx. Default is "tbs", result will be "tbs_m_n" */
   exportVarPrefix: string
   /** Load js under ts env for debug, Default: false */
@@ -107,12 +106,12 @@ export interface JsonType {
 
 
 export interface GenTbListFromTypeOpts {
-  callerFuncNames: CallerFuncName | CallerFuncName[]
   /**
    * Distance from genTbListFromType() or kmore(),
    * Default: 1
    */
-  callerDistance?: number
+  callerDistance: number
+  callerFuncNames: CallerFuncName | CallerFuncName[]
 }
 export interface RetrieveInfoFromTypeOpts extends GenTbListFromTypeOpts {
   cacheMap: CacheMap

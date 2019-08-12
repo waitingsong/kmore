@@ -1,8 +1,13 @@
 import { CacheMap, Options, GenTbListFromTypeOpts, BuildSrcOpts } from './model'
 
 
-export const initOptions: Options = {
+export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
+  callerDistance: 1,
   callerFuncNames: ['genTbListFromType', 'kmore'],
+}
+
+export const initOptions: Options = {
+  ...initGenTbListFromTypeOpts,
   exportVarPrefix: 'tbs',
   forceLoadTbListJs: false,
   forceLoadTbListJsPathReplaceRules: null,
@@ -15,12 +20,6 @@ export const initBuildSrcOpts: Required<BuildSrcOpts> = {
   ...initOptions,
   path: [],
   concurrent: 5,
-}
-
-
-export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
-  callerFuncNames: initOptions.callerFuncNames,
-  callerDistance: 1,
 }
 
 export const reservedTbListKeys: string[] = [
