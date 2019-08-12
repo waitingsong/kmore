@@ -67,6 +67,7 @@
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/dbmodel.html" class="tsd-kind-icon">Db<wbr>Model</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/emptytblist.html" class="tsd-kind-icon">Empty<wbr>TbList</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -74,6 +75,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias"><a href="globals.html#config" class="tsd-kind-icon">Config</a></li>
 								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#dbrefbuilder" class="tsd-kind-icon">Db<wbr>Ref<wbr>Builder</a></li>
+								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#dbtables" class="tsd-kind-icon">Db<wbr>Tables</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a></li>
 								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#tbquerybuilder" class="tsd-kind-icon">Tb<wbr>Query<wbr>Builder</a></li>
 							</ul>
@@ -95,7 +97,7 @@
 					<div class="tsd-signature tsd-kind-icon">Config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Config</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L46">lib/model.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L39">lib/model.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -105,7 +107,7 @@
 					<div class="tsd-signature tsd-kind-icon">Db<wbr>Ref<wbr>Builder&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L66">lib/model.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L68">lib/model.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -125,13 +127,34 @@
 						</ul>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-has-type-parameter">
+					<a name="dbtables" class="tsd-anchor"></a>
+					<h3>Db<wbr>Tables</h3>
+					<div class="tsd-signature tsd-kind-icon">Db<wbr>Tables&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">DbTables&lt;T&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L60">lib/model.ts:60</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type of db.tables</p>
+						</div>
+					</div>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T<span class="tsd-signature-symbol">: </span><a href="globals.html#ttablelistmodel" class="tsd-signature-type">TTableListModel</a></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="ttablelistmodel" class="tsd-anchor"></a>
 					<h3>TTable<wbr>List<wbr>Model</h3>
 					<div class="tsd-signature tsd-kind-icon">TTable<wbr>List<wbr>Model<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L62">lib/model.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L55">lib/model.ts:55</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -141,7 +164,7 @@
 					<div class="tsd-signature tsd-kind-icon">Tb<wbr>Query<wbr>Builder&lt;TName&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L70">lib/model.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/src/lib/model.ts#L72">lib/model.ts:72</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -235,11 +258,17 @@
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/dbmodel.html" class="tsd-kind-icon">Db<wbr>Model</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/emptytblist.html" class="tsd-kind-icon">Empty<wbr>TbList</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#config" class="tsd-kind-icon">Config</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 						<a href="globals.html#dbrefbuilder" class="tsd-kind-icon">Db<wbr>Ref<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#dbtables" class="tsd-kind-icon">Db<wbr>Tables</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a>
