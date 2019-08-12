@@ -20,7 +20,7 @@ export const initBuildSrcOpts: Required<BuildSrcOpts> = {
 
 export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
   callerFuncNames: initOptions.callerFuncNames,
-  stackDepth: 1,
+  callerDistance: 1,
 }
 
 export const reservedTbListKeys: string[] = [

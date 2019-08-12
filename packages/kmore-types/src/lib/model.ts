@@ -82,7 +82,6 @@ export interface EmptyTbList {
 }
 
 
-
 export type TableAlias = string
 export type TableName = string
 export type FilePath = string
@@ -109,8 +108,11 @@ export interface JsonType {
 
 export interface GenTbListFromTypeOpts {
   callerFuncNames: CallerFuncName | CallerFuncName[]
-  /** Default: 1 */
-  stackDepth?: number
+  /**
+   * Distance from genTbListFromType() or kmore(),
+   * Default: 1
+   */
+  callerDistance?: number
 }
 export interface RetrieveInfoFromTypeOpts extends GenTbListFromTypeOpts {
   cacheMap: CacheMap

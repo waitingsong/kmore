@@ -32,8 +32,8 @@ export function genTbListFromType<T extends TTableListModel>(
     ? { ...initGenTbListFromTypeOpts, ...options }
     : { ...initGenTbListFromTypeOpts }
 
-  const depth = typeof opts.stackDepth === 'number' && opts.stackDepth > 0
-    ? opts.stackDepth
+  const depth = typeof opts.callerDistance === 'number' && opts.callerDistance > 0
+    ? opts.callerDistance
     : 1
   const caller = getCallerStack(depth)
 
