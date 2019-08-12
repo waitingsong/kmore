@@ -107,11 +107,6 @@ export interface JsonType {
 }
 
 
-export interface GenTbListFromFileOpts {
-  path: string
-  typeName: string
-  includePathKeyWords?: string | string[]
-}
 export interface GenTbListFromTypeOpts {
   callerFuncNames: CallerFuncName | CallerFuncName[]
   /** Default: 1 */
