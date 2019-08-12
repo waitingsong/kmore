@@ -1,12 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as Knex from 'knex'
-import { DbTables } from 'kmore-types'
 
 
 export {
   Options,
   PathReWriteRule,
-  DbTables,
   BuildSrcOpts,
   CacheMap,
   CallerIdToLocalTypeIdMap,
@@ -56,6 +54,15 @@ export interface DbModel<T extends TTableListModel> {
 }
 export type TTableListModel = object
 
+/**
+ * Type of db.tables
+ */
+export type DbTables<T extends TTableListModel> = T extends void
+  ? EmptyTbList
+  : T extends never ? EmptyTbList : Record<keyof T, string>
+export interface EmptyTbList {
+  readonly [key: string]: never
+}
 
 /** Type of db.refTables */
 export type DbRefBuilder<T> = {
