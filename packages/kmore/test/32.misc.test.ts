@@ -3,13 +3,10 @@ import * as assert from 'power-assert'
 
 import {
   kmore,
-  TbListTagMap,
-  RetrieveInfoFromTypeOpts,
   DbModel,
 } from '../src/index'
 import { initOptions, cacheMap } from '../src/lib/config'
-import { buildTbListParam } from '../src/lib/util'
-import { retrieveLocalTypeMapFromType, genTbListFromType } from '../src/lib/compiler'
+import { genTbListFromType } from '../src/lib/compiler'
 
 import { config } from './test.config'
 import { TbListModel, TbListModelAlias } from './test.model'

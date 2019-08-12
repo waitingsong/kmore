@@ -1,6 +1,6 @@
 import { accessSync } from 'fs'
 
-import { basename, pathResolve, normalize, rimraf } from '@waiting/shared-core'
+import { basename, rimraf } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 import { of } from 'rxjs'
 import { tap, finalize, catchError, defaultIfEmpty } from 'rxjs/operators'
