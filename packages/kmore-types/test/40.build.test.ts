@@ -17,7 +17,7 @@ describe(filename, () => {
       const baseDir = ['./test/config']
 
       buildSource({
-        baseDirFile: baseDir,
+        path: baseDir,
       })
         .pipe(
           defaultIfEmpty(''),
@@ -42,7 +42,7 @@ describe(filename, () => {
       const path = './test/config/test.config2.ts'
 
       buildSource({
-        baseDirFile: path,
+        path,
       })
         .pipe(
           defaultIfEmpty(''),
@@ -67,7 +67,7 @@ describe(filename, () => {
       const path = ['./test/config/test.config2.ts']
 
       buildSource({
-        baseDirFile: path,
+        path,
       })
         .pipe(
           defaultIfEmpty(''),
@@ -93,7 +93,7 @@ describe(filename, () => {
       const outputFileNameSuffix = 'foo' + Math.random().toString()
 
       buildSource({
-        baseDirFile: path,
+        path,
         outputFileNameSuffix,
       })
         .pipe(

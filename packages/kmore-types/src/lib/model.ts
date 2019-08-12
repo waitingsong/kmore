@@ -24,7 +24,7 @@ export interface Options {
 
 export interface BuildSrcOpts extends Partial<Options> {
   /** Base dir or file in both relative and absolute style to scan */
-  baseDirFile: string | string[]
+  path: string | string[]
   /** Default: 5 */
   concurrent?: number
 }
