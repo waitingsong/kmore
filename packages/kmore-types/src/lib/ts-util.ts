@@ -10,7 +10,6 @@ import {
   GenInfoFromNodeOps,
   LocalTypeId,
   TbListTagMap,
-  GenTbListFromTypeOpts,
   MatchedSourceFile,
   WalkNodeWithPositionOps,
   WalkNodeOps,
@@ -126,45 +125,6 @@ export function retrieveGenericsIdentifierFromTypeArguments(node: ts.CallExpress
 }
 
 
-export function needWalkSourFileObject(
-  pathKeyWords: GenTbListFromTypeOpts['includePathKeyWords'],
-  srcPath: string,
-): boolean {
-
-  if (srcPath && srcPath.includes('node_modules')) {
-    return false
-  }
-  else if (! pathKeyWords || ! pathKeyWords.length) {
-    return true
-  }
-  else if (isPathKeyWordsExistsInSrcPath(pathKeyWords, srcPath)) {
-    return true
-  }
-  else {
-    return false
-  }
-}
-
-
-export function isPathKeyWordsExistsInSrcPath(
-  pathKeyWords: GenTbListFromTypeOpts['includePathKeyWords'],
-  srcPath: string,
-): boolean {
-
-  if (typeof pathKeyWords === 'string') {
-    return srcPath.includes(pathKeyWords)
-  }
-  else if (Array.isArray(pathKeyWords)) {
-    for (const key of pathKeyWords) {
-      if (srcPath.includes(key)) {
-        return true
-      }
-    }
-  }
-
-  return false
-}
-
 
 export function matchSourceFileWithFilePath(
   path: string,
@@ -188,11 +148,6 @@ export function matchSourceFileWithFilePath(
   }
 
   for (const sourceFile of program.getSourceFiles()) {
-    // @ts-ignore
-    if (! needWalkSourFileObject('', sourceFile.path)) {
-      continue
-    }
-
     /* istanbul ignore else */
     if (! sourceFile.isDeclarationFile) {
       // @ts-ignore

@@ -114,8 +114,6 @@ export interface GenTbListFromFileOpts {
 }
 export interface GenTbListFromTypeOpts {
   callerFuncNames: CallerFuncName | CallerFuncName[]
-  /** Always excluding "node_module/" */
-  includePathKeyWords?: string | string[]
   /** Default: 1 */
   stackDepth?: number
 }

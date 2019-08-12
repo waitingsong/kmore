@@ -20,7 +20,6 @@ export const initBuildSrcOpts: Required<BuildSrcOpts> = {
 
 export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
   callerFuncNames: initOptions.callerFuncNames,
-  includePathKeyWords: [],
   stackDepth: 1,
 }
 
