@@ -56,7 +56,7 @@
     "all": true
   },
   "dependencies": {
-    "kmore-types": "^1.0.0"
+    "kmore-types": "^0.2.0"
   },
   "devDependencies": {
     "@types/mocha": "*",

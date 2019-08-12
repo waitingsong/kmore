@@ -14,10 +14,10 @@ describe(filename, () => {
 
   describe('Should buildSource() works', () => {
     it('with dir ./test', (done) => {
-      const baseDir = './test'
+      const path = './test'
 
       buildSource({
-        baseDirFile: baseDir,
+        path,
       })
         .pipe(
           defaultIfEmpty(''),
