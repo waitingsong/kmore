@@ -27,6 +27,7 @@ export const initBuildSrcOpts: Required<BuildSrcOpts> = {
   ...initOptions,
   path: [],
   concurrent: 5,
+  excludePathKeys: ['node_modules'],
 }
 
 export const reservedTbListKeys: string[] = [

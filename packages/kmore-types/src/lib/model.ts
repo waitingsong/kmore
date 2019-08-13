@@ -26,6 +26,8 @@ export interface BuildSrcOpts extends Partial<Options> {
   path: string | string[]
   /** Default: 5 */
   concurrent?: number
+  /** String key to skip build under path. Default: node_modules */
+  excludePathKeys?: string | string[]
 }
 
 export interface PathReWriteRule extends Array<RegExp | string> {

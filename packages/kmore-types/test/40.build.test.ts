@@ -13,7 +13,58 @@ const filename = basename(__filename)
 
 describe(filename, () => {
 
+  describe('Should buildSource() works with opts excludePathKeys', () => {
+    it('value string ', (done) => {
+      const basePath = './test/config'
+
+      // globalCallerFuncNameSet without genFoo yet
+      buildSource({ path: basePath, excludePathKeys: 'config3' })
+        .pipe(
+          defaultIfEmpty(''),
+          tap((targetPath) => {
+            console.log(`target: "${targetPath}"`)
+            assert(targetPath && targetPath.length, 'path value invalid.')
+            accessSync(targetPath)
+            rimraf(targetPath)
+          }),
+          finalize(done),
+          catchError((err: Error) => {
+            assert(false, err.message)
+            return of('')
+          }),
+        )
+        .subscribe()
+
+      return
+    })
+
+    it('value array', (done) => {
+      const basePath = './test/config'
+
+      // globalCallerFuncNameSet without genFoo yet
+      buildSource({ path: basePath, excludePathKeys: ['config3.ts', 'config31.ts'] })
+        .pipe(
+          defaultIfEmpty(''),
+          tap((targetPath) => {
+            console.log(`target: "${targetPath}"`)
+            assert(targetPath && targetPath.length, 'path value invalid.')
+            accessSync(targetPath)
+            rimraf(targetPath)
+          }),
+          finalize(done),
+          catchError((err: Error) => {
+            assert(false, err.message)
+            return of('')
+          }),
+        )
+        .subscribe()
+
+      return
+    })
+  })
+
   describe('Should buildSource() works', () => {
+
     it('with ./test/config/test.config2.ts', (done) => {
       const basePath = './test/config/test.config2.ts'
 

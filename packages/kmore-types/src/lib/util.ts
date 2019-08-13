@@ -276,7 +276,7 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     ...initBuildSrcOpts,
     ...options,
   }
-  const { path: basePath } = opts
+  const { path: basePath, excludePathKeys: excludePathKey } = opts
   const maxDepth = 99
   const concurrent = opts.concurrent && opts.concurrent > 0
     ? opts.concurrent
@@ -301,6 +301,10 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
 
   const path$ = dir$.pipe(
     mergeMap(path => walk(path, { maxDepth }), concurrent),
+    filter((ev) => {
+      const { path } = ev
+      return path ? ! ifPathContainsKey(path, excludePathKey) : false
+    }),
     filter(ev => ev.type === EntryType.file
       && ev.path.endsWith('.ts')
       && ! ev.path.endsWith('.d.ts')),
@@ -317,6 +321,25 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
   )
 
   return path$
+}
+
+function ifPathContainsKey(path: FilePath, keys: string | string[]): boolean {
+  if (! path) {
+    return false
+  }
+
+  if (typeof keys === 'string' && keys) {
+    return path.includes(keys)
+  }
+  else if (Array.isArray(keys)) {
+    for (const key of keys) {
+      if (key && path.includes(key)) {
+        return true
+      }
+    }
+  }
+
+  return false
 }
 
 export function ifFileContainsCallerFuncNames(

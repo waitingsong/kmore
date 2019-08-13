@@ -3,7 +3,7 @@ import { DbTables, TTableListModel } from '../../src'
 import { User, UserDetail } from '../test.model'
 
 
-export const tbList4 = genFoo<UserInfoModel>()
+export const tbList31 = genFoo<UserInfoModel>()
 
 export interface UserInfoModel {
   tb_user: User
