@@ -4,7 +4,12 @@ import { from as ofrom, defer, of, Observable, iif } from 'rxjs'
 import { map, filter, mergeMap, catchError } from 'rxjs/operators'
 import { readFileAsync } from '@waiting/shared-core'
 
-import { defaultPropDescriptor, reservedTbListKeys, initBuildSrcOpts, globalCallerFuncNameSet } from './config'
+import {
+  defaultPropDescriptor,
+  reservedTbListKeys,
+  initBuildSrcOpts,
+  globalCallerFuncNameSet,
+} from './config'
 import {
   BuildSrcOpts,
   CallerInfo,
@@ -276,7 +281,7 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
   const concurrent = opts.concurrent && opts.concurrent > 0
     ? opts.concurrent
     : 5
-  const matchFuncNameSet = new Set(...globalCallerFuncNameSet)
+  const matchFuncNameSet = new Set(globalCallerFuncNameSet)
 
   const dir$: Observable<string> = iif(
     () => {
@@ -350,12 +355,13 @@ export function hasContainsCallerFuncNames(
   return false
 }
 
+
 export function parseCallerFuncNames(
   callerFuncNameSet: CallerFuncNameSet,
   names: CallerFuncName | CallerFuncName[],
 ): CallerFuncNameSet {
 
-  const st = new Set(...callerFuncNameSet)
+  const st = new Set(callerFuncNameSet)
 
   if (! names) {
     return st

@@ -35,6 +35,11 @@ export interface PathReWriteRule extends Array<RegExp | string> {
 }
 
 export type CallerFuncNameSet = Set<CallerFuncName>
+/**
+ * Name of the function
+ * calling genTbListFromType() or kmore() and pass with generics type
+ */
+export type CallerFuncName = string
 
 export type TTableListModel = object
 
@@ -118,7 +123,6 @@ export interface RetrieveInfoFromTypeOpts extends GenTbListFromTypeOpts {
   cacheMap: CacheMap
   caller: CallerInfo
 }
-export type CallerFuncName = string
 
 export interface GenGenericsArgMapOpts extends RetrieveInfoFromTypeOpts {
   checker: ts.TypeChecker
