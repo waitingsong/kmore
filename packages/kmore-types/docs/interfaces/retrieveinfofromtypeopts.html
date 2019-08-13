@@ -89,8 +89,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveinfofromtypeopts.html#cachemap" class="tsd-kind-icon">cache<wbr>Map</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="retrieveinfofromtypeopts.html#caller" class="tsd-kind-icon">caller</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="retrieveinfofromtypeopts.html#callerfuncnames" class="tsd-kind-icon">caller<wbr>Func<wbr>Names</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="retrieveinfofromtypeopts.html#stackdepth" class="tsd-kind-icon">stack<wbr>Depth</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="retrieveinfofromtypeopts.html#callerdistance" class="tsd-kind-icon">caller<wbr>Distance</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,7 +103,7 @@
 					<div class="tsd-signature tsd-kind-icon">cache<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="cachemap.html" class="tsd-signature-type">CacheMap</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L121">lib/model.ts:121</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L123">lib/model.ts:123</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -114,34 +113,24 @@
 					<div class="tsd-signature tsd-kind-icon">caller<span class="tsd-signature-symbol">:</span> <a href="callerinfo.html" class="tsd-signature-type">CallerInfo</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L122">lib/model.ts:122</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L124">lib/model.ts:124</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="callerfuncnames" class="tsd-anchor"></a>
-					<h3>caller<wbr>Func<wbr>Names</h3>
-					<div class="tsd-signature tsd-kind-icon">caller<wbr>Func<wbr>Names<span class="tsd-signature-symbol">:</span> <a href="../globals.html#callerfuncname" class="tsd-signature-type">CallerFuncName</a><span class="tsd-signature-symbol"> | </span><a href="../globals.html#callerfuncname" class="tsd-signature-type">CallerFuncName</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="callerdistance" class="tsd-anchor"></a>
+					<h3>caller<wbr>Distance</h3>
+					<div class="tsd-signature tsd-kind-icon">caller<wbr>Distance<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="gentblistfromtypeopts.html">GenTbListFromTypeOpts</a>.<a href="gentblistfromtypeopts.html#callerfuncnames">callerFuncNames</a></p>
+						<p>Inherited from <a href="gentblistfromtypeopts.html">GenTbListFromTypeOpts</a>.<a href="gentblistfromtypeopts.html#callerdistance">callerDistance</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L116">lib/model.ts:116</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="stackdepth" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> stack<wbr>Depth</h3>
-					<div class="tsd-signature tsd-kind-icon">stack<wbr>Depth<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="gentblistfromtypeopts.html">GenTbListFromTypeOpts</a>.<a href="gentblistfromtypeopts.html#stackdepth">stackDepth</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L118">lib/model.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L120">lib/model.ts:120</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Default: 1</p>
+							<p>Distance from genTbListFromType() or kmore(),
+							Default: 1</p>
 						</div>
 					</div>
 				</section>
@@ -185,9 +174,6 @@
 						<a href="geninfofromnodeops.html" class="tsd-kind-icon">Gen<wbr>Info<wbr>From<wbr>Node<wbr>Ops</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="gentblistfromfileopts.html" class="tsd-kind-icon">Gen<wbr>TbList<wbr>From<wbr>File<wbr>Opts</a>
-					</li>
-					<li class=" tsd-kind-interface">
 						<a href="gentblistfromtypeopts.html" class="tsd-kind-icon">Gen<wbr>TbList<wbr>From<wbr>Type<wbr>Opts</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -214,10 +200,7 @@
 								<a href="retrieveinfofromtypeopts.html#caller" class="tsd-kind-icon">caller</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="retrieveinfofromtypeopts.html#callerfuncnames" class="tsd-kind-icon">caller<wbr>Func<wbr>Names</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="retrieveinfofromtypeopts.html#stackdepth" class="tsd-kind-icon">stack<wbr>Depth</a>
+								<a href="retrieveinfofromtypeopts.html#callerdistance" class="tsd-kind-icon">caller<wbr>Distance</a>
 							</li>
 						</ul>
 					</li>
@@ -234,6 +217,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#callerfuncname" class="tsd-kind-icon">Caller<wbr>Func<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#callerfuncnameset" class="tsd-kind-icon">Caller<wbr>Func<wbr>Name<wbr>Set</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../globals.html#callerid" class="tsd-kind-icon">Caller<wbr>Id</a>
