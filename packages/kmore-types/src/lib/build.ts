@@ -15,7 +15,7 @@ import {
   genVarName,
   walkDirForCallerFuncTsFiles,
 } from './util'
-import { initOptions, initBuildSrcOpts } from './config'
+import { initBuildSrcOpts, globalCallerFuncNameSet } from './config'
 import {
   pickInfoFromCallerTypeId,
   genCallerTypeMapFromNodeSet,
@@ -77,7 +77,7 @@ function retrieveTypeFromFile<T extends TTableListModel>(
   if (sourceFile) {
     const nodeSet = walkNode({
       sourceFile,
-      matchFuncName: initOptions.callerFuncNames,
+      matchFuncNameSet: globalCallerFuncNameSet,
     })
     const callerTypeMap = genCallerTypeMapFromNodeSet(nodeSet, checker, sourceFile, path)
 

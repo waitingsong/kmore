@@ -34,6 +34,8 @@ export interface PathReWriteRule extends Array<RegExp | string> {
   length: 2
 }
 
+export type CallerFuncNameSet = Set<CallerFuncName>
+
 export type TTableListModel = object
 
 /**
@@ -111,7 +113,6 @@ export interface GenTbListFromTypeOpts {
    * Default: 1
    */
   callerDistance: number
-  callerFuncNames: CallerFuncName | CallerFuncName[]
 }
 export interface RetrieveInfoFromTypeOpts extends GenTbListFromTypeOpts {
   cacheMap: CacheMap
@@ -143,7 +144,7 @@ export interface StackFrame {
 
 export interface WalkNodeOps {
   sourceFile: ts.SourceFile
-  matchFuncName: CallerFuncName | CallerFuncName[]
+  matchFuncNameSet: CallerFuncNameSet
 }
 
 export interface WalkNodeWithPositionOps extends WalkNodeOps {

@@ -175,10 +175,6 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): ts.CallE
         const expression = node.expression as ts.Identifier | void
 
         if (expression) {
-          // const matched = isCallerNameMatched(expression.getText(), options.matchFuncName)
-          // if (matched) {
-          //   return node
-          // }
           return node
         }
 
@@ -210,7 +206,7 @@ export function walkNode(options: WalkNodeOps): Set<ts.CallExpression> {
       /* istanbul ignore else */
       if (expression) {
         /* istanbul ignore else */
-        if (isCallerNameMatched(expression.getText(), options.matchFuncName)) {
+        if (isCallerNameMatched(expression.getText(), options.matchFuncNameSet)) {
           ret.add(node)
           return
         } // void else

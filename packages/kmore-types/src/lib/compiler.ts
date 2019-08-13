@@ -18,7 +18,7 @@ import {
   matchSourceFileWithFilePath,
   walkNodeWithPosition,
 } from './ts-util'
-import { cacheMap as cacheMapTop, initOptions, initGenTbListFromTypeOpts } from './config'
+import { cacheMap as cacheMapTop, initOptions, initGenTbListFromTypeOpts, globalCallerFuncNameSet } from './config'
 
 
 /**
@@ -53,7 +53,7 @@ export function genTbListFromCaller<T extends TTableListModel>(
 
   const opts: RetrieveInfoFromTypeOpts = {
     callerDistance: initOptions.callerDistance,
-    callerFuncNames: initOptions.callerFuncNames,
+    // callerFuncNames: initOptions.callerFuncNames,
     ...options ? options : {},
     caller,
     cacheMap: cacheMapTop,
@@ -128,14 +128,14 @@ export function retrieveLocalTypeMapFromType(
 export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap {
   const retMap: LocalTypeMap = new Map()
   const {
-    cacheMap, sourceFile, checker, caller, callerFuncNames: callerFuncName,
+    cacheMap, sourceFile, checker, caller,
   } = options
 
   const node: ts.CallExpression | void = walkNodeWithPosition({
     sourceFile,
     matchLine: caller.line,
     matchColumn: caller.column,
-    matchFuncName: callerFuncName,
+    matchFuncNameSet: globalCallerFuncNameSet,
   })
 
   /* istanbul ignore else */

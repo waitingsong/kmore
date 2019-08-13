@@ -58,7 +58,6 @@ describe(filename, () => {
           column: 23,
         },
         callerDistance: 1,
-        callerFuncNames: 'genTbListFromType',
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -79,7 +78,6 @@ describe(filename, () => {
           column: 23,
         },
         callerDistance: 1,
-        callerFuncNames: 'genTbListFromGenerics',
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -97,7 +95,6 @@ describe(filename, () => {
           column: 23,
         },
         callerDistance: 1,
-        callerFuncNames: 'genTbListFromGenerics<',
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -116,7 +113,6 @@ describe(filename, () => {
           column: 22,
         },
         callerDistance: 1,
-        callerFuncNames: 'genTbListFromGenerics',
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -134,7 +130,6 @@ describe(filename, () => {
           column: 1,
         },
         callerDistance: 1,
-        callerFuncNames: 'genTbListFromGenerics',
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)

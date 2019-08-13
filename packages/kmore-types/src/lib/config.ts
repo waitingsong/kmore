@@ -1,9 +1,16 @@
-import { CacheMap, Options, GenTbListFromTypeOpts, BuildSrcOpts } from './model'
+import {
+  BuildSrcOpts,
+  CacheMap,
+  CallerFuncNameSet,
+  GenTbListFromTypeOpts,
+  Options,
+} from './model'
 
+
+export const globalCallerFuncNameSet: CallerFuncNameSet = new Set(['genTbListFromType', 'kmore'])
 
 export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
   callerDistance: 1,
-  callerFuncNames: ['genTbListFromType', 'kmore'],
 }
 
 export const initOptions: Options = {

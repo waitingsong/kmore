@@ -1,10 +1,10 @@
 import * as sourceMapSupport from 'source-map-support'
 import { walk, EntryType } from 'rxwalker'
 import { from as ofrom, defer, of, Observable, iif } from 'rxjs'
-import { map, filter, mergeMap, catchError, mapTo } from 'rxjs/operators'
+import { map, filter, mergeMap, catchError } from 'rxjs/operators'
 import { readFileAsync } from '@waiting/shared-core'
 
-import { defaultPropDescriptor, reservedTbListKeys, initBuildSrcOpts } from './config'
+import { defaultPropDescriptor, reservedTbListKeys, initBuildSrcOpts, globalCallerFuncNameSet } from './config'
 import {
   BuildSrcOpts,
   CallerInfo,
@@ -14,6 +14,7 @@ import {
   Options,
   TbListTagMap,
   TTableListModel,
+  CallerFuncNameSet,
 } from './model'
 
 
@@ -174,18 +175,21 @@ export function buildTbListParam<T extends TTableListModel>(tagMap: TbListTagMap
 
 export function isCallerNameMatched(
   name: string,
-  matchFuncName: CallerFuncName | CallerFuncName[],
+  matchFuncNameSet: CallerFuncNameSet,
 ): boolean {
 
   if (! name) {
     return false
   }
-  else if (typeof matchFuncName === 'string' && matchFuncName === name) {
+  else if (matchFuncNameSet.has(name)) {
     return true
   }
-  else if (Array.isArray(matchFuncName) && matchFuncName.includes(name)) {
-    return true
-  }
+  // else if (typeof matchFuncNameSet === 'string' && matchFuncNameSet === name) {
+  //   return true
+  // }
+  // else if (Array.isArray(matchFuncNameSet) && matchFuncNameSet.includes(name)) {
+  //   return true
+  // }
   else {
     return false
   }
@@ -265,26 +269,27 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     ...initBuildSrcOpts,
     ...options,
   }
-  const { path: baseDir } = opts
+  const { path: basePath } = opts
   const maxDepth = 99
   const concurrent = opts.concurrent && opts.concurrent > 0
     ? opts.concurrent
     : 5
+  const matchFuncNameSet = new Set(...globalCallerFuncNameSet)
 
   const dir$: Observable<string> = iif(
     () => {
-      if (typeof baseDir === 'string') {
+      if (typeof basePath === 'string') {
         return true
       }
-      else if (Array.isArray(baseDir)) {
+      else if (Array.isArray(basePath)) {
         return false
       }
       else {
         throw new TypeError('Value of baseDir invalid, should be String or Array.')
       }
     },
-    of(baseDir as string),
-    ofrom(baseDir as string[]),
+    of(basePath as string),
+    ofrom(basePath as string[]),
   )
 
   const path$ = dir$.pipe(
@@ -294,7 +299,7 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
       && ! ev.path.endsWith('.d.ts')),
     map(ev => ev.path),
     mergeMap((path) => {
-      const flag$ = ifFileContainsCallerFuncNames(path, opts.callerFuncNames)
+      const flag$ = ifFileContainsCallerFuncNames(matchFuncNameSet, path)
       return flag$.pipe(
         map((contains) => {
           return contains ? path : ''
@@ -308,8 +313,8 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
 }
 
 export function ifFileContainsCallerFuncNames(
+  matchFuncNameSet: CallerFuncNameSet,
   path: FilePath,
-  callerFuncNames: Options['callerFuncNames'],
 ): Observable<boolean> {
 
   const file$ = defer(() => readFileAsync(path))
@@ -318,34 +323,50 @@ export function ifFileContainsCallerFuncNames(
       const ret = buf.length > 1024 ? buf.slice(0, 1024) : buf
       return ret
     }),
-    filter((buf) => {
+    map((buf) => {
       const code = buf.toString()
-      return isContainsCallerFuncNames(code, callerFuncNames)
+      return hasContainsCallerFuncNames(matchFuncNameSet, code)
     }),
-    mapTo(true),
     catchError(() => of(false)),
   )
 
   return ret$
 }
 
-export function isContainsCallerFuncNames(
+export function hasContainsCallerFuncNames(
+  matchFuncNameSet: CallerFuncNameSet,
   content: string,
-  callerFuncNames: Options['callerFuncNames'],
 ): boolean {
 
-  if (! content) {
-    return false
-  }
-  else if (typeof callerFuncNames === 'string') {
-    return content.includes(callerFuncNames)
-  }
-  else {
-    for (const name of callerFuncNames) {
-      if (content.includes(name)) {
+  if (content) {
+    for (const key of matchFuncNameSet.keys()) {
+      if (content.includes(key)) {
         return true
       }
     }
-    return false
   }
+  return false
+}
+
+export function parseCallerFuncNames(
+  callerFuncNameSet: CallerFuncNameSet,
+  names: CallerFuncName | CallerFuncName[],
+): CallerFuncNameSet {
+
+  const st = new Set(...callerFuncNameSet)
+
+  if (! names) {
+    return st
+  }
+  else if (typeof names === 'string') {
+    st.add(names)
+  }
+  else if (Array.isArray(names) && names.length) {
+    names.forEach(name => st.add(name))
+  }
+  else {
+    throw new TypeError('Value of param invalid.')
+  }
+
+  return st
 }
