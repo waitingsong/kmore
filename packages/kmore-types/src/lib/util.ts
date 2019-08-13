@@ -18,6 +18,7 @@ import {
 } from './model'
 
 
+/** Allow empty Object */
 export function validateParamTables(tbs: unknown): void {
   if (tbs === null) {
     throw new TypeError('Parameter tables of DbFacrory() invalid. Values is null.')
@@ -89,7 +90,8 @@ export function validateDuplicateProp(
 /**
  * @see https://stackoverflow.com/a/13227808
  */
-export function getCallerStack(depth: number = 1): CallerInfo {
+export function getCallerStack(callerDistance: number = 0): CallerInfo {
+  const depth = callerDistance + 2
   // Save original Error.prepareStackTrace
   const origPrepareStackTrace = Error.prepareStackTrace
 
@@ -105,13 +107,13 @@ export function getCallerStack(depth: number = 1): CallerInfo {
   const patchedPrepareStackTrace = Error.prepareStackTrace
   // Override with function that just returns `stack`
   Error.prepareStackTrace = function(_err, stack) {
-    const target = stack[depth + 1]
+    const target = stack[depth]
     // @ts-ignore
     return patchedPrepareStackTrace(_err, [target])
   }
 
   const limit = Error.stackTraceLimit
-  Error.stackTraceLimit = depth + 2
+  Error.stackTraceLimit = depth + 3
 
   const err = new Error()
   const { stack } = err

@@ -10,7 +10,7 @@ import {
 export const globalCallerFuncNameSet: CallerFuncNameSet = new Set(['genTbListFromType', 'kmore'])
 
 export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
-  callerDistance: 1,
+  callerDistance: 0,
 }
 
 export const initOptions: Options = {

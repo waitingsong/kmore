@@ -34,7 +34,7 @@ export function genTbListFromType<T extends TTableListModel>(
 
   const depth = typeof opts.callerDistance === 'number' && opts.callerDistance > 0
     ? opts.callerDistance
-    : 1
+    : 0
   const caller = getCallerStack(depth)
 
   if (isTsFile(caller.path)) {
