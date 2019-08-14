@@ -95,7 +95,7 @@ export function validateDuplicateProp(
 /**
  * @see https://stackoverflow.com/a/13227808
  */
-export function getCallerStack(callerDistance: number = 0): CallerInfo {
+export function getCallerStack(callerDistance = 0): CallerInfo {
   const depth = callerDistance + 2
   // Save original Error.prepareStackTrace
   const origPrepareStackTrace = Error.prepareStackTrace
