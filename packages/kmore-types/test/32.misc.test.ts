@@ -57,7 +57,6 @@ describe(filename, () => {
           line: 13,
           column: 23,
         },
-        callerDistance: 0,
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -77,7 +76,6 @@ describe(filename, () => {
           line: 12,
           column: 23,
         },
-        callerDistance: 0,
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -94,7 +92,6 @@ describe(filename, () => {
           line: 12,
           column: 23,
         },
-        callerDistance: 0,
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -112,7 +109,6 @@ describe(filename, () => {
           line: 12,
           column: 22,
         },
-        callerDistance: 0,
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)
@@ -129,7 +125,6 @@ describe(filename, () => {
           line: 1,
           column: 1,
         },
-        callerDistance: 0,
       }
 
       const ret = retrieveLocalTypeMapFromType(opts)

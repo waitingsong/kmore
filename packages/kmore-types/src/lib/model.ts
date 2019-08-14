@@ -119,11 +119,12 @@ export interface JsonType {
 export interface GenTbListFromTypeOpts {
   /**
    * Distance from genTbListFromType() or kmore(),
-   * Default: 1
+   * Default: 0 means calling genTbListFromType() or kmore()  directly
    */
   callerDistance: number
 }
-export interface RetrieveInfoFromTypeOpts extends GenTbListFromTypeOpts {
+// export interface RetrieveInfoFromTypeOpts extends GenTbListFromTypeOpts {
+export interface RetrieveInfoFromTypeOpts {
   cacheMap: CacheMap
   caller: CallerInfo
 }

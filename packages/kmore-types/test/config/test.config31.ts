@@ -19,7 +19,8 @@ function genFoo<T extends TTableListModel>(): DbTables<T> {
 function genBar<T extends TTableListModel>(): DbTables<T> {
   const tbList = genTbListFromType<T>({
     /**
-     * 1: means then caller with generics type is one level outer -> genFoo(),
+     * 2: the caller with generics type is up to two level, genFoo() -> fenBar(),
+     * 1: up to one level, outer genBar() -> genTbListFromType(),
      * 0: calling genTbListFromType() with generics type directly
      */
     callerDistance: 2,

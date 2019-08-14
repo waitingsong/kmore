@@ -91,12 +91,16 @@ export function validateDuplicateProp(
   }
 }
 
+export function getCallerStack(callerDistance: number): CallerInfo {
+  const depth = callerDistance + 2
+  const caller = getStack(depth)
+  return caller
+}
 
 /**
  * @see https://stackoverflow.com/a/13227808
  */
-export function getCallerStack(callerDistance = 0): CallerInfo {
-  const depth = callerDistance + 2
+export function getStack(depth = 0): CallerInfo {
   // Save original Error.prepareStackTrace
   const origPrepareStackTrace = Error.prepareStackTrace
 
@@ -112,13 +116,13 @@ export function getCallerStack(callerDistance = 0): CallerInfo {
   const patchedPrepareStackTrace = Error.prepareStackTrace
   // Override with function that just returns `stack`
   Error.prepareStackTrace = function(_err, stack) {
-    const target = stack[depth]
+    const target = stack[depth + 1]
     // @ts-ignore
     return patchedPrepareStackTrace(_err, [target])
   }
 
   const limit = Error.stackTraceLimit
-  Error.stackTraceLimit = depth + 3
+  Error.stackTraceLimit = depth + 2
 
   const err = new Error()
   const { stack } = err
@@ -132,7 +136,7 @@ export function getCallerStack(callerDistance = 0): CallerInfo {
   }
 
   const arr = stack.split('\n')
-  const line = arr.pop() // may one StackFram or all
+  const line = arr.pop() // one StackFram, but may all stacks sometime
   if (! line) {
     throw new Error('Retrieve stack of caller failed, line empty.')
   }
