@@ -83,6 +83,8 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="buildsrcopts.html#concurrent" class="tsd-kind-icon">concurrent</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="buildsrcopts.html#excludepathkeys" class="tsd-kind-icon">exclude<wbr>Path<wbr>Keys</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="buildsrcopts.html#maxscanlines" class="tsd-kind-icon">max<wbr>Scan<wbr>Lines</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="buildsrcopts.html#path" class="tsd-kind-icon">path</a></li>
 							</ul>
 						</section>
@@ -103,6 +105,36 @@
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Default: 5</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="excludepathkeys" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> exclude<wbr>Path<wbr>Keys</h3>
+					<div class="tsd-signature tsd-kind-icon">exclude<wbr>Path<wbr>Keys<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L30">lib/model.ts:30</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>String key to skip build under path. Default: node_modules</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="maxscanlines" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> max<wbr>Scan<wbr>Lines</h3>
+					<div class="tsd-signature tsd-kind-icon">max<wbr>Scan<wbr>Lines<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore-types/blob/master/src/lib/model.ts#L32">lib/model.ts:32</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Maxium file lines to match CallerFuncName (import), Default: 128</p>
 						</div>
 					</div>
 				</section>
@@ -146,6 +178,12 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="buildsrcopts.html#concurrent" class="tsd-kind-icon">concurrent</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="buildsrcopts.html#excludepathkeys" class="tsd-kind-icon">exclude<wbr>Path<wbr>Keys</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="buildsrcopts.html#maxscanlines" class="tsd-kind-icon">max<wbr>Scan<wbr>Lines</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="buildsrcopts.html#path" class="tsd-kind-icon">path</a>
