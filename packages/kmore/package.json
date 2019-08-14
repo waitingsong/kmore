@@ -65,7 +65,7 @@
     "@types/rewire": "*",
     "@types/rimraf": "*",
     "@types/yargs": "^13.0.0",
-    "@waiting/eslint-config": "^1.10.0",
+    "@waiting/eslint-config": "^2.1.0",
     "coveralls": "^3.0.5",
     "cross-env": "^5.2.0",
     "eslint": "^6.1.0",
