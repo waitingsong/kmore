@@ -24,6 +24,10 @@ import {
 } from './ts-util'
 
 
+/**
+ * Generate tables .ts files,
+ * no path value emitted if no file generated.
+ */
 export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
   const opts: Required<BuildSrcOpts> = {
     ...initBuildSrcOpts,
@@ -35,6 +39,7 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
     mergeMap((path) => {
       return defer(() => buildSrcTablesFile(path, opts))
     }, opts.concurrent),
+    // defaultIfEmpty(''),
   )
 
   return build$

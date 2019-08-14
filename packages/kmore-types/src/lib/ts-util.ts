@@ -130,9 +130,10 @@ export function matchSourceFileWithFilePath(
   path: string,
 ): MatchedSourceFile {
 
-  const targetPath = pathResolve(path).replace(/\\/gu, '/')
+  const srcPath = pathResolve(path).replace(/\\/gu, '/')
+  const srcLower = srcPath.toLowerCase()
   const program = ts.createProgram(
-    [targetPath],
+    [srcPath],
     {
       noEmitOnError: true,
       noImplicitAny: true,
@@ -151,9 +152,9 @@ export function matchSourceFileWithFilePath(
     /* istanbul ignore else */
     if (! sourceFile.isDeclarationFile) {
       // @ts-ignore
-      const srcPath = sourceFile.path ? sourceFile.path : ''
+      const srcFilePath = sourceFile.path ? sourceFile.path : ''
 
-      if (srcPath.toLowerCase() === targetPath.toLowerCase()) {
+      if (srcFilePath.toLowerCase() === srcLower) {
         ret.sourceFile = sourceFile
       }
     }

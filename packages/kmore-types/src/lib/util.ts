@@ -1,8 +1,8 @@
 import * as sourceMapSupport from 'source-map-support'
 import { walk, EntryType } from 'rxwalker'
-import { from as ofrom, defer, of, Observable, iif } from 'rxjs'
-import { map, filter, mergeMap, catchError } from 'rxjs/operators'
-import { readFileAsync } from '@waiting/shared-core'
+import { from as ofrom, of, Observable, iif, concat } from 'rxjs'
+import { map, filter, mergeMap, catchError, take } from 'rxjs/operators'
+import { readFileLineRx } from '@waiting/shared-core'
 
 import {
   defaultPropDescriptor,
@@ -276,7 +276,7 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     ...initBuildSrcOpts,
     ...options,
   }
-  const { path: basePath, excludePathKeys: excludePathKey } = opts
+  const { path: basePath, excludePathKeys, maxScanLines } = opts
   const maxDepth = 99
   const concurrent = opts.concurrent && opts.concurrent > 0
     ? opts.concurrent
@@ -303,14 +303,14 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     mergeMap(path => walk(path, { maxDepth }), concurrent),
     filter((ev) => {
       const { path } = ev
-      return path ? ! ifPathContainsKey(path, excludePathKey) : false
+      return path ? ! ifPathContainsKey(path, excludePathKeys) : false
     }),
     filter(ev => ev.type === EntryType.file
       && ev.path.endsWith('.ts')
       && ! ev.path.endsWith('.d.ts')),
     map(ev => ev.path),
     mergeMap((path) => {
-      const flag$ = ifFileContainsCallerFuncNames(matchFuncNameSet, path)
+      const flag$ = ifFileContentContainsCallerFuncNames(matchFuncNameSet, maxScanLines, path)
       return flag$.pipe(
         map((contains) => {
           return contains ? path : ''
@@ -342,22 +342,29 @@ function ifPathContainsKey(path: FilePath, keys: string | string[]): boolean {
   return false
 }
 
-export function ifFileContainsCallerFuncNames(
+function ifFileContentContainsCallerFuncNames(
   matchFuncNameSet: CallerFuncNameSet,
+  maxLines: number,
   path: FilePath,
 ): Observable<boolean> {
 
-  const file$ = defer(() => readFileAsync(path))
-  const ret$ = file$.pipe(
-    map((buf) => {
-      const ret = buf.length > 1024 ? buf.slice(0, 1024) : buf
-      return ret
+  const line$ = readFileLineRx(path)
+  const scan$ = line$.pipe(
+    take(maxLines >= 0 ? maxLines : 128),
+    map((content) => {
+      return hasContainsCallerFuncNames(matchFuncNameSet, content)
     }),
-    map((buf) => {
-      const code = buf.toString()
-      return hasContainsCallerFuncNames(matchFuncNameSet, code)
-    }),
+    filter(exists => !! exists),
     catchError(() => of(false)),
+  )
+
+  const notExists$ = of(false)
+  const ret$ = concat(scan$, notExists$).pipe(
+    take(1),
+    // tap((exists) => {
+    //   // eslint-disable-next-line no-console
+    //   console.info(exists)
+    // }),
   )
 
   return ret$

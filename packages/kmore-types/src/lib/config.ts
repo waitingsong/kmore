@@ -28,6 +28,7 @@ export const initBuildSrcOpts: Required<BuildSrcOpts> = {
   path: [],
   concurrent: 5,
   excludePathKeys: ['node_modules'],
+  maxScanLines: 128,
 }
 
 export const reservedTbListKeys: string[] = [
