@@ -127,8 +127,12 @@ npm install sqlite3</code></pre>
  *    - db.tables : tables name accessor containing table key/value paris
  *    - db.rb : tables builder accessor,   
  *      eg. db.rb.user() =&gt;  Knex.QueryBuilder&lt;{id: number, name: string}&gt;
+ *  tables will be generated from generics automaitically when passing undefined or null value
  */</span>
 <span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;(config)
+<span class="hljs-comment">// or</span>
+<span class="hljs-keyword">const</span> tbList = genTbListFromType&lt;TbListModel&gt;()
+<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;(config, tbList)
 </code></pre>
 				<a href="#create-tables-with-instance-of-knex" id="create-tables-with-instance-of-knex" style="color: inherit; text-decoration: none;">
 					<h3>Create tables with instance of knex</h3>

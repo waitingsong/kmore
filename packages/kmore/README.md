@@ -67,8 +67,12 @@ export interface UserDetail {
  *    - db.tables : tables name accessor containing table key/value paris
  *    - db.rb : tables builder accessor,   
  *      eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
+ *  tables will be generated from generics automaitically when passing undefined or null value
  */
 const db = kmore<TbListModel>(config)
+// or
+const tbList = genTbListFromType<TbListModel>()
+const db = kmore<TbListModel>(config, tbList)
 
 ```
 
