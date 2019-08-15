@@ -1,4 +1,4 @@
-import { genTbListFromType } from '../../src/lib/compiler'
+import { genTbListFromType } from 'kmore-types'
 
 
 genTbListFromType<TbListModelAlias>()

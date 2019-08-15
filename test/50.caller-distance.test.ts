@@ -1,7 +1,6 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
-
-import { validateParamTables } from '../src/lib/util'
+import { validateParamTables } from 'kmore-types'
 
 import { tbList3 } from './config/test.config3'
 import { tbList31 } from './config/test.config31'

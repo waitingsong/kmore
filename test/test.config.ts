@@ -1,8 +1,6 @@
-/* eslint-disable */
-// import * as ts from 'typescript'
+import { genTbListFromType } from 'kmore-types'
 
 import { Config, DbTables } from '../src/index'
-import { genTbListFromType } from '../src/lib/compiler'
 
 import { TbListModel } from './test.model'
 

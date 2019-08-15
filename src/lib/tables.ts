@@ -1,6 +1,12 @@
 import { accessSync, constants } from 'fs'
 
-import { BuildSrcOpts } from 'kmore-types'
+import {
+  BuildSrcOpts,
+  isTsFile,
+  genTbListFromType,
+  loadVarFromFile,
+  reWriteLoadingPath,
+} from 'kmore-types'
 
 import {
   CallerInfo,
@@ -8,12 +14,6 @@ import {
   Options,
   TTableListModel,
 } from './model'
-import {
-  isTsFile,
-  reWriteLoadingPath,
-  loadVarFromFile,
-} from './util'
-import { genTbListFromType } from './compiler'
 
 
 export function loadTbListParamFromCallerInfo<T extends TTableListModel>(

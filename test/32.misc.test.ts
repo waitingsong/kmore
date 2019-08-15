@@ -1,12 +1,12 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
+import { genTbListFromType } from 'kmore-types'
 
 import {
   kmore,
   DbModel,
 } from '../src/index'
 import { initOptions, cacheMap } from '../src/lib/config'
-import { genTbListFromType } from '../src/lib/compiler'
 
 import { config } from './test.config'
 import { TbListModel, TbListModelAlias } from './test.model'
