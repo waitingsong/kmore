@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
+import { validateParamTables, createNullObject, getCallerStack } from 'kmore-types'
 
 import { defaultPropDescriptor, DbPropKeys, initOptions } from './config'
 import {
   DbModel, DbTables, DbRefBuilder, Options, TTableListModel, Config,
 } from './model'
-import { validateParamTables, createNullObject, getCallerStack } from './util'
 import { loadTbListParamFromCallerInfo } from './tables'
 
 

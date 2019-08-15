@@ -1,4 +1,5 @@
-import { genTbListFromType } from '../../src/lib/compiler'
+import { genTbListFromType } from 'kmore-types'
+
 import { DbTables, TTableListModel } from '../../src'
 import { User, UserDetail } from '../test.model'
 
