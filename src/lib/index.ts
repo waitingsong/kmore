@@ -5,7 +5,7 @@ import { defaultPropDescriptor, DbPropKeys, initOptions } from './config'
 import {
   DbModel, DbTables, DbRefBuilder, Options, TTableListModel, Config,
 } from './model'
-import { validateParamTables, createNullObject } from './util'
+import { validateParamTables, createNullObject, getCallerStack } from './util'
 import { loadTbListParamFromCallerInfo } from './tables'
 
 
@@ -33,7 +33,9 @@ export function kmore<T extends TTableListModel>(
     ? { ...initOptions, ...options }
     : { ...initOptions }
 
-  const tables: DbTables<T> = loadTbListParamFromCallerInfo(opts)
+  // detect running env of the caller
+  const caller = getCallerStack(opts.callerDistance)
+  const tables: DbTables<T> = loadTbListParamFromCallerInfo(opts, caller)
 
   let db: DbModel<T> = createNullObject()
   db = bindDbh<T>(defaultPropDescriptor, db, config)

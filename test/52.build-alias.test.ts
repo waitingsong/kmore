@@ -14,6 +14,7 @@ describe(filename, () => {
 
   before(async () => {
     db = kmore<TbModelAlias>(config)
+    assert(db.tables && Object.keys(db.tables).length > 0)
   })
 
   after(async () => {
