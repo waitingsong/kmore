@@ -1,33 +1,13 @@
-import { CacheMap, Options, GenTbListFromTypeOpts, BuildSrcOpts } from './model'
 
+export { globalCallerFuncNameSet } from 'kmore-types'
 
-export const initOptions: Options = {
-  callerFuncNames: ['genTbListFromType', 'kmore'],
-  exportVarPrefix: 'tbs',
-  forceLoadTbListJs: false,
-  forceLoadTbListJsPathReplaceRules: null,
-  outputBanner: '/* eslint-disable */',
-  outputFileNameSuffix: '__built-tables',
-  refTablesPrefix: 'reftb_',
-}
+export {
+  cacheMap,
+  initBuildSrcOpts,
+  initGenTbListFromTypeOpts,
+  initOptions,
+} from 'kmore-types'
 
-export const initBuildSrcOpts: Required<BuildSrcOpts> = {
-  ...initOptions,
-  path: [],
-  concurrent: 5,
-}
-
-
-export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
-  callerFuncNames: initOptions.callerFuncNames,
-  includePathKeyWords: [],
-  stackDepth: 1,
-}
-
-export const reservedTbListKeys: string[] = [
-  'constructor',
-  '__proto__',
-]
 export enum DbPropKeys {
   'dbh' = 'dbh',
   'tables' = 'tables',
@@ -40,12 +20,3 @@ export const defaultPropDescriptor: PropertyDescriptor = {
   writable: false,
 } as const
 
-
-export const cacheMap: CacheMap = {
-  /** CallerId -> TbListParam */
-  tbListMap: new Map(),
-  /** CallerId -> LocalTypeId */
-  callerIdToLocalTypeIdMap: new Map(),
-  /** LocalTypeId -> TableListTagMap */
-  localTypeMap: new Map(),
-}

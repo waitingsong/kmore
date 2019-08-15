@@ -2,6 +2,7 @@
 export {
   validateParamTables,
   getCallerStack,
+  getStack,
   isTsFile,
   createNullObject,
   reWriteLoadingPath,

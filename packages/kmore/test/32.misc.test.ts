@@ -19,6 +19,7 @@ describe(filename, () => {
 
   before(() => {
     db = kmore<TbListModel>(config)
+    assert(db.tables && Object.keys(db.tables).length > 0)
   })
   after(async () => {
     await db.dbh.destroy() // !

@@ -1,5 +1,7 @@
 import { accessSync, constants } from 'fs'
 
+import { BuildSrcOpts } from 'kmore-types'
+
 import {
   CallerInfo,
   DbTables,
@@ -7,7 +9,6 @@ import {
   TTableListModel,
 } from './model'
 import {
-  getCallerStack,
   isTsFile,
   reWriteLoadingPath,
   loadVarFromFile,
@@ -17,28 +18,22 @@ import { genTbListFromType } from './compiler'
 
 export function loadTbListParamFromCallerInfo<T extends TTableListModel>(
   options: Options,
+  caller: CallerInfo,
 ): DbTables<T> {
 
-  const caller = getCallerStack(2)
-
   if (! options.forceLoadTbListJs && isTsFile(caller.path)) {
-    return loadTbListFromTsTypeFile<T>(options.callerFuncNames)
+    return loadTbListFromTsTypeFile<T>(options.callerDistance + 3)
   }
   else { // run in js or debug in ts
     return loadTbListFromJsBuiltFile(options, caller)
   }
-
 }
 
 export function loadTbListFromTsTypeFile<T extends TTableListModel>(
-  callerFuncNames: Options['callerFuncNames'],
+  callerDistance: BuildSrcOpts['callerDistance'],
 ): DbTables<T> {
 
-  const ret = genTbListFromType<T>({
-    callerFuncNames,
-    stackDepth: 4,
-  })
-
+  const ret = genTbListFromType<T>({ callerDistance })
   return ret
 }
 
