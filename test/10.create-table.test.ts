@@ -14,7 +14,6 @@ describe(filename, () => {
   const db = kmore<TbListModel>(config)
 
   before(async () => {
-    assert(Object.isFrozen(db), 'Should db object is frozen')
     assert(db.tables && Object.keys(db.tables).length > 0)
     await dropTables(db.dbh, Object.values(db.tables))
   })
