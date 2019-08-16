@@ -51,7 +51,7 @@ export function kmore<T extends TTableListModel>(
   db = bindTables<T>(defaultPropDescriptor, db, tbs)
   db = bindRefTables<T>(opts, defaultPropDescriptor, db)
 
-  return Object.freeze(db)
+  return db
 }
 
 

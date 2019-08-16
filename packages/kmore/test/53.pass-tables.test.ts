@@ -18,7 +18,6 @@ describe(filename, () => {
         tbList,
       )
 
-      assert(Object.isFrozen(db), 'Should db object is frozen')
       assert(db.tables && Object.keys(db.tables).length)
 
       const { tables } = db
@@ -36,7 +35,6 @@ describe(filename, () => {
         null,
       )
 
-      assert(Object.isFrozen(db), 'Should db object is frozen')
       assert(db.tables && Object.keys(db.tables).length)
 
       const { tables } = db
@@ -54,7 +52,6 @@ describe(filename, () => {
         void 0,
       )
 
-      assert(Object.isFrozen(db), 'Should db object is frozen')
       assert(db.tables && Object.keys(db.tables).length)
 
       const { tables } = db
@@ -73,7 +70,6 @@ describe(filename, () => {
         {},
       )
 
-      assert(Object.isFrozen(db), 'Should db object is frozen')
       assert(typeof db.tables === 'object' && Object.keys(db.tables).length === 0)
       assert(typeof db.rb.tb_user === 'undefined')
       assert(typeof db.rb.tb_user_detail === 'undefined')

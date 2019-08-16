@@ -14,7 +14,6 @@ describe(filename, () => {
 
   before(() => {
     db = kmore<TbListModel>(config)
-    assert(Object.isFrozen(db), 'Should db object is frozen')
     assert(db.tables && Object.keys(db.tables).length > 0)
   })
 
