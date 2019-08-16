@@ -28,7 +28,7 @@ const _Knex = Knex
 export function kmore<T extends TTableListModel>(
   config: Config,
   /** Auto generate tables from generics, if value is undefined or null */
-  tables?: DbTables<T> | null,
+  tables?: DbTables<T> | null | false,
   options?: Partial<Options>,
 ): DbModel<T> {
 

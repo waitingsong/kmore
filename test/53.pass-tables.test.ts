@@ -63,6 +63,20 @@ describe(filename, () => {
       await db.dbh.destroy()
     })
 
+
+    it('pass false ', async () => {
+      const db = kmore<TbListModel>(
+        config,
+        false,
+      )
+
+      assert(typeof db.tables === 'object' && Object.keys(db.tables).length === 0)
+      assert(typeof db.rb.tb_user === 'undefined')
+      assert(typeof db.rb.tb_user_detail === 'undefined')
+
+      await db.dbh.destroy()
+    })
+
     it('pass invalid empty object', async () => {
       const db = kmore<TbListModel>(
         config,
