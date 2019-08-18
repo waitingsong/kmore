@@ -56,7 +56,8 @@
     "all": true
   },
   "dependencies": {
-    "kmore": "^0.10.0"
+    "kmore": "^0.10.0",
+    "kmore-cli": "^0.2.0"
   },
   "devDependencies": {
     "@types/mocha": "*",
