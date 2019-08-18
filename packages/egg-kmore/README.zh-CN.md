@@ -145,6 +145,15 @@ export class UserService {
 }
 ```
 
+## 编译前生成源码
+
+typescript 环境下执行或者调试时会自动执行生成
+
+```sh
+cd ${app_root}
+kmore gen --path ./src
+```
+
 
 ## License
 [MIT](LICENSE)

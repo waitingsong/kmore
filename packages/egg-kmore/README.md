@@ -145,6 +145,15 @@ export class UserService {
 }
 ```
 
+## Generating source files pre build
+
+The files generated automatically under typescript environment for debug or test 
+
+```sh
+cd ${app_root}
+kmore gen --path ./src
+```
+
 
 ## License
 [MIT](LICENSE)
