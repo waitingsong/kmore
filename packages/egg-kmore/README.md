@@ -1,6 +1,6 @@
 # [egg-kmore](https://waitingsong.github.io/egg-kmore/)
 
-kmore for midway framework.
+[kmore](https://www.npmjs.com/package/kmore) for midway framework.
 
 
 [![Version](https://img.shields.io/npm/v/egg-kmore.svg)](https://www.npmjs.com/package/egg-kmore)
@@ -152,6 +152,9 @@ The files generated automatically under typescript environment for debug or test
 ```sh
 cd ${app_root}
 kmore gen --path ./src
+
+// then you could build the project
+npm run build
 ```
 
 

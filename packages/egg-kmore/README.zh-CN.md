@@ -1,6 +1,6 @@
 # [egg-kmore](https://waitingsong.github.io/egg-kmore/)
 
-kmore for midway framework.
+[kmore](https://www.npmjs.com/package/kmore) for midway framework.
 
 
 [![Version](https://img.shields.io/npm/v/egg-kmore.svg)](https://www.npmjs.com/package/egg-kmore)
@@ -152,6 +152,9 @@ typescript 环境下执行或者调试时会自动执行生成
 ```sh
 cd ${app_root}
 kmore gen --path ./src
+
+// 接下来可以开始编辑项目
+npm run build
 ```
 
 
