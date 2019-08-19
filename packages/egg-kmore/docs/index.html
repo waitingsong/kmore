@@ -96,8 +96,9 @@ npm install sqlite3</code></pre>
 				<a href="#add-configurations" id="add-configurations" style="color: inherit; text-decoration: none;">
 					<h3>Add Configurations</h3>
 				</a>
-				<p>Edit <code>${app_root}/src/config/config.${env}.ts</code>:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { EggKmoreConfig, genTbListFromType, ClientOpts } <span class="hljs-keyword">from</span> <span class="hljs-string">'egg-kmore'</span>
+				<pre><code class="language-ts"><span class="hljs-comment">/* location: ${app_root}/src/config/config.${env}.ts */</span>
+
+<span class="hljs-keyword">import</span> { EggKmoreConfig, genTbListFromType, ClientOpts } <span class="hljs-keyword">from</span> <span class="hljs-string">'egg-kmore'</span>
 <span class="hljs-keyword">import</span> { TbListModel } <span class="hljs-keyword">from</span> <span class="hljs-string">'../app/user/user.model'</span>
 
 <span class="hljs-keyword">const</span> master: ClientOpts = {

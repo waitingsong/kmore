@@ -40,8 +40,9 @@ export default {
 
 ### Add Configurations
 
-Edit `${app_root}/src/config/config.${env}.ts`:
 ```ts
+/* location: ${app_root}/src/config/config.${env}.ts */
+
 import { EggKmoreConfig, genTbListFromType, ClientOpts } from 'egg-kmore'
 import { TbListModel } from '../app/user/user.model'
 
