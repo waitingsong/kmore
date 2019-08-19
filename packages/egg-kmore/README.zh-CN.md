@@ -96,7 +96,7 @@ export interface GetUserOpts {
 ## 使用
 
 ```ts
-/* location: ../app/user/service.model.ts */
+/* location: ../app/user/user.service.ts */
 
 import { provide, plugin } from 'midway'
 import { DbModel } from 'egg-kmore'
