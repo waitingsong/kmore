@@ -1,6 +1,6 @@
 {
-  "name": "npm-mono-base",
-  "description": "monorepo",
+  "name": "kmore",
+  "description": "A Knex little more factory of SQL query builder, with auto-generated type-safe tables accessor for Node.js",
   "devDependencies": {
     "@commitlint/cli": "8",
     "@types/mocha": "5",
