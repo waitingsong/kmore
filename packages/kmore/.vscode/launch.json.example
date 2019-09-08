@@ -19,6 +19,7 @@
         "--nolazy"
       ],
       "skipFiles": [
+        "${workspaceFolder}/../../node_modules/rxjs/**/*.js",
         "${workspaceFolder}/node_modules/rxjs/**/*.js",
         "<node_internals>/**/*.js"
       ],
@@ -45,32 +46,6 @@
       "stopOnEntry": false
     },
     {
-      "name": "Midway Debug",
-      "type": "node",
-      "autoAttachChildProcesses": true,
-      "console": "integratedTerminal",
-      "env": {
-        "NODE_ENV": "local"
-      },
-      "port": 9229,
-      "preLaunchTask": "TypeScript compile",
-      "protocol": "auto",
-      "request": "launch",
-      "restart": true,
-      "runtimeArgs": [
-        "run",
-        "debug",
-        "--",
-        "--inspect-brk"
-      ],
-      "runtimeExecutable": "npm",
-      "skipFiles": [
-        // "${workspaceFolder}/node_modules/**/*.js",
-        "${workspaceFolder}/node_modules/rxjs/**/*.js",
-        "<node_internals>/**/*.js"
-      ]
-    },
-    {
       "name": "Chrome Debug with Karma",
       "type": "chrome",
       "address": "localhost",
@@ -80,32 +55,6 @@
       },
       "port": 9333,
       "request": "attach"
-    },
-    {
-      "name": "Egg Debug",
-      "type": "node",
-      "autoAttachChildProcesses": true,
-      "console": "integratedTerminal",
-      "env": {
-        "NODE_ENV": "local"
-      },
-      "port": 9229,
-      "preLaunchTask": "watch",
-      "protocol": "auto",
-      "request": "launch",
-      "restart": true,
-      "runtimeArgs": [
-        "run",
-        "debug",
-        "--",
-        "--inspect-brk"
-      ],
-      "runtimeExecutable": "npm",
-      "skipFiles": [
-        // "${workspaceFolder}/node_modules/**/*.js",
-        "${workspaceFolder}/node_modules/rxjs/**/*.js",
-        "<node_internals>/**/*.js"
-      ]
     },
     {
       "name": "Mocha Tests",
@@ -126,8 +75,13 @@
         "PGPASSWORD": "",
       },
       "internalConsoleOptions": "openOnSessionStart",
-      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "request": "launch",
-    }
+      "skipFiles": [
+        "${workspaceFolder}/../../node_modules/rxjs/**/*.js",
+        "${workspaceFolder}/node_modules/rxjs/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
+    },
   ]
 }
