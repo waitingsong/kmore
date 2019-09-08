@@ -154,21 +154,25 @@ export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap 
 
       /* istanbul ignore else */
       if (gType && gType.symbol) {
-        // might be type alias name so we use typdid
-        // const genericsArgName: GenericsArgName = typeName.text
-        // @ts-ignore
-        const typeid: number = typeof gType.id === 'number' ? gType.id : Math.random()
-        const localTypeId = `${caller.path}:typeid-${typeid}`
+        const sym = gType.getSymbol()
+        if (sym) {
+          const inputTypeName = sym.getName()
+          // might be type alias name so we use typdid
+          // const genericsArgName: GenericsArgName = typeName.text
+          // @ts-ignore
+          // const typeid: number = typeof gType.id === 'number' ? gType.id : Math.random()
+          const localTypeId = `${caller.path}:typeid-${inputTypeName}`
 
-        if (retMap.has(localTypeId)) {
-          return retMap
-        }
-        else if (cacheMap.localTypeMap.has(localTypeId)) {
-          retMap.set(localTypeId, new Map()) // empty map
-        }
-        else {
-          const tagMap = genTbListTagMapFromSymbol(gType.symbol)
-          tagMap.size && retMap.set(localTypeId, tagMap)
+          if (retMap.has(localTypeId)) {
+            return retMap
+          }
+          else if (cacheMap.localTypeMap.has(localTypeId)) {
+            retMap.set(localTypeId, new Map()) // empty map, pick from resolved data later.
+          }
+          else {
+            const tagMap = genTbListTagMapFromSymbol(gType.symbol)
+            tagMap.size && retMap.set(localTypeId, tagMap)
+          }
         }
       }
     }

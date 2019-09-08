@@ -56,11 +56,11 @@ export type TbListMap = Map<CallerId, DbTables<object>>
 export type CallerIdToLocalTypeIdMap = Map<CallerId, LocalTypeId>
 
 
-/** Format <caller.path>:typeid-<typeid> */
+/** Format <caller.path>:typeid-<inputGenericsTypeName> */
 export type LocalTypeId = string
 /** Format <caller.path>:<line>:<column> */
 export type CallerId = string
-/** Format <caller.path>:<line>:<column>:typeid-<typeid> */
+/** Format <caller.path>:<line>:<column>:typeid-<inputGenericsTypeName> */
 export type CallerTypeId = string
 export type CallerTbListMap<T extends TTableListModel> = Map<CallerTypeId, DbTables<T>>
 
@@ -78,7 +78,8 @@ export interface CallerInfo {
   column: number
 }
 export interface CallerTypeIdInfo extends CallerInfo {
-  typeId: number
+  /** GenericsTypeName as param */
+  typeId: string
 }
 
 /**
