@@ -1,7 +1,7 @@
 {
   "name": "kmore-types",
   "author": "waiting",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Retrieve types info from ts file",
   "keywords": [
     "AST",
@@ -32,7 +32,8 @@
     "source-map-support": "^0.5.13"
   },
   "devDependencies": {
-    "@types/source-map-support": "*"
+    "@types/source-map-support": "*",
+    "cross-env": "5"
   },
   "peerDependencies": {
     "typescript": "3"
