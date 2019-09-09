@@ -49,10 +49,8 @@
     "node": ">=10.16.0"
   },
   "scripts": {
-    "bp:add": "git remote add bp https://github.com/waitingsong/npm-base",
-    "bp:sync": "git fetch --all -v && git merge bp/master -m \"Merge remote-tracking branch 'bp/master'\"",
     "build": "npm run lint && npm run tsc && npm run rp",
-    "devbuild": "npm run clean && npm run tsc:dev && npm run rp",
+    "devbuild": "npm run tsc && npm run rp",
     "clean": "rm -rf dist/* .vscode/.tsbuildinfo .vscode/.tsbuildinfo.* ",
     "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc mocha",
     "cov:coveralls": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc mocha && nyc report --reporter=text-lcov | coveralls",
@@ -72,5 +70,31 @@
     "tsc": "tsc -p tsconfig.json",
     "tsc:dev": "tsc -p tsconfig.dev.json",
     "tsc:w": "tsc -p tsconfig.json -w"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      ".githooks",
+      "dist",
+      "node_modules*",
+      "src/bin",
+      "src/domain.ts",
+      "src/interface.ts",
+      "test*",
+      "**/node_modules*",
+      "**/*.d.ts",
+      "**/*.js"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "text-summary",
+      "json",
+      "html"
+    ],
+    "all": true
   }
 }
