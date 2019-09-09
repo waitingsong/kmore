@@ -1,7 +1,8 @@
 # [kmore](https://waitingsong.github.io/kmore/)
 
-A [Knex](https://knexjs.org/) little more factory of SQL query builder,
-with auto-generated type-safe tables accessor via TypeScript compiler API for Node.js.
+基于 [Knex](https://knexjs.org/) 的 SQL 查询生成器工厂，
+根据参数类型自动生成库表访问对象，
+用于 Node.js。
 
 
 [![Version](https://img.shields.io/npm/v/kmore.svg)](https://www.npmjs.com/package/kmore)
@@ -13,7 +14,7 @@ with auto-generated type-safe tables accessor via TypeScript compiler API for No
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 
-## Installation
+## 安装
 ```sh
 npm install kmore knex
 
@@ -24,9 +25,9 @@ npm install oracle
 npm install sqlite3
 ```
 
-## Usage
+## 使用
 
-### Create connection
+### 创建数据库连接
 ```ts
 import { Config } from 'kmore'
 
@@ -76,7 +77,7 @@ const db = kmore<TbListModel>(config, tbList)
 
 ```
 
-### Create tables with instance of knex
+### 建表
 ```ts
 await db.dbh.schema
   .createTable('tb_user', (tb) => {
@@ -98,7 +99,7 @@ await db.dbh.schema
   })
 ```
 
-### Inert rows via auto generated table accessor
+### 插入数据
 ```ts
 // auto generated accessort tb_user() and tb_user_detail() on db.rb
 const { tb_user, tb_user_detail } = db.rb
@@ -119,7 +120,7 @@ await tb_user_detail()
   .then()
 ```
 
-### Join tables
+### 连表
 ```ts
 const { tables: t, rb } = db
 
@@ -140,7 +141,7 @@ await rb.tb_user()
   })
 ```
 
-### Use instance of knex
+### 使用 knex
 ```ts
 // drop table
 await db.dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
