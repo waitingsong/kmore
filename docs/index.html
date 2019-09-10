@@ -60,151 +60,195 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#a-hrefhttpswaitingsonggithubioegg-kmoreegg-kmorea" id="a-hrefhttpswaitingsonggithubioegg-kmoreegg-kmorea" style="color: inherit; text-decoration: none;">
-					<h1><a href="https://waitingsong.github.io/egg-kmore/">egg-kmore</a></h1>
+				<a href="#a-hrefhttpswaitingsonggithubiokmorekmorea" id="a-hrefhttpswaitingsonggithubiokmorekmorea" style="color: inherit; text-decoration: none;">
+					<h1><a href="https://waitingsong.github.io/kmore/">kmore</a></h1>
 				</a>
-				<p><a href="https://www.npmjs.com/package/kmore">kmore</a> for midway framework.</p>
-				<p><a href="https://www.npmjs.com/package/egg-kmore"><img src="https://img.shields.io/npm/v/egg-kmore.svg" alt="Version"></a>
+				<p>A <a href="https://knexjs.org/">Knex</a> little more factory of SQL query builder,
+				with auto-generated type-safe tables accessor via TypeScript compiler API for Node.js.</p>
+				<p><a href=""><img src="https://img.shields.io/github/tag/waitingsong/kmore.svg" alt="GitHub tag"></a>
 					<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
 					<img src="https://img.shields.io/badge/lang-TypeScript-blue.svg" alt="">
-				<a href="https://conventionalcommits.org"><img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg" alt="Conventional Commits"></a></p>
+					<a href="https://travis-ci.org/waitingsong/kmore"><img src="https://travis-ci.org/waitingsong/kmore.svg?branch=master" alt="Build Status"></a>
+					<a href="https://ci.appveyor.com/project/waitingsong/kmore/branch/master"><img src="https://ci.appveyor.com/api/projects/status/nkseik96p23fcvpm/branch/master?svg=true" alt="Build status"></a>
+					<a href="https://coveralls.io/github/waitingsong/kmore?branch=master"><img src="https://coveralls.io/repos/github/waitingsong/kmore/badge.svg?branch=master" alt="Coverage Status"></a>
+					<a href="https://conventionalcommits.org"><img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg" alt="Conventional Commits"></a>
+				<a href="https://lernajs.io/"><img src="https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg" alt="lerna"></a></p>
 				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
 					<h2>Installation</h2>
 				</a>
-				<pre><code class="language-sh">npm install egg-kmore knex
+				<pre><code class="language-sh">npm install kmore knex
 
 <span class="hljs-comment"># Then add one of the following:</span>
 npm install pg
 npm install mssql
 npm install oracle
 npm install sqlite3</code></pre>
-				<a href="#configuration" id="configuration" style="color: inherit; text-decoration: none;">
-					<h2>Configuration</h2>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
 				</a>
-				<a href="#enable-plugin" id="enable-plugin" style="color: inherit; text-decoration: none;">
-					<h3>Enable Plugin</h3>
+				<a href="#create-connection" id="create-connection" style="color: inherit; text-decoration: none;">
+					<h3>Create connection</h3>
 				</a>
-				<p>Edit <code>${app_root}/src/config/plugin.ts</code>:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { EggPlugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'midway'</span>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Config } <span class="hljs-keyword">from</span> <span class="hljs-string">'kmore'</span>
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
-  kmore: {
-    enable: <span class="hljs-literal">true</span>,
-    package: <span class="hljs-string">'egg-kmore'</span>,
+<span class="hljs-comment">// connection config</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> config: Config = {
+  client: <span class="hljs-string">'pg'</span>,
+  <span class="hljs-comment">// connection: process.env.PG_CONNECTION_STRING,</span>
+  connection: {
+    host: <span class="hljs-string">'localhost'</span>,
+    user: <span class="hljs-string">'postgres'</span>,
+    password: <span class="hljs-string">'foo'</span>,
+    database: <span class="hljs-string">'db_ci_test'</span>,
   },
-} <span class="hljs-keyword">as</span> EggPlugin</code></pre>
-				<a href="#add-configurations" id="add-configurations" style="color: inherit; text-decoration: none;">
-					<h3>Add Configurations</h3>
-				</a>
-				<pre><code class="language-ts"><span class="hljs-comment">/* location: ${app_root}/src/config/config.${env}.ts */</span>
-
-<span class="hljs-keyword">import</span> { EggKmoreConfig, genTbListFromType, ClientOpts } <span class="hljs-keyword">from</span> <span class="hljs-string">'egg-kmore'</span>
-<span class="hljs-keyword">import</span> { TbListModel } <span class="hljs-keyword">from</span> <span class="hljs-string">'../app/user/user.model'</span>
-
-<span class="hljs-keyword">const</span> master: ClientOpts = {
-  knexConfig: {
-    client: <span class="hljs-string">'pg'</span>,
-    connection: {
-      host: <span class="hljs-string">'localhost'</span>,
-      user: <span class="hljs-string">'postgres'</span>,
-      password: <span class="hljs-string">''</span>,
-      database: <span class="hljs-string">'db_ci_test'</span>,
-    },
-    acquireConnectionTimeout: <span class="hljs-number">10000</span>,
-  },
-  tables: genTbListFromType&lt;TbListModel&gt;(),
 }
 
-<span class="hljs-comment">// app: default true</span>
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> kmore: EggKmoreConfig = {
-  client: master,
-}
-
-
-<span class="hljs-comment">/* location: ../app/user/user.model.ts */</span>
+<span class="hljs-comment">// Define Types of tables</span>
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> TbListModel {
   tb_user: User
   tb_user_detail: UserDetail
 }
 
-<span class="hljs-comment">/**
- * user info
- */</span>
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> UserInfo <span class="hljs-keyword">extends</span> User, UserDetail {
-}
-
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> User {
   uid: <span class="hljs-built_in">number</span>
-  user_name: <span class="hljs-built_in">string</span>
+  name: <span class="hljs-built_in">string</span>
+  ctime: <span class="hljs-built_in">Date</span> | <span class="hljs-string">'now()'</span>
 }
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> UserDetail {
   uid: <span class="hljs-built_in">number</span>
-  phone: <span class="hljs-built_in">string</span>
-  email: <span class="hljs-built_in">string</span>
-}
+  age: <span class="hljs-built_in">number</span>
+  address: <span class="hljs-built_in">string</span>
+}  
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> GetUserOpts {
-  uid: <span class="hljs-built_in">number</span>
-}</code></pre>
-				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-					<h2>Usage</h2>
+<span class="hljs-comment">/**
+ *  Initialize db connection and generate type-safe tables accessor (name and builder)
+ *  will get
+ *    - db.dbh : the connection instance of knex
+ *      eg. db.dbh&lt;OtherType&gt;('tb_other').select()
+ *    - db.tables : tables name accessor containing table key/value paris
+ *    - db.rb : tables builder accessor,   
+ *      eg. db.rb.user() =&gt;  Knex.QueryBuilder&lt;{id: number, name: string}&gt;
+ *  tables will be generated from generics automaitically when passing undefined or null value
+ */</span>
+<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;(config)
+<span class="hljs-comment">// or</span>
+<span class="hljs-keyword">const</span> tbList = genTbListFromType&lt;TbListModel&gt;()
+<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;(config, tbList)
+</code></pre>
+				<a href="#create-tables-with-instance-of-knex" id="create-tables-with-instance-of-knex" style="color: inherit; text-decoration: none;">
+					<h3>Create tables with instance of knex</h3>
 				</a>
-				<pre><code class="language-ts"><span class="hljs-comment">/* location: ../app/user/user.service.ts */</span>
-
-<span class="hljs-keyword">import</span> { provide, plugin } <span class="hljs-keyword">from</span> <span class="hljs-string">'midway'</span>
-<span class="hljs-keyword">import</span> { DbModel } <span class="hljs-keyword">from</span> <span class="hljs-string">'egg-kmore'</span>
-<span class="hljs-keyword">import</span> { GetUserOpts, UserInfo, User, TbListModel } <span class="hljs-keyword">from</span> <span class="hljs-string">'./user.model'</span>
-
-<span class="hljs-meta">@provide</span>()
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> UserService {
-
-  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
-    <span class="hljs-meta">@plugin</span>(<span class="hljs-string">'kmore'</span>) <span class="hljs-keyword">private</span> readonly db: DbModel&lt;TbListModel&gt;,
-  </span>) { }
-
-  <span class="hljs-comment">/**
-   * Read user info
-   */</span>
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> getUser(options: GetUserOpts): <span class="hljs-built_in">Promise</span>&lt;UserInfo&gt; {
-    <span class="hljs-keyword">const</span> { rb, tables: t } = <span class="hljs-keyword">this</span>.db
-
-    <span class="hljs-keyword">const</span> row: UserInfo = <span class="hljs-keyword">await</span> rb.tb_user()
-      .innerJoin(
-        t.tb_user_detail,
-        <span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>,
-        <span class="hljs-string">`<span class="hljs-subst">${t.tb_user_detail}</span>.uid`</span>,
-      )
-      .select(<span class="hljs-string">'*'</span>)
-      .where(<span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>, options.uid)
-      .then(<span class="hljs-function"><span class="hljs-params">rows</span> =&gt;</span> rows[<span class="hljs-number">0</span>])
-
-    <span class="hljs-keyword">return</span> row
-  }
-
-  <span class="hljs-comment">/**
-   * Read user_name
-   */</span>
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> getUserName(options: GetUserOpts): <span class="hljs-built_in">Promise</span>&lt;User[<span class="hljs-string">'user_name'</span>]&gt; {
-    <span class="hljs-keyword">const</span> { rb } = <span class="hljs-keyword">this</span>.db
-
-    <span class="hljs-keyword">const</span> name = <span class="hljs-keyword">await</span> rb.tb_user()
-      .select(<span class="hljs-string">'user_name'</span>)
-      .where(<span class="hljs-string">'uid'</span>, options.uid)
-      .then(<span class="hljs-function"><span class="hljs-params">rows</span> =&gt;</span> rows[<span class="hljs-number">0</span>] ? rows[<span class="hljs-number">0</span>].user_name : <span class="hljs-string">''</span>)
-
-    <span class="hljs-keyword">return</span> name
-  }
-
-}</code></pre>
-				<a href="#generating-source-files-pre-build" id="generating-source-files-pre-build" style="color: inherit; text-decoration: none;">
-					<h2>Generating source files pre build</h2>
+				<pre><code class="language-ts"><span class="hljs-keyword">await</span> db.dbh.schema
+  .createTable(<span class="hljs-string">'tb_user'</span>, <span class="hljs-function">(<span class="hljs-params">tb</span>) =&gt;</span> {
+    tb.increments(<span class="hljs-string">'uid'</span>)
+    tb.string(<span class="hljs-string">'name'</span>, <span class="hljs-number">30</span>)
+    tb.timestamp(<span class="hljs-string">'ctime'</span>, { useTz: <span class="hljs-literal">false</span> })
+  })
+  .createTable(<span class="hljs-string">'tb_user_detail'</span>, <span class="hljs-function">(<span class="hljs-params">tb</span>) =&gt;</span> {
+    tb.integer(<span class="hljs-string">'uid'</span>)
+    tb.foreign(<span class="hljs-string">'uid'</span>)
+      .references(<span class="hljs-string">'tb_user.uid'</span>)
+      .onDelete(<span class="hljs-string">'CASCADE'</span>)
+      .onUpdate(<span class="hljs-string">'CASCADE'</span>)
+    tb.integer(<span class="hljs-string">'age'</span>)
+    tb.string(<span class="hljs-string">'address'</span>, <span class="hljs-number">255</span>)
+  })
+  .catch(<span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">Error</span></span>) =&gt;</span> {
+    assert(<span class="hljs-literal">false</span>, err.message)
+  })</code></pre>
+				<a href="#inert-rows-via-auto-generated-table-accessor" id="inert-rows-via-auto-generated-table-accessor" style="color: inherit; text-decoration: none;">
+					<h3>Inert rows via auto generated table accessor</h3>
 				</a>
-				<p>The files generated automatically under typescript environment for debug or test </p>
-				<pre><code class="language-sh"><span class="hljs-built_in">cd</span> <span class="hljs-variable">${app_root}</span>
-kmore gen --path ./src
+				<pre><code class="language-ts"><span class="hljs-comment">// auto generated accessort tb_user() and tb_user_detail() on db.rb</span>
+<span class="hljs-keyword">const</span> { tb_user, tb_user_detail } = db.rb
 
-// <span class="hljs-keyword">then</span> you could build the project
-npm run build</code></pre>
+<span class="hljs-keyword">await</span> tb_user()
+  .insert([
+    { name: <span class="hljs-string">'user1'</span>, ctime: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>() }, <span class="hljs-comment">// ms</span>
+    { name: <span class="hljs-string">'user2'</span>, ctime: <span class="hljs-string">'now()'</span> }, <span class="hljs-comment">// μs</span>
+  ])
+  .then()
+
+<span class="hljs-keyword">await</span> tb_user_detail()
+  .insert([
+    { uid: <span class="hljs-number">1</span>, age: <span class="hljs-number">10</span>, address: <span class="hljs-string">'address1'</span> },
+    { uid: <span class="hljs-number">2</span>, age: <span class="hljs-number">10</span>, address: <span class="hljs-string">'address1'</span> },
+  ])
+  .returning(<span class="hljs-string">'*'</span>)
+  .then()</code></pre>
+				<a href="#join-tables" id="join-tables" style="color: inherit; text-decoration: none;">
+					<h3>Join tables</h3>
+				</a>
+				<pre><code class="language-ts"><span class="hljs-keyword">const</span> { tables: t, rb } = db
+
+<span class="hljs-keyword">await</span> rb.tb_user()
+  .select(<span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>, <span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.name`</span>)
+  .innerJoin(
+    t.tb_user_detail,
+    <span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>,
+    <span class="hljs-string">`<span class="hljs-subst">${t.tb_user_detail}</span>.uid`</span>,
+  )
+  .where(<span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>, <span class="hljs-number">1</span>)
+  .then(<span class="hljs-function">(<span class="hljs-params">rows</span>) =&gt;</span> {
+    assert(rows &amp;&amp; rows.length === <span class="hljs-number">1</span> &amp;&amp; rows[<span class="hljs-number">0</span>].uid === <span class="hljs-number">1</span>)
+    <span class="hljs-keyword">return</span> rows
+  })
+  .catch(<span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">Error</span></span>) =&gt;</span> {
+    assert(<span class="hljs-literal">false</span>, err.message)
+  })</code></pre>
+				<a href="#use-instance-of-knex" id="use-instance-of-knex" style="color: inherit; text-decoration: none;">
+					<h3>Use instance of knex</h3>
+				</a>
+				<pre><code class="language-ts"><span class="hljs-comment">// drop table</span>
+<span class="hljs-keyword">await</span> db.dbh.raw(<span class="hljs-string">`DROP TABLE IF EXISTS "<span class="hljs-subst">${tb}</span>" CASCADE;`</span>).then()
+
+<span class="hljs-comment">// disconnect</span>
+<span class="hljs-keyword">await</span> db.dbh.destroy()</code></pre>
+				<a href="#demo" id="demo" style="color: inherit; text-decoration: none;">
+					<h2>Demo</h2>
+				</a>
+				<ul>
+					<li><a href="https://github.com/waitingsong/kmore/blob/master/test/">see test</a></li>
+				</ul>
+				<a href="#packages" id="packages" style="color: inherit; text-decoration: none;">
+					<h2>Packages</h2>
+				</a>
+				<p>kmore is comprised of many specialized packages.
+				This repository contains all these packages. Below you will find a summary of each package.</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Package</th>
+							<th>Version</th>
+							<th>Dependencies</th>
+							<th>DevDependencies</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/kmore"><code>kmore</code></a></td>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/kmore/CHANGELOG.md"><img src="https://img.shields.io/npm/v/kmore.svg?maxAge=86400" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore"><img src="https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore?path=packages/kmore#info=devDependencies"><img src="https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore" alt=""></a></td>
+						</tr>
+						<tr>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/kmore-types"><code>kmore-types</code></a></td>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/kmore-types/CHANGELOG.md"><img src="https://img.shields.io/npm/v/kmore-types.svg?maxAge=86400" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types"><img src="https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore?path=packages/kmore-types#info=devDependencies"><img src="https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-types" alt=""></a></td>
+						</tr>
+						<tr>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/kmore-cli"><code>kmore-cli</code></a></td>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/kmore-clie/CHANGELOG.md"><img src="https://img.shields.io/npm/v/kmore-cli.svg?maxAge=86400" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli"><img src="https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore?path=packages/kmore-cli#info=devDependencies"><img src="https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-cli" alt=""></a></td>
+						</tr>
+						<tr>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore"><code>egg-kmore</code></a></td>
+							<td><a href="https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore/CHANGELOG.md"><img src="https://img.shields.io/npm/v/egg-kmore.svg?maxAge=86400" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore"><img src="https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore" alt=""></a></td>
+							<td><a href="https://david-dm.org/waitingsong/kmore?path=packages/egg-kmore#info=devDependencies"><img src="https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/egg-kmore" alt=""></a></td>
+						</tr>
+				</tbody></table>
 				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
 					<h2>License</h2>
 				</a>
