@@ -1,4 +1,4 @@
-# [egg-kmore](https://waitingsong.github.io/egg-kmore/)
+# [egg-kmore](https://waitingsong.github.io/kmore/)
 
 [kmore](https://www.npmjs.com/package/kmore) for midway framework.
 

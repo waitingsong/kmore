@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/waitingsong/kmore-types/issues"
   },
-  "homepage": "https://waitingsong.github.io/kmore-types/",
+  "homepage": "https://waitingsong.github.io/kmore/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/waitingsong/kmore-types.git"
@@ -46,22 +46,12 @@
     "devbuild": "npm run tsc && npm run rp",
     "clean": "rm -rf dist/* .vscode/.tsbuildinfo .vscode/.tsbuildinfo.* ",
     "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc mocha",
-    "cov:coveralls": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc mocha && nyc report --reporter=text-lcov | coveralls",
-    "doc": "typedoc src/index.ts src/lib/index.ts src/lib/model.ts",
-    "jslint": "eslint --fix dist/**/*.js",
-    "link_global": "npm link typescript",
     "lint": "eslint --fix {src,test}/**/*.ts",
-    "prepublishOnly": "npm run clean && npm run build",
-    "release": "standard-version -r",
-    "release:first": "standard-version --first-release",
-    "repo:init": "sh .githooks/init-repo.sh",
     "rp": "rollup -c rollup.config.js",
     "rp:w": "npm run tsc:w | rollup -wc rollup.config.js",
     "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha --opts test/mocha.opts",
     "test:browser": "cd .config && npm run browser && cd ..",
-    "browser:debug": "cd .config && npm run debug && cd ..",
     "tsc": "tsc -p tsconfig.json",
-    "tsc:dev": "tsc -p tsconfig.dev.json",
     "tsc:w": "tsc -p tsconfig.json -w"
   },
   "nyc": {

@@ -1,4 +1,4 @@
-# [kmore-types](https://waitingsong.github.io/kmore-types/)
+# [kmore-types](https://waitingsong.github.io/kmore/)
 
 Parse and build types from ts files for [kmore](https://www.npmjs.com/package/kmore)
 
