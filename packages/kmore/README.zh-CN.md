@@ -5,14 +5,14 @@
 用于 Node.js。
 
 
-[![Version](https://img.shields.io/npm/v/kmore.svg)](https://www.npmjs.com/package/kmore)
+[![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![](https://img.shields.io/badge/lang-TypeScript-blue.svg)
 [![Build Status](https://travis-ci.org/waitingsong/kmore.svg?branch=master)](https://travis-ci.org/waitingsong/kmore)
 [![Build status](https://ci.appveyor.com/api/projects/status/nkseik96p23fcvpm/branch/master?svg=true)](https://ci.appveyor.com/project/waitingsong/kmore/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/waitingsong/kmore/badge.svg?branch=master)](https://coveralls.io/github/waitingsong/kmore?branch=master)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
-
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
 ## 安装
 ```sh
@@ -155,6 +155,20 @@ await db.dbh.destroy()
 - [see test](https://github.com/waitingsong/kmore/blob/master/test/)
 
 
+## Packages
+
+kmore is comprised of many specialized packages.
+This repository contains all these packages. Below you will find a summary of each package.
+
+| Package         | Version                    | Dependencies                     | DevDependencies                    |
+| --------------- | -------------------------- | -------------------------------- | ---------------------------------- |
+| [`kmore`]       | [![][kmore-svg]][kmore-ch] | [![][kmore-d-svg]][kmore-d-link] | [![][kmore-dd-svg]][kmore-dd-link] |
+| [`kmore-types`] | [![][types-svg]][types-ch] | [![][types-d-svg]][types-d-link] | [![][types-dd-svg]][types-dd-link] |
+| [`kmore-cli`]   | [![][cli-svg]][cli-ch]     | [![][cli-d-svg]][cli-d-link]     | [![][cli-dd-svg]][cli-dd-link]     |
+| [`egg-kmore`]   | [![][egg-svg]][egg-ch]     | [![][egg-d-svg]][egg-d-link]     | [![][egg-dd-svg]][egg-dd-link]     |
+
+
+
 ## License
 [MIT](LICENSE)
 
@@ -162,3 +176,38 @@ await db.dbh.destroy()
 ### Languages
 - [English](README.md)
 - [中文](README.zh-CN.md)
+
+
+[`kmore`]: https://github.com/waitingsong/kmore/tree/master/packages/kmore
+[`kmore-types`]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-types
+[`kmore-cli`]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-cli
+[`egg-kmore`]: https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore
+
+[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=86400
+[kmore-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore/CHANGELOG.md
+[kmore-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
+[kmore-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
+[kmore-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore
+[kmore-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore#info=devDependencies
+
+[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=86400
+[types-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-types/CHANGELOG.md
+[types-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
+[types-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
+[types-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-types
+[types-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-types#info=devDependencies
+
+[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=86400
+[cli-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-clie/CHANGELOG.md
+[cli-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
+[cli-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
+[cli-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-cli
+[cli-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-cli#info=devDependencies
+
+
+[egg-svg]: https://img.shields.io/npm/v/egg-kmore.svg?maxAge=86400
+[egg-ch]: https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore/CHANGELOG.md
+[egg-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore
+[egg-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore
+[egg-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/egg-kmore
+[egg-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/egg-kmore#info=devDependencies
