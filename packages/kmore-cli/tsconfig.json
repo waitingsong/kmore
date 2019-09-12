@@ -3,7 +3,7 @@
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "incremental": true,
+    "incremental": false,
     "inlineSourceMap": true,
     "module": "ES6",
     "moduleResolution": "node",
@@ -16,7 +16,6 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2019",
-    "tsBuildInfoFile": ".vscode/.tsbuildinfo",
     "types" : ["node", "mocha"]
   },
   "include": [
