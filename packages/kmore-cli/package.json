@@ -27,7 +27,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/log": "^1.0.1",
     "@waiting/shared-core": "3",
     "@waiting/shared-types": "1",
     "kmore-types": "^0.11.0",

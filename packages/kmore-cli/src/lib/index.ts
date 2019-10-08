@@ -1,4 +1,3 @@
-import { log } from '@waiting/log'
 import { Observable } from 'rxjs'
 import { buildSource } from 'kmore-types'
 
@@ -8,7 +7,7 @@ import { RunCmdArgs, Options } from './model'
 export function runCmd(args: RunCmdArgs): Observable<string> {
   const { cmd, options, debug } = args
 
-  debug && options && log(options)
+  debug && options && console.info(options)
   switch (cmd) {
     case 'gen':
       return gen(options)

@@ -3,7 +3,6 @@
  * command: gen  case insensitive
  */
 
-import { log } from '@waiting/log'
 import * as yargs from 'yargs'
 
 import { genCmdHelp, helpDefault } from '../lib/helper'
@@ -18,7 +17,7 @@ try {
   args = parseCliArgs(yargs.argv)
 }
 catch (ex) {
-  log(ex.message)
+  console.info(ex.message)
   process.exit(1)
 }
 
@@ -26,22 +25,22 @@ catch (ex) {
 if (args && args.cmd) {
   if (args.needHelp) {
     const msg = genCmdHelp(args.cmd)
-    log(msg)
+    console.info(msg)
     process.exit(0)
   }
   else {
     // eslint-disable-next-line id-length
     args.options = parseCliOpts(args.cmd, { ...yargs.argv, _: '' })
-    args.debug && log(args)
+    args.debug && console.info(args)
 
     runCmd(args).subscribe(
-      log,
+      data => console.info(data),
       (err: Error) => {
         if (err.message) {
-          log(err.message)
+          console.info(err.message)
         }
         else {
-          log(err)
+          console.info(err)
         }
 
         return err.message.includes('-h')
@@ -54,6 +53,6 @@ if (args && args.cmd) {
 }
 else {
   const msg = helpDefault()
-  log(msg)
+  console.info(msg)
   process.exit(0)
 }
