@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as ts from 'typescript'
+import { CallExpression, Identifier } from 'typescript'
 
 import {
   GenGenericsArgMapOpts,
@@ -136,7 +136,7 @@ export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap 
     cacheMap, sourceFile, checker, caller,
   } = options
 
-  const node: ts.CallExpression | void = walkNodeWithPosition({
+  const node: CallExpression | void = walkNodeWithPosition({
     sourceFile,
     matchLine: caller.line,
     matchColumn: caller.column,
@@ -145,7 +145,7 @@ export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap 
 
   /* istanbul ignore else */
   if (node) {
-    const typeName: ts.Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
+    const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
 
     /* istanbul ignore else */
     if (typeName && typeName.getText()) {
@@ -193,3 +193,4 @@ export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap 
 //   }
 //   return transformer
 // }
+

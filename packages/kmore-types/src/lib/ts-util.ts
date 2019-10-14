@@ -1,5 +1,18 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as ts from 'typescript'
+import {
+  createProgram,
+  isCallExpression,
+  forEachChild,
+  CallExpression,
+  JSDocTagInfo,
+  Identifier,
+  Node,
+  SourceFile,
+  Symbol as TsSymbol,
+  TypeChecker,
+  ScriptTarget,
+  ModuleKind,
+} from 'typescript'
 import { pathResolve } from '@waiting/shared-core'
 
 import { isCallerNameMatched } from './util'
@@ -38,9 +51,9 @@ export function pickInfoFromCallerTypeId(id: CallerTypeId): CallerTypeIdInfo {
 
 
 export function genCallerTypeMapFromNodeSet(
-  nodes: Set<ts.CallExpression>,
-  checker: ts.TypeChecker,
-  sourceFile: ts.SourceFile,
+  nodes: Set<CallExpression>,
+  checker: TypeChecker,
+  sourceFile: SourceFile,
   path: string,
 ): CallerTypeMap {
 
@@ -65,7 +78,7 @@ function genInfoFromNode(options: GenInfoFromNodeOps): { id: LocalTypeId, tagMap
 
   /* istanbul ignore else */
   if (node) {
-    const typeName: ts.Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
+    const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
 
     /* istanbul ignore else */
     if (typeName && typeName.getText()) {
@@ -95,7 +108,7 @@ function genInfoFromNode(options: GenInfoFromNodeOps): { id: LocalTypeId, tagMap
 
 // ---- compiler ---
 
-export function genTbListTagMapFromSymbol(symbol: ts.Symbol): TbListTagMap {
+export function genTbListTagMapFromSymbol(symbol: TsSymbol): TbListTagMap {
   const { members } = symbol
   // Map<TableAlias, Map<TagName, TagComment> >
   const symbolTagMap: TbListTagMap = new Map()
@@ -104,7 +117,7 @@ export function genTbListTagMapFromSymbol(symbol: ts.Symbol): TbListTagMap {
   if (members) {
     members.forEach((member) => {
       const name = member.getName()
-      const tags: ts.JSDocTagInfo[] = member.getJsDocTags()
+      const tags: JSDocTagInfo[] = member.getJsDocTags()
       // tags can be empty array
       symbolTagMap.set(name, tags)
     })
@@ -114,9 +127,9 @@ export function genTbListTagMapFromSymbol(symbol: ts.Symbol): TbListTagMap {
 }
 
 
-export function retrieveGenericsIdentifierFromTypeArguments(node: ts.CallExpression): ts.Identifier | void {
+export function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
   /* istanbul ignore else */
-  if (! node.typeArguments || node.typeArguments.length !== 1) {
+  if (!node.typeArguments || node.typeArguments.length !== 1) {
     return
   }
   const [typeNode] = node.typeArguments
@@ -132,14 +145,14 @@ export function matchSourceFileWithFilePath(
 
   const srcPath = pathResolve(path).replace(/\\/gu, '/')
   const srcLower = srcPath.toLowerCase()
-  const program = ts.createProgram(
+  const program = createProgram(
     [srcPath],
     {
       noEmitOnError: true,
       noImplicitAny: true,
-      target: ts.ScriptTarget.ESNext,
+      target: ScriptTarget.ESNext,
       inlineSourceMap: false,
-      module: ts.ModuleKind.CommonJS,
+      module: ModuleKind.CommonJS,
     },
   )
   const ret: MatchedSourceFile = {
@@ -150,7 +163,7 @@ export function matchSourceFileWithFilePath(
 
   for (const sourceFile of program.getSourceFiles()) {
     /* istanbul ignore else */
-    if (! sourceFile.isDeclarationFile) {
+    if (!sourceFile.isDeclarationFile) {
       // @ts-ignore
       const srcFilePath = sourceFile.path ? sourceFile.path : ''
 
@@ -166,15 +179,15 @@ export function matchSourceFileWithFilePath(
 
 
 /** Retrieve node with specified position from caller */
-export function walkNodeWithPosition(options: WalkNodeWithPositionOps): ts.CallExpression | void {
-  const visit = (node: ts.Node, opts: WalkNodeWithPositionOps): ts.CallExpression | void => {
+export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpression | void {
+  const visit = (node: Node, opts: WalkNodeWithPositionOps): CallExpression | void => {
     const { line, character } = opts.sourceFile.getLineAndCharacterOfPosition(node.getStart())
 
     /* istanbul ignore else */
     if (line + 1 === opts.matchLine && character + 1 === opts.matchColumn) {
       /* istanbul ignore else */
-      if (ts.isCallExpression(node)) {
-        const expression = node.expression as ts.Identifier | void
+      if (isCallExpression(node)) {
+        const expression = node.expression as Identifier | void
 
         if (expression) {
           return node
@@ -187,23 +200,23 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): ts.CallE
 
     /* istanbul ignore else */
     if (node.getChildCount()) {
-      return ts.forEachChild(node, childNode => visit(childNode, opts))
+      return forEachChild(node, childNode => visit(childNode, opts))
     }
   } // End of visit
 
-  const targetNode = ts.forEachChild(options.sourceFile, node => visit(node, options))
+  const targetNode = forEachChild(options.sourceFile, node => visit(node, options))
   return targetNode
 }
 
 
 /** Retrieve node with specified matchFuncName */
-export function walkNode(options: WalkNodeOps): Set<ts.CallExpression> {
-  const ret: Set<ts.CallExpression> = new Set()
+export function walkNode(options: WalkNodeOps): Set<CallExpression> {
+  const ret: Set<CallExpression> = new Set()
 
-  const visitor = (node: ts.Node, opts: WalkNodeOps): void => {
+  const visitor = (node: Node, opts: WalkNodeOps): void => {
     /* istanbul ignore else */
-    if (ts.isCallExpression(node)) {
-      const expression = node.expression as ts.Identifier | void
+    if (isCallExpression(node)) {
+      const expression = node.expression as Identifier | void
 
       /* istanbul ignore else */
       if (expression) {
@@ -217,11 +230,11 @@ export function walkNode(options: WalkNodeOps): Set<ts.CallExpression> {
 
     /* istanbul ignore else */
     if (node.getChildCount()) {
-      ts.forEachChild(node, childNode => visitor(childNode, opts))
+      forEachChild(node, childNode => visitor(childNode, opts))
     }
   } // End of visit
 
-  ts.forEachChild(options.sourceFile, node => visitor(node, options))
+  forEachChild(options.sourceFile, node => visitor(node, options))
   return ret
 }
 
