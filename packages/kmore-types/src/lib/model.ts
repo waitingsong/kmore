@@ -1,5 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import * as ts from 'typescript'
+import {
+  CallExpression,
+  JSDocTagInfo,
+  SourceFile,
+  TypeChecker,
+} from 'typescript'
 
 
 export interface Options extends GenTbListFromTypeOpts {
@@ -68,7 +73,7 @@ export type CallerTbListMap<T extends TTableListModel> = Map<CallerTypeId, DbTab
 /** GenericsTypeId scope in the file */
 export type LocalTypeMap = Map<LocalTypeId, TbListTagMap>
 export type CallerTypeMap = Map<CallerTypeId, TbListTagMap>
-export type TbListTagMap = Map<TableAlias, ts.JSDocTagInfo[]>
+export type TbListTagMap = Map<TableAlias, JSDocTagInfo[]>
 
 export type GenericsArgName = string
 
@@ -131,8 +136,8 @@ export interface RetrieveInfoFromTypeOpts {
 }
 
 export interface GenGenericsArgMapOpts extends RetrieveInfoFromTypeOpts {
-  checker: ts.TypeChecker
-  sourceFile: ts.SourceFile
+  checker: TypeChecker
+  sourceFile: SourceFile
 }
 
 export interface CacheMap {
@@ -153,7 +158,7 @@ export interface StackFrame {
 }
 
 export interface WalkNodeOps {
-  sourceFile: ts.SourceFile
+  sourceFile: SourceFile
   matchFuncNameSet: CallerFuncNameSet
 }
 
@@ -163,15 +168,15 @@ export interface WalkNodeWithPositionOps extends WalkNodeOps {
 }
 
 export interface GenInfoFromNodeOps {
-  sourceFile: ts.SourceFile
-  checker: ts.TypeChecker
-  node: ts.CallExpression
+  sourceFile: SourceFile
+  checker: TypeChecker
+  node: CallExpression
   path: string
   retMap: LocalTypeMap
 }
 
 export interface MatchedSourceFile {
-  checker: ts.TypeChecker
-  sourceFile: ts.SourceFile | null
+  checker: TypeChecker
+  sourceFile: SourceFile | null
 }
 

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
-  createProgram,
-  isCallExpression,
-  forEachChild,
+  createProgram as createProgramOri,
+  isCallExpression as isCallExpressionOri,
+  forEachChild as forEachChildOri,
   CallExpression,
   JSDocTagInfo,
   Identifier,
@@ -10,8 +11,6 @@ import {
   SourceFile,
   Symbol as TsSymbol,
   TypeChecker,
-  ScriptTarget,
-  ModuleKind,
 } from 'typescript'
 import { pathResolve } from '@waiting/shared-core'
 
@@ -129,7 +128,7 @@ export function genTbListTagMapFromSymbol(symbol: TsSymbol): TbListTagMap {
 
 export function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
   /* istanbul ignore else */
-  if (!node.typeArguments || node.typeArguments.length !== 1) {
+  if (! node.typeArguments || node.typeArguments.length !== 1) {
     return
   }
   const [typeNode] = node.typeArguments
@@ -142,6 +141,10 @@ export function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression
 export function matchSourceFileWithFilePath(
   path: string,
 ): MatchedSourceFile {
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const { createProgram } = require('typescript') as {
+    createProgram: typeof createProgramOri,
+  }
 
   const srcPath = pathResolve(path).replace(/\\/gu, '/')
   const srcLower = srcPath.toLowerCase()
@@ -150,9 +153,11 @@ export function matchSourceFileWithFilePath(
     {
       noEmitOnError: true,
       noImplicitAny: true,
-      target: ScriptTarget.ESNext,
+      // target: ScriptTarget.ESNext,
+      target: 99,
       inlineSourceMap: false,
-      module: ModuleKind.CommonJS,
+      // module: ModuleKind.CommonJS,
+      module: 1,
     },
   )
   const ret: MatchedSourceFile = {
@@ -163,7 +168,7 @@ export function matchSourceFileWithFilePath(
 
   for (const sourceFile of program.getSourceFiles()) {
     /* istanbul ignore else */
-    if (!sourceFile.isDeclarationFile) {
+    if (! sourceFile.isDeclarationFile) {
       // @ts-ignore
       const srcFilePath = sourceFile.path ? sourceFile.path : ''
 
@@ -180,6 +185,12 @@ export function matchSourceFileWithFilePath(
 
 /** Retrieve node with specified position from caller */
 export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpression | void {
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const { isCallExpression, forEachChild } = require('typescript') as {
+    isCallExpression: typeof isCallExpressionOri,
+    forEachChild: typeof forEachChildOri,
+  }
+
   const visit = (node: Node, opts: WalkNodeWithPositionOps): CallExpression | void => {
     const { line, character } = opts.sourceFile.getLineAndCharacterOfPosition(node.getStart())
 
@@ -211,6 +222,12 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpr
 
 /** Retrieve node with specified matchFuncName */
 export function walkNode(options: WalkNodeOps): Set<CallExpression> {
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const { isCallExpression, forEachChild } = require('typescript') as {
+    isCallExpression: typeof isCallExpressionOri,
+    forEachChild: typeof forEachChildOri,
+  }
+
   const ret: Set<CallExpression> = new Set()
 
   const visitor = (node: Node, opts: WalkNodeOps): void => {
