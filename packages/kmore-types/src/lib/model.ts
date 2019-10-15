@@ -10,11 +10,16 @@ import {
 export interface Options extends GenTbListFromTypeOpts {
   /** Exported vaiable name preifx. Default is "tbs", result will be "tbs_m_n" */
   exportVarPrefix: string
-  /** Load js under ts env for debug, Default: false */
+  /**
+   * Load js under ts env for debug,
+   * Default: false
+   * Default: true if process.env.NODE_ENV === 'production'
+   */
   forceLoadTbListJs: boolean
   /**
    * Rewrite loading path during forceLoadTbListJs:true,
    * Default: null
+   * Default: [ [/\/src\//u, '/dist/'] ] if process.env.NODE_ENV === 'production'
    * @example [ [/src\//u, 'dist/'] ]
    */
   forceLoadTbListJsPathReplaceRules: PathReWriteRule[] | null

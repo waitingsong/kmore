@@ -33,6 +33,9 @@ export function genTbListFromType<T extends TTableListModel>(
 
   if (process.env.NODE_ENV === 'production') {
     opts.forceLoadTbListJs = true
+    if (opts.forceLoadTbListJsPathReplaceRules === null) {
+      opts.forceLoadTbListJsPathReplaceRules = [ [/\/src\//u, '/dist/'] ]
+    }
   }
   const caller = getCallerStack(opts.callerDistance)
   const ret = loadTbListParamFromCallerInfo<T>(opts, caller)
