@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.13.0](https://github.com/waitingsong/kmore/compare/v0.12.0...v0.13.0) (2019-10-15)
+
+
+### Features
+
+* default forceLoadTbListJs, forceLoadTbListJsPathReplaceRules ([1a758d3](https://github.com/waitingsong/kmore/commit/1a758d3))
+
+
+
+
+
 # [0.12.0](https://github.com/waitingsong/kmore/compare/v0.11.2...v0.12.0) (2019-10-15)
 
 
