@@ -1,6 +1,4 @@
-import { genTbListFromType } from 'kmore-types'
-
-import { Config, DbTables } from '../src/index'
+import { Config, DbTables, genTbListFromType } from '../src/index'
 
 import { TbListModel } from './test.model'
 
