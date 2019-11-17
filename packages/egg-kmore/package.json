@@ -23,12 +23,12 @@
   "module": "./index.js",
   "types": "./index.d.ts",
   "bugs": {
-    "url": "https://github.com/waitingsong/egg-kmore/issues"
+    "url": "https://github.com/waitingsong/kmore/issues"
   },
   "homepage": "https://waitingsong.github.io/kmore/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waitingsong/egg-kmore.git"
+    "url": "git+https://github.com/waitingsong/kmore.git"
   },
   "license": "MIT",
   "dependencies": {
