@@ -31,7 +31,7 @@
     "@waiting/shared-types": "3",
     "kmore-types": "^0.13.0",
     "rxjs": "^6.5.2",
-    "yargs": "14"
+    "yargs": "15"
   },
   "devDependencies": {
     "cross-env": "6"
