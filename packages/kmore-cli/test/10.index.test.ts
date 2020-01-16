@@ -2,7 +2,7 @@ import { accessSync } from 'fs'
 
 import { basename, rimraf } from '@waiting/shared-core'
 import * as assert from 'power-assert'
-import { tap, finalize } from 'rxjs/operators'
+import { tap, finalize, delay } from 'rxjs/operators'
 
 import { runCmd, RunCmdArgs } from '../src/index'
 
@@ -28,6 +28,7 @@ describe(filename, () => {
             accessSync(targetPath)
             rimraf(targetPath)
           }),
+          delay(1000),
           finalize(done),
         )
         .subscribe()
@@ -35,7 +36,7 @@ describe(filename, () => {
       return
     })
 
-    it('with --basedir .test/ ', (done) => {
+    it(' with --basedir .test/', (done) => {
       const args: RunCmdArgs = {
         cmd: 'gen',
         debug: true,
@@ -51,6 +52,7 @@ describe(filename, () => {
             accessSync(targetPath)
             rimraf(targetPath)
           }),
+          delay(1000),
           finalize(done),
         )
         .subscribe()
