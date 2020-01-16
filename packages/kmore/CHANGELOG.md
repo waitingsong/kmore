@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.14.0](https://github.com/waitingsong/kmore/compare/v0.13.1...v0.14.0) (2020-01-16)
+
+
+### Features
+
+* **kmore:** TbQueryBuilder accept 2nd generics parameter ([88672fb](https://github.com/waitingsong/kmore/commit/88672fb94d59ec2e47a444e4ca9b15a6884e0434))
+
+
+
+
+
 ## [0.13.1](https://github.com/waitingsong/kmore/compare/v0.13.0...v0.13.1) (2019-11-17)
 
 **Note:** Version bump only for package kmore

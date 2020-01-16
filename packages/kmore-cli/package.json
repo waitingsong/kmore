@@ -1,7 +1,7 @@
 {
   "name": "kmore-cli",
   "author": "waiting",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Command line to generate config of tables from ts types file for kmore",
   "keywords": [
     "kmore",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@waiting/shared-core": "3",
     "@waiting/shared-types": "3",
-    "kmore-types": "^0.13.1",
+    "kmore-types": "^0.14.0",
     "rxjs": "^6.5.2",
     "yargs": "15"
   },
