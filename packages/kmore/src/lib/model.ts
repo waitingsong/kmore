@@ -67,7 +67,7 @@ export interface EmptyTbList {
 /** Type of db.refTables */
 export type DbRefBuilder<T> = {
   /** tbName: () => knex('tb_name') */
-  [key in keyof T]: TbQueryBuilder<T[key]>
+  [key in keyof T]: TbQueryBuilder<T[key], T[key][]>
 }
-export type TbQueryBuilder<TName> = () => Knex.QueryBuilder<TName>
+export type TbQueryBuilder<TRecord, TResult = TRecord[]> = () => Knex.QueryBuilder<TRecord, TResult>
 
