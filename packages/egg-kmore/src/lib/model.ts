@@ -1,7 +1,7 @@
 import {
   Config,
-  DbTables,
-  TTableListModel,
+  KTables,
+  TTables,
 } from 'kmore'
 
 
@@ -21,7 +21,7 @@ export interface DefaultClientOpts {
 }
 export interface ClientOpts {
   knexConfig: Config
-  tables?: DbTables<TTableListModel> | false
+  kTables: KTables<TTables>
   waitConnected?: boolean
 }
 export interface MuiltiClientsOpts {

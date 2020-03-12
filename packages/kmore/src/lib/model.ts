@@ -1,9 +1,22 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as Knex from 'knex'
+import {
+  Tables,
+  TableCols,
+  TableScopedCols,
+  KTablesBase,
+  Options,
+  DbPropKeys,
+} from 'kmore-types'
 
 
 export {
+  Tables,
+  TableCols,
   Options,
+}
+
+export {
   PathReWriteRule,
   BuildSrcOpts,
   CacheMap,
@@ -23,12 +36,9 @@ export {
   GenTbListFromTypeOpts,
   RetrieveInfoFromTypeOpts,
   CallerFuncName,
-  GenGenericsArgMapOpts,
   ColumnType,
   BaseTbType,
   BaseTbListType,
-  PlainJsonValueType,
-  JsonType,
   TableAlias,
   TableName,
   FilePath,
@@ -38,6 +48,28 @@ export {
 
 export type Config = Knex.Config
 
+/**
+ * K(more)Tables array contains:
+ *  tables: tables name
+ *  columns: columns name of the tables
+ *  scopedColumns: columns name with table prefix of the tables
+ */
+export interface KTables<T extends TTables> extends KTablesBase<T> {
+  /**
+  * Columns mapping object, column name with table prefix, eg tb_foo.user
+  * ```json
+  * {
+  *    tb_alias: { col_alias: "table_name.col_name", ...,}
+  * }
+  * ```
+  */
+  scopedColumns: TableScopedCols<T>
+}
+
+export interface KmoreOpts {
+  config: Config
+  options?: Partial<Options>
+}
 
 /**
  * Generate knex method refer to tables.
@@ -47,22 +79,20 @@ export type Config = Knex.Config
  * @description T = { user: {id: number, name: string} }
  *  will get db.user() => Knex.QueryBuilder<{id: number, name: string}>
  */
-export interface DbModel<T extends TTableListModel> {
-  readonly dbh: Knex
-  readonly tables: DbTables<T>
-  readonly rb: DbRefBuilder<T>
+export interface DbModel<T extends TTables> {
+  readonly [DbPropKeys.dbh]: Knex
+  /** tables.tb_foo output table name of tb_foo */
+  readonly [DbPropKeys.tables]: Tables<T>
+  /** columns.tb_foo.ctime output col name, eg. `ctime` */
+  readonly [DbPropKeys.columns]: TableCols<T>
+  /** scopedColumns.tb_foo.ctime output col name with table prefix, eg. `tb_foo.ctime` */
+  readonly [DbPropKeys.scopedColumns]: TableScopedCols<T>
+  readonly [DbPropKeys.refTables]: DbRefBuilder<T>
 }
+export type TTables = object
+/** @deprecated use `TTables` instead */
 export type TTableListModel = object
 
-/**
- * Type of db.tables
- */
-export type DbTables<T extends TTableListModel> = T extends void
-  ? EmptyTbList
-  : T extends never ? EmptyTbList : Record<keyof T, string>
-export interface EmptyTbList {
-  readonly [key: string]: never
-}
 
 /** Type of db.refTables */
 export type DbRefBuilder<T> = {
@@ -70,4 +100,11 @@ export type DbRefBuilder<T> = {
   [key in keyof T]: TbQueryBuilder<T[key], T[key][]>
 }
 export type TbQueryBuilder<TRecord, TResult = TRecord[]> = () => Knex.QueryBuilder<TRecord, TResult>
+
+
+export type CreateColumnNameFn = (options: CreateColumnNameOpts) => string
+export interface CreateColumnNameOpts {
+  tableName: string
+  columnName: string
+}
 

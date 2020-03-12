@@ -13,7 +13,7 @@ describe(filename, () => {
   let db: DbModel<TbModelAlias>
 
   before(async () => {
-    db = kmore<TbModelAlias>(config)
+    db = kmore<TbModelAlias>({ config })
     assert(db.tables && Object.keys(db.tables).length > 0)
   })
 

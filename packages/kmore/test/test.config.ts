@@ -1,4 +1,6 @@
-import { Config, DbTables, genTbListFromType } from '../src/index'
+import * as assert from 'power-assert'
+
+import { Config, Tables, genTbListFromType, KTables } from '../src/index'
 
 import { TbListModel } from './test.model'
 
@@ -20,12 +22,12 @@ export const config: Config = {
 }
 
 // for demo
-export const tbListObj: DbTables<TbListModel> = {
+export const tbListObj: Tables<TbListModel> = {
   tb_user: 'tb_user',
   tb_user_detail: 'tb_user_detail',
 }
-export const tbList = genTbListFromType<TbListModel>()
-if (Object.keys(tbList).length === 0) {
+export const kTables: KTables<TbListModel> = genTbListFromType<TbListModel>()
+if (Object.keys(kTables).length === 0) {
   throw new Error('tbList empty.')
 }
 

@@ -8,9 +8,11 @@ import {
   JSDocTagInfo,
   Identifier,
   Node,
+  PropertySignature,
   SourceFile,
   Symbol as TsSymbol,
   TypeChecker,
+  TypeNode,
 } from 'typescript'
 import { pathResolve } from '@waiting/shared-core'
 
@@ -19,12 +21,15 @@ import {
   CallerTypeIdInfo,
   CallerTypeId,
   CallerTypeMap,
+  ColListTagMap,
   GenInfoFromNodeOps,
   LocalTypeId,
   TbListTagMap,
+  TbColListTagMap,
   MatchedSourceFile,
   WalkNodeWithPositionOps,
   WalkNodeOps,
+  TbTagsMap,
 } from './model'
 
 
@@ -52,53 +57,74 @@ export function pickInfoFromCallerTypeId(id: CallerTypeId): CallerTypeIdInfo {
 export function genCallerTypeMapFromNodeSet(
   nodes: Set<CallExpression>,
   checker: TypeChecker,
-  sourceFile: SourceFile,
-  path: string,
+  sourceFile: SourceFile, // sourceFileObject
+  path: string, // .ts file
 ): CallerTypeMap {
 
   const retMap: CallerTypeMap = new Map()
 
   nodes.forEach((node) => {
     const obj = genInfoFromNode({
-      node, checker, sourceFile, retMap, path,
+      checker,
+      node,
+      path,
+      sourceFile,
     })
     if (obj) {
-      retMap.set(obj.id, obj.tagMap)
+      const { callerTypeId, tbTagMap, tbColTagMap } = obj
+      retMap.set(callerTypeId, [tbTagMap, tbColTagMap])
     }
   })
 
   return retMap
 }
 
-function genInfoFromNode(options: GenInfoFromNodeOps): { id: LocalTypeId, tagMap: TbListTagMap } | void {
+interface GenInfoFromNodeRet extends Omit<TbTagsMap, 'tbScopedColTagMap'> {
+  callerTypeId: CallerTypeId
+  localTypeId: LocalTypeId
+}
+
+export function genInfoFromNode(
+  options: GenInfoFromNodeOps,
+): GenInfoFromNodeRet | void {
+
   const {
-    node, checker, sourceFile, retMap, path,
+    node, checker, sourceFile, path,
   } = options
 
+  const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
+
   /* istanbul ignore else */
-  if (node) {
-    const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
+  if (typeName && typeName.getText()) {
+    const gType = checker.getTypeAtLocation(typeName)
 
     /* istanbul ignore else */
-    if (typeName && typeName.getText()) {
-      const gType = checker.getTypeAtLocation(typeName)
+    if (gType && gType.symbol) {
+      const sym = gType.getSymbol()
+      if (! sym) {
+        return
+      }
 
+      const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
+
+      const inputTypeName = sym.getName()
+      // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
+      const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
+
+      // @ts-ignore
+      // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
+      // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
+      // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
+      const localTypeId = `${path}:typeid-${inputTypeName}`
+
+      const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(gType.symbol, checker)
       /* istanbul ignore else */
-      if (gType && gType.symbol) {
-        // @ts-ignore
-        const typeid: number = typeof gType.id === 'number' ? gType.id : Math.random()
-        const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
-        const localTypeId = `${path}:${line + 1}:${character + 1}:typeid-${typeid}`
-
-        if (retMap.has(localTypeId)) {
-          return
-        }
-        else {
-          const tagMap: TbListTagMap = genTbListTagMapFromSymbol(gType.symbol)
-          /* istanbul ignore else */
-          if (tagMap.size) {
-            return { id: localTypeId, tagMap }
-          }
+      if (tbTagMap.size) {
+        return {
+          callerTypeId,
+          localTypeId,
+          tbTagMap,
+          tbColTagMap,
         }
       }
     }
@@ -107,26 +133,85 @@ function genInfoFromNode(options: GenInfoFromNodeOps): { id: LocalTypeId, tagMap
 
 // ---- compiler ---
 
-export function genTbListTagMapFromSymbol(symbol: TsSymbol): TbListTagMap {
+function genTbListTagMapFromSymbol(
+  symbol: TsSymbol,
+  checker: TypeChecker,
+): Omit<TbTagsMap, 'tbScopedColTagMap'> {
+
   const { members } = symbol
   // Map<TableAlias, Map<TagName, TagComment> >
-  const symbolTagMap: TbListTagMap = new Map()
+  const tbTagMap: TbListTagMap = new Map()
+  const tbColTagMap: TbColListTagMap = new Map()
+  // const tbScopedColTagMap: TbScopedColListTagMap = new Map()
 
   /* istanbul ignore else */
   if (members) {
-    members.forEach((member) => {
-      const name = member.getName()
-      const tags: JSDocTagInfo[] = member.getJsDocTags()
+    members.forEach((tbSym: TsSymbol) => {
+      const { name: tbName, tags } = retrieveInfoFromSymbolObject(tbSym)
       // tags can be empty array
-      symbolTagMap.set(name, tags)
+      tbTagMap.set(tbName, tags)
+
+      const nodes = tbSym.getDeclarations() as PropertySignature[] | undefined
+      if (nodes && nodes.length) {
+        const colTagMap = genColListTagMapFromTbSymbol(nodes, checker)
+        tbColTagMap.set(tbName, colTagMap)
+      }
     })
   }
 
-  return symbolTagMap
+  return { tbTagMap, tbColTagMap }
+}
+
+function genColListTagMapFromTbSymbol(
+  nodes: PropertySignature[],
+  checker: TypeChecker,
+): ColListTagMap {
+
+  const ret: ColListTagMap = new Map()
+  const [node] = nodes // use only one
+  const { type: typeRef } = node
+
+  if (typeRef && typeRef.getText()) {
+    return retrieveMembersFromTypeRef(typeRef, checker)
+  }
+
+  return ret
+}
+
+function retrieveMembersFromTypeRef(
+  typeRef: TypeNode, // TypeReference
+  checker: TypeChecker,
+): ColListTagMap {
+
+  const ret: ColListTagMap = new Map()
+  const gType = checker.getTypeAtLocation(typeRef)
+
+  /* istanbul ignore else */
+  if (gType && gType.symbol) {
+    const sym = gType.getSymbol()
+    if (sym) {
+      const { members } = sym
+      if (members) {
+        members.forEach((member) => {
+          const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
+          ret.set(colName, tags)
+        })
+      }
+    }
+  }
+
+  return ret
+}
+
+function retrieveInfoFromSymbolObject(symbol: TsSymbol): {name: string, tags: JSDocTagInfo[]} {
+  return {
+    name: symbol.getName(),
+    tags: symbol.getJsDocTags(),
+  }
 }
 
 
-export function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
+function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
   /* istanbul ignore else */
   if (! node.typeArguments || node.typeArguments.length !== 1) {
     return

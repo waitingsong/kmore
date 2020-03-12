@@ -1,10 +1,10 @@
-import { genTbListFromType } from 'kmore-types'
+import { genTbListFromType, KTablesBase } from 'kmore-types'
 
-import { DbTables, TTableListModel } from '../../src'
+import { TTables, KTables } from '../../src'
 import { User, UserDetail } from '../test.model'
 
 
-export const tbList31 = genFoo<UserInfoModel>()
+export const kTables31 = genFoo<UserInfoModel>(0)
 
 export interface UserInfoModel {
   tb_user: User
@@ -13,19 +13,19 @@ export interface UserInfoModel {
 export type TbListModelAlias = UserInfoModel
 
 
-function genFoo<T extends TTableListModel>(): DbTables<T> {
-  return genBar<T>()
+function genFoo<T extends TTables>(distance: number): KTablesBase<T> {
+  return genBar<T>(distance + 1)
 }
 
-function genBar<T extends TTableListModel>(): DbTables<T> {
-  const tbList = genTbListFromType<T>({
+function genBar<T extends TTables>(distance: number): KTablesBase<T> {
+  const kTables = genTbListFromType<T>({
     /**
      * 2: the caller with generics type is up to two level, genFoo() -> fenBar(),
      * 1: up to one level, outer genBar() -> genTbListFromType(),
      * 0: calling genTbListFromType() with generics type directly
      */
-    callerDistance: 2,
+    callerDistance: distance + 1, // now is 2
   })
-  return tbList
+  return kTables
 }
 

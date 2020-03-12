@@ -1,37 +1,39 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { CallExpression, Identifier } from 'typescript'
+import { CallExpression } from 'typescript'
 
 import {
-  GenGenericsArgMapOpts,
-  LocalTypeMap,
   RetrieveInfoFromTypeOpts,
   CallerInfo,
   GenTbListFromTypeOpts,
-  DbTables,
-  TbListTagMap,
-  TTableListModel,
+  TTables,
+  KTablesBase,
+  TagsMapArr,
+  LocalTypeItem,
 } from './model'
-import { buildTbListParam, isTsFile, getCallerStack } from './util'
 import {
-  genTbListTagMapFromSymbol,
-  retrieveGenericsIdentifierFromTypeArguments,
+  buildTbListParam,
+  buildTbColListParam,
+  getCallerStack,
+  isTsFile,
+} from './util'
+import {
+  genInfoFromNode,
   matchSourceFileWithFilePath,
   walkNodeWithPosition,
 } from './ts-util'
 import {
   cacheMap as cacheMapTop,
-  // initOptions,
   initGenTbListFromTypeOpts,
   globalCallerFuncNameSet,
 } from './config'
 
 
 /**
- * Generate DbTables from generics type T
+ * Generate KTables from generics type T
  */
-export function genTbListFromType<T extends TTableListModel>(
+export function genTbListFromType<T extends TTables>(
   options?: Partial<GenTbListFromTypeOpts>,
-): DbTables<T> {
+): KTablesBase<T> {
 
   const opts: GenTbListFromTypeOpts = options
     ? { ...initGenTbListFromTypeOpts, ...options }
@@ -51,10 +53,10 @@ export function genTbListFromType<T extends TTableListModel>(
 }
 
 
-export function genTbListFromCaller<T extends TTableListModel>(
+export function genTbListFromCaller<T extends TTables>(
   caller: CallerInfo,
   options: GenTbListFromTypeOpts,
-): DbTables<T> {
+): KTablesBase<T> {
 
   const opts: RetrieveInfoFromTypeOpts = {
     // callerDistance: initOptions.callerDistance,
@@ -63,78 +65,74 @@ export function genTbListFromCaller<T extends TTableListModel>(
     caller,
     cacheMap: cacheMapTop,
   }
+  // "/kmore-mono/packages/kmore-types/test/test.config.ts:13:23"
   const callerId = `${caller.path}:${caller.line}:${caller.column}`
   const localTypeId = opts.cacheMap.callerIdToLocalTypeIdMap.get(callerId)
-  let ret = {} as DbTables<T>
 
-  if (localTypeId) {
-    const tbListTagMap: TbListTagMap | void = opts.cacheMap.localTypeMap.get(localTypeId)
-    if (! tbListTagMap) {
+  if (localTypeId) { // from cache
+    const tagsMapArr: TagsMapArr | void = opts.cacheMap.localTypeMap.get(localTypeId)
+    if (tagsMapArr && tagsMapArr.length) {
+      return buildKTablesBaseFromTagsMapArr(tagsMapArr)
+    }
+    else {
       throw new Error(`cacheMap.localTypeMap not contains key: "${localTypeId}".`)
     }
-    else if (! tbListTagMap.size) {
-      throw new Error(`cacheMap.localTypeMap key: "${localTypeId}" value empty.`)
-    }
-    ret = buildTbListParam<T>(tbListTagMap)
   }
   else {
-    const localTypeMap: LocalTypeMap = retrieveLocalTypeMapFromType(opts)
+    const localTypeItem: LocalTypeItem | void = retrieveLocalTypeItemFromType(opts)
+
+    if (! localTypeItem) {
+      throw new Error(`retrieveLocalTypeMapFromType() return empty with key: "${localTypeId}".`)
+    }
 
     // id is localTypeId
-    // map maybe empty
-    localTypeMap.forEach((map, id) => {
-      opts.cacheMap.callerIdToLocalTypeIdMap.set(callerId, id)
+    // map maybe empty, so try from cache
+    const { localTypeId: id, tagsMapArr } = localTypeItem
 
-      // map can be empty as cached result
-      if (map.size) {
-        opts.cacheMap.localTypeMap.set(id, map)
-        ret = buildTbListParam<T>(map)
+    opts.cacheMap.callerIdToLocalTypeIdMap.set(callerId, id)
+
+    if (tagsMapArr && tagsMapArr[0] && tagsMapArr[0].size) {
+      opts.cacheMap.localTypeMap.set(id, tagsMapArr)
+      return buildKTablesBaseFromTagsMapArr(tagsMapArr)
+    }
+    else { // retrieved only localTypeId, then try from cache
+      const tagsMapArr2 = opts.cacheMap.localTypeMap.get(id)
+      if (! tagsMapArr2) {
+        throw new Error(`cacheMap.localTypeMap not contains key: "${id}" or value empty.`)
       }
-      else {
-        const cMap = opts.cacheMap.localTypeMap.get(id)
-        if (! cMap) {
-          throw new Error(`cacheMap.localTypeMap not contains key: "${id}" or value empty.`)
-        }
-        else if (! cMap.size) {
-          throw new Error(`cacheMap.localTypeMap key: "${id}" value empty.`)
-        }
-        ret = buildTbListParam<T>(cMap)
+      else if (! tagsMapArr2[0].size) {
+        throw new Error(`cacheMap.localTypeMap key: "${id}" value empty.`)
       }
-    })
+      return buildKTablesBaseFromTagsMapArr(tagsMapArr2)
+    }
   }
+}
 
+function buildKTablesBaseFromTagsMapArr<T extends TTables>(
+  tagsMapArr: TagsMapArr,
+): KTablesBase<T> {
+
+  const [tbListTagMap, tbColListTagMap] = tagsMapArr
+  const ret: KTablesBase<T> = {
+    tables: buildTbListParam<T>(tbListTagMap),
+    columns: buildTbColListParam<T>(tbColListTagMap),
+  }
   return ret
 }
 
 
-export function retrieveLocalTypeMapFromType(
+export function retrieveLocalTypeItemFromType(
   options: RetrieveInfoFromTypeOpts,
-): LocalTypeMap {
+): LocalTypeItem | void {
 
-  const { checker, sourceFile } = matchSourceFileWithFilePath(options.caller.path)
+  const { caller } = options
+  const { checker, sourceFile } = matchSourceFileWithFilePath(caller.path)
 
-  if (sourceFile) {
-    const localTypeMap: LocalTypeMap = genGenericsArgMap({
-      ...options,
-      sourceFile,
-      checker,
-    })
-
-    /* istanbul ignore else */
-    if (localTypeMap.size) {
-      return localTypeMap // retrieve succeed
-    }
+  /* istanbul ignore else */
+  if (! sourceFile) {
+    // throw new Error(`Can not retrieve generics type info from file: "${caller.path}"`)
+    return
   }
-
-  // throw new Error(`Can not retrieve generics type info from file: "${caller.path}"`)
-  return new Map()
-}
-
-export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap {
-  const retMap: LocalTypeMap = new Map()
-  const {
-    cacheMap, sourceFile, checker, caller,
-  } = options
 
   const node: CallExpression | void = walkNodeWithPosition({
     sourceFile,
@@ -143,42 +141,33 @@ export function genGenericsArgMap(options: GenGenericsArgMapOpts): LocalTypeMap 
     matchFuncNameSet: globalCallerFuncNameSet,
   })
 
+
   /* istanbul ignore else */
   if (node) {
-    const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
 
-    /* istanbul ignore else */
-    if (typeName && typeName.getText()) {
-      const gType = checker.getTypeAtLocation(typeName)
-      // const symbol = checker.getSymbolAtLocation(typeName)
+    const nodeInfo = genInfoFromNode({
+      checker,
+      node,
+      path: caller.path,
+      sourceFile,
+    })
+    if (nodeInfo) {
+      const { localTypeId, tbTagMap, tbColTagMap } = nodeInfo
 
-      /* istanbul ignore else */
-      if (gType && gType.symbol) {
-        const sym = gType.getSymbol()
-        if (sym) {
-          const inputTypeName = sym.getName()
-          // might be type alias name so we use typdid
-          // const genericsArgName: GenericsArgName = typeName.text
-          // @ts-ignore
-          // const typeid: number = typeof gType.id === 'number' ? gType.id : Math.random()
-          const localTypeId = `${caller.path}:typeid-${inputTypeName}`
-
-          if (retMap.has(localTypeId)) {
-            return retMap
-          }
-          else if (cacheMap.localTypeMap.has(localTypeId)) {
-            retMap.set(localTypeId, new Map()) // empty map, pick from resolved data later.
-          }
-          else {
-            const tagMap = genTbListTagMapFromSymbol(gType.symbol)
-            tagMap.size && retMap.set(localTypeId, tagMap)
-          }
+      if (tbTagMap.size) {
+        // localTypeId: "/kmore-mono/packages/kmore-types/test/test.config.ts:typeid-TbListModel"
+        return {
+          localTypeId,
+          tagsMapArr: [tbTagMap, tbColTagMap],
+        }
+      }
+      else {
+        return {
+          localTypeId, // empty tagsMapArr. will try from resolved cache data later.
         }
       }
     }
   }
-
-  return retMap
 }
 
 

@@ -5,27 +5,29 @@ import {
   getCallerStack,
   genTbListFromType as genTbListFromTypeOri,
   isTsFile,
+  KTablesBase,
   loadVarFromFile,
   reWriteLoadingPath,
 } from 'kmore-types'
 
 import {
   CallerInfo,
-  DbTables,
   Options,
-  TTableListModel,
+  TTables,
+  KTables,
 } from './model'
 import { initOptions } from './config'
+import { genKTablesFromBase } from './scoped-cols-util'
 
 
 /**
- * Generate DbTables from generics type T
+ * Generate KTables from generics type T
  * Loading compiled js file if prod env
  */
-export function genTbListFromType<T extends TTableListModel>(
+export function genTbListFromType<T extends TTables>(
   // options?: Partial<GenTbListFromTypeOpts>,
   options?: Partial<Options>,
-): DbTables<T> {
+): KTables<T> {
 
   const opts = options
     ? { ...initOptions, ...options }
@@ -38,14 +40,16 @@ export function genTbListFromType<T extends TTableListModel>(
     }
   }
   const caller = getCallerStack(opts.callerDistance)
-  const ret = loadTbListParamFromCallerInfo<T>(opts, caller)
-  return ret
+  const base: KTablesBase<T> = loadTbListParamFromCallerInfo<T>(opts, caller)
+  const ktbs = genKTablesFromBase(base)
+
+  return ktbs
 }
 
-export function loadTbListParamFromCallerInfo<T extends TTableListModel>(
+export function loadTbListParamFromCallerInfo<T extends TTables>(
   options: Options,
   caller: CallerInfo,
-): DbTables<T> {
+): KTablesBase<T> {
 
   if (! options.forceLoadTbListJs && isTsFile(caller.path)) {
     return loadTbListFromTsTypeFile<T>(options.callerDistance + 3)
@@ -55,19 +59,19 @@ export function loadTbListParamFromCallerInfo<T extends TTableListModel>(
   }
 }
 
-export function loadTbListFromTsTypeFile<T extends TTableListModel>(
+
+export function loadTbListFromTsTypeFile<T extends TTables>(
   callerDistance: BuildSrcOpts['callerDistance'],
-): DbTables<T> {
+): KTablesBase<T> {
 
   const ret = genTbListFromTypeOri<T>({ callerDistance })
   return ret
 }
 
-
-export function loadTbListFromJsBuiltFile<T extends TTableListModel>(
+export function loadTbListFromJsBuiltFile<T extends TTables>(
   options: Options,
   caller: CallerInfo,
-): DbTables<T> {
+): KTablesBase<T> {
 
   const { outputFileNameSuffix, forceLoadTbListJsPathReplaceRules } = options
 
@@ -76,7 +80,7 @@ export function loadTbListFromJsBuiltFile<T extends TTableListModel>(
 
   accessSync(path, constants.R_OK)
 
-  const ret = loadVarFromFile<T>(path, caller, options)
-  return ret
+  const base = loadVarFromFile<T>({ path, caller, options })
+  return base
 }
 

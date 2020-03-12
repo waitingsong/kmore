@@ -1,5 +1,5 @@
 import { genTbListFromType } from '../../src/lib/compiler'
-import { DbTables, TTableListModel } from '../../src'
+import { KTablesBase, TTables } from '../../src'
 import { User, UserDetail } from '../test.model'
 
 
@@ -12,11 +12,11 @@ export interface UserInfoModel {
 export type TbListModelAlias = UserInfoModel
 
 
-function genFoo<T extends TTableListModel>(): DbTables<T> {
+function genFoo<T extends TTables>(): KTablesBase<T> {
   return genBar<T>()
 }
 
-function genBar<T extends TTableListModel>(): DbTables<T> {
+function genBar<T extends object>(): KTablesBase<T> {
   const tbList = genTbListFromType<T>({
     /**
      * 2: the caller with generics type is up to two level, genFoo() -> fenBar(),

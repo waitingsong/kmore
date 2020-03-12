@@ -15,11 +15,11 @@ describe(filename, () => {
 
   describe('Should validateTables() works', () => {
     it('with valid value', () => {
-      const tbs = { ...tbList }
+      const tbs = { ...tbList.tables }
 
       try {
         validateParamTables(tbs)
-        validateParamTables(tbList)
+        validateParamTables(tbList.tables)
       }
       catch (ex) {
         assert(false, ex)

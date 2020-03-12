@@ -13,7 +13,7 @@ describe(filename, () => {
   let db: DbModel<TbListModel>
 
   before(() => {
-    db = kmore<TbListModel>(config)
+    db = kmore<TbListModel>({ config })
     assert(db.tables && Object.keys(db.tables).length > 0)
   })
 
@@ -22,8 +22,25 @@ describe(filename, () => {
   })
 
   describe('Should inner join table works', () => {
+    it('tb_user join tb_user_detail via scopedColumns', async () => {
+      const { tables: t, rb, scopedColumns: sc } = db
+
+      await rb.tb_user()
+        .select(sc.tb_user.uid, sc.tb_user.name)
+        .innerJoin(
+          t.tb_user_detail,
+          sc.tb_user.uid,
+          sc.tb_user_detail.uid,
+        )
+        .where(sc.tb_user.uid, 1)
+        .then((rows) => {
+          validateUserRows(rows)
+          return rows
+        })
+    })
+
     it('tb_user join tb_user_detail', async () => {
-      const { tables: t, rb } = db
+      const { tables: t, rb, columns: tc } = db
 
       await rb.tb_user()
         .select(`${t.tb_user}.uid`, `${t.tb_user}.name`)
@@ -37,11 +54,6 @@ describe(filename, () => {
           validateUserRows(rows)
           return rows
         })
-        .catch((err: Error) => {
-          assert(false, err.message)
-        })
-
-      return
     })
   })
 

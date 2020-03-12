@@ -18,7 +18,7 @@ describe(filename, () => {
   let db: DbModel<TbListModel>
 
   before(() => {
-    db = kmore<TbListModel>(config)
+    db = kmore<TbListModel>({ config })
     assert(db.tables && Object.keys(db.tables).length > 0)
   })
   after(async () => {
@@ -26,12 +26,12 @@ describe(filename, () => {
   })
 
   describe('Should genTbListFromType() works', () => {
-    it('with noraml type', () => {
+    it('with normal type', () => {
       const { tables, rb } = db
       const ret = genTbListFromType<TbListModel>()
 
-      assert(ret && Object.keys(ret).length === Object.keys(tables).length)
-      Object.keys(ret).forEach((tb) => {
+      assert(ret && Object.keys(ret.tables).length === Object.keys(tables).length)
+      Object.keys(ret.tables).forEach((tb) => {
         assert(typeof tables[tb] === 'string', `Should tables.includes("${tb}")`)
       })
     })
@@ -40,8 +40,8 @@ describe(filename, () => {
       const { tables } = db
       const ret = genTbListFromType<TbListModelAlias>()
 
-      assert(ret && Object.keys(ret).length === Object.keys(tables).length)
-      Object.keys(ret).forEach((tb) => {
+      assert(ret && Object.keys(ret.tables).length === Object.keys(tables).length)
+      Object.keys(ret.tables).forEach((tb) => {
         assert(typeof tables[tb] === 'string', `Should tables.includes("${tb}")`)
       })
     })
@@ -58,7 +58,6 @@ describe(filename, () => {
       })
     })
   })
-
 
 
 })

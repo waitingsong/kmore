@@ -7,7 +7,7 @@ import {
 } from '../src/index'
 import { cacheMap } from '../src/lib/config'
 import { buildTbListParam } from '../src/lib/util'
-import { retrieveLocalTypeMapFromType, genTbListFromType } from '../src/lib/compiler'
+import { retrieveLocalTypeItemFromType } from '../src/lib/compiler'
 
 
 const filename = basename(__filename)
@@ -59,11 +59,9 @@ describe(filename, () => {
         },
       }
 
-      const ret = retrieveLocalTypeMapFromType(opts)
-      assert(ret.size === 1)
-      for (const key of ret.keys()) {
-        assert(key && key.includes(opts.caller.path))
-      }
+      const ret = retrieveLocalTypeItemFromType(opts)
+      assert(ret)
+      assert(ret && ret.localTypeId && ret.localTypeId.includes(opts.caller.path))
     })
 
     it('with fake caller.line', () => {
@@ -78,8 +76,8 @@ describe(filename, () => {
         },
       }
 
-      const ret = retrieveLocalTypeMapFromType(opts)
-      assert(ret && ret.size === 0)
+      const ret = retrieveLocalTypeItemFromType(opts)
+      assert(! ret)
     })
 
     it('with fake callerFuncName', () => {
@@ -94,8 +92,8 @@ describe(filename, () => {
         },
       }
 
-      const ret = retrieveLocalTypeMapFromType(opts)
-      assert(ret && ret.size === 0)
+      const ret = retrieveLocalTypeItemFromType(opts)
+      assert(! ret)
     })
 
 
@@ -111,8 +109,8 @@ describe(filename, () => {
         },
       }
 
-      const ret = retrieveLocalTypeMapFromType(opts)
-      assert(ret && ret.size === 0)
+      const ret = retrieveLocalTypeItemFromType(opts)
+      assert(! ret)
     })
 
     it('with fake caller.path', () => {
@@ -127,8 +125,8 @@ describe(filename, () => {
         },
       }
 
-      const ret = retrieveLocalTypeMapFromType(opts)
-      assert(ret && ret.size === 0)
+      const ret = retrieveLocalTypeItemFromType(opts)
+      assert(! ret)
     })
   })
 

@@ -11,7 +11,7 @@ import { dropTables } from './helper'
 const filename = basename(__filename)
 
 describe(filename, () => {
-  const db = kmore<TbListModel>(config)
+  const db = kmore<TbListModel>({ config })
   assert(db.tables && Object.keys(db.tables).length > 0)
 
   after(async () => {

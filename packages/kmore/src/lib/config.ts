@@ -1,5 +1,7 @@
 
-export { globalCallerFuncNameSet } from 'kmore-types'
+export {
+  globalCallerFuncNameSet, DbPropKeys,
+} from 'kmore-types'
 
 export {
   cacheMap,
@@ -7,12 +9,6 @@ export {
   initGenTbListFromTypeOpts,
   initOptions,
 } from 'kmore-types'
-
-export enum DbPropKeys {
-  'dbh' = 'dbh',
-  'tables' = 'tables',
-  'refTables' = 'rb',
-}
 
 export const defaultPropDescriptor: PropertyDescriptor = {
   configurable: false,

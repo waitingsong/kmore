@@ -14,12 +14,16 @@ import {
   BuildSrcOpts,
   CallerInfo,
   CallerFuncName,
-  DbTables,
+  CallerFuncNameSet,
+  Tables,
+  TableCols,
   FilePath,
+  KTablesBase,
+  LoadVarFromFileOpts,
   Options,
   TbListTagMap,
-  TTableListModel,
-  CallerFuncNameSet,
+  TbColListTagMap,
+  TTables,
 } from './model'
 
 
@@ -166,7 +170,7 @@ export function isTsFile(path: string): boolean {
 
 
 /** Build DbTables from TableListTagMap */
-export function buildTbListParam<T extends TTableListModel>(tagMap: TbListTagMap): DbTables<T> {
+export function buildTbListParam<T extends TTables>(tagMap: TbListTagMap): Tables<T> {
   const ret = createNullObject()
 
   if (tagMap && tagMap.size) {
@@ -183,6 +187,74 @@ export function buildTbListParam<T extends TTableListModel>(tagMap: TbListTagMap
 
   return ret
 }
+
+/** Build DbTableCols from TableColListTagMap */
+export function buildTbColListParam<T extends TTables>(tagMap: TbColListTagMap): TableCols<T> {
+  const ret = createNullObject()
+
+  if (tagMap && tagMap.size) {
+    tagMap.forEach((colListTagMap, tb) => {
+      const cols = createNullObject()
+
+      colListTagMap.forEach((_tags, col) => {
+        Object.defineProperty(cols, col, {
+          ...defaultPropDescriptor,
+          value: col,
+        })
+      })
+
+      Object.defineProperty(ret, tb, {
+        ...defaultPropDescriptor,
+        value: cols,
+      })
+    })
+  }
+  else {
+    throw new TypeError('Value of tagMap invalid.')
+  }
+
+  return ret
+}
+
+/** Build DbTableScopedCols from TableColListTagMap */
+// export function buildTbScopedColListParam<T extends TTables>(
+//   tagMap: TbColListTagMap,
+//   tables: DbTables<T>,
+// ): DbTableScopedCols<T> {
+
+//   const ret = createNullObject()
+//   if (! tables || ! Object.keys(tables).length) {
+//     return ret
+//   }
+
+//   if (tagMap && tagMap.size) {
+//     tagMap.forEach((colListTagMap, tbAlias) => {
+//       const tb = tbAlias as keyof DbTables<T>
+//       if (typeof tables[tb] !== 'string') {
+//         return
+//       }
+//       const tbName = tables[tb]
+//       const cols = createNullObject()
+
+//       colListTagMap.forEach((_tags, colAlias) => {
+//         Object.defineProperty(cols, colAlias, {
+//           ...defaultPropDescriptor,
+//           value: `${tbName}.${colAlias}`,
+//         })
+//       })
+
+//       Object.defineProperty(ret, tbAlias, {
+//         ...defaultPropDescriptor,
+//         value: cols,
+//       })
+//     })
+//   }
+//   else {
+//     throw new TypeError('Value of tagMap invalid.')
+//   }
+
+//   return ret
+// }
 
 export function isCallerNameMatched(
   name: string,
@@ -227,7 +299,7 @@ export function genVarName(
   column: number,
 ): string {
 
-  const varName = `${exportVarPrefix}_${line}_${column}`
+  const varName = `${exportVarPrefix}${line}_${column}`
   return varName
 }
 
@@ -249,17 +321,31 @@ export function reWriteLoadingPath(
 }
 
 
-export function loadVarFromFile<T extends TTableListModel>(
-  path: string,
-  caller: CallerInfo,
-  options: Options,
-): DbTables<T> {
-
-  const varName = genVarName(options.exportVarPrefix, caller.line, caller.column)
+export function loadTableVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): Tables<T> {
+  const kTables = loadVarFromFile<T>(loadOpts)
+  return kTables.tables
+}
+export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): TableCols<T> {
+  const kTables = loadVarFromFile<T>(loadOpts)
+  return kTables.columns
+}
+/**
+ * Load kTables var from a js file
+ */
+export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTablesBase<T> {
+  const { path, caller, options } = loadOpts
+  const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
+  const colVarName = `${tbVarName}${options.exportVarColsSuffix}`
   const mods = loadFile(path)
 
-  if (mods && typeof mods[varName] === 'object') {
-    return mods[varName] as DbTables<T>
+  if (mods && typeof mods[tbVarName] === 'object') {
+    const tables = mods[tbVarName] as Tables<T>
+
+    const columns = typeof mods[colVarName] === 'object'
+      ? mods[colVarName] as TableCols<T>
+      : {} as TableCols<T>
+
+    return { tables, columns }
   }
   throw new TypeError(`Load tables failed, path: "${path}"`)
 }

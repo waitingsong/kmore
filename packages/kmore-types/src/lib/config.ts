@@ -15,7 +15,8 @@ export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
 
 export const initOptions: Options = {
   ...initGenTbListFromTypeOpts,
-  exportVarPrefix: 'tbs',
+  exportVarPrefix: 'tbs_',
+  exportVarColsSuffix: '_cols',
   forceLoadTbListJs: false,
   forceLoadTbListJsPathReplaceRules: null,
   outputBanner: '/* eslint-disable */',
@@ -38,11 +39,13 @@ export const reservedTbListKeys: string[] = [
 export enum DbPropKeys {
   'dbh' = 'dbh',
   'tables' = 'tables',
+  'columns' = 'columns',
+  'scopedColumns' = 'scopedColumns',
   'refTables' = 'rb',
 }
 
 export const defaultPropDescriptor: PropertyDescriptor = {
-  configurable: false,
+  configurable: true,
   enumerable: true,
   writable: false,
 } as const
@@ -51,6 +54,7 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 export const cacheMap: CacheMap = {
   /** CallerId -> TbListParam */
   tbListMap: new Map(),
+  tbColListMap: new Map(),
   /** CallerId -> LocalTypeId */
   callerIdToLocalTypeIdMap: new Map(),
   /** LocalTypeId -> TableListTagMap */

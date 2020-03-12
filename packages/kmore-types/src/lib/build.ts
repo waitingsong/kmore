@@ -3,17 +3,19 @@ import { mergeMap } from 'rxjs/operators'
 import { Observable, defer } from 'rxjs'
 
 import {
-  TTableListModel,
+  TTables,
   FilePath,
-  DbTables,
+  Tables,
   CallerTbListMap,
   BuildSrcOpts,
+  TableCols,
 } from './model'
 import {
   buildTbListParam,
   genTbListTsFilePath,
   genVarName,
   walkDirForCallerFuncTsFiles,
+  buildTbColListParam,
 } from './util'
 import { initBuildSrcOpts, globalCallerFuncNameSet } from './config'
 import {
@@ -47,11 +49,11 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
 
 
 /**
- * Build tables in ts from generics type for specified file
+ * Build tables in ts from generics type for specified ts file
  *
  * @returns file path if src file need parsed
  */
-export async function buildSrcTablesFile<T extends TTableListModel>(
+export async function buildSrcTablesFile<T extends TTables>(
   file: string,
   options: BuildSrcOpts,
 ): Promise<FilePath> {
@@ -61,7 +63,7 @@ export async function buildSrcTablesFile<T extends TTableListModel>(
     ...options,
   }
 
-  const ret: CallerTbListMap<T> = retrieveTypeFromFile<T>(file)
+  const ret: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
   if (ret && ret.size) {
     const path = await saveFile<T>(ret, opts)
     return path.replace(/\\/gu, '/')
@@ -71,7 +73,7 @@ export async function buildSrcTablesFile<T extends TTableListModel>(
   }
 }
 
-function retrieveTypeFromFile<T extends TTableListModel>(
+function retrieveTypeFromTsFile<T extends TTables>(
   file: FilePath,
 ): CallerTbListMap<T> {
 
@@ -86,33 +88,42 @@ function retrieveTypeFromFile<T extends TTableListModel>(
     })
     const callerTypeMap = genCallerTypeMapFromNodeSet(nodeSet, checker, sourceFile, path)
 
-    callerTypeMap.forEach((tagMap, callerTypeId) => {
-      const tbs: DbTables<T> = buildTbListParam<T>(tagMap)
-      ret.set(callerTypeId, tbs)
+    callerTypeMap.forEach(([tbListTagMap, tbColListTagMap], callerTypeId) => {
+      const tbs: Tables<T> = buildTbListParam<T>(tbListTagMap)
+      const tbCols: TableCols<T> = buildTbColListParam<T>(tbColListTagMap)
+      ret.set(callerTypeId, [tbs, tbCols])
     })
   }
 
   return ret
 }
 
-function genTsCodeFromTypes<T extends TTableListModel>(
+function genTsCodeFromTypes<T extends TTables>(
   inputMap: CallerTbListMap<T>,
   options: Required<BuildSrcOpts>,
 ): [FilePath, string] {
 
-  const { exportVarPrefix, outputFileNameSuffix } = options
+  const {
+    exportVarPrefix,
+    exportVarColsSuffix,
+    outputFileNameSuffix,
+  } = options
   let targetPath = ''
   const sourceArr: string[] = []
 
-  inputMap.forEach((arr, key) => {
+  inputMap.forEach(([tbs, tbCols], key) => {
     const { path, line, column } = pickInfoFromCallerTypeId(key)
 
     if (! targetPath) {
       // const relativePath = relative(base, path)
       targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
     }
-    const varName = genVarName(exportVarPrefix, line, column)
-    sourceArr.push(`export const ${varName} = ${JSON.stringify(arr, null, 2)} as const`)
+
+    const tbVarName = genVarName(exportVarPrefix, line, column)
+    const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
+
+    sourceArr.push(`export const ${tbVarName} = ${JSON.stringify(tbs, null, 2)} as const`)
+    sourceArr.push(`export const ${tbColVarName} = ${JSON.stringify(tbCols, null, 2)} as const`)
   })
 
   return [targetPath, sourceArr.join('\n\n')]
@@ -120,7 +131,7 @@ function genTsCodeFromTypes<T extends TTableListModel>(
 
 
 /** Save tables of one file */
-async function saveFile<T extends TTableListModel>(
+async function saveFile<T extends TTables>(
   inputMap: CallerTbListMap<T>,
   options: Required<BuildSrcOpts>,
 ): Promise<FilePath> {

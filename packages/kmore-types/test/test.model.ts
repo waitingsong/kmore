@@ -22,6 +22,7 @@ export interface User {
   uid: number
   name: string
   ctime: Date | 'now()'
+  userName: string
 }
 
 export interface UserDetail {

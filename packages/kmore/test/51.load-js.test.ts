@@ -14,14 +14,16 @@ describe(filename, () => {
 
   before(() => {
     db = kmore<TbListModel>(
-      config,
-      null,
       {
-        // load test/51.load-js.test.__built-tables.js
-        forceLoadTbListJs: true,
-        forceLoadTbListJsPathReplaceRules: [ [/foo\d+/u, '__built-tables'] ],
-        outputFileNameSuffix: 'foo1234',
+        config,
+        options: {
+          // load test/51.load-js.test.__built-tables.js
+          forceLoadTbListJs: true,
+          forceLoadTbListJsPathReplaceRules: [ [/foo\d+/u, '__built-tables'] ],
+          outputFileNameSuffix: 'foo1234',
+        },
       },
+      null,
     )
   })
 
@@ -36,3 +38,4 @@ describe(filename, () => {
   })
 
 })
+

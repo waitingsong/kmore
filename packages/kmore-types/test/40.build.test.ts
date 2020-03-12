@@ -36,13 +36,13 @@ describe(filename, () => {
       return
     })
 
-    it('value array', (done) => {
+    it('value array', async () => {
       const basePath = './test/config'
 
       globalCallerFuncNameSet.delete('genFoo')
 
       // globalCallerFuncNameSet without genFoo yet
-      buildSource({ path: basePath, excludePathKeys: ['config3.ts', 'config31.ts'] })
+      await buildSource({ path: basePath, excludePathKeys: ['config3.ts', 'config31.ts'] })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -51,20 +51,17 @@ describe(filename, () => {
             accessSync(targetPath)
           }),
           mergeMap(rimraf),
-          finalize(done),
         )
-        .subscribe()
-
-      return
+        .toPromise()
     })
   })
 
 
   describe('Should buildSource() works', () => {
-    it('with ./test/config/test.config2.ts', (done) => {
+    it('with ./test/config/test.config2.ts', async () => {
       const basePath = './test/config/test.config2.ts'
 
-      buildSource({ path: basePath })
+      await buildSource({ path: basePath })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -73,25 +70,21 @@ describe(filename, () => {
             accessSync(targetPath)
           }),
           mergeMap(rimraf),
-          finalize(done),
         )
-        .subscribe()
-
-      return
+        .toPromise()
     })
 
-    it('with file ./test/config/test.config3.ts', (done) => {
+    it('with file ./test/config/test.config3.ts', async () => {
       const path = './test/config/test.config3.ts'
 
-      buildSource({ path })
+      await buildSource({ path })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
             assert(! targetPath, 'Should path value empty but NOT: ' + targetPath)
           }),
-          finalize(done),
         )
-        .subscribe()
+        .toPromise()
 
       return
     })
@@ -120,10 +113,10 @@ describe(filename, () => {
       return
     })
 
-    it('with file [./test/config/test.config2.ts]', (done) => {
+    it('with file [./test/config/test.config2.ts]', async () => {
       const path = ['./test/config/test.config2.ts']
 
-      buildSource({ path })
+      await buildSource({ path })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -132,18 +125,16 @@ describe(filename, () => {
             accessSync(targetPath)
           }),
           mergeMap(rimraf),
-          finalize(done),
         )
-        .subscribe()
+        .toPromise()
 
-      return
     })
 
-    it('with opts outputFileNameSuffix', (done) => {
+    it('with opts outputFileNameSuffix', async () => {
       const path = './test/config/test.config2.ts'
       const outputFileNameSuffix = 'foo' + Math.random().toString()
 
-      buildSource({ path, outputFileNameSuffix })
+      await buildSource({ path, outputFileNameSuffix })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -153,19 +144,17 @@ describe(filename, () => {
             accessSync(targetPath)
           }),
           mergeMap(rimraf),
-          finalize(done),
         )
-        .subscribe()
+        .toPromise()
 
-      return
     })
 
-    it('with ./test/config', (done) => {
+    it('with ./test/config', async () => {
       const basePath = './test/config'
 
       globalCallerFuncNameSet.add('genFoo')
       // globalCallerFuncNameSet updated with genFoo
-      buildSource({ path: basePath })
+      await buildSource({ path: basePath })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -176,12 +165,10 @@ describe(filename, () => {
           mergeMap(rimraf),
           finalize(() => {
             globalCallerFuncNameSet.delete('genFoo')
-            done()
           }),
         )
-        .subscribe()
+        .toPromise()
 
-      return
     })
   })
 
@@ -207,12 +194,12 @@ describe(filename, () => {
       return
     })
 
-    it('value 1 for ./test/config/test.config3.ts', (done) => {
+    it('value 1 for ./test/config/test.config3.ts', async () => {
       const basePath = './test/config/test.config3.ts'
 
       globalCallerFuncNameSet.add('genFoo')
       // matched but no output
-      buildSource({ path: basePath, maxScanLines: 1 })
+      await buildSource({ path: basePath, maxScanLines: 1 })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -220,20 +207,17 @@ describe(filename, () => {
           }),
           finalize(() => {
             globalCallerFuncNameSet.delete('genFoo')
-            done()
           }),
         )
-        .subscribe()
-
-      return
+        .toPromise()
     })
 
-    it('value 6 for ./test/config/test.config3.ts', (done) => {
+    it('value 6 for ./test/config/test.config3.ts', async () => {
       const basePath = './test/config/test.config3.ts'
 
       globalCallerFuncNameSet.add('genFoo')
       // matched also output
-      buildSource({ path: basePath, maxScanLines: 6 })
+      await buildSource({ path: basePath, maxScanLines: 6 })
         .pipe(
           defaultIfEmpty(''),
           tap((targetPath) => {
@@ -244,31 +228,25 @@ describe(filename, () => {
           mergeMap(rimraf),
           finalize(() => {
             globalCallerFuncNameSet.delete('genFoo')
-            done()
           }),
         )
-        .subscribe()
-
-      return
+        .toPromise()
     })
   })
 
 
   describe('Should buildSource() works with empty source file', () => {
-    it('emptylines.ts', (done) => {
+    it('emptylines.ts', async () => {
       const basePath = './test/config/emptylines.ts'
 
-      buildSource({ path: basePath })
+      await buildSource({ path: basePath })
         .pipe(
           tap((targetPath) => {
             console.log(`target: "${targetPath}"`)
             assert(! targetPath, 'Should path value empty.')
           }),
-          finalize(done),
         )
-        .subscribe()
-
-      return
+        .toPromise()
     })
   })
 

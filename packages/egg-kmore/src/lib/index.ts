@@ -3,7 +3,7 @@ import * as assert from 'assert'
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Agent, Application } from 'egg'
-import { kmore } from 'kmore'
+import { kmore, TTables, KTables } from 'kmore'
 
 import { ClientOpts } from './model'
 
@@ -14,7 +14,11 @@ export default (app: Application | Agent) => {
   app.addSingleton('kmore', createOneClient)
 }
 
-function createOneClient(clientOpts: ClientOpts, app: Application | Agent) {
+function createOneClient<T extends TTables>(
+  clientOpts: ClientOpts,
+  app: Application | Agent,
+) {
+
   assert(clientOpts.knexConfig, '[egg-kmore] database connect knexConfig empty')
 
   const { connection } = clientOpts.knexConfig
@@ -47,7 +51,12 @@ function createOneClient(clientOpts: ClientOpts, app: Application | Agent) {
     assert(false, '[egg-kmore] database connect config are required on config')
   }
 
-  const client = kmore(clientOpts.knexConfig, clientOpts.tables)
+  const client = kmore<T>(
+    {
+      config: clientOpts.knexConfig,
+    },
+    clientOpts.kTables as KTables<T>,
+  )
 
   if (clientOpts.waitConnected) {
     app.beforeStart(async () => {
@@ -64,3 +73,4 @@ function createOneClient(clientOpts: ClientOpts, app: Application | Agent) {
 
   return client
 }
+

@@ -13,7 +13,7 @@ describe(filename, () => {
   let db: DbModel<TbListModel>
 
   before(() => {
-    db = kmore<TbListModel>(config)
+    db = kmore<TbListModel>({ config })
     assert(db.tables && Object.keys(db.tables).length > 0)
   })
 
