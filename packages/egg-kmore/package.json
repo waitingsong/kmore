@@ -19,9 +19,9 @@
   "bin": {},
   "browser": "",
   "es2015": "",
-  "main": "./index.cjs.js",
-  "module": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
@@ -50,16 +50,12 @@
     "node": ">=10.16.0"
   },
   "files": [
-    "config",
-    "lib",
     "agent.js",
-    "agent.d.ts",
     "app.js",
-    "app.d.ts",
-    "index.js",
-    "index.cjs.js",
-    "index.cjs.js.map",
-    "index.d.ts"
+    "app",
+    "config",
+    "dist",
+    "*.d.ts"
   ],
   "scripts": {
     "build": "npm run tsc && npm run rp",
