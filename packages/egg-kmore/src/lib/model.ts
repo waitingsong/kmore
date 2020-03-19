@@ -6,25 +6,25 @@ import {
 
 
 /** Config of egg-kmore */
-export interface EggKmoreConfig {
+export interface EggKmoreConfig<T extends TTables> {
   /** Start in app worker, Default: true */
   app?: boolean
   /** Start in agent, Default: false */
   agent?: boolean
   default?: Partial<DefaultClientOpts>
-  client?: ClientOpts
-  clients?: MuiltiClientsOpts
+  client?: ClientOpts<T>
+  clients?: MuiltiClientsOpts<T>
 }
 
 export interface DefaultClientOpts {
   waitConnected: boolean
 }
-export interface ClientOpts {
+export interface ClientOpts<T extends TTables> {
   knexConfig: Config
-  kTables: KTables<TTables>
+  kTables: KTables<T>
   waitConnected?: boolean
 }
-export interface MuiltiClientsOpts {
-  [db: string]: ClientOpts
+export interface MuiltiClientsOpts<T extends TTables> {
+  [db: string]: ClientOpts<T>
 }
 

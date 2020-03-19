@@ -3,7 +3,7 @@ import * as assert from 'assert'
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Agent, Application } from 'egg'
-import { kmore, TTables, KTables } from 'kmore'
+import { kmore, TTables } from 'kmore'
 
 import { ClientOpts } from './model'
 
@@ -15,7 +15,7 @@ export default (app: Application | Agent) => {
 }
 
 function createOneClient<T extends TTables>(
-  clientOpts: ClientOpts,
+  clientOpts: ClientOpts<T>,
   app: Application | Agent,
 ) {
 
@@ -55,7 +55,7 @@ function createOneClient<T extends TTables>(
     {
       config: clientOpts.knexConfig,
     },
-    clientOpts.kTables as KTables<T>,
+    clientOpts.kTables,
   )
 
   if (clientOpts.waitConnected) {
