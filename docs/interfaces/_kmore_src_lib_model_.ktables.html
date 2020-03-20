@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RetrieveInfoFromTypeOpts | kmore</title>
+	<title>KTables | kmore</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,24 +52,47 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_kmore_types_src_lib_model_.html">&quot;kmore-types/src/lib/model&quot;</a>
+					<a href="../modules/_kmore_src_lib_model_.html">&quot;kmore/src/lib/model&quot;</a>
 				</li>
 				<li>
-					<a href="_kmore_types_src_lib_model_.retrieveinfofromtypeopts.html">RetrieveInfoFromTypeOpts</a>
+					<a href="_kmore_src_lib_model_.ktables.html">KTables</a>
 				</li>
 			</ul>
-			<h1>Interface RetrieveInfoFromTypeOpts</h1>
+			<h1>Interface KTables&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>K(more)Tables array contains:
+							tables: tables name
+							columns: columns name of the tables
+						scopedColumns: columns name with table prefix of the tables</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">RetrieveInfoFromTypeOpts</span>
+						<span class="tsd-signature-type">KTablesBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">KTables</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -80,8 +103,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.retrieveinfofromtypeopts.html#cachemap" class="tsd-kind-icon">cache<wbr>Map</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.retrieveinfofromtypeopts.html#caller" class="tsd-kind-icon">caller</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.ktables.html#columns" class="tsd-kind-icon">columns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.ktables.html#scopedcolumns" class="tsd-kind-icon">scoped<wbr>Columns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.ktables.html#tables" class="tsd-kind-icon">tables</a></li>
 							</ul>
 						</section>
 					</div>
@@ -89,25 +113,59 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="cachemap" class="tsd-anchor"></a>
-					<h3>cache<wbr>Map</h3>
-					<div class="tsd-signature tsd-kind-icon">cache<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_kmore_types_src_lib_model_.cachemap.html" class="tsd-signature-type">CacheMap</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="columns" class="tsd-anchor"></a>
+					<h3>columns</h3>
+					<div class="tsd-signature tsd-kind-icon">columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tablecols" class="tsd-signature-type">TableCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="_kmore_src_lib_model_.ktables.html">KTables</a>.<a href="_kmore_src_lib_model_.ktables.html#columns">columns</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L215">kmore-types/src/lib/model.ts:215</a></li>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:118</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Columns mapping object, tb_name w/o table prefix</p>
+							<pre><code class="language-json">{
+   tb_alias: { col_alias: &quot;col_name&quot;, ..., }
+}</code></pre>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="caller" class="tsd-anchor"></a>
-					<h3>caller</h3>
-					<div class="tsd-signature tsd-kind-icon">caller<span class="tsd-signature-symbol">:</span> <a href="_kmore_types_src_lib_model_.callerinfo.html" class="tsd-signature-type">CallerInfo</a></div>
+					<a name="scopedcolumns" class="tsd-anchor"></a>
+					<h3>scoped<wbr>Columns</h3>
+					<div class="tsd-signature tsd-kind-icon">scoped<wbr>Columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tablescopedcols" class="tsd-signature-type">TableScopedCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L216">kmore-types/src/lib/model.ts:216</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L67">kmore/src/lib/model.ts:67</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Columns mapping object, column name with table prefix, eg tb_foo.user</p>
+							<pre><code class="language-json">{
+   tb_alias: { col_alias: &quot;table_name.col_name&quot;, ...,}
+}</code></pre>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="tables" class="tsd-anchor"></a>
+					<h3>tables</h3>
+					<div class="tsd-signature tsd-kind-icon">tables<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tables" class="tsd-signature-type">Tables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_kmore_src_lib_model_.ktables.html">KTables</a>.<a href="_kmore_src_lib_model_.ktables.html#tables">tables</a></p>
+						<ul>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:109</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Tables alias/name pairs
+							{ tb_alias: &quot;tb_name&quot; }</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -126,34 +184,64 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_kmore_cli_src_lib_model_.html">&quot;kmore-<wbr>cli/src/lib/model&quot;</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_kmore_types_src_lib_model_.html">&quot;kmore-<wbr>types/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_kmore_src_lib_index_.html">&quot;kmore/src/lib/index&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_kmore_src_lib_model_.html">&quot;kmore/src/lib/model&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_kmore_src_lib_model_.createcolumnnameopts.html" class="tsd-kind-icon">Create<wbr>Column<wbr>Name<wbr>Opts</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_kmore_src_lib_model_.dbmodel.html" class="tsd-kind-icon">Db<wbr>Model</a>
+					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_kmore_types_src_lib_model_.retrieveinfofromtypeopts.html" class="tsd-kind-icon">Retrieve<wbr>Info<wbr>From<wbr>Type<wbr>Opts</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_kmore_src_lib_model_.ktables.html" class="tsd-kind-icon">KTables</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_types_src_lib_model_.retrieveinfofromtypeopts.html#cachemap" class="tsd-kind-icon">cache<wbr>Map</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_kmore_src_lib_model_.ktables.html#columns" class="tsd-kind-icon">columns</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_types_src_lib_model_.retrieveinfofromtypeopts.html#caller" class="tsd-kind-icon">caller</a>
+								<a href="_kmore_src_lib_model_.ktables.html#scopedcolumns" class="tsd-kind-icon">scoped<wbr>Columns</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_kmore_src_lib_model_.ktables.html#tables" class="tsd-kind-icon">tables</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_kmore_src_lib_model_.kmoreopts.html" class="tsd-kind-icon">Kmore<wbr>Opts</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_kmore_src_lib_model_.html#config" class="tsd-kind-icon">Config</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_kmore_src_lib_model_.html#createcolumnnamefn" class="tsd-kind-icon">Create<wbr>Column<wbr>Name<wbr>Fn</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_kmore_src_lib_model_.html#dbrefbuilder" class="tsd-kind-icon">Db<wbr>Ref<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-kind-icon">TTables</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_kmore_src_lib_model_.html#tbquerybuilder" class="tsd-kind-icon">Tb<wbr>Query<wbr>Builder</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

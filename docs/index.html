@@ -52,7 +52,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1> kmore</h1>
+			<h1>kmore</h1>
 		</div>
 	</div>
 </header>
@@ -124,16 +124,18 @@ npm install sqlite3</code></pre>
  *  Initialize db connection and generate type-safe tables accessor (name and builder)
  *  will get
  *    - db.dbh : the connection instance of knex
- *      eg. db.dbh&lt;OtherType&gt;('tb_other').select()
+ *        eg. db.dbh&lt;OtherType&gt;('tb_other').select()
  *    - db.tables : tables name accessor containing table key/value paris
- *    - db.rb : tables builder accessor,   
- *      eg. db.rb.user() =&gt;  Knex.QueryBuilder&lt;{id: number, name: string}&gt;
+ *    - db.columns : table column names accessor containing table key/value paris
+ *    - db.scopedColumns : table column names accessor containing table key/value paris, with table prefix
+ *    - db.rb : tables builder accessor,
+ *        eg. db.rb.user() =&gt;  Knex.QueryBuilder&lt;{id: number, name: string}&gt;
  *  tables will be generated from generics automaitically when passing undefined or null value
  */</span>
-<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;(config)
+<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;({ config })
 <span class="hljs-comment">// or</span>
-<span class="hljs-keyword">const</span> tbList = genTbListFromType&lt;TbListModel&gt;()
-<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;(config, tbList)
+<span class="hljs-keyword">const</span> kTables = genTbListFromType&lt;TbListModel&gt;()
+<span class="hljs-keyword">const</span> db = kmore&lt;TbListModel&gt;({ config }, kTables)
 </code></pre>
 				<a href="#create-tables-with-instance-of-knex" id="create-tables-with-instance-of-knex" style="color: inherit; text-decoration: none;">
 					<h3>Create tables with instance of knex</h3>
@@ -179,22 +181,22 @@ npm install sqlite3</code></pre>
 				<a href="#join-tables" id="join-tables" style="color: inherit; text-decoration: none;">
 					<h3>Join tables</h3>
 				</a>
-				<pre><code class="language-ts"><span class="hljs-keyword">const</span> { tables: t, rb } = db
+				<pre><code class="language-ts"><span class="hljs-keyword">const</span> { tables: t, rb, scopedColumns: sc } = db
 
-<span class="hljs-keyword">await</span> rb.tb_user()
-  .select(<span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>, <span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.name`</span>)
+<span class="hljs-keyword">await</span> rb.tb_user&lt;UserDetail&gt;()
+  .select()
   .innerJoin(
     t.tb_user_detail,
-    <span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>,
-    <span class="hljs-string">`<span class="hljs-subst">${t.tb_user_detail}</span>.uid`</span>,
+    sc.tb_user.uid,
+    sc.tb_user_detail.uid,
   )
-  .where(<span class="hljs-string">`<span class="hljs-subst">${t.tb_user}</span>.uid`</span>, <span class="hljs-number">1</span>)
+  .where(sc.tb_user.uid, <span class="hljs-number">1</span>)
   .then(<span class="hljs-function">(<span class="hljs-params">rows</span>) =&gt;</span> {
-    assert(rows &amp;&amp; rows.length === <span class="hljs-number">1</span> &amp;&amp; rows[<span class="hljs-number">0</span>].uid === <span class="hljs-number">1</span>)
+    <span class="hljs-keyword">const</span> [row] = rows
+    assert(row &amp;&amp; row.uid)
+    assert(row &amp;&amp; row.name)
+    assert(row &amp;&amp; row.age)
     <span class="hljs-keyword">return</span> rows
-  })
-  .catch(<span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">Error</span></span>) =&gt;</span> {
-    assert(<span class="hljs-literal">false</span>, err.message)
   })</code></pre>
 				<a href="#use-instance-of-knex" id="use-instance-of-knex" style="color: inherit; text-decoration: none;">
 					<h3>Use instance of knex</h3>
@@ -269,28 +271,22 @@ npm install sqlite3</code></pre>
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_egg_kmore_src_lib_index_.html">"egg-<wbr>kmore/src/lib/index"</a>
+						<a href="modules/_egg_kmore_src_lib_model_.html">&quot;egg-<wbr>kmore/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_egg_kmore_src_lib_model_.html">"egg-<wbr>kmore/src/lib/model"</a>
+						<a href="modules/_kmore_cli_src_lib_index_.html">&quot;kmore-<wbr>cli/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_kmore_cli_src_lib_index_.html">"kmore-<wbr>cli/src/lib/index"</a>
+						<a href="modules/_kmore_cli_src_lib_model_.html">&quot;kmore-<wbr>cli/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_kmore_cli_src_lib_model_.html">"kmore-<wbr>cli/src/lib/model"</a>
+						<a href="modules/_kmore_types_src_lib_model_.html">&quot;kmore-<wbr>types/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_kmore_types_src_lib_index_.html">"kmore-<wbr>types/src/lib/index"</a>
+						<a href="modules/_kmore_src_lib_index_.html">&quot;kmore/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_kmore_types_src_lib_model_.html">"kmore-<wbr>types/src/lib/model"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_kmore_src_lib_index_.html">"kmore/src/lib/index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_kmore_src_lib_model_.html">"kmore/src/lib/model"</a>
+						<a href="modules/_kmore_src_lib_model_.html">&quot;kmore/src/lib/model&quot;</a>
 					</li>
 				</ul>
 			</nav>

@@ -58,13 +58,21 @@
 					<a href="_egg_kmore_src_lib_model_.clientopts.html">ClientOpts</a>
 				</li>
 			</ul>
-			<h1>Interface ClientOpts</h1>
+			<h1>Interface ClientOpts&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -80,8 +88,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_egg_kmore_src_lib_model_.clientopts.html#ktables" class="tsd-kind-icon">k<wbr>Tables</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_egg_kmore_src_lib_model_.clientopts.html#knexconfig" class="tsd-kind-icon">knex<wbr>Config</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_egg_kmore_src_lib_model_.clientopts.html#tables" class="tsd-kind-icon">tables</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_egg_kmore_src_lib_model_.clientopts.html#waitconnected" class="tsd-kind-icon">wait<wbr>Connected</a></li>
 							</ul>
 						</section>
@@ -90,6 +98,16 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ktables" class="tsd-anchor"></a>
+					<h3>k<wbr>Tables</h3>
+					<div class="tsd-signature tsd-kind-icon">k<wbr>Tables<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KTables</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/egg-kmore/src/lib/model.ts#L24">egg-kmore/src/lib/model.ts:24</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="knexconfig" class="tsd-anchor"></a>
 					<h3>knex<wbr>Config</h3>
@@ -101,19 +119,9 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tables" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> tables</h3>
-					<div class="tsd-signature tsd-kind-icon">tables<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_src_lib_model_.html#dbtables" class="tsd-signature-type">DbTables</a><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-signature-type">TTableListModel</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/egg-kmore/src/lib/model.ts#L24">egg-kmore/src/lib/model.ts:24</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="waitconnected" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wait<wbr>Connected</h3>
-					<div class="tsd-signature tsd-kind-icon">wait<wbr>Connected<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<div class="tsd-signature tsd-kind-icon">wait<wbr>Connected<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/egg-kmore/src/lib/model.ts#L25">egg-kmore/src/lib/model.ts:25</a></li>
@@ -128,29 +136,23 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_egg_kmore_src_lib_index_.html">"egg-<wbr>kmore/src/lib/index"</a>
-					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_egg_kmore_src_lib_model_.html">"egg-<wbr>kmore/src/lib/model"</a>
+						<a href="../modules/_egg_kmore_src_lib_model_.html">&quot;egg-<wbr>kmore/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_cli_src_lib_index_.html">"kmore-<wbr>cli/src/lib/index"</a>
+						<a href="../modules/_kmore_cli_src_lib_index_.html">&quot;kmore-<wbr>cli/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_cli_src_lib_model_.html">"kmore-<wbr>cli/src/lib/model"</a>
+						<a href="../modules/_kmore_cli_src_lib_model_.html">&quot;kmore-<wbr>cli/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_types_src_lib_index_.html">"kmore-<wbr>types/src/lib/index"</a>
+						<a href="../modules/_kmore_types_src_lib_model_.html">&quot;kmore-<wbr>types/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_types_src_lib_model_.html">"kmore-<wbr>types/src/lib/model"</a>
+						<a href="../modules/_kmore_src_lib_index_.html">&quot;kmore/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_src_lib_index_.html">"kmore/src/lib/index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_src_lib_model_.html">"kmore/src/lib/model"</a>
+						<a href="../modules/_kmore_src_lib_model_.html">&quot;kmore/src/lib/model&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -158,14 +160,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_egg_kmore_src_lib_model_.clientopts.html" class="tsd-kind-icon">Client<wbr>Opts</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_egg_kmore_src_lib_model_.clientopts.html#knexconfig" class="tsd-kind-icon">knex<wbr>Config</a>
+								<a href="_egg_kmore_src_lib_model_.clientopts.html#ktables" class="tsd-kind-icon">k<wbr>Tables</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_egg_kmore_src_lib_model_.clientopts.html#tables" class="tsd-kind-icon">tables</a>
+								<a href="_egg_kmore_src_lib_model_.clientopts.html#knexconfig" class="tsd-kind-icon">knex<wbr>Config</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_egg_kmore_src_lib_model_.clientopts.html#waitconnected" class="tsd-kind-icon">wait<wbr>Connected</a>
@@ -177,10 +179,10 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_egg_kmore_src_lib_model_.defaultclientopts.html" class="tsd-kind-icon">Default<wbr>Client<wbr>Opts</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_egg_kmore_src_lib_model_.eggkmoreconfig.html" class="tsd-kind-icon">Egg<wbr>Kmore<wbr>Config</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_egg_kmore_src_lib_model_.muilticlientsopts.html" class="tsd-kind-icon">Muilti<wbr>Clients<wbr>Opts</a>
 					</li>
 				</ul>

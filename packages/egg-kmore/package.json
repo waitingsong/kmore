@@ -13,6 +13,7 @@
     "egg-plugin",
     "knex",
     "kmore",
+    "typed knex",
     "typescript",
     "ts"
   ],

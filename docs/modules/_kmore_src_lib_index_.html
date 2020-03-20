@@ -81,13 +81,13 @@
 					<a name="kmore" class="tsd-anchor"></a>
 					<h3>kmore</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">kmore&lt;T&gt;<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Config</span>, tables<span class="tsd-signature-symbol">?: </span><a href="_kmore_src_lib_model_.html#dbtables" class="tsd-signature-type">DbTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.dbmodel.html" class="tsd-signature-type">DbModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">kmore&lt;T&gt;<span class="tsd-signature-symbol">(</span>kmoreOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.kmoreopts.html" class="tsd-signature-type">KmoreOpts</a>, kTables<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">KTablesBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_kmore_src_lib_model_.ktables.html" class="tsd-signature-type">KTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.dbmodel.html" class="tsd-signature-type">DbModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/index.ts#L28">kmore/src/lib/index.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/index.ts#L27">kmore/src/lib/index.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -103,6 +103,8 @@
 											<li>db.dbh : the connection instance of knex
 											eg. db.dbh<OtherType>(&#39;tb_other&#39;).select()</li>
 											<li>db.tables : tables name accessor containing table key/value paris</li>
+											<li>db.columns : table column names accessor containing table key/value paris</li>
+											<li>db.scopedColumns : table column names accessor containing table key/value paris, with table prefix</li>
 											<li>db.rb : tables builder accessor,
 												eg. db.rb.user() =&gt;  Knex.QueryBuilder&lt;{id: number, name: string}&gt;
 											tables will be generated from generics automaitically when passing undefined or null value</li>
@@ -113,19 +115,16 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T<span class="tsd-signature-symbol">: </span><a href="_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-signature-type">TTableListModel</a></h4>
+									<h4>T<span class="tsd-signature-symbol">: </span><a href="_kmore_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <span class="tsd-signature-type">Config</span></h5>
+									<h5>kmoreOpts: <a href="../interfaces/_kmore_src_lib_model_.kmoreopts.html" class="tsd-signature-type">KmoreOpts</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> tables: <a href="_kmore_src_lib_model_.html#dbtables" class="tsd-signature-type">DbTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Options</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> kTables: <span class="tsd-signature-type">KTablesBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_kmore_src_lib_model_.ktables.html" class="tsd-signature-type">KTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_kmore_src_lib_model_.dbmodel.html" class="tsd-signature-type">DbModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -141,28 +140,22 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_egg_kmore_src_lib_index_.html">"egg-<wbr>kmore/src/lib/index"</a>
+						<a href="_egg_kmore_src_lib_model_.html">&quot;egg-<wbr>kmore/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_egg_kmore_src_lib_model_.html">"egg-<wbr>kmore/src/lib/model"</a>
+						<a href="_kmore_cli_src_lib_index_.html">&quot;kmore-<wbr>cli/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_kmore_cli_src_lib_index_.html">"kmore-<wbr>cli/src/lib/index"</a>
+						<a href="_kmore_cli_src_lib_model_.html">&quot;kmore-<wbr>cli/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_kmore_cli_src_lib_model_.html">"kmore-<wbr>cli/src/lib/model"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_kmore_types_src_lib_index_.html">"kmore-<wbr>types/src/lib/index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_kmore_types_src_lib_model_.html">"kmore-<wbr>types/src/lib/model"</a>
+						<a href="_kmore_types_src_lib_model_.html">&quot;kmore-<wbr>types/src/lib/model&quot;</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="_kmore_src_lib_index_.html">"kmore/src/lib/index"</a>
+						<a href="_kmore_src_lib_index_.html">&quot;kmore/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_kmore_src_lib_model_.html">"kmore/src/lib/model"</a>
+						<a href="_kmore_src_lib_model_.html">&quot;kmore/src/lib/model&quot;</a>
 					</li>
 				</ul>
 			</nav>

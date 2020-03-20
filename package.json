@@ -1,7 +1,7 @@
 {
   "name": "kmore",
   "version": "1.0.0",
-  "description": "A Knex little more factory of SQL query builder, with auto-generated type-safe tables accessor for Node.js",
+  "description": "A Knex little more typed factory of SQL query builder powed by TypeScript, with auto-generated type-safe tables accessor for Node.js",
   "private": true,
   "devDependencies": {
     "@commitlint/cli": "8",

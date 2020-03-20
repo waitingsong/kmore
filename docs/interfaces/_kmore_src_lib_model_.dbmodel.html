@@ -84,7 +84,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-signature-type">TTableListModel</a></h4>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
 					</li>
 				</ul>
 			</section>
@@ -103,9 +103,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#dbh" class="tsd-kind-icon">dbh</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#rb" class="tsd-kind-icon">rb</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#tables" class="tsd-kind-icon">tables</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_columns_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.columns]</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_dbh_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.dbh]</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_reftables_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.ref<wbr>Tables]</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_scopedcolumns_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.scoped<wbr>Columns]</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_tables_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.tables]</a></li>
 							</ul>
 						</section>
 					</div>
@@ -114,34 +116,69 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="dbh" class="tsd-anchor"></a>
-					<h3>dbh</h3>
-					<div class="tsd-signature tsd-kind-icon">dbh<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Knex</span></div>
+					<a name="_dbpropkeys_columns_" class="tsd-anchor"></a>
+					<h3>[<wbr>DbProp<wbr>Keys.columns]</h3>
+					<div class="tsd-signature tsd-kind-icon">[<wbr>DbProp<wbr>Keys.columns]<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tablecols" class="tsd-signature-type">TableCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L51">kmore/src/lib/model.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L88">kmore/src/lib/model.ts:88</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>columns.tb_foo.ctime output col name, eg. <code>ctime</code></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="_dbpropkeys_dbh_" class="tsd-anchor"></a>
+					<h3>[<wbr>DbProp<wbr>Keys.dbh]</h3>
+					<div class="tsd-signature tsd-kind-icon">[<wbr>DbProp<wbr>Keys.dbh]<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Knex</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L84">kmore/src/lib/model.ts:84</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="rb" class="tsd-anchor"></a>
-					<h3>rb</h3>
-					<div class="tsd-signature tsd-kind-icon">rb<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_src_lib_model_.html#dbrefbuilder" class="tsd-signature-type">DbRefBuilder</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="_dbpropkeys_reftables_" class="tsd-anchor"></a>
+					<h3>[<wbr>DbProp<wbr>Keys.ref<wbr>Tables]</h3>
+					<div class="tsd-signature tsd-kind-icon">[<wbr>DbProp<wbr>Keys.ref<wbr>Tables]<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_src_lib_model_.html#dbrefbuilder" class="tsd-signature-type">DbRefBuilder</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L53">kmore/src/lib/model.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L91">kmore/src/lib/model.ts:91</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tables" class="tsd-anchor"></a>
-					<h3>tables</h3>
-					<div class="tsd-signature tsd-kind-icon">tables<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_src_lib_model_.html#dbtables" class="tsd-signature-type">DbTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="_dbpropkeys_scopedcolumns_" class="tsd-anchor"></a>
+					<h3>[<wbr>DbProp<wbr>Keys.scoped<wbr>Columns]</h3>
+					<div class="tsd-signature tsd-kind-icon">[<wbr>DbProp<wbr>Keys.scoped<wbr>Columns]<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tablescopedcols" class="tsd-signature-type">TableScopedCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L52">kmore/src/lib/model.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L90">kmore/src/lib/model.ts:90</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>scopedColumns.tb_foo.ctime output col name with table prefix, eg. <code>tb_foo.ctime</code></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="_dbpropkeys_tables_" class="tsd-anchor"></a>
+					<h3>[<wbr>DbProp<wbr>Keys.tables]</h3>
+					<div class="tsd-signature tsd-kind-icon">[<wbr>DbProp<wbr>Keys.tables]<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tables" class="tsd-signature-type">Tables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L86">kmore/src/lib/model.ts:86</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>tables.tb_foo output table name of tb_foo</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -152,65 +189,74 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_egg_kmore_src_lib_index_.html">"egg-<wbr>kmore/src/lib/index"</a>
+						<a href="../modules/_egg_kmore_src_lib_model_.html">&quot;egg-<wbr>kmore/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_egg_kmore_src_lib_model_.html">"egg-<wbr>kmore/src/lib/model"</a>
+						<a href="../modules/_kmore_cli_src_lib_index_.html">&quot;kmore-<wbr>cli/src/lib/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_cli_src_lib_index_.html">"kmore-<wbr>cli/src/lib/index"</a>
+						<a href="../modules/_kmore_cli_src_lib_model_.html">&quot;kmore-<wbr>cli/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_cli_src_lib_model_.html">"kmore-<wbr>cli/src/lib/model"</a>
+						<a href="../modules/_kmore_types_src_lib_model_.html">&quot;kmore-<wbr>types/src/lib/model&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_types_src_lib_index_.html">"kmore-<wbr>types/src/lib/index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_types_src_lib_model_.html">"kmore-<wbr>types/src/lib/model"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_kmore_src_lib_index_.html">"kmore/src/lib/index"</a>
+						<a href="../modules/_kmore_src_lib_index_.html">&quot;kmore/src/lib/index&quot;</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_kmore_src_lib_model_.html">"kmore/src/lib/model"</a>
+						<a href="../modules/_kmore_src_lib_model_.html">&quot;kmore/src/lib/model&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_kmore_src_lib_model_.createcolumnnameopts.html" class="tsd-kind-icon">Create<wbr>Column<wbr>Name<wbr>Opts</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_kmore_src_lib_model_.dbmodel.html" class="tsd-kind-icon">Db<wbr>Model</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_src_lib_model_.dbmodel.html#dbh" class="tsd-kind-icon">dbh</a>
+								<a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_columns_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.columns]</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_src_lib_model_.dbmodel.html#rb" class="tsd-kind-icon">rb</a>
+								<a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_dbh_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.dbh]</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_src_lib_model_.dbmodel.html#tables" class="tsd-kind-icon">tables</a>
+								<a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_reftables_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.ref<wbr>Tables]</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_scopedcolumns_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.scoped<wbr>Columns]</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_src_lib_model_.dbmodel.html#_dbpropkeys_tables_" class="tsd-kind-icon">[<wbr>DbProp<wbr>Keys.tables]</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_kmore_src_lib_model_.ktables.html" class="tsd-kind-icon">KTables</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_kmore_src_lib_model_.emptytblist.html" class="tsd-kind-icon">Empty<wbr>TbList</a>
+						<a href="_kmore_src_lib_model_.kmoreopts.html" class="tsd-kind-icon">Kmore<wbr>Opts</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_kmore_src_lib_model_.html#config" class="tsd-kind-icon">Config</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_kmore_src_lib_model_.html#createcolumnnamefn" class="tsd-kind-icon">Create<wbr>Column<wbr>Name<wbr>Fn</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_kmore_src_lib_model_.html#dbrefbuilder" class="tsd-kind-icon">Db<wbr>Ref<wbr>Builder</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../modules/_kmore_src_lib_model_.html#dbtables" class="tsd-kind-icon">Db<wbr>Tables</a>
-					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-kind-icon">TTables</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_kmore_src_lib_model_.html#tbquerybuilder" class="tsd-kind-icon">Tb<wbr>Query<wbr>Builder</a>
