@@ -1,7 +1,7 @@
 {
   "name": "kmore",
   "author": "waiting",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "A Knex little more typed factory of SQL query builder powed by TypeScript, with auto-generated type-safe tables accessor for Node.js",
   "keywords": [
     "knex",
@@ -34,7 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "@waiting/shared-types": "3",
-    "kmore-types": "^0.14.0"
+    "kmore-types": "^0.15.0"
   },
   "devDependencies": {
     "@waiting/shared-core": "3",
