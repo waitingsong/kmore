@@ -64,16 +64,18 @@ export interface UserDetail {
  *  Initialize db connection and generate type-safe tables accessor (name and builder)
  *  will get
  *    - db.dbh : the connection instance of knex
- *      eg. db.dbh<OtherType>('tb_other').select()
+ *        eg. db.dbh<OtherType>('tb_other').select()
  *    - db.tables : tables name accessor containing table key/value paris
- *    - db.rb : tables builder accessor,   
- *      eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
+ *    - db.columns : table column names accessor containing table key/value paris
+ *    - db.scopedColumns : table column names accessor containing table key/value paris, with table prefix
+ *    - db.rb : tables builder accessor,
+ *        eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
  *  tables will be generated from generics automaitically when passing undefined or null value
  */
-const db = kmore<TbListModel>(config)
+const db = kmore<TbListModel>({ config })
 // or
-const tbList = genTbListFromType<TbListModel>()
-const db = kmore<TbListModel>(config, tbList)
+const kTables = genTbListFromType<TbListModel>()
+const db = kmore<TbListModel>({ config }, kTables)
 
 ```
 
@@ -122,22 +124,22 @@ await tb_user_detail()
 
 ### Join tables
 ```ts
-const { tables: t, rb } = db
+const { tables: t, rb, scopedColumns: sc } = db
 
-await rb.tb_user()
-  .select(`${t.tb_user}.uid`, `${t.tb_user}.name`)
+await rb.tb_user<UserDetail>()
+  .select()
   .innerJoin(
     t.tb_user_detail,
-    `${t.tb_user}.uid`,
-    `${t.tb_user_detail}.uid`,
+    sc.tb_user.uid,
+    sc.tb_user_detail.uid,
   )
-  .where(`${t.tb_user}.uid`, 1)
+  .where(sc.tb_user.uid, 1)
   .then((rows) => {
-    assert(rows && rows.length === 1 && rows[0].uid === 1)
+    const [row] = rows
+    assert(row && row.uid)
+    assert(row && row.name)
+    assert(row && row.age)
     return rows
-  })
-  .catch((err: Error) => {
-    assert(false, err.message)
   })
 ```
 
