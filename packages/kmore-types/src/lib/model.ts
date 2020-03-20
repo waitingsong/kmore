@@ -5,7 +5,7 @@ import {
   SourceFile,
   TypeChecker,
 } from 'typescript'
-import { JsonType } from '@waiting/shared-types'
+import { JsonType, Spread } from '@waiting/shared-types'
 
 
 export interface Options extends GenTbListFromTypeOpts {
@@ -263,4 +263,6 @@ export interface LoadVarFromFileOpts {
   caller: CallerInfo
   options: Options
 }
+
+export type JointTable<L, R, KeyExcludeOptional = void> = Spread<L, R, KeyExcludeOptional>
 

@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as Knex from 'knex'
 import {
+  JointTable,
   Tables,
   TableCols,
   TableScopedCols,
@@ -99,7 +100,10 @@ export type DbRefBuilder<T> = {
   /** tbName: () => knex('tb_name') */
   [key in keyof T]: TbQueryBuilder<T[key], T[key][]>
 }
-export type TbQueryBuilder<TRecord, TResult = TRecord[]> = () => Knex.QueryBuilder<TRecord, TResult>
+export type TbQueryBuilder<TRecord, TResult = TRecord[]>
+  = <R = void, KeyExcludeOptional = void>() => R extends TTables
+    ? Knex.QueryBuilder<JointTable<TRecord, R, KeyExcludeOptional>, JointTable<TRecord, R, KeyExcludeOptional>[]>
+    : Knex.QueryBuilder<TRecord, TResult>
 
 
 export type CreateColumnNameFn = (options: CreateColumnNameOpts) => string
