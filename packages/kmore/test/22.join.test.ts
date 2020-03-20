@@ -40,7 +40,7 @@ describe(filename, () => {
     })
 
     it('tb_user join tb_user_detail', async () => {
-      const { tables: t, rb, columns: tc } = db
+      const { tables: t, rb } = db
 
       await rb.tb_user()
         .select(`${t.tb_user}.uid`, `${t.tb_user}.name`)
