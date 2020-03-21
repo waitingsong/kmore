@@ -27,6 +27,16 @@ npm install sqlite3
 
 ## 使用
 
+### Build configuration:
+Ensure `sourceMap` or `inlineSourceMap` is true in the tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "sourceMap": true
+  },
+}
+```
+
 ### 创建数据库连接
 ```ts
 import { Config } from 'kmore'
