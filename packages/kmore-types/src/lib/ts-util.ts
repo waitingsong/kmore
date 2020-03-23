@@ -92,40 +92,44 @@ export function genInfoFromNode(
     node, checker, sourceFile, path,
   } = options
 
-  const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
+  if (! node.typeArguments || ! node.typeArguments[0]) {
+    return
+  }
+
+  // const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
+  // if (typeName && typeName.getText()) {
+  //   const gType = checker.getTypeAtLocation(typeName)
+  // }
+  const gType = checker.getTypeFromTypeNode(node.typeArguments[0])
+  // const props = checker.getPropertiesOfType(type2)
 
   /* istanbul ignore else */
-  if (typeName && typeName.getText()) {
-    const gType = checker.getTypeAtLocation(typeName)
+  if (gType && gType.symbol) {
+    const sym = gType.getSymbol()
+    if (! sym) {
+      return
+    }
 
+    const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
+
+    const inputTypeName = sym.getName()
+    // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
+    const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
+
+    // @ts-ignore
+    // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
+    // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
+    // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
+    const localTypeId = `${path}:typeid-${inputTypeName}`
+
+    const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(gType.symbol, checker)
     /* istanbul ignore else */
-    if (gType && gType.symbol) {
-      const sym = gType.getSymbol()
-      if (! sym) {
-        return
-      }
-
-      const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
-
-      const inputTypeName = sym.getName()
-      // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
-      const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
-
-      // @ts-ignore
-      // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
-      // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
-      // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
-      const localTypeId = `${path}:typeid-${inputTypeName}`
-
-      const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(gType.symbol, checker)
-      /* istanbul ignore else */
-      if (tbTagMap.size) {
-        return {
-          callerTypeId,
-          localTypeId,
-          tbTagMap,
-          tbColTagMap,
-        }
+    if (tbTagMap.size) {
+      return {
+        callerTypeId,
+        localTypeId,
+        tbTagMap,
+        tbColTagMap,
       }
     }
   }
@@ -211,16 +215,16 @@ function retrieveInfoFromSymbolObject(symbol: TsSymbol): {name: string, tags: JS
 }
 
 
-function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
-  /* istanbul ignore else */
-  if (! node.typeArguments || node.typeArguments.length !== 1) {
-    return
-  }
-  const [typeNode] = node.typeArguments
-  // @ts-ignore
-  return typeNode.typeName
-}
-
+// function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
+//   /* istanbul ignore else */
+//   if (! node.typeArguments || node.typeArguments.length !== 1) {
+//     return
+//   }
+//   // typeNode TypeReference = 169
+//   const [typeNode] = node.typeArguments
+//   // @ts-ignore
+//   return typeNode.typeName
+// }
 
 
 export function matchSourceFileWithFilePath(
