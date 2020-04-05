@@ -8,6 +8,7 @@
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![](https://img.shields.io/badge/lang-TypeScript-blue.svg)
+[![Node CI](https://github.com/waitingsong/kmore/workflows/Node%20CI/badge.svg)](https://github.com/waitingsong/kmore/actions)
 [![Build Status](https://travis-ci.org/waitingsong/kmore.svg?branch=master)](https://travis-ci.org/waitingsong/kmore)
 [![Build status](https://ci.appveyor.com/api/projects/status/nkseik96p23fcvpm/branch/master?svg=true)](https://ci.appveyor.com/project/waitingsong/kmore/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/waitingsong/kmore/badge.svg?branch=master)](https://coveralls.io/github/waitingsong/kmore?branch=master)
