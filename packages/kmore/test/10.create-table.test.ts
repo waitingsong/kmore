@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore } from '../src/index'
+import { kmore, DbModel } from '../src/index'
 
 import { config } from './test.config'
 import { TbListModel } from './test.model'
@@ -11,7 +11,7 @@ import { dropTables } from './helper'
 const filename = basename(__filename)
 
 describe(filename, () => {
-  const db = kmore<TbListModel>({ config })
+  const db: DbModel<TbListModel> = kmore<TbListModel>({ config })
 
   before(async () => {
     assert(db.tables && Object.keys(db.tables).length > 0)
