@@ -31,42 +31,43 @@ export function genKTablesFromBase<T extends TTables>(
   }
 
   const colsNew: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
-
   const ktbs: KTables<T> = {
     columns: colsNew,
     tables: kTablesBase.tables,
-    scopedColumns: new Proxy(kTablesBase.columns, {
-      get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
-        // eslint-disable-next-line no-console
-        // console.log(`getting ${tbAlias.toString()}`)
-
-        // @ts-ignore
-        if (typeof target[tbAlias] === 'object' && target[tbAlias] !== null) {
-          // @ts-ignore
-          const columns = target[tbAlias] as Columns<T>
-
-          const cachedCols = getScopedColumnsColsCache(columns, tbAlias)
-          /* istanbul ignore else */
-          if (cachedCols) {
-            return cachedCols
-          }
-
-          const scopedCols = createScopedColumns(columns, createColumnNameFn)
-          setScopedColumnsColsCache(columns, tbAlias, scopedCols)
-
-          return scopedCols
-        }
-        else {
-          const data = Reflect.get(target, tbAlias, receiver)
-          return data
-        }
-      },
-      set() {
-        return false
-        // return Reflect.set(target, propKey, value, receiver)
-      },
-    }),
+    scopedColumns: {} as MultiTableCols<T>,
   }
+
+  ktbs.scopedColumns = new Proxy(kTablesBase.columns, {
+    get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
+      // eslint-disable-next-line no-console
+      // console.log(`getting ${tbAlias.toString()}`)
+
+      // @ts-ignore
+      if (typeof target[tbAlias] === 'object' && target[tbAlias] !== null) {
+        // @ts-ignore
+        const columns = target[tbAlias] as Columns<T>
+
+        const cachedCols = getScopedColumnsColsCache(columns, tbAlias)
+        /* istanbul ignore else */
+        if (cachedCols) {
+          return cachedCols
+        }
+
+        const scopedCols = createScopedColumns(columns, createColumnNameFn)
+        setScopedColumnsColsCache(columns, tbAlias, scopedCols)
+
+        return scopedCols
+      }
+      else {
+        const data = Reflect.get(target, tbAlias, receiver)
+        return data
+      }
+    },
+    set() {
+      return false
+      // return Reflect.set(target, propKey, value, receiver)
+    },
+  })
 
   return ktbs
 }
@@ -78,7 +79,7 @@ function genColumnsWithExtProps<T extends TTables>(
   const ret = {} as KTablesBase<T>['columns']
   const props = {
     configurable: false,
-    enumerable: false,
+    enumerable: true,
     writable: false,
   }
 
