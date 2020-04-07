@@ -1,6 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
-import { validateParamTables, createNullObject, MultiTableCols, KTablesBase } from 'kmore-types'
+import {
+  validateParamTables,
+  createNullObject,
+  KTablesBase,
+} from 'kmore-types'
 
 import { DbPropKeys } from './config'
 import { DbModel, DbRefBuilder, Options, TTables, KTables } from './model'
@@ -59,22 +63,22 @@ export function bindTablesCols<T extends TTables>(
   const key = DbPropKeys.columns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: {},
+    value: kTables && kTables.columns ? kTables.columns : {},
   })
 
-  if (kTables && kTables.columns && Object.keys(kTables.columns).length) {
-    Object.entries(kTables.columns).forEach((row) => {
-      // eslint-disable-next-line prefer-destructuring
-      const tb: string = row[0]
-      // eslint-disable-next-line prefer-destructuring
-      const col = row[1] as MultiTableCols<T>
-      Object.defineProperty(db[key], tb, {
-        ...propDescriptor,
-        value: { ...col },
-      })
-
-    })
-  }
+  // error: ColumnExtPropKeys missing, so assign above directly.
+  // if (kTables && kTables.columns && Object.keys(kTables.columns).length) {
+  //   Object.entries(kTables.columns).forEach((row) => {
+  //     // eslint-disable-next-line prefer-destructuring
+  //     const tb: string = row[0]
+  //     // eslint-disable-next-line prefer-destructuring
+  //     const col = row[1] as MultiTableCols<T>
+  //     Object.defineProperty(db[key], tb, {
+  //       ...propDescriptor,
+  //       value: { ...col },
+  //     })
+  //   })
+  // }
 
   return db
 }
