@@ -30,8 +30,11 @@ export function genKTablesFromBase<T extends TTables>(
     return kTablesBase
   }
 
+  const colsNew: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
+
   const ktbs: KTables<T> = {
-    ...kTablesBase,
+    columns: colsNew,
+    tables: kTablesBase.tables,
     scopedColumns: new Proxy(kTablesBase.columns, {
       get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
         // eslint-disable-next-line no-console
@@ -47,13 +50,9 @@ export function genKTablesFromBase<T extends TTables>(
           if (cachedCols) {
             return cachedCols
           }
-          const cols = createColumnsProperties({
-            columns,
-            tableAlias: tbAlias,
-            tables: kTablesBase.tables,
-          })
-          const scopedCols = createScopedColumns(cols, createColumnNameFn)
-          setScopedColumnsColsCache(cols, tbAlias, scopedCols)
+
+          const scopedCols = createScopedColumns(columns, createColumnNameFn)
+          setScopedColumnsColsCache(columns, tbAlias, scopedCols)
 
           return scopedCols
         }
@@ -70,6 +69,36 @@ export function genKTablesFromBase<T extends TTables>(
   }
 
   return ktbs
+}
+
+function genColumnsWithExtProps<T extends TTables>(
+  kTablesBase: KTablesBase<T>,
+): KTablesBase<T>['columns'] {
+
+  const ret = {} as KTablesBase<T>['columns']
+  const props = {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+  }
+
+  Object.keys(kTablesBase.columns).forEach((tbAlias) => {
+    const alias = tbAlias as keyof KTablesBase<T>['columns']
+    const cols = kTablesBase.columns[alias]
+
+    const retCols = createColumnsProperties({
+      // @ts-ignore
+      columns: cols,
+      tableAlias: tbAlias,
+      tables: kTablesBase.tables,
+    })
+    Object.defineProperty(ret, tbAlias, {
+      ...props,
+      value: retCols,
+    })
+  })
+
+  return ret
 }
 
 function createColumnsProperties<T extends TTables>(options: {
