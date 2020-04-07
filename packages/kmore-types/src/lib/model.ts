@@ -79,7 +79,7 @@ export type CallerTypeId = string
 export type CallerTbListMap<T extends TTables> = Map<CallerTypeId, TablesMapArr<T>>
 
 export interface TablesMapArr<T extends TTables>
-  extends Array<Tables<T> | MultiTableCols<T> | TableScopedCols<T>> {
+  extends Array<Tables<T> | MultiTableCols<T> | MultiTableScopedCols<T>> {
   0: Tables<T>
   1: MultiTableCols<T>
   // 2: DbTableScopedCols<T>
@@ -178,7 +178,7 @@ export type Columns<T extends TTables> = ScopedColumns<T> & {
  * Type of db.tableCols.tb_foo.col_bar,
  * value with table prefix, eg. `tb_foo.col_name`
  */
-export type TableScopedCols<T extends TTables> = T extends void
+export type MultiTableScopedCols<T extends TTables> = T extends void
   ? EmptyTbList
   : T extends never ? EmptyTbList : ScopedColumns<T>
 /**
