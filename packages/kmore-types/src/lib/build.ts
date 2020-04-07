@@ -8,7 +8,7 @@ import {
   Tables,
   CallerTbListMap,
   BuildSrcOpts,
-  TableCols,
+  MultiTableCols,
 } from './model'
 import {
   buildTbListParam,
@@ -90,7 +90,7 @@ function retrieveTypeFromTsFile<T extends TTables>(
 
     callerTypeMap.forEach(([tbListTagMap, tbColListTagMap], callerTypeId) => {
       const tbs: Tables<T> = buildTbListParam<T>(tbListTagMap)
-      const tbCols: TableCols<T> = buildTbColListParam<T>(tbColListTagMap)
+      const tbCols: MultiTableCols<T> = buildTbColListParam<T>(tbColListTagMap)
       ret.set(callerTypeId, [tbs, tbCols])
     })
   }

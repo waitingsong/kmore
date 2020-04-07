@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
-import { validateParamTables, createNullObject, TableCols, KTablesBase } from 'kmore-types'
+import { validateParamTables, createNullObject, MultiTableCols, KTablesBase } from 'kmore-types'
 
 import { DbPropKeys } from './config'
 import { DbModel, DbRefBuilder, Options, TTables, KTables } from './model'
@@ -67,7 +67,7 @@ export function bindTablesCols<T extends TTables>(
       // eslint-disable-next-line prefer-destructuring
       const tb: string = row[0]
       // eslint-disable-next-line prefer-destructuring
-      const col = row[1] as TableCols<T>
+      const col = row[1] as MultiTableCols<T>
       Object.defineProperty(db[key], tb, {
         ...propDescriptor,
         value: { ...col },

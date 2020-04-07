@@ -16,7 +16,7 @@ import {
   CallerFuncName,
   CallerFuncNameSet,
   Tables,
-  TableCols,
+  MultiTableCols,
   FilePath,
   KTablesBase,
   LoadVarFromFileOpts,
@@ -189,7 +189,7 @@ export function buildTbListParam<T extends TTables>(tagMap: TbListTagMap): Table
 }
 
 /** Build DbTableCols from TableColListTagMap */
-export function buildTbColListParam<T extends TTables>(tagMap: TbColListTagMap): TableCols<T> {
+export function buildTbColListParam<T extends TTables>(tagMap: TbColListTagMap): MultiTableCols<T> {
   const ret = createNullObject()
 
   if (tagMap && tagMap.size) {
@@ -325,7 +325,7 @@ export function loadTableVarFromFile<T extends TTables>(loadOpts: LoadVarFromFil
   const kTables = loadVarFromFile<T>(loadOpts)
   return kTables.tables
 }
-export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): TableCols<T> {
+export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): MultiTableCols<T> {
   const kTables = loadVarFromFile<T>(loadOpts)
   return kTables.columns
 }
@@ -342,8 +342,8 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
     const tables = mods[tbVarName] as Tables<T>
 
     const columns = typeof mods[colVarName] === 'object'
-      ? mods[colVarName] as TableCols<T>
-      : {} as TableCols<T>
+      ? mods[colVarName] as MultiTableCols<T>
+      : {} as MultiTableCols<T>
 
     return { tables, columns }
   }

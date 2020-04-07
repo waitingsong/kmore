@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import {
   ColumnExtPropKeys,
-  TableCols,
+  MultiTableCols,
   Columns,
   KTablesBase,
   ScopedColumns,
@@ -33,7 +33,7 @@ export function genKTablesFromBase<T extends TTables>(
   const ktbs: KTables<T> = {
     ...kTablesBase,
     scopedColumns: new Proxy(kTablesBase.columns, {
-      get(target: TableCols<T>, tbAlias: string, receiver: unknown) {
+      get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
         // eslint-disable-next-line no-console
         // console.log(`getting ${tbAlias.toString()}`)
 

@@ -9,6 +9,10 @@ import {
   KTablesBase,
   TagsMapArr,
   LocalTypeItem,
+  // TbColListMap,
+  // TbColListTagMap,
+  // TbJointColListTagMap,
+  // ColListTagMap,
 } from './model'
 import {
   buildTbListParam,
@@ -113,6 +117,7 @@ function buildKTablesBaseFromTagsMapArr<T extends TTables>(
 ): KTablesBase<T> {
 
   const [tbListTagMap, tbColListTagMap] = tagsMapArr
+  // const jointColumns = genJointColListTagMap(tbColListTagMap)
   const ret: KTablesBase<T> = {
     tables: buildTbListParam<T>(tbListTagMap),
     columns: buildTbColListParam<T>(tbColListTagMap),
@@ -120,6 +125,25 @@ function buildKTablesBaseFromTagsMapArr<T extends TTables>(
   return ret
 }
 
+// function genJointColListTagMap(tbColListTagMap: TbColListTagMap): TbJointColListTagMap {
+//   const ret: TbJointColListTagMap = new Map()
+
+//   tbColListTagMap.forEach((colListTagMap, tb) => {
+//     colListTagMap.forEach((tagInfo[], colAlias) => {
+
+//     })
+
+//   })
+
+//   return ret
+// }
+export function snakeToCamel(string: string) {
+  return string.replace(/([-_][a-z])/iug, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '')
+  })
+}
 
 export function retrieveLocalTypeItemFromType(
   options: RetrieveInfoFromTypeOpts,

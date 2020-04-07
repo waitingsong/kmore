@@ -3,7 +3,7 @@ import * as Knex from 'knex'
 import {
   JointTable,
   Tables,
-  TableCols,
+  MultiTableCols,
   TableScopedCols,
   KTablesBase,
   Options,
@@ -13,7 +13,7 @@ import {
 
 export {
   Tables,
-  TableCols,
+  MultiTableCols,
   Options,
 }
 
@@ -85,7 +85,7 @@ export interface DbModel<T extends TTables> {
   /** tables.tb_foo output table name of tb_foo */
   readonly [DbPropKeys.tables]: Tables<T>
   /** columns.tb_foo.ctime output col name, eg. `ctime` */
-  readonly [DbPropKeys.columns]: TableCols<T>
+  readonly [DbPropKeys.columns]: MultiTableCols<T>
   /** scopedColumns.tb_foo.ctime output col name with table prefix, eg. `tb_foo.ctime` */
   readonly [DbPropKeys.scopedColumns]: TableScopedCols<T>
   readonly [DbPropKeys.refTables]: DbRefBuilder<T>
