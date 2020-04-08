@@ -34,7 +34,7 @@ describe(filename, () => {
     const keys = ['uid', 'name', 'ctime']
     const aliasKeys = ['tbUserUid', 'tbUserName', 'tbUserCtime']
 
-    it('all fields', () => {
+    it('all fields with *', () => {
       const { aliasColumns: ac } = db
       const ps = ac.tb_user.genFieldsAlias(['*'])
       // const ps = {
@@ -46,7 +46,7 @@ describe(filename, () => {
         assert(typeof ps[key] === 'string' && ps[key])
       })
     })
-    it('all fields, colName w/o converted', () => {
+    it('all fields with *, colName w/o converted', () => {
       const { aliasColumns: ac } = db
       const ps = ac.tb_user.genFieldsAlias(['*'], true)
       // const ps = {
@@ -96,16 +96,46 @@ describe(filename, () => {
     const keys = ['uid', 'age', 'address']
     const aliasKeys = ['tbUserDetailUid', 'tbUserDetailAge', 'tbUserDetailAddress']
 
-    it('all fields', () => {
+    it('all fields with *', () => {
       const { aliasColumns: ac } = db
       const ps = ac.tb_user_detail.genFieldsAlias(['*'])
       aliasKeys.forEach((key) => {
         assert(typeof ps[key] === 'string' && ps[key])
       })
     })
-    it('all fields, colName w/o converted', () => {
+    it('all fields with *, colName w/o converted', () => {
       const { aliasColumns: ac } = db
       const ps = ac.tb_user_detail.genFieldsAlias(['*'], true)
+      keys.forEach((key) => {
+        assert(typeof ps[key] === 'string' && ps[key])
+      })
+    })
+
+    it('all fields with explicit fld name', () => {
+      const { aliasColumns: ac } = db
+      const ps = ac.tb_user_detail.genFieldsAlias(['uid', 'age', 'address'])
+      aliasKeys.forEach((key) => {
+        assert(typeof ps[key] === 'string' && ps[key])
+      })
+    })
+    it('all fields with explicit fld name, colName w/o converted', () => {
+      const { aliasColumns: ac } = db
+      const ps = ac.tb_user_detail.genFieldsAlias(['uid', 'age', 'address'], true)
+      keys.forEach((key) => {
+        assert(typeof ps[key] === 'string' && ps[key])
+      })
+    })
+
+    it('all fields with both * and explicit fld name', () => {
+      const { aliasColumns: ac } = db
+      const ps = ac.tb_user_detail.genFieldsAlias(['uid', 'age', 'address', '*'])
+      aliasKeys.forEach((key) => {
+        assert(typeof ps[key] === 'string' && ps[key])
+      })
+    })
+    it('all fields with both * explicit fld name, colName w/o converted', () => {
+      const { aliasColumns: ac } = db
+      const ps = ac.tb_user_detail.genFieldsAlias(['uid', 'age', 'address', '*'], true)
       keys.forEach((key) => {
         assert(typeof ps[key] === 'string' && ps[key])
       })
@@ -148,8 +178,8 @@ describe(filename, () => {
     it('tb_user join tb_user_detail via aliasColumns', async () => {
       const {
         rb, tables: t,
-        columns: co,
         aliasColumns: ac,
+        columns: co,
         scopedColumns: sc,
       } = db
 
