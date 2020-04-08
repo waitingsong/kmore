@@ -133,7 +133,7 @@ describe(filename, () => {
         assert(typeof ps[key] === 'string' && ps[key])
       })
     })
-    it('all fields with both * explicit fld name, colName w/o converted', () => {
+    it('all fields with both * and explicit fld name, colName w/o converted', () => {
       const { aliasColumns: ac } = db
       const ps = ac.tb_user_detail.genFieldsAlias(['uid', 'age', 'address', '*'], true)
       keys.forEach((key) => {
