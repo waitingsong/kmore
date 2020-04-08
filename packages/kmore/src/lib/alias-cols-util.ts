@@ -105,6 +105,11 @@ function updateProps<T extends TableAliasColumns = any>(
   value: string,
 ): void {
 
+  // @ts-ignore
+  if (typeof obj[key] !== 'undefined') {
+    return
+  }
+
   Object.defineProperty(obj, key, {
     configurable: false,
     enumerable: true,

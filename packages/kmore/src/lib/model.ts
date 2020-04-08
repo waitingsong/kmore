@@ -61,15 +61,25 @@ export type Config = Knex.Config
  */
 export interface KTables<T extends TTables> extends KTablesBase<T> {
   /**
+  * For table joint
+  * ```json
+  * {
+  *    tb_alias: { tableNameColName: "table_name.col_name", ...,}
+  *    ...,
+  * }
+  * ```
+  */
+  aliasColumns: MultiTableAliasColumns<T>
+  /**
   * Columns mapping object, column name with table prefix, eg tb_foo.user
   * ```json
   * {
   *    tb_alias: { col_alias: "table_name.col_name", ...,}
+  *    ...,
   * }
   * ```
   */
   scopedColumns: MultiTableScopedCols<T>
-  aliasColumns: MultiTableAliasColumns<T>
 }
 
 export interface KmoreOpts {
