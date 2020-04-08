@@ -8,7 +8,7 @@ import {
 import {
   kmore,
   DbModel,
-  JointTableColumns,
+  TableAliasColumns,
 } from '../src/index'
 
 import { config } from './test.config'

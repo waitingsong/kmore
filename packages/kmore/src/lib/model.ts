@@ -119,12 +119,10 @@ export interface CreateColumnNameOpts {
 
 
 export type MultiTableAliasColumns<T extends TTables> = {
-  [tbAlias in keyof T]: JointTableColumns<T[tbAlias]>
+  [tbAlias in keyof T]: TableAliasColumns<T[tbAlias]>
 }
-// export type JointTableColumns<TAliasCols = any> = AliasTableColumns<TAliasCols >
-export type JointTableColumns<TAliasCols = any> = AliasTableColumns<TAliasCols> & {
+export type TableAliasColumns<TAliasCols = any> = AliasTableColumns<TAliasCols> & {
   [ColumnExtPropKeys.genFieldsAliasFn]<T extends AliasTableColumns<TAliasCols> = any>(
-    // this: T,
     keyArr: ((keyof T) | '*')[],
     /** Default: false */
     useColAliasNameAsOutputName?: boolean,
@@ -143,8 +141,6 @@ export type AliasTableColumns<TAliasCols = any> = {
 export interface KnexColumnsParma {
   [out: string]: string
 }
-
-
 export interface ColAlias<TColType> {
   /** input column name */
   input: string
@@ -152,7 +148,7 @@ export interface ColAlias<TColType> {
   output: string
   _typePlaceholder: TColType
 }
-export type JointRetTable<K extends JointTableColumns> = {
+export type JointRetTable<K extends TableAliasColumns> = {
   [col in keyof K]: K[col]['_typePlaceholder']
 }
 

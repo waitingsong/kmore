@@ -10,7 +10,7 @@ import {
 import {
   TTables,
   MultiTableAliasColumns,
-  JointTableColumns,
+  TableAliasColumns,
   ColAlias,
   KnexColumnsParma,
 } from './model'
@@ -25,7 +25,7 @@ export function genAliasColumns<T extends TTables>(
   Object.entries(scopedColumns).forEach((item) => {
     const tbAlias = item[0] as keyof T
     const cols = item[1] as TableFields<T, typeof tbAlias>
-    const tableFlds = {} as JointTableColumns
+    const tableFlds = {} as TableAliasColumns
 
     Object.entries(cols).forEach((row) => {
       const colAlias = row[0] as keyof T[typeof tbAlias]
@@ -67,7 +67,7 @@ export function genAliasColumns<T extends TTables>(
 }
 
 
-export function genKnexColumnsParam<T extends JointTableColumns = any>(
+export function genKnexColumnsParam<T extends TableAliasColumns = any>(
   jointTableColumns: T,
   keyArr: ((keyof T) | '*')[],
   useColAliasNameAsOutputName = false,
@@ -99,7 +99,7 @@ export function genKnexColumnsParam<T extends JointTableColumns = any>(
   return ret
 }
 
-function updateProps<T extends JointTableColumns = any>(
+function updateProps<T extends TableAliasColumns = any>(
   obj: KnexColumnsParma,
   key: keyof T,
   value: string,
