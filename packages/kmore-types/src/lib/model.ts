@@ -168,7 +168,7 @@ export enum ColumnExtPropKeys {
   tablesRef = '_tablesRef',
   sColsCacheMap = '_scopedColsCacheMap',
 }
-export type Columns<T extends TTables> = ScopedColumns<T> & {
+export type Columns<T extends TTables> = BaseMultiTableColumns<T> & {
   readonly [ColumnExtPropKeys.tableAlias]: TableAlias,
   readonly [ColumnExtPropKeys.tablesRef]: KTablesBase<T>['tables'],
   readonly [ColumnExtPropKeys.sColsCacheMap]: Map<TableAlias, ScopedColumns<T>>,
@@ -191,7 +191,8 @@ export type MultiTableScopedCols<T extends TTables> = T extends void
  *  ...
  * }
  */
-export type ScopedColumns<T extends TTables> = {
+export type ScopedColumns<T extends TTables> = BaseMultiTableColumns<T>
+export type BaseMultiTableColumns<T extends TTables> = {
   readonly [tbAlias in keyof T]: TableFields<T, tbAlias>
 }
 export type TableFields<T, TbAlias extends keyof T> = {
