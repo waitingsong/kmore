@@ -202,10 +202,9 @@ describe(filename, () => {
 })
 
 
-function valiateRowHasColumnNames(row: unknown, columns: string[]): void {
+function valiateRowHasColumnNames(row: any, columns: string[]): void {
   assert(typeof row === 'object' && row)
   columns.forEach((colName) => {
-    // @ts-ignore
     assert(typeof row[colName] !== 'undefined' && row[colName])
   })
 }
