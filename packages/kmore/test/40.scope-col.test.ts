@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { genKTablesFromBase } from '../src/lib/scoped-cols-util'
+import { genKTablesFromBase } from '../src/lib/util'
 import { CreateColumnNameOpts } from '../src'
 
 import { kTables } from './test.config'
