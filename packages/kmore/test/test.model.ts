@@ -25,8 +25,14 @@ export interface User {
 }
 
 export interface UserDetail {
+  /**
+   * @tableModel UserDetail
+   * @jointName userDetailUid
+   * @description 用户详情表uid字段
+   */
   uid: number
   age: number
+  /** 住址 */
   address: string
 }
 
