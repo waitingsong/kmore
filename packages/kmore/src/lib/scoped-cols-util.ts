@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import {
   ColumnExtPropKeys,
-  MultiTableCols,
   Columns,
   KTablesBase,
   ScopedColumns,
@@ -9,70 +8,12 @@ import {
 
 import {
   TTables,
-  KTables,
   CreateColumnNameOpts,
   CreateColumnNameFn,
 } from './model'
-import { hasScopedColumns } from './util'
 
 
-/**
- * Generate KTables from generics type T
- * Loading compiled js file if prod env
- */
-export function genKTablesFromBase<T extends TTables>(
-  kTablesBase: KTablesBase<T>,
-  /** false will use original col name w/o table name prefix */
-  createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,
-): KTables<T> {
-
-  if (hasScopedColumns(kTablesBase)) {
-    return kTablesBase
-  }
-
-  const mtCols: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
-  const ktbs: KTables<T> = {
-    columns: mtCols,
-    tables: kTablesBase.tables,
-    scopedColumns: {} as MultiTableCols<T>,
-  }
-
-  ktbs.scopedColumns = new Proxy(mtCols, {
-    get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
-      // eslint-disable-next-line no-console
-      // console.log(`getting ${tbAlias.toString()}`)
-
-      // @ts-ignore
-      if (typeof target[tbAlias] === 'object' && target[tbAlias] !== null) {
-        // @ts-ignore
-        const tbCols = target[tbAlias] as Columns<T>
-
-        const cachedCols = getScopedColumnsColsCache(tbCols, tbAlias)
-        /* istanbul ignore else */
-        if (cachedCols) {
-          return cachedCols
-        }
-
-        const scopedCols = createScopedColumns(tbCols, createColumnNameFn)
-        setScopedColumnsColsCache(tbCols, tbAlias, scopedCols)
-
-        return scopedCols
-      }
-      else {
-        const data = Reflect.get(target, tbAlias, receiver)
-        return data
-      }
-    },
-    set() {
-      return false
-      // return Reflect.set(target, propKey, value, receiver)
-    },
-  })
-
-  return ktbs
-}
-
-function genColumnsWithExtProps<T extends TTables>(
+export function genColumnsWithExtProps<T extends TTables>(
   kTablesBase: KTablesBase<T>,
 ): KTablesBase<T>['columns'] {
 
@@ -139,7 +80,7 @@ function createColumnsProperties<T extends TTables>(options: {
   return cols
 }
 
-function getScopedColumnsColsCache<T extends TTables>(
+export function getScopedColumnsColsCache<T extends TTables>(
   columns: Columns<T>,
   tableAlias: string,
 ): ScopedColumns<T> | void {
@@ -153,7 +94,7 @@ function getScopedColumnsColsCache<T extends TTables>(
   return cacheMap.get(tableAlias)
 }
 
-function setScopedColumnsColsCache<T extends TTables>(
+export function setScopedColumnsColsCache<T extends TTables>(
   columns: Columns<T>,
   tableAlias: string,
   scopedColumns: ScopedColumns<T>,
@@ -170,7 +111,7 @@ function setScopedColumnsColsCache<T extends TTables>(
   }
 }
 
-function createScopedColumns<T extends TTables>(
+export function createScopedColumns<T extends TTables>(
   columns: Columns<T>,
   /** false will use original col name w/o table name prefix */
   createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,

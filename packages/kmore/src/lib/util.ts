@@ -4,10 +4,25 @@ import {
   validateParamTables,
   createNullObject,
   KTablesBase,
+  MultiTableCols,
 } from 'kmore-types'
 
 import { DbPropKeys } from './config'
-import { DbModel, DbRefBuilder, Options, TTables, KTables } from './model'
+import {
+  DbModel,
+  DbRefBuilder,
+  Options,
+  TTables,
+  KTables,
+  CreateColumnNameFn,
+  MultiTableAliasColumns,
+} from './model'
+import {
+  createScopedColumns,
+  genColumnsWithExtProps,
+  getScopedColumnsColsCache,
+  setScopedColumnsColsCache,
+} from './scoped-cols-util'
 
 
 // workaround for rollup
@@ -136,5 +151,63 @@ export function hasScopedColumns<T extends TTables>(
 
   // eslint-disable-next-line no-prototype-builtins
   return !! (tables && tables.hasOwnProperty(DbPropKeys.scopedColumns))
+}
+
+
+/**
+ * Generate KTables from generics type T
+ * Loading compiled js file if prod env
+ */
+export function genKTablesFromBase<T extends TTables>(
+  kTablesBase: KTablesBase<T>,
+  /** false will use original col name w/o table name prefix */
+  createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,
+): KTables<T> {
+
+  if (hasScopedColumns(kTablesBase)) {
+    return kTablesBase
+  }
+
+  const mtCols: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
+  const ktbs: KTables<T> = {
+    columns: mtCols,
+    tables: kTablesBase.tables,
+    scopedColumns: {} as MultiTableCols<T>,
+    aliasColumns: {} as MultiTableAliasColumns<T>,
+  }
+
+  ktbs.scopedColumns = new Proxy(mtCols, {
+    get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
+      // eslint-disable-next-line no-console
+      // console.log(`getting ${tbAlias.toString()}`)
+
+      // @ts-ignore
+      if (typeof target[tbAlias] === 'object' && target[tbAlias] !== null) {
+        // @ts-ignore
+        const tbCols = target[tbAlias]
+
+        const cachedCols = getScopedColumnsColsCache(tbCols, tbAlias)
+        /* istanbul ignore else */
+        if (cachedCols) {
+          return cachedCols
+        }
+
+        const scopedCols = createScopedColumns(tbCols, createColumnNameFn)
+        setScopedColumnsColsCache(tbCols, tbAlias, scopedCols)
+
+        return scopedCols
+      }
+      else {
+        const data = Reflect.get(target, tbAlias, receiver)
+        return data
+      }
+    },
+    set() {
+      return false
+      // return Reflect.set(target, propKey, value, receiver)
+    },
+  })
+
+  return ktbs
 }
 
