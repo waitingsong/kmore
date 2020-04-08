@@ -30,14 +30,14 @@ export function genKTablesFromBase<T extends TTables>(
     return kTablesBase
   }
 
-  const colsNew: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
+  const mtCols: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
   const ktbs: KTables<T> = {
-    columns: colsNew,
+    columns: mtCols,
     tables: kTablesBase.tables,
     scopedColumns: {} as MultiTableCols<T>,
   }
 
-  ktbs.scopedColumns = new Proxy(colsNew, {
+  ktbs.scopedColumns = new Proxy(mtCols, {
     get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
       // eslint-disable-next-line no-console
       // console.log(`getting ${tbAlias.toString()}`)
@@ -45,16 +45,16 @@ export function genKTablesFromBase<T extends TTables>(
       // @ts-ignore
       if (typeof target[tbAlias] === 'object' && target[tbAlias] !== null) {
         // @ts-ignore
-        const columns = target[tbAlias] as Columns<T>
+        const tbCols = target[tbAlias] as Columns<T>
 
-        const cachedCols = getScopedColumnsColsCache(columns, tbAlias)
+        const cachedCols = getScopedColumnsColsCache(tbCols, tbAlias)
         /* istanbul ignore else */
         if (cachedCols) {
           return cachedCols
         }
 
-        const scopedCols = createScopedColumns(columns, createColumnNameFn)
-        setScopedColumnsColsCache(columns, tbAlias, scopedCols)
+        const scopedCols = createScopedColumns(tbCols, createColumnNameFn)
+        setScopedColumnsColsCache(tbCols, tbAlias, scopedCols)
 
         return scopedCols
       }
