@@ -192,9 +192,9 @@ export type MultiTableScopedCols<T extends TTables> = T extends void
  * }
  */
 export type ScopedColumns<T extends TTables> = {
-  readonly [tbAlias in keyof T]: TableRows<T, tbAlias>
+  readonly [tbAlias in keyof T]: TableFields<T, tbAlias>
 }
-export type TableRows<T, TbAlias extends keyof T> = {
+export type TableFields<T, TbAlias extends keyof T> = {
   readonly [colAlias in keyof T[TbAlias]]: string
 }
 // export type ScopedColumns<T extends TTables> = {
