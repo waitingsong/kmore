@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   CallExpression,
@@ -167,6 +168,7 @@ export enum ColumnExtPropKeys {
   tableAlias = '_tableAlias',
   tablesRef = '_tablesRef',
   sColsCacheMap = '_scopedColsCacheMap',
+  genFieldsAliasFn = 'genFieldsAlias',
 }
 export type Columns<T extends TTables> = BaseMultiTableColumns<T> & {
   readonly [ColumnExtPropKeys.tableAlias]: TableAlias,
@@ -195,7 +197,7 @@ export type ScopedColumns<T extends TTables> = BaseMultiTableColumns<T>
 export type BaseMultiTableColumns<T extends TTables> = {
   readonly [tbAlias in keyof T]: TableFields<T, tbAlias>
 }
-export type TableFields<T, TbAlias extends keyof T> = {
+export type TableFields<T, TbAlias extends keyof T = any> = {
   readonly [colAlias in keyof T[TbAlias]]: string
 }
 // export type ScopedColumns<T extends TTables> = {

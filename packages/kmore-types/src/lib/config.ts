@@ -41,6 +41,7 @@ export enum DbPropKeys {
   'tables' = 'tables',
   'columns' = 'columns',
   'scopedColumns' = 'scopedColumns',
+  'aliasColumns' = 'aliasColumns',
   'refTables' = 'rb',
 }
 

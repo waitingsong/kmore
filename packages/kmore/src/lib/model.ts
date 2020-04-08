@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import * as Knex from 'knex'
 import {
@@ -8,13 +9,16 @@ import {
   KTablesBase,
   Options,
   DbPropKeys,
+  TTables,
+  ColumnExtPropKeys,
 } from 'kmore-types'
 
 
 export {
-  Tables,
   MultiTableCols,
   Options,
+  Tables,
+  TTables,
 }
 
 export {
@@ -65,6 +69,7 @@ export interface KTables<T extends TTables> extends KTablesBase<T> {
   * ```
   */
   scopedColumns: MultiTableScopedCols<T>
+  aliasColumns: MultiTableAliasColumns<T>
 }
 
 export interface KmoreOpts {
@@ -88,9 +93,9 @@ export interface DbModel<T extends TTables> {
   readonly [DbPropKeys.columns]: MultiTableCols<T>
   /** scopedColumns.tb_foo.ctime output col name with table prefix, eg. `tb_foo.ctime` */
   readonly [DbPropKeys.scopedColumns]: MultiTableScopedCols<T>
+  readonly [DbPropKeys.aliasColumns]: MultiTableAliasColumns<T>
   readonly [DbPropKeys.refTables]: DbRefBuilder<T>
 }
-export type TTables = object
 /** @deprecated use `TTables` instead */
 export type TTableListModel = object
 
@@ -110,5 +115,44 @@ export type CreateColumnNameFn = (options: CreateColumnNameOpts) => string
 export interface CreateColumnNameOpts {
   tableName: string
   columnName: string
+}
+
+
+export type MultiTableAliasColumns<T extends TTables> = {
+  [tbAlias in keyof T]: JointTableColumns<T[tbAlias]>
+}
+// export type JointTableColumns<TAliasCols = any> = AliasTableColumns<TAliasCols >
+export type JointTableColumns<TAliasCols = any> = AliasTableColumns<TAliasCols> & {
+  [ColumnExtPropKeys.genFieldsAliasFn]<T extends AliasTableColumns<TAliasCols> = any>(
+    // this: T,
+    keyArr: ((keyof T) | '*')[],
+    /** Default: false */
+    useColAliasNameAsOutputName?: boolean,
+  ): KnexColumnsParma,
+}
+export type AliasTableColumns<TAliasCols = any> = {
+  [col in keyof TAliasCols]: ColAlias<TAliasCols[col]>
+}
+/**
+ * {
+ *   // jointTableColumns.output: jointTableColumns.inupt
+ *   tbUserDetailUid: 'tb_user_detail.uid',
+ *   tbUserDetailAge: 'tb_user_detail.age',
+ * }
+ */
+export interface KnexColumnsParma {
+  [out: string]: string
+}
+
+
+export interface ColAlias<TColType> {
+  /** input column name */
+  input: string
+  /** output column alias name */
+  output: string
+  _typePlaceholder: TColType
+}
+export type JointRetTable<K extends JointTableColumns> = {
+  [col in keyof K]: K[col]['_typePlaceholder']
 }
 

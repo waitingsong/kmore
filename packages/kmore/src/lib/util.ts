@@ -117,6 +117,22 @@ export function bindTablesScopedCols<T extends TTables>(
 }
 
 
+export function bindTablesAliasCols<T extends TTables>(
+  propDescriptor: PropertyDescriptor,
+  db: DbModel<T>,
+  kTables?: KTables<T>,
+): DbModel<T> {
+
+  const key = DbPropKeys.aliasColumns
+  Object.defineProperty(db, key, {
+    ...propDescriptor,
+    value: kTables && kTables.aliasColumns ? kTables.aliasColumns : {},
+  })
+
+  return db
+}
+
+
 export function bindRefTables<T extends TTables>(
   options: Options,
   propDescriptor: PropertyDescriptor,

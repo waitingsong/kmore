@@ -11,6 +11,7 @@ import {
   bindTablesScopedCols,
   hasScopedColumns,
   genKTablesFromBase,
+  bindTablesAliasCols,
 } from './util'
 
 
@@ -68,6 +69,7 @@ export function kmore<T extends TTables>(
   db = bindTables<T>(defaultPropDescriptor, db, ktbs)
   db = bindTablesCols<T>(defaultPropDescriptor, db, ktbs)
   db = bindTablesScopedCols<T>(defaultPropDescriptor, db, ktbs)
+  db = bindTablesAliasCols<T>(defaultPropDescriptor, db, ktbs)
   db = bindRefTables<T>(opts, defaultPropDescriptor, db)
 
   return db
