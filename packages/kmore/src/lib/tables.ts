@@ -17,7 +17,7 @@ import {
   KTables,
 } from './model'
 import { initOptions } from './config'
-import { genKTablesFromBase } from './scoped-cols-util'
+import { genKTablesFromBase } from './util'
 
 
 /**

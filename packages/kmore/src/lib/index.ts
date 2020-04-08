@@ -4,9 +4,14 @@ import { defaultPropDescriptor, initOptions } from './config'
 import { DbModel, TTables, KmoreOpts, KTables } from './model'
 import { loadTbListParamFromCallerInfo } from './tables'
 import {
-  bindDbh, bindTables, bindTablesCols, bindRefTables, bindTablesScopedCols, hasScopedColumns,
+  bindDbh,
+  bindTables,
+  bindTablesCols,
+  bindRefTables,
+  bindTablesScopedCols,
+  hasScopedColumns,
+  genKTablesFromBase,
 } from './util'
-import { genKTablesFromBase } from './scoped-cols-util'
 
 
 /**

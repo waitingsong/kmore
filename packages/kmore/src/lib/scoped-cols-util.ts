@@ -152,7 +152,7 @@ export function createScopedColumns<T extends TTables>(
   return scopedCols
 }
 
-function defaultCreateScopedColumnName(options: CreateColumnNameOpts): string {
+export function defaultCreateScopedColumnName(options: CreateColumnNameOpts): string {
   const { tableName, columnName } = options
   return `${tableName}.${columnName}`
 }

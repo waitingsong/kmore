@@ -22,7 +22,9 @@ import {
   genColumnsWithExtProps,
   getScopedColumnsColsCache,
   setScopedColumnsColsCache,
+  defaultCreateScopedColumnName,
 } from './scoped-cols-util'
+import { genAliasColumns } from './alias-cols-util'
 
 
 // workaround for rollup
@@ -207,6 +209,8 @@ export function genKTablesFromBase<T extends TTables>(
       // return Reflect.set(target, propKey, value, receiver)
     },
   })
+
+  ktbs.aliasColumns = genAliasColumns(ktbs.scopedColumns)
 
   return ktbs
 }
