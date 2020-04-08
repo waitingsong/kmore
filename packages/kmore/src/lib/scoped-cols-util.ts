@@ -37,7 +37,7 @@ export function genKTablesFromBase<T extends TTables>(
     scopedColumns: {} as MultiTableCols<T>,
   }
 
-  ktbs.scopedColumns = new Proxy(kTablesBase.columns, {
+  ktbs.scopedColumns = new Proxy(colsNew, {
     get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
       // eslint-disable-next-line no-console
       // console.log(`getting ${tbAlias.toString()}`)
@@ -80,7 +80,7 @@ function genColumnsWithExtProps<T extends TTables>(
   const props = {
     configurable: false,
     enumerable: true,
-    writable: false,
+    writable: true,
   }
 
   Object.keys(kTablesBase.columns).forEach((tbAlias) => {
