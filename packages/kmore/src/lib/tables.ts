@@ -6,7 +6,6 @@ import {
   genTbListFromType as genTbListFromTypeOri,
   isTsFile,
   KTablesBase,
-  loadVarFromFile,
   reWriteLoadingPath,
 } from 'kmore-types'
 
@@ -17,7 +16,7 @@ import {
   KTables,
 } from './model'
 import { initOptions } from './config'
-import { genKTablesFromBase } from './util'
+import { genKTablesFromBase, loadVarFromFile } from './util'
 
 
 /**
@@ -71,7 +70,7 @@ export function loadTbListFromTsTypeFile<T extends TTables>(
 export function loadTbListFromJsBuiltFile<T extends TTables>(
   options: Options,
   caller: CallerInfo,
-): KTablesBase<T> {
+): KTables<T> {
 
   const { outputFileNameSuffix, forceLoadTbListJsPathReplaceRules } = options
 
@@ -80,7 +79,7 @@ export function loadTbListFromJsBuiltFile<T extends TTables>(
 
   accessSync(path, constants.R_OK)
 
-  const base = loadVarFromFile<T>({ path, caller, options })
-  return base
+  const kTables = loadVarFromFile<T>({ path, caller, options })
+  return kTables
 }
 
