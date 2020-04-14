@@ -8,7 +8,7 @@ import {
 import {
   kmore,
   DbModel,
-  TableAliasColumns,
+  TableAliasCols,
 } from '../src/index'
 
 import { config } from './test.config'

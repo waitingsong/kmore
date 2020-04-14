@@ -80,10 +80,15 @@ export type CallerTypeId = string
 export type CallerTbListMap<T extends TTables> = Map<CallerTypeId, TablesMapArr<T>>
 
 export interface TablesMapArr<T extends TTables>
-  extends Array<Tables<T> | MultiTableCols<T> | MultiTableScopedCols<T>> {
+  extends Array<Tables<T> | MultiTableCols<T>> {
   0: Tables<T>
   1: MultiTableCols<T>
-  // 2: DbTableScopedCols<T>
+  length: 2
+}
+export interface TablesMapArrCommon<T extends TTables>
+  extends Array<Tables<T> | MultiTableCols<T> | MultiTableScopedCols<T> | MultiTableAliasCols<T>> {
+  0: Tables<T>
+  1: MultiTableCols<T> | MultiTableScopedCols<T> | MultiTableAliasCols<T>
   length: 2
 }
 
@@ -285,4 +290,39 @@ export interface LoadVarFromFileOpts {
 }
 
 export type JointTable<L, R, KeyExcludeOptional = void> = Spread<L, R, KeyExcludeOptional>
+
+
+export type MultiTableAliasCols<T extends TTables> = {
+  [tbAlias in keyof T]: TableAliasCols<T[tbAlias]>
+}
+export type TableAliasCols<TAliasCols = any> = AliasTableCols<TAliasCols> & {
+  [ColumnExtPropKeys.genFieldsAliasFn]<T extends AliasTableCols<TAliasCols> = any>(
+    keyArr: ((keyof T) | '*')[],
+    /** Default: false */
+    useColAliasNameAsOutputName?: boolean,
+  ): KnexColumnsParma,
+}
+export type AliasTableCols<TAliasCols = any> = {
+  [col in keyof TAliasCols]: ColAliasType<TAliasCols[col]>
+}
+/**
+ * {
+ *   // jointTableColumns.output: jointTableColumns.inupt
+ *   tbUserDetailUid: 'tb_user_detail.uid',
+ *   tbUserDetailAge: 'tb_user_detail.age',
+ * }
+ */
+export interface KnexColumnsParma {
+  [out: string]: string
+}
+export interface ColAliasType<TColType> {
+  /** input column name */
+  input: string
+  /** output column alias name */
+  output: string
+  _typePlaceholder: TColType
+}
+export type JointRetTable<K extends TableAliasCols> = {
+  [col in keyof K]: K[col]['_typePlaceholder']
+}
 

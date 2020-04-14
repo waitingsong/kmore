@@ -15,7 +15,7 @@ import {
   TTables,
   KTables,
   CreateColumnNameFn,
-  MultiTableAliasColumns,
+  MultiTableAliasCols,
 } from './model'
 import {
   createScopedColumns,
@@ -191,7 +191,7 @@ export function genKTablesFromBase<T extends TTables>(
     columns: mtCols,
     tables: kTablesBase.tables,
     scopedColumns: {} as MultiTableCols<T>,
-    aliasColumns: {} as MultiTableAliasColumns<T>,
+    aliasColumns: {} as MultiTableAliasCols<T>,
   }
 
   ktbs.scopedColumns = new Proxy(mtCols, {
