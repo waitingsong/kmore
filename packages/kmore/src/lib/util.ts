@@ -242,9 +242,13 @@ export function genKTablesFromBase<T extends TTables>(
 export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTables<T> {
   const { path, caller, options } = loadOpts
   const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
-  const tableVarName = `${tbVarName}_${DbPropKeys.tables}`
 
-  const colSuffixArr = [DbPropKeys.columns, DbPropKeys.aliasColumns, DbPropKeys.scopedColumns]
+  const keySuffixArr = [
+    DbPropKeys.tables,
+    DbPropKeys.columns,
+    DbPropKeys.aliasColumns,
+    DbPropKeys.scopedColumns,
+  ]
 
   const ret = {} as KTables<T>
   const props = {
@@ -259,22 +263,16 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
     throw new TypeError(`Load tables failed, path: "${path}"`)
   }
 
-  const tables = mods[tableVarName] as Tables<T>
-  Object.defineProperty(ret, 'tables', {
-    ...props,
-    value: tables,
-  })
+  keySuffixArr.forEach((key) => {
+    const varName = `${tbVarName}_${key}`
 
-  colSuffixArr.forEach((colName) => {
-    const colVarName = `${tbVarName}_${colName}`
+    const value = typeof mods[varName] === 'object'
+      ? mods[varName] as Tables<T> | MultiTableCols<T>
+      : {} as Tables<T> | MultiTableCols<T>
 
-    const columns = typeof mods[colVarName] === 'object'
-      ? mods[colVarName] as MultiTableCols<T>
-      : {} as MultiTableCols<T>
-
-    Object.defineProperty(ret, colName, {
+    Object.defineProperty(ret, key, {
       ...props,
-      value: columns,
+      value,
     })
   })
 
