@@ -136,7 +136,7 @@ export function genTsCodeFromTypes<T extends TTables>(
 
   const [, code2] = genColsTsCodeFromTypes<T>(
     callerTypeId,
-    arr[1],
+    [arr[1]],
     options.exportVarPrefix,
     options.exportVarColsSuffix,
     options.outputFileNameSuffix,
@@ -165,7 +165,7 @@ export function genTablesTsCodeFromTypes<T extends TTables>(
 
 export function genColsTsCodeFromTypes<T extends TTables>(
   callerTypeId: CallerTypeId,
-  columns: MultiTableColsCommon<T>,
+  columnsArr: MultiTableColsCommon<T>[],
   exportVarPrefix: string,
   exportVarColsSuffix: string,
   outputFileNameSuffix: string,
@@ -177,9 +177,14 @@ export function genColsTsCodeFromTypes<T extends TTables>(
 
   const tbVarName = genVarName(exportVarPrefix, line, column)
   const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
-  const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
+  const codeArr: string[] = []
 
-  return [targetPath, code]
+  columnsArr.forEach((columns) => {
+    const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
+    codeArr.push(code)
+  })
+
+  return [targetPath, codeArr.join('\n\n')]
 }
 
 
