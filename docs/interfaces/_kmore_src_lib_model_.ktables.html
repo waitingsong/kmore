@@ -79,7 +79,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../modules/_kmore_types_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
 					</li>
 				</ul>
 			</section>
@@ -103,6 +103,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.ktables.html#aliascolumns" class="tsd-kind-icon">alias<wbr>Columns</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.ktables.html#columns" class="tsd-kind-icon">columns</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.ktables.html#scopedcolumns" class="tsd-kind-icon">scoped<wbr>Columns</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.ktables.html#tables" class="tsd-kind-icon">tables</a></li>
@@ -113,14 +114,33 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="aliascolumns" class="tsd-anchor"></a>
+					<h3>alias<wbr>Columns</h3>
+					<div class="tsd-signature tsd-kind-icon">alias<wbr>Columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#multitablealiascols" class="tsd-signature-type">MultiTableAliasCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L79">kmore/src/lib/model.ts:79</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>For table joint</p>
+							<pre><code class="language-json">{
+   tb_alias: { tableNameColName: &quot;table_name.col_name&quot;, ...,}
+   ...,
+}</code></pre>
+						</div>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="columns" class="tsd-anchor"></a>
 					<h3>columns</h3>
-					<div class="tsd-signature tsd-kind-icon">columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tablecols" class="tsd-signature-type">TableCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#multitablecols" class="tsd-signature-type">MultiTableCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_kmore_src_lib_model_.ktables.html">KTables</a>.<a href="_kmore_src_lib_model_.ktables.html#columns">columns</a></p>
 						<ul>
-							<li>Defined in kmore-types/dist/lib/model.d.ts:118</li>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:123</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -135,10 +155,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="scopedcolumns" class="tsd-anchor"></a>
 					<h3>scoped<wbr>Columns</h3>
-					<div class="tsd-signature tsd-kind-icon">scoped<wbr>Columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#tablescopedcols" class="tsd-signature-type">TableScopedCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">scoped<wbr>Columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#multitablescopedcols" class="tsd-signature-type">MultiTableScopedCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L67">kmore/src/lib/model.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L89">kmore/src/lib/model.ts:89</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -146,6 +166,7 @@
 							<p>Columns mapping object, column name with table prefix, eg tb_foo.user</p>
 							<pre><code class="language-json">{
    tb_alias: { col_alias: &quot;table_name.col_name&quot;, ...,}
+   ...,
 }</code></pre>
 						</div>
 					</div>
@@ -157,7 +178,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_kmore_src_lib_model_.ktables.html">KTables</a>.<a href="_kmore_src_lib_model_.ktables.html#tables">tables</a></p>
 						<ul>
-							<li>Defined in kmore-types/dist/lib/model.d.ts:109</li>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:114</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -208,6 +229,9 @@
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_kmore_src_lib_model_.ktables.html" class="tsd-kind-icon">KTables</a>
 						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_src_lib_model_.ktables.html#aliascolumns" class="tsd-kind-icon">alias<wbr>Columns</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="_kmore_src_lib_model_.ktables.html#columns" class="tsd-kind-icon">columns</a>
 							</li>
@@ -235,9 +259,6 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_kmore_src_lib_model_.html#ttables" class="tsd-kind-icon">TTables</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_kmore_src_lib_model_.html#tbquerybuilder" class="tsd-kind-icon">Tb<wbr>Query<wbr>Builder</a>
