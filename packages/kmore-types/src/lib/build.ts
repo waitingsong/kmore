@@ -9,8 +9,9 @@ import {
   CallerTbListMap,
   BuildSrcOpts,
   MultiTableCols,
-  TablesMapArrCommon,
   CallerTypeId,
+  MultiTableColsCommon,
+  TablesMapArrCommon,
 } from './model'
 import {
   buildTbListParam,
@@ -119,25 +120,66 @@ export function genTsCodeFromTypes<T extends TTables>(
   options: Required<BuildSrcOpts>,
 ): [FilePath, string] {
 
-  const {
-    exportVarPrefix,
-    exportVarColsSuffix,
-    outputFileNameSuffix,
-  } = options
-  const sourceArr: string[] = []
+  let path = ''
+  const codeArr: string[] = []
 
-  const [tbs, mtCols] = arr
+  const [str, code] = genTablesTsCodeFromTypes<T>(
+    callerTypeId,
+    arr[0],
+    options.exportVarPrefix,
+    options.outputFileNameSuffix,
+  )
+  if (! path) {
+    path = str // all value are the same one
+  }
+  codeArr.push(code)
+
+  const [, code2] = genColsTsCodeFromTypes<T>(
+    callerTypeId,
+    arr[1],
+    options.exportVarPrefix,
+    options.exportVarColsSuffix,
+    options.outputFileNameSuffix,
+  )
+  codeArr.push(code2)
+
+  return [path, codeArr.join('\n\n')]
+}
+
+export function genTablesTsCodeFromTypes<T extends TTables>(
+  callerTypeId: CallerTypeId,
+  tables: Tables<T>,
+  exportVarPrefix: string,
+  outputFileNameSuffix: string,
+): [FilePath, string] {
+
+  const { path, line, column } = pickInfoFromCallerTypeId(callerTypeId)
+  // const relativePath = relative(base, path)
+  const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
+
+  const tbVarName = genVarName(exportVarPrefix, line, column)
+  const code = `export const ${tbVarName} = ${JSON.stringify(tables, null, 2)} as const`
+
+  return [targetPath, code]
+}
+
+export function genColsTsCodeFromTypes<T extends TTables>(
+  callerTypeId: CallerTypeId,
+  columns: MultiTableColsCommon<T>,
+  exportVarPrefix: string,
+  exportVarColsSuffix: string,
+  outputFileNameSuffix: string,
+): [FilePath, string] {
+
   const { path, line, column } = pickInfoFromCallerTypeId(callerTypeId)
   // const relativePath = relative(base, path)
   const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
 
   const tbVarName = genVarName(exportVarPrefix, line, column)
   const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
+  const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
 
-  sourceArr.push(`export const ${tbVarName} = ${JSON.stringify(tbs, null, 2)} as const`)
-  sourceArr.push(`export const ${tbColVarName} = ${JSON.stringify(mtCols, null, 2)} as const`)
-
-  return [targetPath, sourceArr.join('\n\n')]
+  return [targetPath, code]
 }
 
 
