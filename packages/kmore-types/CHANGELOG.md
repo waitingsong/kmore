@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/waitingsong/kmore/compare/v0.15.0...v0.16.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* **kmore-types:** loadVarFromFile() ([38f3765](https://github.com/waitingsong/kmore/commit/38f37655b40e5fd48b9f7cdca649aa19bca70961))
+
+
+### Features
+
+* **kmore-types:** export all funcs of build.ts ([f174de2](https://github.com/waitingsong/kmore/commit/f174de21b24a9beb527dfb9296d4041e07f1d951))
+* joint table alias ([7fa9fff](https://github.com/waitingsong/kmore/commit/7fa9fff364be0c7e97f7d54c4fe53ad7cf28577e))
+* **kmore-types:** add tyeps BaseMultiTableColumns ([3d4e810](https://github.com/waitingsong/kmore/commit/3d4e8104f44f868368dbd1bd890005f864927488))
+
+
+
+
+
 # [0.15.0](https://github.com/waitingsong/kmore/compare/v0.14.0...v0.15.0) (2020-03-20)
 
 

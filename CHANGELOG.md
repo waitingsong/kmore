@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.16.0](https://github.com/waitingsong/kmore/compare/v0.15.0...v0.16.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* **kmore:** genColumnsWithExtProps() ([53afed0](https://github.com/waitingsong/kmore/commit/53afed016e47de60e4737e5c01cda5f9a2673021))
+* **kmore:** genColumnsWithExtProps() enumerable ([d25b2dc](https://github.com/waitingsong/kmore/commit/d25b2dc253a27ef1b62acfb786bca5d01689b459))
+* **kmore:** kTablesBase.columns has no ext props ([c4fe945](https://github.com/waitingsong/kmore/commit/c4fe9458581e3ecafcda7dac1ee2477dd59df601))
+* **kmore:** loadVarFromFile() ([9ec2165](https://github.com/waitingsong/kmore/commit/9ec21650d60b8ca42d48a53f06a5ea819bbdb75a))
+* **kmore:** loadVarFromFile() ([1816966](https://github.com/waitingsong/kmore/commit/1816966b30af8e8b66768eba1d20348b4588ab55))
+* **kmore:** return types of loadTbListFromJsBuiltFile() ([87c69c8](https://github.com/waitingsong/kmore/commit/87c69c8d202fede1d05c1414e6d0a6a5de72cf6f))
+* **kmore-types:** loadVarFromFile() ([38f3765](https://github.com/waitingsong/kmore/commit/38f37655b40e5fd48b9f7cdca649aa19bca70961))
+
+
+### Features
+
+* **kmore:** add lib/build.ts ([2a7d838](https://github.com/waitingsong/kmore/commit/2a7d838019ce8a2539d7d80c148768aa3cf1ef30))
+* **kmore:** add loadVarFromFile() ([d1bb283](https://github.com/waitingsong/kmore/commit/d1bb283db552feb38aa507ef3f2877ea5979e46f))
+* **kmore-types:** export all funcs of build.ts ([f174de2](https://github.com/waitingsong/kmore/commit/f174de21b24a9beb527dfb9296d4041e07f1d951))
+* joint table alias ([7fa9fff](https://github.com/waitingsong/kmore/commit/7fa9fff364be0c7e97f7d54c4fe53ad7cf28577e))
+* **kmore:** genAliasColumns() ([18f70d4](https://github.com/waitingsong/kmore/commit/18f70d49d6c7ac27ad9483ab92b8a5a8fc2cf0a3))
+* **kmore-types:** add tyeps BaseMultiTableColumns ([3d4e810](https://github.com/waitingsong/kmore/commit/3d4e8104f44f868368dbd1bd890005f864927488))
+
+
+
+
+
 # [0.15.0](https://github.com/waitingsong/kmore/compare/v0.14.0...v0.15.0) (2020-03-20)
 
 
