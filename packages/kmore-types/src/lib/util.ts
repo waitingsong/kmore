@@ -9,6 +9,7 @@ import {
   reservedTbListKeys,
   initBuildSrcOpts,
   globalCallerFuncNameSet,
+  DbPropKeys,
 } from './config'
 import {
   BuildSrcOpts,
@@ -335,7 +336,7 @@ export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFi
 export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTablesBase<T> {
   const { path, caller, options } = loadOpts
   const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
-  const colVarName = `${tbVarName}${options.exportVarColsSuffix}`
+  const colVarName = `${tbVarName}${DbPropKeys.columns}`
   const mods = loadFile(path)
 
   if (mods && typeof mods[tbVarName] === 'object') {
