@@ -37,5 +37,23 @@ describe(filename, () => {
     })
   })
 
+  describe('Should loading columns works', () => {
+    it('normal', () => {
+      assert(db.columns && Object.keys(db.columns).length)
+    })
+  })
+
+  describe('Should loading aliasColumns works', () => {
+    it('normal', () => {
+      assert(db.aliasColumns && Object.keys(db.aliasColumns).length)
+    })
+  })
+
+  describe('Should loading scopedColumns works', () => {
+    it('normal', () => {
+      assert(db.scopedColumns && Object.keys(db.scopedColumns).length)
+    })
+  })
+
 })
 
