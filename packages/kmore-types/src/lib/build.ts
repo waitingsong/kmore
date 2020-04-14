@@ -90,8 +90,8 @@ function retrieveTypeFromTsFile<T extends TTables>(
 
     callerTypeMap.forEach(([tbListTagMap, tbColListTagMap], callerTypeId) => {
       const tbs: Tables<T> = buildTbListParam<T>(tbListTagMap)
-      const tbCols: MultiTableCols<T> = buildTbColListParam<T>(tbColListTagMap)
-      ret.set(callerTypeId, [tbs, tbCols])
+      const mtCols: MultiTableCols<T> = buildTbColListParam<T>(tbColListTagMap)
+      ret.set(callerTypeId, [tbs, mtCols])
     })
   }
 
@@ -111,7 +111,7 @@ function genTsCodeFromTypes<T extends TTables>(
   let targetPath = ''
   const sourceArr: string[] = []
 
-  inputMap.forEach(([tbs, tbCols], key) => {
+  inputMap.forEach(([tbs, mtCols], key) => {
     const { path, line, column } = pickInfoFromCallerTypeId(key)
 
     if (! targetPath) {
@@ -123,7 +123,7 @@ function genTsCodeFromTypes<T extends TTables>(
     const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
 
     sourceArr.push(`export const ${tbVarName} = ${JSON.stringify(tbs, null, 2)} as const`)
-    sourceArr.push(`export const ${tbColVarName} = ${JSON.stringify(tbCols, null, 2)} as const`)
+    sourceArr.push(`export const ${tbColVarName} = ${JSON.stringify(mtCols, null, 2)} as const`)
   })
 
   return [targetPath, sourceArr.join('\n\n')]
