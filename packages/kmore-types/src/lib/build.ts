@@ -65,7 +65,8 @@ export async function buildSrcTablesFile<T extends TTables>(
 
   const ret: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
   if (ret && ret.size) {
-    const path = await saveFile<T>(ret, opts)
+    const [path, code] = genTsCodeFromTypes<T>(ret, opts)
+    await saveFile(path, code, opts.outputBanner)
     return path.replace(/\\/gu, '/')
   }
   else {
@@ -131,13 +132,12 @@ function genTsCodeFromTypes<T extends TTables>(
 
 
 /** Save tables of one file */
-async function saveFile<T extends TTables>(
-  inputMap: CallerTbListMap<T>,
-  options: Required<BuildSrcOpts>,
+async function saveFile(
+  path: string,
+  code: string,
+  outputPrefix: string,
 ): Promise<FilePath> {
 
-  const { outputBanner: outputPrefix } = options
-  const [path, code] = genTsCodeFromTypes<T>(inputMap, options)
   const retCode = outputPrefix
     ? `${outputPrefix}\n\n${code}\n\n`
     : `${code}\n\n`
