@@ -127,6 +127,7 @@ export function genTsCodeFromTypes<T extends TTables>(
     callerTypeId,
     arr[0],
     options.exportVarPrefix,
+    DbPropKeys.tables,
     options.outputFileNameSuffix,
   )
   if (! path) {
@@ -150,6 +151,7 @@ export function genTablesTsCodeFromTypes<T extends TTables>(
   callerTypeId: CallerTypeId,
   tables: Tables<T>,
   exportVarPrefix: string,
+  exportVarColsSuffix: string,
   outputFileNameSuffix: string,
 ): [FilePath, string] {
 
@@ -158,7 +160,8 @@ export function genTablesTsCodeFromTypes<T extends TTables>(
   const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
 
   const tbVarName = genVarName(exportVarPrefix, line, column)
-  const code = `export const ${tbVarName} = ${JSON.stringify(tables, null, 2)} as const`
+  const tbTableVarName = `${tbVarName}_${exportVarColsSuffix}`
+  const code = `export const ${tbTableVarName} = ${JSON.stringify(tables, null, 2)} as const`
 
   return [targetPath, code]
 }

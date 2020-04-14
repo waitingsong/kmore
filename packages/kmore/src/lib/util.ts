@@ -8,6 +8,7 @@ import {
   LoadVarFromFileOpts,
   genVarName,
   loadFile,
+  Tables,
 } from 'kmore-types'
 
 import { DbPropKeys } from './config'
@@ -241,6 +242,8 @@ export function genKTablesFromBase<T extends TTables>(
 export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTables<T> {
   const { path, caller, options } = loadOpts
   const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
+  const tableVarName = `${tbVarName}_${DbPropKeys.tables}`
+
   const colSuffixArr = [DbPropKeys.columns, DbPropKeys.aliasColumns, DbPropKeys.scopedColumns]
 
   const ret = {} as KTables<T>
@@ -256,7 +259,7 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
     throw new TypeError(`Load tables failed, path: "${path}"`)
   }
 
-  const tables = mods[tbVarName]
+  const tables = mods[tableVarName] as Tables<T>
   Object.defineProperty(ret, 'tables', {
     ...props,
     value: tables,

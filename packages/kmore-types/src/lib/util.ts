@@ -336,11 +336,12 @@ export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFi
 export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTablesBase<T> {
   const { path, caller, options } = loadOpts
   const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
+  const tableVarName = `${tbVarName}_${DbPropKeys.tables}`
   const colVarName = `${tbVarName}_${DbPropKeys.columns}`
   const mods = loadFile(path)
 
   if (mods && typeof mods[tbVarName] === 'object') {
-    const tables = mods[tbVarName] as Tables<T>
+    const tables = mods[tableVarName] as Tables<T>
 
     const columns = typeof mods[colVarName] === 'object'
       ? mods[colVarName] as MultiTableCols<T>

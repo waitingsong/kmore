@@ -1,7 +1,7 @@
 import { basename, pathResolve, normalize } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { initOptions, initBuildSrcOpts } from '../src/lib/config'
+import { initOptions, initBuildSrcOpts, DbPropKeys } from '../src/lib/config'
 import { buildSrcTablesFile } from '../src/lib/build'
 import { genTbListTsFilePath } from '../src/lib/util'
 
@@ -20,6 +20,18 @@ describe(filename, () => {
         normalize(targetPath).toLowerCase() === normalize(expectedPath).toLowerCase(),
         `retPath: ${targetPath}, expectedPath: ${expectedPath}`,
       )
+
+      const mods = await import(targetPath)
+      const colSuffixArr = [
+        DbPropKeys.tables,
+        DbPropKeys.columns,
+      ]
+
+      assert(mods && typeof mods === 'object')
+      colSuffixArr.forEach((col) => {
+        const contains = Object.keys(mods).some(key => key.endsWith(col))
+        assert(contains === true, `${col} not existing`)
+      })
     })
   })
 
