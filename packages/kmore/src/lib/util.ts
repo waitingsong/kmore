@@ -266,7 +266,7 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
   })
 
   colSuffixArr.forEach((colName) => {
-    const colVarName = `${tbVarName}${colName}`
+    const colVarName = `${tbVarName}_${colName}`
 
     const columns = typeof mods[colVarName] === 'object'
       ? mods[colVarName] as MultiTableCols<T>
