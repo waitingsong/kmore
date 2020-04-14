@@ -1,6 +1,6 @@
 import { pathResolve, writeFileAsync } from '@waiting/shared-core'
 import { mergeMap } from 'rxjs/operators'
-import { Observable, defer } from 'rxjs'
+import { Observable, of } from 'rxjs'
 
 import {
   TTables,
@@ -9,6 +9,8 @@ import {
   CallerTbListMap,
   BuildSrcOpts,
   MultiTableCols,
+  TablesMapArrCommon,
+  CallerTypeId,
 } from './model'
 import {
   buildTbListParam,
@@ -39,7 +41,7 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
   const walk$ = walkDirForCallerFuncTsFiles(opts)
   const build$ = walk$.pipe(
     mergeMap((path) => {
-      return defer(() => buildSrcTablesFile(path, opts))
+      return buildSrcTablesFile(path, opts)
     }, opts.concurrent),
     // defaultIfEmpty(''),
   )
@@ -63,15 +65,27 @@ export async function buildSrcTablesFile<T extends TTables>(
     ...options,
   }
 
-  const ret: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
-  if (ret && ret.size) {
-    const [path, code] = genTsCodeFromTypes<T>(ret, opts)
-    await saveFile(path, code, opts.outputBanner)
-    return path.replace(/\\/gu, '/')
+  let path = ''
+  let content = ''
+  const map: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
+
+  if (map && map.size) {
+    map.forEach((arr, key) => {
+      const [str, code] = genTsCodeFromTypes<T>(key, arr, opts)
+      if (! path) {
+        path = str // all value are the same one
+      }
+      content += code
+    })
+    if (! path) {
+      throw new Error('path value is empty')
+    }
+    await saveFile(path, content, opts.outputBanner)
+    path = path.replace(/\\/ug, '/')
+
   }
-  else {
-    return ''
-  }
+
+  return path
 }
 
 function retrieveTypeFromTsFile<T extends TTables>(
@@ -100,7 +114,8 @@ function retrieveTypeFromTsFile<T extends TTables>(
 }
 
 function genTsCodeFromTypes<T extends TTables>(
-  inputMap: CallerTbListMap<T>,
+  callerTypeId: CallerTypeId,
+  arr: TablesMapArrCommon<T>,
   options: Required<BuildSrcOpts>,
 ): [FilePath, string] {
 
@@ -109,29 +124,24 @@ function genTsCodeFromTypes<T extends TTables>(
     exportVarColsSuffix,
     outputFileNameSuffix,
   } = options
-  let targetPath = ''
   const sourceArr: string[] = []
 
-  inputMap.forEach(([tbs, mtCols], key) => {
-    const { path, line, column } = pickInfoFromCallerTypeId(key)
+  const [tbs, mtCols] = arr
+  const { path, line, column } = pickInfoFromCallerTypeId(callerTypeId)
+  // const relativePath = relative(base, path)
+  const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
 
-    if (! targetPath) {
-      // const relativePath = relative(base, path)
-      targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
-    }
+  const tbVarName = genVarName(exportVarPrefix, line, column)
+  const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
 
-    const tbVarName = genVarName(exportVarPrefix, line, column)
-    const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
-
-    sourceArr.push(`export const ${tbVarName} = ${JSON.stringify(tbs, null, 2)} as const`)
-    sourceArr.push(`export const ${tbColVarName} = ${JSON.stringify(mtCols, null, 2)} as const`)
-  })
+  sourceArr.push(`export const ${tbVarName} = ${JSON.stringify(tbs, null, 2)} as const`)
+  sourceArr.push(`export const ${tbColVarName} = ${JSON.stringify(mtCols, null, 2)} as const`)
 
   return [targetPath, sourceArr.join('\n\n')]
 }
 
 
-/** Save tables of one file */
+/** Save (k)tables of one file */
 async function saveFile(
   path: string,
   code: string,
