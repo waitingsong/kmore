@@ -176,7 +176,7 @@ export function genColsTsCodeFromTypes<T extends TTables>(
   const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
 
   const tbVarName = genVarName(exportVarPrefix, line, column)
-  const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
+  const tbColVarName = `${tbVarName}_${exportVarColsSuffix}`
   const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
 
   return [targetPath, code]
