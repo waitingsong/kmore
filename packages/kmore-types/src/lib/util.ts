@@ -330,7 +330,7 @@ export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFi
   return kTables.columns
 }
 /**
- * Load kTables var from a js file
+ * Load kTablesBase var from a js file
  */
 export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTablesBase<T> {
   const { path, caller, options } = loadOpts
