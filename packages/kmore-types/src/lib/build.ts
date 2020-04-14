@@ -1,6 +1,6 @@
 import { pathResolve, writeFileAsync } from '@waiting/shared-core'
 import { mergeMap } from 'rxjs/operators'
-import { Observable, of } from 'rxjs'
+import { Observable } from 'rxjs'
 
 import {
   TTables,
@@ -77,22 +77,22 @@ export async function buildSrcTablesFile<T extends TTables>(
       }
       content += code
     })
+
     if (! path) {
       throw new Error('path value is empty')
     }
     await saveFile(path, content, opts.outputBanner)
     path = path.replace(/\\/ug, '/')
-
   }
 
   return path
 }
 
-function retrieveTypeFromTsFile<T extends TTables>(
+export function retrieveTypeFromTsFile<T extends TTables>(
   file: FilePath,
 ): CallerTbListMap<T> {
 
-  const path = pathResolve(file).replace(/\\/gu, '/')
+  const path = pathResolve(file).replace(/\\/ug, '/')
   const { checker, sourceFile } = matchSourceFileWithFilePath(path)
   const ret: CallerTbListMap<T> = new Map()
 
@@ -113,7 +113,7 @@ function retrieveTypeFromTsFile<T extends TTables>(
   return ret
 }
 
-function genTsCodeFromTypes<T extends TTables>(
+export function genTsCodeFromTypes<T extends TTables>(
   callerTypeId: CallerTypeId,
   arr: TablesMapArrCommon<T>,
   options: Required<BuildSrcOpts>,
@@ -142,7 +142,7 @@ function genTsCodeFromTypes<T extends TTables>(
 
 
 /** Save (k)tables of one file */
-async function saveFile(
+export async function saveFile(
   path: string,
   code: string,
   outputPrefix: string,
