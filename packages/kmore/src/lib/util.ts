@@ -5,6 +5,9 @@ import {
   createNullObject,
   KTablesBase,
   MultiTableCols,
+  LoadVarFromFileOpts,
+  genVarName,
+  loadFile,
 } from 'kmore-types'
 
 import { DbPropKeys } from './config'
@@ -229,5 +232,49 @@ export function genKTablesFromBase<T extends TTables>(
   ktbs.aliasColumns = genAliasColumns(ktbs.scopedColumns)
 
   return ktbs
+}
+
+
+/**
+ * Load kTables var from a js file
+ */
+export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTables<T> {
+  const { path, caller, options } = loadOpts
+  const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
+  const colSuffixArr = [DbPropKeys.columns, DbPropKeys.aliasColumns, DbPropKeys.scopedColumns]
+
+  const ret = {} as KTables<T>
+  const props = {
+    configurable: false,
+    enumerable: true,
+    writable: false,
+  }
+
+  const mods = loadFile(path)
+
+  if (! mods || typeof mods[tbVarName] !== 'object') {
+    throw new TypeError(`Load tables failed, path: "${path}"`)
+  }
+
+  const tables = mods[tbVarName]
+  Object.defineProperty(ret, 'tables', {
+    ...props,
+    value: tables,
+  })
+
+  colSuffixArr.forEach((colName) => {
+    const colVarName = `${tbVarName}${colName}`
+
+    const columns = typeof mods[colVarName] === 'object'
+      ? mods[colVarName] as MultiTableCols<T>
+      : {} as MultiTableCols<T>
+
+    Object.defineProperty(ret, colName, {
+      ...props,
+      value: columns,
+    })
+  })
+
+  return ret
 }
 
