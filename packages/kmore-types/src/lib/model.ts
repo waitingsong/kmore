@@ -86,11 +86,13 @@ export interface TablesMapArr<T extends TTables>
   length: 2
 }
 export interface TablesMapArrCommon<T extends TTables>
-  extends Array<Tables<T> | MultiTableCols<T> | MultiTableScopedCols<T> | MultiTableAliasCols<T>> {
+  extends Array<Tables<T> | MultiTableColsCommon<T>> {
   0: Tables<T>
-  1: MultiTableCols<T> | MultiTableScopedCols<T> | MultiTableAliasCols<T>
+  1: MultiTableColsCommon<T>
   length: 2
 }
+export type MultiTableColsCommon<T extends TTables> =
+  MultiTableCols<T> | MultiTableScopedCols<T> | MultiTableAliasCols<T>
 
 /** GenericsTypeId scope in the file */
 export type LocalTypeMap = Map<LocalTypeId, TagsMapArr>
