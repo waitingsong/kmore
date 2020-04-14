@@ -259,8 +259,9 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
 
   const mods = loadFile(path)
 
-  if (! mods || typeof mods[tbVarName] !== 'object') {
-    throw new TypeError(`Load tables failed, path: "${path}"`)
+  const tKey = `${tbVarName}_${DbPropKeys.tables}`
+  if (! mods || typeof mods[tKey] !== 'object') {
+    throw new TypeError(`Error, load tables failed, key not existed: "${tKey}", path: "${path}"`)
   }
 
   keySuffixArr.forEach((key) => {
