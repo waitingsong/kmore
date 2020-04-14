@@ -20,7 +20,7 @@ import {
   walkDirForCallerFuncTsFiles,
   buildTbColListParam,
 } from './util'
-import { initBuildSrcOpts, globalCallerFuncNameSet } from './config'
+import { initBuildSrcOpts, globalCallerFuncNameSet, DbPropKeys } from './config'
 import {
   pickInfoFromCallerTypeId,
   genCallerTypeMapFromNodeSet,
@@ -136,9 +136,9 @@ export function genTsCodeFromTypes<T extends TTables>(
 
   const [, code2] = genColsTsCodeFromTypes<T>(
     callerTypeId,
-    [arr[1]],
+    arr[1],
     options.exportVarPrefix,
-    options.exportVarColsSuffix,
+    DbPropKeys.columns,
     options.outputFileNameSuffix,
   )
   codeArr.push(code2)
@@ -165,7 +165,7 @@ export function genTablesTsCodeFromTypes<T extends TTables>(
 
 export function genColsTsCodeFromTypes<T extends TTables>(
   callerTypeId: CallerTypeId,
-  columnsArr: MultiTableColsCommon<T>[],
+  columns: MultiTableColsCommon<T>,
   exportVarPrefix: string,
   exportVarColsSuffix: string,
   outputFileNameSuffix: string,
@@ -177,14 +177,9 @@ export function genColsTsCodeFromTypes<T extends TTables>(
 
   const tbVarName = genVarName(exportVarPrefix, line, column)
   const tbColVarName = `${tbVarName}${exportVarColsSuffix}`
-  const codeArr: string[] = []
+  const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
 
-  columnsArr.forEach((columns) => {
-    const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
-    codeArr.push(code)
-  })
-
-  return [targetPath, codeArr.join('\n\n')]
+  return [targetPath, code]
 }
 
 

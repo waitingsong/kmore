@@ -12,8 +12,6 @@ import { JsonType, Spread } from '@waiting/shared-types'
 export interface Options extends GenTbListFromTypeOpts {
   /** Exported table vaiable name prefix. Default is "tbs_", result will be "tbs_m_n" */
   exportVarPrefix: string
-  /** Exported column vaiable name suffix. Default is "_cols", result will be "tbs_m_n_cols" */
-  exportVarColsSuffix: string
   /**
    * Load js under ts env for debug,
    * Default: false

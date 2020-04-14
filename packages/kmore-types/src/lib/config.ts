@@ -16,7 +16,6 @@ export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
 export const initOptions: Options = {
   ...initGenTbListFromTypeOpts,
   exportVarPrefix: 'tbs_',
-  exportVarColsSuffix: '_cols',
   forceLoadTbListJs: false,
   forceLoadTbListJsPathReplaceRules: null,
   outputBanner: '/* eslint-disable */',
