@@ -22,7 +22,7 @@ describe(filename, () => {
       )
 
       const mods = await import(targetPath)
-      const colSuffixArr = [
+      const keyArr = [
         DbPropKeys.tables,
         DbPropKeys.columns,
         DbPropKeys.aliasColumns,
@@ -30,7 +30,7 @@ describe(filename, () => {
       ]
 
       assert(mods && typeof mods === 'object')
-      colSuffixArr.forEach((col) => {
+      keyArr.forEach((col) => {
         const contains = Object.keys(mods).some(key => key.endsWith(col))
         assert(col && contains === true, `${col} not existing`)
       })
