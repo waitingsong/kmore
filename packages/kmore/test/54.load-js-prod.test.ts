@@ -6,7 +6,7 @@ import { tbList2 } from './config/test.config2'
 
 const filename = basename(__filename)
 
-describe.only(filename, () => {
+describe(filename, () => {
 
   describe('Should loading tables works', () => {
     it('normal', () => {
@@ -16,3 +16,4 @@ describe.only(filename, () => {
   })
 
 })
+
