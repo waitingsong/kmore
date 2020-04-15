@@ -340,16 +340,18 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
   const colVarName = `${tbVarName}_${DbPropKeys.columns}`
   const mods = loadFile(path)
 
-  if (mods && typeof mods[tbVarName] === 'object') {
-    const tables = mods[tableVarName] as Tables<T>
-
-    const columns = typeof mods[colVarName] === 'object'
-      ? mods[colVarName] as MultiTableCols<T>
-      : {} as MultiTableCols<T>
-
-    return { tables, columns }
+  if (! mods) {
+    throw new TypeError(`Loaded mods empty, path: "${path}"`)
   }
-  throw new TypeError(`Load tables failed, path: "${path}"`)
+  else if (typeof mods[tableVarName] !== 'object') {
+    throw new TypeError(`Loaded mods[${tableVarName}] not object, path: "${path}"`)
+  }
+  const tables = mods[tableVarName] as Tables<T>
+  const columns = typeof mods[colVarName] === 'object'
+    ? mods[colVarName] as MultiTableCols<T>
+    : {} as MultiTableCols<T>
+
+  return { tables, columns }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
