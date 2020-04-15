@@ -167,12 +167,12 @@ export function bindRefTables<T extends TTables>(
   return db
 }
 
-export function hasScopedColumns<T extends TTables>(
+export function hasExtColumns<T extends TTables>(
   tables: KTablesBase<T> | KTables<T>,
+  key: DbPropKeys,
 ): tables is KTables<T> {
 
-  // eslint-disable-next-line no-prototype-builtins
-  return !! (tables && tables.hasOwnProperty(DbPropKeys.scopedColumns))
+  return !! (tables && Object.prototype.hasOwnProperty.call(tables, key))
 }
 
 
@@ -186,7 +186,8 @@ export function genKTablesFromBase<T extends TTables>(
   createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,
 ): KTables<T> {
 
-  if (hasScopedColumns(kTablesBase)) {
+  if (hasExtColumns(kTablesBase, DbPropKeys.aliasColumns)
+    && hasExtColumns(kTablesBase, DbPropKeys.scopedColumns)) {
     return kTablesBase
   }
 

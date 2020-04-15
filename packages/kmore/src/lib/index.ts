@@ -1,4 +1,4 @@
-import { createNullObject, getCallerStack, KTablesBase } from 'kmore-types'
+import { createNullObject, getCallerStack, KTablesBase, DbPropKeys } from 'kmore-types'
 
 import { defaultPropDescriptor, initOptions } from './config'
 import { DbModel, TTables, KmoreOpts, KTables } from './model'
@@ -9,7 +9,7 @@ import {
   bindTablesCols,
   bindRefTables,
   bindTablesScopedCols,
-  hasScopedColumns,
+  hasExtColumns,
   genKTablesFromBase,
   bindTablesAliasCols,
 } from './util'
@@ -47,7 +47,9 @@ export function kmore<T extends TTables>(
   let ktbs = {} as KTables<T>
   if (kTables) {
     if (Object.keys(kTables).length) {
-      ktbs = hasScopedColumns(kTables) ? kTables : genKTablesFromBase(kTables)
+      ktbs = hasExtColumns(kTables, DbPropKeys.scopedColumns) && hasExtColumns(kTables, DbPropKeys.aliasColumns)
+        ? kTables
+        : genKTablesFromBase(kTables)
     }
     else {
       throw new TypeError('Parameter kTables is empty')
