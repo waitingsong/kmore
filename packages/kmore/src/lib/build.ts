@@ -23,10 +23,12 @@ import { genKTablesFromBase } from './util'
 
 
 /**
- * Generate tables .ts files,
+ * Generate kTables .ts files,
+ * include extra scopedColumns, aliasColumns,
+ * for testing.
  * no path value emitted if no file generated.
  */
-export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
+export function buildKTablesSource(options: BuildSrcOpts): Observable<FilePath> {
   const opts: Required<BuildSrcOpts> = {
     ...initBuildSrcOpts,
     ...options,
