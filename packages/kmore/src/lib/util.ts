@@ -239,7 +239,7 @@ export function genKTablesFromBase<T extends TTables>(
 /**
  * Load kTables var from a js file
  */
-export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTables<T> {
+export function loadKTablesVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTables<T> {
   const { path, caller, options } = loadOpts
   const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
 
