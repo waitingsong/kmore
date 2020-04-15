@@ -300,7 +300,7 @@ export type TableAliasCols<TAliasCols = any> = AliasTableCols<TAliasCols> & {
     keyArr: ((keyof T) | '*')[],
     /** Default: false */
     useColAliasNameAsOutputName?: boolean,
-  ): KnexColumnsParma,
+  ): any,
 }
 export type AliasTableCols<TAliasCols = any> = {
   [col in keyof TAliasCols]: ColAliasType<TAliasCols[col]>
