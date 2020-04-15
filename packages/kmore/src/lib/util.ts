@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import * as Knex from 'knex'
 import {
   validateParamTables,
   createNullObject,
@@ -10,7 +8,10 @@ import {
   loadFile,
   Tables,
 } from 'kmore-types'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as Knex from 'knex'
 
+import { genAliasColumns } from './alias-cols-util'
 import { DbPropKeys } from './config'
 import {
   DbModel,
@@ -28,7 +29,6 @@ import {
   setScopedColumnsColsCache,
   defaultCreateScopedColumnName,
 } from './scoped-cols-util'
-import { genAliasColumns } from './alias-cols-util'
 
 
 // workaround for rollup

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
+import { JsonType, Spread } from '@waiting/shared-types'
 import {
   CallExpression,
   JSDocTagInfo,
   SourceFile,
   TypeChecker,
 } from 'typescript'
-import { JsonType, Spread } from '@waiting/shared-types'
 
 
 export interface Options extends GenTbListFromTypeOpts {

@@ -1,5 +1,5 @@
-import { genTbListFromType } from '../../src/lib/compiler'
 import { KTablesBase, TTables } from '../../src'
+import { genTbListFromType } from '../../src/lib/compiler'
 import { User, UserDetail } from '../test.model'
 
 

@@ -2,6 +2,11 @@
 import { CallExpression } from 'typescript'
 
 import {
+  cacheMap as cacheMapTop,
+  initGenTbListFromTypeOpts,
+  globalCallerFuncNameSet,
+} from './config'
+import {
   RetrieveInfoFromTypeOpts,
   CallerInfo,
   GenTbListFromTypeOpts,
@@ -15,21 +20,16 @@ import {
   // ColListTagMap,
 } from './model'
 import {
-  buildTbListParam,
-  buildTbColListParam,
-  getCallerStack,
-  isTsFile,
-} from './util'
-import {
   genInfoFromNode,
   matchSourceFileWithFilePath,
   walkNodeWithPosition,
 } from './ts-util'
 import {
-  cacheMap as cacheMapTop,
-  initGenTbListFromTypeOpts,
-  globalCallerFuncNameSet,
-} from './config'
+  buildTbListParam,
+  buildTbColListParam,
+  getCallerStack,
+  isTsFile,
+} from './util'
 
 
 /**

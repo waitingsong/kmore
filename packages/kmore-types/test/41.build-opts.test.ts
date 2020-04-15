@@ -1,8 +1,8 @@
 import { basename, pathResolve, normalize } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { initOptions, initBuildSrcOpts, DbPropKeys } from '../src/lib/config'
 import { buildSrcTablesFile } from '../src/lib/build'
+import { initOptions, initBuildSrcOpts, DbPropKeys } from '../src/lib/config'
 import { genTbListTsFilePath } from '../src/lib/util'
 
 

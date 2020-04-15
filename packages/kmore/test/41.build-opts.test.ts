@@ -1,6 +1,6 @@
 import { basename, pathResolve, normalize } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import { genTbListTsFilePath, DbPropKeys } from 'kmore-types'
+import * as assert from 'power-assert'
 
 import { buildKTablesFile } from '../src/lib/build'
 import { initOptions, initBuildSrcOpts } from '../src/lib/config'

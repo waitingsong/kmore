@@ -1,6 +1,6 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import { genTbListFromType } from 'kmore-types'
+import * as assert from 'power-assert'
 
 import {
   kmore,

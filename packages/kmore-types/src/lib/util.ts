@@ -1,8 +1,8 @@
-import * as sourceMapSupport from 'source-map-support'
-import { walk, EntryType } from 'rxwalker'
+import { readFileLineRx } from '@waiting/shared-core'
 import { from as ofrom, of, Observable, iif, concat } from 'rxjs'
 import { map, filter, mergeMap, catchError, take } from 'rxjs/operators'
-import { readFileLineRx } from '@waiting/shared-core'
+import { walk, EntryType } from 'rxwalker'
+import * as sourceMapSupport from 'source-map-support'
 
 import {
   defaultPropDescriptor,

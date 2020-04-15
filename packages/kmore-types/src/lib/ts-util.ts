@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+import { pathResolve } from '@waiting/shared-core'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   createProgram as createProgramOri,
@@ -14,9 +15,7 @@ import {
   TypeChecker,
   TypeNode,
 } from 'typescript'
-import { pathResolve } from '@waiting/shared-core'
 
-import { isCallerNameMatched } from './util'
 import {
   CallerTypeIdInfo,
   CallerTypeId,
@@ -31,6 +30,7 @@ import {
   WalkNodeOps,
   TbTagsMap,
 } from './model'
+import { isCallerNameMatched } from './util'
 
 
 /**

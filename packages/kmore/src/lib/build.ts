@@ -1,5 +1,3 @@
-import { mergeMap } from 'rxjs/operators'
-import { Observable, defer } from 'rxjs'
 import {
   walkDirForCallerFuncTsFiles,
   retrieveTypeFromTsFile,
@@ -10,7 +8,10 @@ import {
   genColsTsCodeFromTypes,
   DbPropKeys,
 } from 'kmore-types'
+import { Observable, defer } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 
+import { initBuildSrcOpts } from './config'
 import {
   TTables,
   FilePath,
@@ -18,7 +19,6 @@ import {
   BuildSrcOpts,
   KTables,
 } from './model'
-import { initBuildSrcOpts } from './config'
 import { genKTablesFromBase } from './util'
 
 

@@ -1,7 +1,8 @@
 import { pathResolve, writeFileAsync } from '@waiting/shared-core'
-import { mergeMap } from 'rxjs/operators'
 import { Observable } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 
+import { initBuildSrcOpts, globalCallerFuncNameSet, DbPropKeys } from './config'
 import {
   TTables,
   FilePath,
@@ -14,19 +15,18 @@ import {
   TablesMapArrCommon,
 } from './model'
 import {
+  pickInfoFromCallerTypeId,
+  genCallerTypeMapFromNodeSet,
+  matchSourceFileWithFilePath,
+  walkNode,
+} from './ts-util'
+import {
   buildTbListParam,
   genTbListTsFilePath,
   genVarName,
   walkDirForCallerFuncTsFiles,
   buildTbColListParam,
 } from './util'
-import { initBuildSrcOpts, globalCallerFuncNameSet, DbPropKeys } from './config'
-import {
-  pickInfoFromCallerTypeId,
-  genCallerTypeMapFromNodeSet,
-  matchSourceFileWithFilePath,
-  walkNode,
-} from './ts-util'
 
 
 /**

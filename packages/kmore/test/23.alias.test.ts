@@ -1,9 +1,9 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import {
   ScopedColumns,
   TTables,
 } from 'kmore-types'
+import * as assert from 'power-assert'
 
 import {
   kmore,

@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs'
 import { buildSource } from 'kmore-types'
+import { Observable } from 'rxjs'
 
 import { RunCmdArgs, Options } from './model'
 

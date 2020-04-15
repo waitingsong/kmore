@@ -9,13 +9,13 @@ import {
   reWriteLoadingPath,
 } from 'kmore-types'
 
+import { initOptions } from './config'
 import {
   CallerInfo,
   Options,
   TTables,
   KTables,
 } from './model'
-import { initOptions } from './config'
 import { genKTablesFromBase, loadVarFromFile } from './util'
 
 

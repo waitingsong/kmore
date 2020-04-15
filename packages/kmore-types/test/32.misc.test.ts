@@ -5,9 +5,9 @@ import {
   TbListTagMap,
   RetrieveInfoFromTypeOpts,
 } from '../src/index'
+import { retrieveLocalTypeItemFromType } from '../src/lib/compiler'
 import { cacheMap } from '../src/lib/config'
 import { buildTbListParam } from '../src/lib/util'
-import { retrieveLocalTypeItemFromType } from '../src/lib/compiler'
 
 
 const filename = basename(__filename)

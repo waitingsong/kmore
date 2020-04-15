@@ -1,6 +1,6 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import { validateParamTables } from 'kmore-types'
+import * as assert from 'power-assert'
 
 import { kTablesBase3 } from './config/test.config3'
 import { kTables31 } from './config/test.config31'

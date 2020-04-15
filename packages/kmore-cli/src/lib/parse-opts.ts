@@ -1,5 +1,5 @@
-import * as yargs from 'yargs'
 import { BuildSrcOpts } from 'kmore-types'
+import * as yargs from 'yargs'
 
 import { cmdSet, initialCliArgs } from './config'
 import { helpDefault } from './helper'

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
-import * as Knex from 'knex'
 import {
   JointTable,
   Tables,
@@ -15,6 +14,7 @@ import {
   ColAliasType,
   KnexColumnsParma,
 } from 'kmore-types'
+import * as Knex from 'knex'
 
 
 export {

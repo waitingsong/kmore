@@ -1,11 +1,11 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { genKTablesFromBase } from '../src/lib/util'
 import { CreateColumnNameOpts } from '../src'
+import { genKTablesFromBase } from '../src/lib/util'
 
-import { kTables } from './test.config'
 import { kTablesBase3, kTablesBase4 } from './config/test.config3'
+import { kTables } from './test.config'
 
 
 const filename = basename(__filename)

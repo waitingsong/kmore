@@ -5,8 +5,8 @@ import * as assert from 'power-assert'
 import { of } from 'rxjs'
 import { tap, finalize, defaultIfEmpty, mergeMap } from 'rxjs/operators'
 
-import { buildSource } from '../src/lib/build'
 import { globalCallerFuncNameSet } from '../src'
+import { buildSource } from '../src/lib/build'
 
 
 const filename = basename(__filename)

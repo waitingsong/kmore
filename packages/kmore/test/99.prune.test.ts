@@ -3,9 +3,9 @@ import * as assert from 'power-assert'
 
 import { kmore } from '../src/index'
 
+import { dropTables } from './helper'
 import { config } from './test.config'
 import { TbListModel } from './test.model'
-import { dropTables } from './helper'
 
 
 const filename = basename(__filename)
