@@ -17,6 +17,7 @@ exports.tbs_4_24_columns = {
   }
 };
 
+/*
 exports.tbs_4_24_scopedColumns = {
   "tb_user": {
     "uid": "tb_user.uid",
@@ -50,4 +51,5 @@ exports.tbs_4_24_aliasColumns = {
     }
   }
 };
+*/
 
