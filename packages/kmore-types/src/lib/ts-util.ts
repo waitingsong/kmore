@@ -193,19 +193,14 @@ function retrieveMembersFromTypeRef(
 
   const ret: ColListTagMap = new Map()
   const gType = checker.getTypeAtLocation(typeRef)
+  const sym = gType.getSymbol()
 
   /* istanbul ignore else */
-  if (gType && gType.symbol) {
-    const sym = gType.getSymbol()
-    if (sym) {
-      const { members } = sym
-      if (members) {
-        members.forEach((member) => {
-          const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
-          ret.set(colName, tags)
-        })
-      }
-    }
+  if (sym && sym.members) {
+    sym.members.forEach((member) => {
+      const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
+      ret.set(colName, tags)
+    })
   }
 
   return ret
