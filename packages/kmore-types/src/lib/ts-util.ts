@@ -6,6 +6,7 @@ import {
   isCallExpression as isCallExpressionOri,
   forEachChild as forEachChildOri,
   CallExpression,
+  Declaration,
   JSDocTagInfo,
   Identifier,
   Node,
@@ -155,7 +156,7 @@ function genTbListTagMapFromSymbol(
       // tags can be empty array
       tbTagMap.set(tbName, tags)
 
-      const nodes = tbSym.getDeclarations() as PropertySignature[] | undefined
+      const nodes: Declaration[] | undefined = tbSym.getDeclarations()
       if (nodes && nodes.length) {
         const colTagMap = genColListTagMapFromTbSymbol(nodes, checker)
         tbColTagMap.set(tbName, colTagMap)
@@ -167,16 +168,19 @@ function genTbListTagMapFromSymbol(
 }
 
 function genColListTagMapFromTbSymbol(
-  nodes: PropertySignature[],
+  nodes: Declaration[],
   checker: TypeChecker,
 ): ColListTagMap {
 
   const ret: ColListTagMap = new Map()
   const [node] = nodes // use only one
-  const { type: typeRef } = node
 
-  if (typeRef && typeRef.getText()) {
-    return retrieveMembersFromTypeRef(typeRef, checker)
+  if (typeof (node as PropertySignature).type === 'object') {
+    const typeRef = (node as PropertySignature).type
+
+    if (typeRef && typeRef.getText()) {
+      return retrieveMembersFromTypeRef(typeRef, checker)
+    }
   }
 
   return ret
