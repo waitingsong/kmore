@@ -122,7 +122,7 @@ export function genInfoFromNode(
     // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
     const localTypeId = `${path}:typeid-${inputTypeName}`
 
-    const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(gType.symbol, checker)
+    const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(sym, checker)
     /* istanbul ignore else */
     if (tbTagMap.size) {
       return {
@@ -207,7 +207,9 @@ function retrieveMembersFromTypeRef(
   return ret
 }
 
-function retrieveInfoFromSymbolObject(symbol: TsSymbol): {name: string, tags: JSDocTagInfo[]} {
+function retrieveInfoFromSymbolObject(
+  symbol: TsSymbol,
+): {name: string, tags: JSDocTagInfo[] } {
   return {
     name: symbol.getName(),
     tags: symbol.getJsDocTags(),
