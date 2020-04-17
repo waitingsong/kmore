@@ -1,16 +1,17 @@
+/* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { pathResolve } from '@waiting/shared-core'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   createProgram as createProgramOri,
   isCallExpression as isCallExpressionOri,
+  isPropertySignature,
   forEachChild as forEachChildOri,
   CallExpression,
   Declaration,
   JSDocTagInfo,
   Identifier,
   Node,
-  PropertySignature,
   SourceFile,
   Symbol as TsSymbol,
   TypeChecker,
@@ -96,6 +97,7 @@ export function genInfoFromNode(
   if (! node.typeArguments || ! node.typeArguments[0]) {
     return
   }
+  // console.info(node.getSourceFile().fileName)
 
   // const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
   // if (typeName && typeName.getText()) {
@@ -175,9 +177,8 @@ function genColListTagMapFromTbSymbol(
   const ret: ColListTagMap = new Map()
   const [node] = nodes // use only one
 
-  if (typeof (node as PropertySignature).type === 'object') {
-    const typeRef = (node as PropertySignature).type
-
+  if (isPropertySignature(node) && typeof node.type === 'object') {
+    const typeRef = node.type
     if (typeRef && typeRef.getText()) {
       return retrieveMembersFromTypeRef(typeRef, checker)
     }
