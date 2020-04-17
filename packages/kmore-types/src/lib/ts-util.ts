@@ -186,7 +186,7 @@ function genColListTagMapFromTbDeclarations(
   if (isPropertySignature(node) && typeof node.type === 'object') {
     const typeRef = node.type
     if (typeRef && typeRef.getText()) {
-      return retrieveMembersFromTypeNode(typeRef, checker)
+      return retrieveMembersFromTypeNode(checker, typeRef)
     }
   }
 
@@ -194,8 +194,8 @@ function genColListTagMapFromTbDeclarations(
 }
 
 function retrieveMembersFromTypeNode(
-  typeRef: TypeNode, // TypeReference
   checker: TypeChecker,
+  typeRef: TypeNode, // TypeReference
 ): ColListTagMap {
 
   const ret: ColListTagMap = new Map()
