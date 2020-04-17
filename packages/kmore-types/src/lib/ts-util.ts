@@ -161,7 +161,7 @@ function genTbListTagMapFromSymbol(
       // fields declarations
       const declarations: Declaration[] | undefined = tbSym.getDeclarations()
       if (declarations && declarations.length) {
-        const colTagMap = genColListTagMapFromTbSymbol(checker, declarations)
+        const colTagMap = genColListTagMapFromTbDeclarations(checker, declarations)
         tbColTagMap.set(tbName, colTagMap)
       }
     })
@@ -170,7 +170,7 @@ function genTbListTagMapFromSymbol(
   return { tbTagMap, tbColTagMap }
 }
 
-function genColListTagMapFromTbSymbol(
+function genColListTagMapFromTbDeclarations(
   checker: TypeChecker,
   declarations: Declaration[],
 ): ColListTagMap {
