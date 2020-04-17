@@ -180,10 +180,10 @@ function genColListTagMapFromTbDeclarations(
   }
 
   const ret: ColListTagMap = new Map()
-  const [node] = declarations // use only one
+  const [obj] = declarations // use only one
 
-  if (isPropertySignature(node) && typeof node.type === 'object') {
-    const nType = checker.getTypeAtLocation(node)
+  if (isPropertySignature(obj) && typeof obj.type === 'object') {
+    const nType = checker.getTypeAtLocation(obj)
     const sym = nType.getSymbol()
 
     /* istanbul ignore else */
