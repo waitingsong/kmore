@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { pathResolve } from '@waiting/shared-core'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {
+import type {
   createProgram as createProgramOri,
   isCallExpression as isCallExpressionOri,
-  isPropertySignature,
+  isPropertySignature as isPropertySignatureOri,
   forEachChild as forEachChildOri,
   CallExpression,
   Declaration,
@@ -173,6 +173,11 @@ function genColListTagMapFromTbSymbol(
   nodes: Declaration[],
   checker: TypeChecker,
 ): ColListTagMap {
+
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const { isPropertySignature } = require('typescript') as {
+    isPropertySignature: typeof isPropertySignatureOri,
+  }
 
   const ret: ColListTagMap = new Map()
   const [node] = nodes // use only one
