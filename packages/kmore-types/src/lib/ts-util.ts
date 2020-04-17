@@ -158,6 +158,7 @@ function genTbListTagMapFromSymbol(
       // tags can be empty array
       tbTagMap.set(tbName, tags)
 
+      // fields declarations
       const nodes: Declaration[] | undefined = tbSym.getDeclarations()
       if (nodes && nodes.length) {
         const colTagMap = genColListTagMapFromTbSymbol(nodes, checker)
