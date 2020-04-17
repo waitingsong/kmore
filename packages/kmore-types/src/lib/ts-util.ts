@@ -15,7 +15,6 @@ import type {
   SourceFile,
   Symbol as TsSymbol,
   TypeChecker,
-  TypeNode,
 } from 'typescript'
 
 import {
@@ -184,34 +183,21 @@ function genColListTagMapFromTbDeclarations(
   const [node] = declarations // use only one
 
   if (isPropertySignature(node) && typeof node.type === 'object') {
-    const typeRef = node.type
-    if (typeRef && typeRef.getText()) {
-      return retrieveMembersFromTypeNode(checker, typeRef)
+    const nType = checker.getTypeAtLocation(node)
+    const sym = nType.getSymbol()
+
+    /* istanbul ignore else */
+    if (sym && sym.members) {
+      sym.members.forEach((member) => {
+        const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
+        ret.set(colName, tags)
+      })
     }
   }
 
   return ret
 }
 
-function retrieveMembersFromTypeNode(
-  checker: TypeChecker,
-  typeRef: TypeNode, // TypeReference
-): ColListTagMap {
-
-  const ret: ColListTagMap = new Map()
-  const gType = checker.getTypeAtLocation(typeRef)
-  const sym = gType.getSymbol()
-
-  /* istanbul ignore else */
-  if (sym && sym.members) {
-    sym.members.forEach((member) => {
-      const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
-      ret.set(colName, tags)
-    })
-  }
-
-  return ret
-}
 
 function retrieveInfoFromSymbolObject(
   symbol: TsSymbol,
