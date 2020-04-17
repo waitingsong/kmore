@@ -124,7 +124,7 @@ export function genInfoFromNode(
     // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
     const localTypeId = `${path}:typeid-${inputTypeName}`
 
-    const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(sym, checker)
+    const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(checker, sym)
     /* istanbul ignore else */
     if (tbTagMap.size) {
       return {
@@ -140,8 +140,8 @@ export function genInfoFromNode(
 // ---- compiler ---
 
 function genTbListTagMapFromSymbol(
-  symbol: TsSymbol,
   checker: TypeChecker,
+  symbol: TsSymbol,
 ): Omit<TbTagsMap, 'tbScopedColTagMap'> {
 
   const { members } = symbol
