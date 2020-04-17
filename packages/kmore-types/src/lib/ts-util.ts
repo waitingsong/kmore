@@ -159,9 +159,9 @@ function genTbListTagMapFromSymbol(
       tbTagMap.set(tbName, tags)
 
       // fields declarations
-      const nodes: Declaration[] | undefined = tbSym.getDeclarations()
-      if (nodes && nodes.length) {
-        const colTagMap = genColListTagMapFromTbSymbol(nodes, checker)
+      const declarations: Declaration[] | undefined = tbSym.getDeclarations()
+      if (declarations && declarations.length) {
+        const colTagMap = genColListTagMapFromTbSymbol(checker, declarations)
         tbColTagMap.set(tbName, colTagMap)
       }
     })
@@ -171,8 +171,8 @@ function genTbListTagMapFromSymbol(
 }
 
 function genColListTagMapFromTbSymbol(
-  nodes: Declaration[],
   checker: TypeChecker,
+  declarations: Declaration[],
 ): ColListTagMap {
 
   // eslint-disable-next-line import/no-extraneous-dependencies
@@ -181,7 +181,7 @@ function genColListTagMapFromTbSymbol(
   }
 
   const ret: ColListTagMap = new Map()
-  const [node] = nodes // use only one
+  const [node] = declarations // use only one
 
   if (isPropertySignature(node) && typeof node.type === 'object') {
     const typeRef = node.type
