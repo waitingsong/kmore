@@ -27,7 +27,9 @@ export const tbListObj: Tables<TbListModel> = {
   tb_user_detail: 'tb_user_detail',
 }
 export const kTables: KTables<TbListModel> = genTbListFromType<TbListModel>()
-if (Object.keys(kTables).length === 0) {
-  throw new Error('tbList empty.')
-}
+
+assert(kTables && Object.keys(kTables.tables).length > 0)
+assert(Object.keys(kTables.columns.tb_user).length > 0)
+assert(Object.keys(kTables.columns.tb_user_detail).length > 0)
+assert(Object.keys(kTables.tables).length === Object.keys(kTables.columns).length)
 

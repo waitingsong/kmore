@@ -54,7 +54,7 @@ describe(filename, () => {
         },
         caller: {
           path: './test/test.config.ts',
-          line: 13,
+          line: 14,
           column: 23,
         },
       }
@@ -104,7 +104,7 @@ describe(filename, () => {
         },
         caller: {
           path: './test/test.config.ts',
-          line: 12,
+          line: 14,
           column: 22,
         },
       }
