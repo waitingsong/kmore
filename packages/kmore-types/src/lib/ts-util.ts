@@ -5,10 +5,8 @@ import { pathResolve } from '@waiting/shared-core'
 import type {
   createProgram as createProgramOri,
   isCallExpression as isCallExpressionOri,
-  isPropertySignature as isPropertySignatureOri,
   forEachChild as forEachChildOri,
   CallExpression,
-  Declaration,
   JSDocTagInfo,
   Identifier,
   Node,
@@ -158,41 +156,30 @@ function genTbListTagMapFromSymbol(
       tbTagMap.set(tbName, tags)
 
       // fields declarations
-      const declarations: Declaration[] | undefined = tbSym.getDeclarations()
-      if (declarations && declarations.length) {
-        const colTagMap = genColListTagMapFromTbDeclarations(checker, declarations)
-        tbColTagMap.set(tbName, colTagMap)
-      }
+      const colTagMap = genColListTagMapFromTbSymbol(checker, tbSym)
+      tbColTagMap.set(tbName, colTagMap)
     })
   }
 
   return { tbTagMap, tbColTagMap }
 }
 
-function genColListTagMapFromTbDeclarations(
+
+function genColListTagMapFromTbSymbol(
   checker: TypeChecker,
-  declarations: Declaration[],
+  tbSym: TsSymbol,
 ): ColListTagMap {
 
-  // eslint-disable-next-line import/no-extraneous-dependencies
-  const { isPropertySignature } = require('typescript') as {
-    isPropertySignature: typeof isPropertySignatureOri,
-  }
-
   const ret: ColListTagMap = new Map()
-  const [obj] = declarations // use only one
+  const tbType = checker.getTypeOfSymbolAtLocation(tbSym, tbSym.valueDeclaration)
+  const sym = tbType.getSymbol()
 
-  if (isPropertySignature(obj) && typeof obj.type === 'object') {
-    const nType = checker.getTypeAtLocation(obj)
-    const sym = nType.getSymbol()
-
-    /* istanbul ignore else */
-    if (sym && sym.members) {
-      sym.members.forEach((member) => {
-        const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
-        ret.set(colName, tags)
-      })
-    }
+  /* istanbul ignore else */
+  if (sym && sym.members) {
+    sym.members.forEach((member) => {
+      const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
+      ret.set(colName, tags)
+    })
   }
 
   return ret
