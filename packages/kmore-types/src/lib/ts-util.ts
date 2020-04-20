@@ -150,13 +150,13 @@ function genTbListTagMapFromSymbol(
 
   /* istanbul ignore else */
   if (members) {
-    members.forEach((tbSym: TsSymbol) => {
-      const { name: tbName, tags } = retrieveInfoFromSymbolObject(tbSym)
+    members.forEach((tbNameSym: TsSymbol) => {
+      const { name: tbName, tags } = retrieveInfoFromSymbolObject(tbNameSym)
       // tags can be empty array
       tbTagMap.set(tbName, tags)
 
-      // fields declarations
-      const colTagMap = genColListTagMapFromTbSymbol(checker, tbSym)
+      // fields
+      const colTagMap = genColListTagMapFromTbSymbol(checker, tbNameSym)
       tbColTagMap.set(tbName, colTagMap)
     })
   }
@@ -167,11 +167,11 @@ function genTbListTagMapFromSymbol(
 
 function genColListTagMapFromTbSymbol(
   checker: TypeChecker,
-  tbSym: TsSymbol,
+  tbNameSym: TsSymbol,
 ): ColListTagMap {
 
   const ret: ColListTagMap = new Map()
-  const tbType = checker.getTypeOfSymbolAtLocation(tbSym, tbSym.valueDeclaration)
+  const tbType = checker.getTypeOfSymbolAtLocation(tbNameSym, tbNameSym.valueDeclaration)
   const sym = tbType.getSymbol()
 
   /* istanbul ignore else */
