@@ -27,4 +27,3 @@ export interface ClientOpts<T extends TTables> {
 export interface MuiltiClientsOpts<T extends TTables> {
   [db: string]: ClientOpts<T>
 }
-

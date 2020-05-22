@@ -10,7 +10,7 @@ import { ClientOpts } from './model'
 
 let count = 0
 
-export default (app: Application | Agent) => {
+export default (app: Application | Agent): void => {
   app.addSingleton('kmore', createOneClient)
 }
 
@@ -29,10 +29,10 @@ function createOneClient<T extends TTables>(
       '[egg-kmore] database connect string empty',
     )
   }
-  else if (typeof connection === 'object' && connection) {
+  else if (typeof connection === 'object') {
     const {
       host, port, user, database,
-    } = connection as any
+    } = connection as {host: string, port: number, user: string, database: string}
 
     assert(
       connection,
@@ -59,10 +59,14 @@ function createOneClient<T extends TTables>(
   )
 
   if (clientOpts.waitConnected) {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     app.beforeStart(async () => {
-      const { rows } = await client.dbh.raw('SELECT now() AS currentTime;')
+      const { rows }: { rows: [{currenttime: string}]} = await client.dbh.raw('SELECT now() AS currentTime;')
       count += 1
-      assert(rows && rows[0] && rows[0].currenttime, 'Should retrieve current time from connecting database, but got invalid.')
+      assert(
+        rows[0].currenttime,
+        'Should retrieve current time from connecting database, but got invalid.',
+      )
       app.coreLogger.info(`[egg-kmore] instance[${count}] status connected, db currentTime: ${rows[0].currenttime}`)
     })
   }
