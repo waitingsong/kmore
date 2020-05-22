@@ -16,6 +16,7 @@ function genFoo<T extends TTables>(): KTablesBase<T> {
   return genBar<T>()
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function genBar<T extends object>(): KTablesBase<T> {
   const tbList = genTbListFromType<T>({
     /**

@@ -70,7 +70,7 @@ export async function buildSrcTablesFile<T extends TTables>(
   let content = ''
   const map: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
 
-  if (map && map.size) {
+  if (map.size) {
     map.forEach((arr, key) => {
       const [str, code] = genTsCodeFromTypes<T>(key, arr, opts)
       if (! path) {
@@ -95,7 +95,7 @@ export function retrieveTypeFromTsFile<T extends TTables>(
 
   const path = pathResolve(file).replace(/\\/ug, '/')
   const { checker, sourceFile } = matchSourceFileWithFilePath(path)
-  const ret: CallerTbListMap<T> = new Map()
+  const ret = new Map() as CallerTbListMap<T>
 
   if (sourceFile) {
     const nodeSet = walkNode({

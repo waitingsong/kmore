@@ -37,7 +37,7 @@ import { isCallerNameMatched } from './util'
  * @param id <path>:<line>:<col>:typeid-<typeName>
  */
 export function pickInfoFromCallerTypeId(id: CallerTypeId): CallerTypeIdInfo {
-  const matched = id.match(/^(.+):(\d+):(\d+):typeid-([\d\w]+)$/u)
+  const matched = /^(.+):(\d+):(\d+):typeid-([\d\w]+)$/u.exec(id)
 
   if (matched && matched.length === 5) {
     const ret: CallerTypeIdInfo = {
@@ -60,7 +60,7 @@ export function genCallerTypeMapFromNodeSet(
   path: string, // .ts file
 ): CallerTypeMap {
 
-  const retMap: CallerTypeMap = new Map()
+  const retMap = new Map() as CallerTypeMap
 
   nodes.forEach((node) => {
     const obj = genInfoFromNode({
@@ -91,7 +91,7 @@ export function genInfoFromNode(
     node, checker, sourceFile, path,
   } = options
 
-  if (! node.typeArguments || ! node.typeArguments[0]) {
+  if (! node.typeArguments) {
     return
   }
   // console.info(node.getSourceFile().fileName)
@@ -102,21 +102,17 @@ export function genInfoFromNode(
   // }
   const gType = checker.getTypeFromTypeNode(node.typeArguments[0])
   // const props = checker.getPropertiesOfType(type2)
+  const sym = gType.getSymbol()
 
   /* istanbul ignore else */
-  if (gType && gType.symbol) {
-    const sym = gType.getSymbol()
-    if (! sym) {
-      return
-    }
-
+  if (sym) {
     const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
 
     const inputTypeName = sym.getName()
     // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
     const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
 
-    // @ts-ignore
+    // // @ts-expect-error
     // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
     // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
     // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
@@ -144,8 +140,8 @@ function genTbListTagMapFromSymbol(
 
   const { members } = symbol
   // Map<TableAlias, Map<TagName, TagComment> >
-  const tbTagMap: TbListTagMap = new Map()
-  const tbColTagMap: TbColListTagMap = new Map()
+  const tbTagMap = new Map() as TbListTagMap
+  const tbColTagMap = new Map() as TbColListTagMap
   // const tbScopedColTagMap: TbScopedColListTagMap = new Map()
 
   /* istanbul ignore else */
@@ -170,12 +166,12 @@ function genColListTagMapFromTbSymbol(
   tbNameSym: TsSymbol,
 ): ColListTagMap {
 
-  const ret: ColListTagMap = new Map()
+  const ret = new Map() as ColListTagMap
   const tbType = checker.getTypeOfSymbolAtLocation(tbNameSym, tbNameSym.valueDeclaration)
   const sym = tbType.getSymbol()
 
   /* istanbul ignore else */
-  if (sym && sym.members) {
+  if (sym?.members) {
     sym.members.forEach((member) => {
       const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
       ret.set(colName, tags)
@@ -239,10 +235,14 @@ export function matchSourceFileWithFilePath(
   for (const sourceFile of program.getSourceFiles()) {
     /* istanbul ignore else */
     if (! sourceFile.isDeclarationFile) {
-      // @ts-ignore
-      const srcFilePath = sourceFile.path ? sourceFile.path : ''
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const srcFilePath = typeof sourceFile.path === 'string'
+        // @ts-expect-error
+        ? sourceFile.path
+        : ''
 
-      if (srcFilePath.toLowerCase() === srcLower) {
+      if ((srcFilePath as string).toLowerCase() === srcLower) {
         ret.sourceFile = sourceFile
         break
       }

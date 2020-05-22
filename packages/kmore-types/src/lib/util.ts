@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { readFileLineRx } from '@waiting/shared-core'
 import { from as ofrom, of, Observable, iif, concat } from 'rxjs'
 import { map, filter, mergeMap, catchError, take } from 'rxjs/operators'
@@ -30,10 +34,10 @@ import {
 
 /** Allow empty Object */
 export function validateParamTables(tbs: unknown): void {
-  if (tbs === null) {
-    throw new TypeError('Parameter tables of DbFacrory() invalid. Values is null.')
-  }
-  else if (typeof tbs === 'symbol') {
+  // if (tbs === null) {
+  //   throw new TypeError('Parameter tables of DbFacrory() invalid. Values is null.')
+  // }
+  if (typeof tbs === 'symbol') {
     throw new TypeError('Parameter tables of DbFacrory() invalid. Values is symbol.')
   }
   else if (Array.isArray(tbs)) {
@@ -86,12 +90,11 @@ export function validateTbName(tb: string): void {
 
 
 export function validateDuplicateProp(
-  tbs: object,
+  tbs: Record<string, unknown>,
   key: string,
 ): void {
 
-  // @ts-ignore
-  if (tbs && typeof key === 'string' && typeof tbs[key] !== 'undefined') {
+  if (typeof key === 'string' && typeof tbs[key] !== 'undefined') {
     throw Error(`Object has duplicate key: "${key}" to assign`)
   }
 }
@@ -122,7 +125,7 @@ export function getStack(depth = 0): CallerInfo {
   // Override with function that just returns `stack`
   Error.prepareStackTrace = function(_err, stack) {
     const target = stack[depth + 1]
-    // @ts-ignore
+    // @ts-expect-error
     return patchedPrepareStackTrace(_err, [target])
   }
 
@@ -150,7 +153,7 @@ export function getStack(depth = 0): CallerInfo {
     throw new Error('Retrieve stack of caller failed')
   }
 
-  const matched = path.match(/^(.+):(\d+):(\d+)$/u)
+  const matched = /^(.+):(\d+):(\d+)$/u.exec(path)
   if (! matched || matched.length !== 4) {
     throw new Error('Retrieve stack of caller failed. ' + (matched ? JSON.stringify(matched) : ''))
   }
@@ -166,15 +169,15 @@ export function getStack(depth = 0): CallerInfo {
 
 
 export function isTsFile(path: string): boolean {
-  return !! (path && path.endsWith('.ts'))
+  return !! path.endsWith('.ts')
 }
 
 
 /** Build DbTables from TableListTagMap */
 export function buildTbListParam<T extends TTables>(tagMap: TbListTagMap): Tables<T> {
-  const ret = createNullObject()
+  const ret = createNullObject() as Tables<T>
 
-  if (tagMap && tagMap.size) {
+  if (tagMap.size) {
     tagMap.forEach((_tags, key) => {
       Object.defineProperty(ret, key, {
         ...defaultPropDescriptor,
@@ -191,9 +194,9 @@ export function buildTbListParam<T extends TTables>(tagMap: TbListTagMap): Table
 
 /** Build DbTableCols from TableColListTagMap */
 export function buildTbColListParam<T extends TTables>(tagMap: TbColListTagMap): MultiTableCols<T> {
-  const ret = createNullObject()
+  const ret = createNullObject() as MultiTableCols<T>
 
-  if (tagMap && tagMap.size) {
+  if (tagMap.size) {
     tagMap.forEach((colListTagMap, tb) => {
       const cols = createNullObject()
 
@@ -280,7 +283,7 @@ export function isCallerNameMatched(
 }
 
 
-export function createNullObject() {
+export function createNullObject(): any {
   return Object.create(null)
 }
 
@@ -312,7 +315,7 @@ export function reWriteLoadingPath(
 
   let ret = path
   /* istanbul ignore else */
-  if (rules && rules.length) {
+  if (rules?.length) {
     rules.forEach(([regx, str]) => {
       ret = ret.replace(regx, str)
     })
@@ -354,7 +357,6 @@ export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts
   return { tables, columns }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function loadFile(path: string): any {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   const mods = require(path)

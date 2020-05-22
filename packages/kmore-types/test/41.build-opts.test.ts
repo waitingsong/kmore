@@ -21,6 +21,7 @@ describe(filename, () => {
         `retPath: ${targetPath}, expectedPath: ${expectedPath}`,
       )
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const mods = await import(targetPath)
       const colSuffixArr = [
         DbPropKeys.tables,

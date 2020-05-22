@@ -65,7 +65,7 @@ export function genTbListFromCaller<T extends TTables>(
   const opts: RetrieveInfoFromTypeOpts = {
     // callerDistance: initOptions.callerDistance,
     // callerFuncNames: initOptions.callerFuncNames,
-    ...options ? options : {},
+    ...options,
     caller,
     cacheMap: cacheMapTop,
   }
@@ -74,8 +74,8 @@ export function genTbListFromCaller<T extends TTables>(
   const localTypeId = opts.cacheMap.callerIdToLocalTypeIdMap.get(callerId)
 
   if (localTypeId) { // from cache
-    const tagsMapArr: TagsMapArr | void = opts.cacheMap.localTypeMap.get(localTypeId)
-    if (tagsMapArr && tagsMapArr.length) {
+    const tagsMapArr: TagsMapArr | undefined = opts.cacheMap.localTypeMap.get(localTypeId)
+    if (tagsMapArr?.length) {
       return buildKTablesBaseFromTagsMapArr(tagsMapArr)
     }
     else {
@@ -86,7 +86,7 @@ export function genTbListFromCaller<T extends TTables>(
     const localTypeItem: LocalTypeItem | void = retrieveLocalTypeItemFromType(opts)
 
     if (! localTypeItem) {
-      throw new Error(`retrieveLocalTypeMapFromType() return empty with key: "${localTypeId}".`)
+      throw new Error(`retrieveLocalTypeMapFromType() return empty with key: "${localTypeId ? localTypeId : 'N/A'}".`)
     }
 
     // id is localTypeId
@@ -95,7 +95,7 @@ export function genTbListFromCaller<T extends TTables>(
 
     opts.cacheMap.callerIdToLocalTypeIdMap.set(callerId, id)
 
-    if (tagsMapArr && tagsMapArr[0] && tagsMapArr[0].size) {
+    if (tagsMapArr?.[0]?.size) {
       opts.cacheMap.localTypeMap.set(id, tagsMapArr)
       return buildKTablesBaseFromTagsMapArr(tagsMapArr)
     }
@@ -137,7 +137,7 @@ function buildKTablesBaseFromTagsMapArr<T extends TTables>(
 
 //   return ret
 // }
-export function snakeToCamel(string: string) {
+export function snakeToCamel(string: string): string {
   return string.replace(/([-_][a-z])/iug, ($1) => {
     return $1.toUpperCase()
       .replace('-', '')

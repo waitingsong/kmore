@@ -20,7 +20,7 @@ describe(filename, () => {
         user: 'tb_user',
         userDetail: 'tb_user_detail',
       }
-      const tagMap: TbListTagMap = new Map()
+      const tagMap = new Map() as TbListTagMap
 
       Object.keys(list).forEach(tb => tagMap.set(tb, []))
 

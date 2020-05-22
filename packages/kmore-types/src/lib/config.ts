@@ -1,9 +1,15 @@
 import {
   BuildSrcOpts,
   CacheMap,
+  CallerId,
   CallerFuncNameSet,
   GenTbListFromTypeOpts,
+  LocalTypeId,
+  MultiTableCols,
   Options,
+  Tables,
+  TagsMapArr,
+  TTables,
 } from './model'
 
 
@@ -53,10 +59,11 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 
 export const cacheMap: CacheMap = {
   /** CallerId -> TbListParam */
-  tbListMap: new Map(),
-  tbColListMap: new Map(),
+  tbListMap: new Map<CallerId, Tables<TTables>>(),
+  tbColListMap: new Map<CallerId, MultiTableCols<TTables>>(),
   /** CallerId -> LocalTypeId */
-  callerIdToLocalTypeIdMap: new Map(),
+  callerIdToLocalTypeIdMap: new Map<CallerId, LocalTypeId>(),
   /** LocalTypeId -> TableListTagMap */
-  localTypeMap: new Map(),
+  localTypeMap: new Map<LocalTypeId, TagsMapArr>(),
 }
+

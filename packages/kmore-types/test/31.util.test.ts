@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
@@ -107,7 +108,8 @@ describe(filename, () => {
         catch (ex) {
           return assert(true)
         }
-        assert(false, 'Should throw error, but NOT. Value:' + val)
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        assert(false, 'Should throw error, but NOT. Value:' + val?.toString())
       })
 
       // symbol unenumerable with Object.entries()
