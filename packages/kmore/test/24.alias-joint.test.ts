@@ -252,6 +252,7 @@ function validateUserRows(rows: unknown[]): void {
         assert(row.name === 'user1', JSON.stringify(row))
         break
       default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
         break
     }
