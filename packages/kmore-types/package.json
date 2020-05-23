@@ -34,10 +34,10 @@
   "devDependencies": {
     "@types/source-map-support": "*",
     "cross-env": "7",
-    "typescript": "3"
+    "typescript": "^3.9"
   },
   "peerDependencies": {
-    "typescript": "3"
+    "typescript": "^3.9"
   },
   "engines": {
     "node": ">=10.16.0"
