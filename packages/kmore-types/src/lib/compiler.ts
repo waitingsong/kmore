@@ -76,7 +76,7 @@ export function genTbListFromCaller<T extends TTables>(
 
   if (localTypeId) { // from cache
     const tagsMapArr: TagsMapArr | undefined = opts.cacheMap.localTypeMap.get(localTypeId)
-    if (tagsMapArr && tagsMapArr.length) {
+    if (tagsMapArr) {
       return buildKTablesBaseFromTagsMapArr(tagsMapArr)
     }
     else {
@@ -96,7 +96,7 @@ export function genTbListFromCaller<T extends TTables>(
 
     opts.cacheMap.callerIdToLocalTypeIdMap.set(callerId, id)
 
-    if (tagsMapArr && tagsMapArr[0] && tagsMapArr[0].size) {
+    if (tagsMapArr && tagsMapArr[0].size) {
       opts.cacheMap.localTypeMap.set(id, tagsMapArr)
       return buildKTablesBaseFromTagsMapArr(tagsMapArr)
     }

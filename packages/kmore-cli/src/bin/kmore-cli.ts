@@ -31,6 +31,7 @@ if (args.cmd) {
   }
   else {
     // eslint-disable-next-line id-length
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     args.options = parseCliOpts(args.cmd, { ...yargs.argv, _: '' })
     args.debug && console.info(args)
 

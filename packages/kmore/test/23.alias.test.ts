@@ -37,7 +37,7 @@ describe(filename, () => {
 
     it('all fields with *', () => {
       const { aliasColumns: ac } = db
-      const ps = ac.tb_user.genFieldsAlias(['*']) as Record<string, string>
+      const ps = ac.tb_user.genFieldsAlias(['*'])
       // const ps = {
       //   tbUserUid: 'tb_user.uid',
       //   tbUserName: 'tb_user.name',
