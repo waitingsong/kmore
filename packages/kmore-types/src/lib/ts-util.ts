@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { pathResolve } from '@waiting/shared-core'
@@ -171,7 +172,7 @@ function genColListTagMapFromTbSymbol(
   const sym = tbType.getSymbol()
 
   /* istanbul ignore else */
-  if (sym?.members) {
+  if (sym && sym.members) {
     sym.members.forEach((member) => {
       const { name: colName, tags } = retrieveInfoFromSymbolObject(member)
       ret.set(colName, tags)

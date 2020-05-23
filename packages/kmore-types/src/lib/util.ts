@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -316,7 +317,7 @@ export function reWriteLoadingPath(
 
   let ret = path
   /* istanbul ignore else */
-  if (rules?.length) {
+  if (rules && rules.length) {
     rules.forEach(([regx, str]) => {
       ret = ret.replace(regx, str)
     })
