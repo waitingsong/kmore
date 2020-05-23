@@ -35,6 +35,7 @@ export function genAliasColumns<T extends TTables>(
       const value: ColAliasType<T[typeof tbAlias][typeof colAlias]> = {
         input: scopedColName,
         output,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         _typePlaceholder: void 0 as any,
       }
 
@@ -105,8 +106,7 @@ function updateProps<T extends TableAliasCols = any>(
   value: string,
 ): void {
 
-  // @ts-ignore
-  if (typeof obj[key] !== 'undefined') {
+  if (Object.getOwnPropertyDescriptor(obj, key)) {
     return
   }
 

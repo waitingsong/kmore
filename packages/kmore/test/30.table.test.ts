@@ -52,6 +52,7 @@ describe(filename, () => {
 
         try {
           // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           db[val]()
         }
         catch (ex) {

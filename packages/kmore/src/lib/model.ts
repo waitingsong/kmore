@@ -114,7 +114,7 @@ export interface DbModel<T extends TTables> {
   readonly [DbPropKeys.refTables]: DbRefBuilder<T>
 }
 /** @deprecated use `TTables` instead */
-export type TTableListModel = object
+export type TTableListModel = TTables
 
 
 /** Type of db.refTables */

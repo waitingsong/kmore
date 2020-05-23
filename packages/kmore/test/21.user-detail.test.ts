@@ -113,6 +113,7 @@ function validateUserDetailRows(rows: Partial<UserDetail>[]): void {
         assert(row.age === 10, JSON.stringify(row))
         break
       default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
         break
     }

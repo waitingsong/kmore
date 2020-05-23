@@ -66,7 +66,7 @@ export async function buildKTablesFile<T extends TTables>(
   let content = ''
   const map: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
 
-  if (map && map.size) {
+  if (map.size) {
     map.forEach((arr, key) => {
       const [str, code] = genTsCodeFromTypes<T>(key, arr, opts)
       if (! path) {

@@ -66,7 +66,7 @@ export function kmore<T extends TTables>(
     ktbs = genKTablesFromBase(base)
   }
 
-  let db: DbModel<T> = createNullObject()
+  let db = createNullObject() as DbModel<T>
   db = bindDbh<T>(defaultPropDescriptor, db, config)
   db = bindTables<T>(defaultPropDescriptor, db, ktbs)
   db = bindTablesCols<T>(defaultPropDescriptor, db, ktbs)

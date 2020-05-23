@@ -7,6 +7,7 @@ import {
   genVarName,
   loadFile,
   Tables,
+  Columns,
 } from 'kmore-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
@@ -57,7 +58,7 @@ export function bindTables<T extends TTables>(
 
   const key = DbPropKeys.tables
 
-  if (kTables && kTables.tables && Object.keys(kTables.tables).length) {
+  if (kTables?.tables && Object.keys(kTables.tables).length) {
     validateParamTables(kTables.tables)
     Object.defineProperty(db, DbPropKeys.tables, {
       ...propDescriptor,
@@ -84,7 +85,7 @@ export function bindTablesCols<T extends TTables>(
   const key = DbPropKeys.columns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: kTables && kTables.columns ? kTables.columns : {},
+    value: kTables?.columns ? kTables.columns : {},
   })
 
   // error: ColumnExtPropKeys missing, so assign above directly.
@@ -114,7 +115,7 @@ export function bindTablesScopedCols<T extends TTables>(
   const key = DbPropKeys.scopedColumns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: kTables && kTables.scopedColumns ? kTables.scopedColumns : {},
+    value: kTables?.scopedColumns ? kTables.scopedColumns : {},
   })
 
   return db
@@ -130,7 +131,7 @@ export function bindTablesAliasCols<T extends TTables>(
   const key = DbPropKeys.aliasColumns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: kTables && kTables.aliasColumns ? kTables.aliasColumns : {},
+    value: kTables?.aliasColumns ? kTables.aliasColumns : {},
   })
 
   return db
@@ -143,26 +144,24 @@ export function bindRefTables<T extends TTables>(
   db: DbModel<T>,
 ): DbModel<T> {
 
-  const rb: DbRefBuilder<T> = createNullObject()
+  const rb = createNullObject() as DbRefBuilder<T>
 
   Object.defineProperty(db, DbPropKeys.refTables, {
     ...propDescriptor,
     value: rb,
   })
 
-  if (db.tables) {
-    Object.keys(db.tables).forEach((refName) => {
-      Object.defineProperty(rb, refName, {
-        ...propDescriptor,
-        value: (): Knex.QueryBuilder => db.dbh(refName),
-      })
-      // @ts-ignore
-      Object.defineProperty(rb[refName], 'name', {
-        ...propDescriptor,
-        value: `${options.refTablesPrefix}${refName}`,
-      })
+  Object.keys(db.tables).forEach((refName) => {
+    Object.defineProperty(rb, refName, {
+      ...propDescriptor,
+      value: (): Knex.QueryBuilder => db.dbh(refName),
     })
-  }
+    // @ts-expect-error
+    Object.defineProperty(rb[refName], 'name', {
+      ...propDescriptor,
+      value: `${options.refTablesPrefix}${refName}`,
+    })
+  })
 
   return db
 }
@@ -172,7 +171,7 @@ export function hasExtColumns<T extends TTables>(
   key: DbPropKeys,
 ): tables is KTables<T> {
 
-  return !! (tables && Object.prototype.hasOwnProperty.call(tables, key))
+  return !! Object.prototype.hasOwnProperty.call(tables, key)
 }
 
 
@@ -200,28 +199,28 @@ export function genKTablesFromBase<T extends TTables>(
   }
 
   ktbs.scopedColumns = new Proxy(mtCols, {
-    get(target: MultiTableCols<T>, tbAlias: string, receiver: unknown) {
+    get(target: MultiTableCols<T>, tbAlias: keyof Columns<T>, receiver: unknown) {
       // eslint-disable-next-line no-console
       // console.log(`getting ${tbAlias.toString()}`)
 
-      // @ts-ignore
-      if (typeof target[tbAlias] === 'object' && target[tbAlias] !== null) {
-        // @ts-ignore
-        const tbCols = target[tbAlias]
+      // @ts-expect-error
+      const tbCols = target[tbAlias] as unknown // as Columns<T>
 
-        const cachedCols = getScopedColumnsColsCache(tbCols, tbAlias)
+      if (typeof tbCols === 'object' && !! tbCols) {
+        const tbCols2 = tbCols as Columns<T>
+        const cachedCols = getScopedColumnsColsCache<T>(tbCols2, tbAlias as string)
         /* istanbul ignore else */
         if (cachedCols) {
           return cachedCols
         }
 
-        const scopedCols = createScopedColumns(tbCols, createColumnNameFn)
-        setScopedColumnsColsCache(tbCols, tbAlias, scopedCols)
+        const scopedCols = createScopedColumns(tbCols2, createColumnNameFn)
+        setScopedColumnsColsCache(tbCols2, tbAlias as string, scopedCols)
 
         return scopedCols
       }
       else {
-        const data = Reflect.get(target, tbAlias, receiver)
+        const data = Reflect.get(target, tbAlias, receiver) as unknown
         return data
       }
     },
@@ -258,17 +257,19 @@ export function loadKTablesVarFromFile<T extends TTables>(loadOpts: LoadVarFromF
     writable: false,
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const mods = loadFile(path)
 
   const tKey = `${tbVarName}_${DbPropKeys.tables}`
-  if (! mods || typeof mods[tKey] !== 'object') {
+  if (! mods || ! Object.getOwnPropertyDescriptor(mods, tKey)) {
     throw new TypeError(`Error, load tables failed, key not existed: "${tKey}", path: "${path}"`)
   }
 
   keySuffixArr.forEach((key) => {
     const varName = `${tbVarName}_${key}`
 
-    const value = typeof mods[varName] === 'object'
+    const value = Object.getOwnPropertyDescriptor(mods, varName)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       ? mods[varName] as Tables<T> | MultiTableCols<T>
       : {} as Tables<T> | MultiTableCols<T>
 

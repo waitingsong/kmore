@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { basename } from '@waiting/shared-core'
 import {
   ScopedColumns,
@@ -36,7 +37,7 @@ describe(filename, () => {
 
     it('all fields with *', () => {
       const { aliasColumns: ac } = db
-      const ps = ac.tb_user.genFieldsAlias(['*'])
+      const ps = ac.tb_user.genFieldsAlias(['*']) as Record<string, string>
       // const ps = {
       //   tbUserUid: 'tb_user.uid',
       //   tbUserName: 'tb_user.name',
@@ -221,6 +222,7 @@ describe(filename, () => {
           assert(row && typeof row.name === 'string' && row.name)
           assert(row && row.uid && row.uid === row.tbUserDetailUid)
 
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return rows
         })
       // const query = obj.toQuery()
@@ -250,6 +252,7 @@ function validateUserRows(rows: unknown[]): void {
         assert(row.name === 'user1', JSON.stringify(row))
         break
       default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
         break
     }

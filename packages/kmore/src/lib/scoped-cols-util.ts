@@ -4,6 +4,7 @@ import {
   Columns,
   KTablesBase,
   ScopedColumns,
+  TableAlias,
 } from 'kmore-types'
 
 import {
@@ -29,7 +30,7 @@ export function genColumnsWithExtProps<T extends TTables>(
     const cols = kTablesBase.columns[alias]
 
     const retCols = createColumnsProperties({
-      // @ts-ignore
+      // @ts-expect-error
       columns: cols,
       tableAlias: tbAlias,
       tables: kTablesBase.tables,
@@ -83,14 +84,9 @@ function createColumnsProperties<T extends TTables>(options: {
 export function getScopedColumnsColsCache<T extends TTables>(
   columns: Columns<T>,
   tableAlias: string,
-): ScopedColumns<T> | void {
+): ScopedColumns<T> | undefined {
 
   const cacheMap = columns[ColumnExtPropKeys.sColsCacheMap]
-  /* istanbul ignore else */
-  if (! cacheMap) {
-    // throw new TypeError('Invalid colsCacheMap')
-    return
-  }
   return cacheMap.get(tableAlias)
 }
 
@@ -102,11 +98,7 @@ export function setScopedColumnsColsCache<T extends TTables>(
 
   const cacheMap = columns[ColumnExtPropKeys.sColsCacheMap]
   /* istanbul ignore else */
-  if (! cacheMap) {
-    throw new TypeError('Invalid colsCacheMap')
-  }
-  /* istanbul ignore else */
-  if (scopedColumns && Object.keys(scopedColumns).length) {
+  if (Object.keys(scopedColumns).length) {
     cacheMap.set(tableAlias, scopedColumns)
   }
 }
@@ -119,25 +111,25 @@ export function createScopedColumns<T extends TTables>(
 
   const scopedCols = new Proxy(columns, {
     get(targetCol: ScopedColumns<T>, colAlias: string, receiver2: unknown) {
-      // @ts-ignore
-      const runTimeTbAlias = Reflect.get(targetCol, ColumnExtPropKeys.tableAlias, receiver2)
-      // @ts-ignore
-      const tbsRef = Reflect.get(targetCol, ColumnExtPropKeys.tablesRef, receiver2)
-      const tbName = tbsRef[runTimeTbAlias]
+      const runTimeTbAlias = Reflect.get(targetCol, ColumnExtPropKeys.tableAlias, receiver2) as TableAlias
+      const tbsRef = Reflect.get(
+        targetCol,
+        ColumnExtPropKeys.tablesRef,
+        receiver2,
+      ) as Columns<T>[ColumnExtPropKeys.tablesRef]
+      // @ts-expect-error
+      const tbName = tbsRef[runTimeTbAlias] as unknown
 
       if (typeof tbName === 'string' && tbName) {
-        const colName: string = Reflect.get(targetCol, colAlias, receiver2)
+        const colName = Reflect.get(targetCol, colAlias, receiver2) as string
         if (typeof createColumnNameFn === 'function') {
           return createColumnNameFn({
             tableName: tbName,
             columnName: colName,
           })
         }
-        else if (createColumnNameFn === false) {
-          return colName // no parse
-        }
         else {
-          throw new TypeError('Parameter createColumnNameFn must be Function or false')
+          return colName // no parse
         }
       }
       else {

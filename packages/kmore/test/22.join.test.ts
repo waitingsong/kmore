@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
@@ -60,7 +64,6 @@ describe(filename, () => {
           const [row] = rows
           assert(row && row.uid)
           assert(row && row.name)
-          // @ts-ignore
           assert(row && typeof row.age === 'undefined')
           return rows
         })
