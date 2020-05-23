@@ -59,7 +59,7 @@ export function mergeOptions<T>(
 ): T {
 
   const opts: T = { ...initOptions }
-  const propMap: Map<string, string> = new Map() // <upperKey, oriKey>
+  const propMap: Map<string, string> = new Map<string, string>() // <upperKey, oriKey>
 
   Object.keys(opts).forEach((key) => {
     propMap.set(key.toUpperCase(), key)

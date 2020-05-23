@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 // @ts-ignore fake import
 import { genTbListFromType, kmore, config } from 'kmore'
 

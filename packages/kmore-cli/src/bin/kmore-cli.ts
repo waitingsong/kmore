@@ -1,3 +1,4 @@
+/* eslint-disable node/no-process-exit */
 /**
  * kmore-cli
  * command: gen  case insensitive
@@ -17,12 +18,12 @@ try {
   args = parseCliArgs(yargs.argv)
 }
 catch (ex) {
-  console.info(ex.message)
+  console.info((ex as Error).message)
   process.exit(1)
 }
 
 
-if (args && args.cmd) {
+if (args.cmd) {
   if (args.needHelp) {
     const msg = genCmdHelp(args.cmd)
     console.info(msg)
@@ -56,3 +57,4 @@ else {
   console.info(msg)
   process.exit(0)
 }
+

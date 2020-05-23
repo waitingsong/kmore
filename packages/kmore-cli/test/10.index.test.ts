@@ -26,7 +26,7 @@ describe(filename, () => {
           tap((targetPath) => {
             assert(targetPath && targetPath.includes('test.config.__built-tables.ts'))
             accessSync(targetPath)
-            rimraf(targetPath)
+            void rimraf(targetPath)
           }),
           delay(1000),
           finalize(done),
@@ -50,7 +50,7 @@ describe(filename, () => {
           tap((targetPath) => {
             assert(targetPath && targetPath.includes('test.config.__built-tables.ts'))
             accessSync(targetPath)
-            rimraf(targetPath)
+            void rimraf(targetPath)
           }),
           delay(1000),
           finalize(done),
@@ -62,3 +62,4 @@ describe(filename, () => {
   })
 
 })
+

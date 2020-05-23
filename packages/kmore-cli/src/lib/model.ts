@@ -10,7 +10,7 @@ export interface InputOptions {
 }
 
 export interface RunCmdArgs {
-  cmd: CmdType | void
+  cmd: CmdType | undefined
   options: Options
   debug: boolean
 }
