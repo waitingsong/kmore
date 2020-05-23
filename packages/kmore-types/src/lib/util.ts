@@ -75,7 +75,7 @@ export function validateParamTables(tbs: unknown): void {
   }
 }
 
-export function validateTbName(tb: string): void {
+export function validateTbName(tb: unknown): void {
   if (typeof tb !== 'string') {
     throw new TypeError('TableName in parameter of DbFacrory() empty.')
   }

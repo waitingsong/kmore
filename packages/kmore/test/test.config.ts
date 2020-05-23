@@ -18,7 +18,7 @@ export const config: Config = {
   acquireConnectionTimeout: 10000,
   asyncStackTraces: false,
   debug: false,
-  pool: { min: 2, max: 10 },
+  pool: { min: 5, max: 30 },
 }
 
 // for demo

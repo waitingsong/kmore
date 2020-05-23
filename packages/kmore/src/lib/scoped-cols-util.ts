@@ -117,8 +117,7 @@ export function createScopedColumns<T extends TTables>(
         ColumnExtPropKeys.tablesRef,
         receiver2,
       ) as Columns<T>[ColumnExtPropKeys.tablesRef]
-      // @ts-expect-error
-      const tbName = tbsRef[runTimeTbAlias] as unknown
+      const tbName = tbsRef[runTimeTbAlias as keyof Columns<T>[ColumnExtPropKeys.tablesRef]] as unknown
 
       if (typeof tbName === 'string' && tbName) {
         const colName = Reflect.get(targetCol, colAlias, receiver2) as string

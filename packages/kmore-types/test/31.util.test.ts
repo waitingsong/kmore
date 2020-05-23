@@ -50,7 +50,6 @@ describe(filename, () => {
 
       tbArr.forEach((tb) => {
         try {
-          // @ts-ignore
           validateParamTables([tb])
         }
         catch (ex) {
@@ -62,7 +61,6 @@ describe(filename, () => {
       const tbArr2 = [null, 123, true, false, void 0]
       tbArr2.forEach((val) => {
         try {
-          // @ts-ignore
           validateParamTables(val)
         }
         catch (ex) {
@@ -90,7 +88,6 @@ describe(filename, () => {
 
       Object.entries(tbObj).forEach((item) => {
         try {
-          // @ts-ignore
           validateParamTables({ [item[0]]: item[1] })
         }
         catch (ex) {
@@ -102,7 +99,6 @@ describe(filename, () => {
       const tbArr = [null, 123, true, false]
       tbArr.forEach((val) => {
         try {
-          // @ts-ignore
           validateParamTables(val)
         }
         catch (ex) {
@@ -124,7 +120,6 @@ describe(filename, () => {
   describe('Should validateTableName() works', () => {
     ['', true, false, null, void 0, 123].forEach((val) => {
       try {
-        // @ts-ignore
         validateTbName(val)
         assert(false, `Should throw error, but NOT with "${val}"`)
       }

@@ -58,7 +58,7 @@ export function bindTables<T extends TTables>(
 
   const key = DbPropKeys.tables
 
-  if (kTables?.tables && Object.keys(kTables.tables).length) {
+  if (kTables && kTables.tables && Object.keys(kTables.tables).length) {
     validateParamTables(kTables.tables)
     Object.defineProperty(db, DbPropKeys.tables, {
       ...propDescriptor,
@@ -85,7 +85,7 @@ export function bindTablesCols<T extends TTables>(
   const key = DbPropKeys.columns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: kTables?.columns ? kTables.columns : {},
+    value: kTables && kTables.columns ? kTables.columns : {},
   })
 
   // error: ColumnExtPropKeys missing, so assign above directly.
@@ -115,7 +115,7 @@ export function bindTablesScopedCols<T extends TTables>(
   const key = DbPropKeys.scopedColumns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: kTables?.scopedColumns ? kTables.scopedColumns : {},
+    value: kTables && kTables.scopedColumns ? kTables.scopedColumns : {},
   })
 
   return db
@@ -131,7 +131,7 @@ export function bindTablesAliasCols<T extends TTables>(
   const key = DbPropKeys.aliasColumns
   Object.defineProperty(db, key, {
     ...propDescriptor,
-    value: kTables?.aliasColumns ? kTables.aliasColumns : {},
+    value: kTables && kTables.aliasColumns ? kTables.aliasColumns : {},
   })
 
   return db
@@ -156,8 +156,7 @@ export function bindRefTables<T extends TTables>(
       ...propDescriptor,
       value: (): Knex.QueryBuilder => db.dbh(refName),
     })
-    // @ts-expect-error
-    Object.defineProperty(rb[refName], 'name', {
+    Object.defineProperty(rb[refName as keyof typeof rb], 'name', {
       ...propDescriptor,
       value: `${options.refTablesPrefix}${refName}`,
     })
