@@ -176,10 +176,11 @@ export enum ColumnExtPropKeys {
   sColsCacheMap = '_scopedColsCacheMap',
   genFieldsAliasFn = 'genFieldsAlias',
 }
-export type Columns<T extends TTables> = BaseMultiTableColumns<T> & {
-  readonly [ColumnExtPropKeys.tableAlias]: TableAlias,
-  readonly [ColumnExtPropKeys.tablesRef]: KTablesBase<T>['tables'],
-  readonly [ColumnExtPropKeys.sColsCacheMap]: Map<TableAlias, ScopedColumns<T>>,
+export type Columns<T extends TTables> = BaseMultiTableColumns<T> & BaseMultiTableColumnsExtProp<T>
+export interface BaseMultiTableColumnsExtProp<T extends TTables> {
+  readonly [ColumnExtPropKeys.tableAlias]: TableAlias
+  readonly [ColumnExtPropKeys.tablesRef]: KTablesBase<T>['tables']
+  readonly [ColumnExtPropKeys.sColsCacheMap]: Map<TableAlias, ScopedColumns<T>>
 }
 
 /**
@@ -297,11 +298,18 @@ export type MultiTableAliasCols<T extends TTables> = {
   [tbAlias in keyof T]: TableAliasCols<T[tbAlias]>
 }
 export type TableAliasCols<TAliasCols = any> = AliasTableCols<TAliasCols> & {
+  /**
+   * @returns object
+   * `{
+   *  tbUserUid: 'tb_user.uid',
+   *  tbUserName: 'tb_user.name',
+   * }`
+   */
   [ColumnExtPropKeys.genFieldsAliasFn]: <T extends AliasTableCols<TAliasCols> = any>(
     keyArr: ((keyof T) | '*')[],
     /** Default: false */
     useColAliasNameAsOutputName?: boolean,
-  ) => any,
+  ) => Record<string, string>,
 }
 export type AliasTableCols<TAliasCols = any> = {
   [col in keyof TAliasCols]: ColAliasType<TAliasCols[col]>
