@@ -34,9 +34,10 @@ import {
 
 /** Allow empty Object */
 export function validateParamTables(tbs: unknown): void {
-  // if (tbs === null) {
-  //   throw new TypeError('Parameter tables of DbFacrory() invalid. Values is null.')
-  // }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (tbs === null) {
+    throw new TypeError('Parameter tables of DbFacrory() invalid. Values is null.')
+  }
   if (typeof tbs === 'symbol') {
     throw new TypeError('Parameter tables of DbFacrory() invalid. Values is symbol.')
   }

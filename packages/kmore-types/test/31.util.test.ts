@@ -109,7 +109,7 @@ describe(filename, () => {
           return assert(true)
         }
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        assert(false, 'Should throw error, but NOT. Value:' + val?.toString())
+        assert(false, 'Should throw error, but NOT. Value:' + val)
       })
 
       // symbol unenumerable with Object.entries()
