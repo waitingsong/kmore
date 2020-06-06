@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.4](https://github.com/waitingsong/kmore/compare/v0.16.3...v0.16.4) (2020-06-06)
+
+
+### Bug Fixes
+
+* **egg-kmore:** check connected only for pg, mysql. [#1](https://github.com/waitingsong/kmore/issues/1) ([ecf20fb](https://github.com/waitingsong/kmore/commit/ecf20fb7da2075e9449235864deeb0940d7b7611))
+
+
+
+
+
 ## [0.16.3](https://github.com/waitingsong/kmore/compare/v0.16.2...v0.16.3) (2020-04-15)
 
 **Note:** Version bump only for package egg-kmore

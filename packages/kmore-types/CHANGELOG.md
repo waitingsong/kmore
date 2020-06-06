@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.4](https://github.com/waitingsong/kmore/compare/v0.16.3...v0.16.4) (2020-06-06)
+
+
+### Bug Fixes
+
+* **kmore-types:** syntax for test ([6058190](https://github.com/waitingsong/kmore/commit/60581903a3d8849c650859f19efa1dddb45bc216))
+
+
+
+
+
 ## [0.16.3](https://github.com/waitingsong/kmore/compare/v0.16.2...v0.16.3) (2020-04-15)
 
 **Note:** Version bump only for package kmore-types
