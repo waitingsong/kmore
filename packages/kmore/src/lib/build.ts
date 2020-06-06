@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   walkDirForCallerFuncTsFiles,
   retrieveTypeFromTsFile,
@@ -72,7 +73,7 @@ export async function buildKTablesFile<T extends TTables>(
       if (! path) {
         path = str // all value are the same one
       }
-      content += code + '\n\n'
+      content += `${code}\n\n`
 
       const kts = genKTables(arr)
       const [, code2] = genColsTsCodeFromTypes<T>(
@@ -82,7 +83,7 @@ export async function buildKTablesFile<T extends TTables>(
         DbPropKeys.scopedColumns,
         opts.outputFileNameSuffix,
       )
-      content += code2 + '\n\n'
+      content += `${code2}\n\n`
 
 
       const [, code3] = genColsTsCodeFromTypes<T>(
@@ -92,7 +93,7 @@ export async function buildKTablesFile<T extends TTables>(
         DbPropKeys.aliasColumns,
         opts.outputFileNameSuffix,
       )
-      content += code3 + '\n\n'
+      content += `${code3}\n\n`
     })
 
     if (! path) {

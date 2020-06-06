@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { buildSource } from 'kmore-types'
 import { Observable } from 'rxjs'
 

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { pathResolve } from '@waiting/shared-core'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type {

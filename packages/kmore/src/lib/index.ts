@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { createNullObject, getCallerStack, KTablesBase, DbPropKeys } from 'kmore-types'
 
 import { defaultPropDescriptor, initOptions } from './config'
