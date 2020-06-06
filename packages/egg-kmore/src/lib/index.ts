@@ -3,7 +3,7 @@ import * as assert from 'assert'
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Agent, Application } from 'egg'
-import { kmore, TTables } from 'kmore'
+import { kmore, TTables, DbModel, Config } from 'kmore'
 
 import { ClientOpts } from './model'
 
@@ -59,16 +59,7 @@ function createOneClient<T extends TTables>(
   )
 
   if (clientOpts.waitConnected) {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    app.beforeStart(async () => {
-      const { rows }: { rows: [{currenttime: string}]} = await client.dbh.raw('SELECT now() AS currentTime;')
-      count += 1
-      assert(
-        rows[0].currenttime,
-        'Should retrieve current time from connecting database, but got invalid.',
-      )
-      app.coreLogger.info(`[egg-kmore] instance[${count}] status connected, db currentTime: ${rows[0].currenttime}`)
-    })
+    checkConnected(app, clientOpts.knexConfig, client)
   }
   else {
     count += 1
@@ -76,5 +67,34 @@ function createOneClient<T extends TTables>(
   }
 
   return client
+}
+
+
+function checkConnected<T extends TTables>(
+  app: Application | Agent,
+  knexConfig: Config,
+  clientInstInst: DbModel<T>,
+): void {
+
+  const { client } = knexConfig
+  const flag = !! (client === 'pg'
+    || client === 'mysql'
+    || client === 'mysql2')
+
+  if (! flag) {
+    return
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  app.beforeStart(async () => {
+    const { rows }: { rows: [{currenttime: string}]}
+      = await clientInstInst.dbh.raw('SELECT now() AS currenttime;')
+    count += 1
+    assert(
+      rows[0].currenttime,
+      'Should retrieve current time from connecting database, but got invalid.',
+    )
+    app.coreLogger.info(`[egg-kmore] instance[${count}] status connected, db currentTime: ${rows[0].currenttime}`)
+  })
 }
 
