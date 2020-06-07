@@ -5,6 +5,7 @@ import { TableName } from '../src/index'
 
 export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<void> {
   for (const tb of tbs) {
+    // await dbh.schema.dropTableIfExists(tb).then()
     await dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
   }
 }
