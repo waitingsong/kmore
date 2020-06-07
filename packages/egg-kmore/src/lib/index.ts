@@ -3,7 +3,14 @@ import * as assert from 'assert'
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Agent, Application } from 'egg'
-import { kmore, TTables, DbModel, Config } from 'kmore'
+import {
+  kmore,
+  TTables,
+  DbModel,
+  Config,
+  getCurrentTime,
+  EnumClient,
+} from 'kmore'
 
 import { ClientOpts } from './model'
 
@@ -77,24 +84,23 @@ function checkConnected<T extends TTables>(
 ): void {
 
   const { client } = knexConfig
-  const flag = !! (client === 'pg'
-    || client === 'mysql'
-    || client === 'mysql2')
+  const checkFlag = !! (client === EnumClient.pg
+    || client === EnumClient.mysql
+    || client === EnumClient.mysql2)
 
-  if (! flag) {
+  if (! checkFlag) {
     return
   }
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   app.beforeStart(async () => {
-    const { rows }: { rows: [{currenttime: string}]}
-      = await clientInstInst.dbh.raw('SELECT now() AS currenttime;')
-    count += 1
+    const time = await getCurrentTime(clientInstInst.dbh, client)
     assert(
-      rows[0].currenttime,
+      time,
       'Should retrieve current time from connecting database, but got invalid.',
     )
-    app.coreLogger.info(`[egg-kmore] instance[${count}] status connected, db currentTime: ${rows[0].currenttime}`)
+    count += 1
+    app.coreLogger.info(`[egg-kmore] instance[${count}] status connected, db currentTime: '${time}'`)
   })
 }
 
