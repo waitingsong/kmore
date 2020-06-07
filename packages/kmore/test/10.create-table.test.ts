@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, DbModel, getCurrentTime } from '../src/index'
+import { kmore, DbModel, getCurrentTime, EnumClient } from '../src/index'
 
 import { dropTables } from './helper'
 import { config } from './test.config'
@@ -30,12 +30,14 @@ describe(filename, () => {
     it('tb_user and tb_user_detail', async () => {
       await db.dbh.schema
         .createTable('tb_user', (tb) => {
-          tb.increments('uid')
+          tb.increments('uid').primary()
           tb.string('name', 30)
           tb.timestamp('ctime', { useTz: false })
         })
         .createTable('tb_user_detail', (tb) => {
-          tb.integer('uid')
+          config.client === EnumClient.mysql || config.client === EnumClient.mysql2
+            ? tb.integer('uid').unsigned().primary()
+            : tb.integer('uid').primary()
           tb.foreign('uid')
             .references('tb_user.uid')
             .onDelete('CASCADE')
