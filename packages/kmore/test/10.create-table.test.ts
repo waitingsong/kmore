@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, DbModel } from '../src/index'
+import { kmore, DbModel, getCurrentTime } from '../src/index'
 
 import { dropTables } from './helper'
 import { config } from './test.config'
@@ -16,6 +16,10 @@ describe(filename, () => {
   before(async () => {
     assert(db.tables && Object.keys(db.tables).length > 0)
     await dropTables(db.dbh, Object.values(db.tables))
+
+    const time = await getCurrentTime(db.dbh, config.client)
+    assert(time)
+    console.info(`CurrrentTime: ${time}`)
   })
 
   after(async () => {
