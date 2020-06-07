@@ -134,3 +134,12 @@ export interface CreateColumnNameOpts {
   columnName: string
 }
 
+export enum EnumClient {
+  pg = 'pg',
+  mssql = 'mssql',
+  mysql = 'mysql',
+  mysql2 = 'mysql2',
+  sqlite3 = 'sqlite3',
+  oracledb = 'oracledb',
+}
+
