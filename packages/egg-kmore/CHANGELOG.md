@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/waitingsong/kmore/compare/v0.16.4...v0.17.0) (2020-06-07)
+
+
+### Bug Fixes
+
+* **egg-kmore:** checkConnected() [#1](https://github.com/waitingsong/kmore/issues/1) ([6b77bc9](https://github.com/waitingsong/kmore/commit/6b77bc915f5f995f1b217aee6c755ad69b00a0a2))
+
+
+
+
+
 ## [0.16.4](https://github.com/waitingsong/kmore/compare/v0.16.3...v0.16.4) (2020-06-06)
 
 
