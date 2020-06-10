@@ -1,9 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { pathResolve } from '@waiting/shared-core'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import type {
   createProgram as createProgramOri,
   isCallExpression as isCallExpressionOri,
@@ -87,7 +87,7 @@ interface GenInfoFromNodeRet extends Omit<TbTagsMap, 'tbScopedColTagMap'> {
 
 export function genInfoFromNode(
   options: GenInfoFromNodeOps,
-): GenInfoFromNodeRet | void {
+): GenInfoFromNodeRet | undefined {
 
   const {
     node, checker, sourceFile, path,
@@ -300,7 +300,7 @@ export function walkNode(options: WalkNodeOps): Set<CallExpression> {
     forEachChild: typeof forEachChildOri,
   }
 
-  const ret: Set<CallExpression> = new Set()
+  const ret = new Set<CallExpression>()
 
   const visitor = (node: Node, opts: WalkNodeOps): void => {
     /* istanbul ignore else */
