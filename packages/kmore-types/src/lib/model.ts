@@ -306,7 +306,7 @@ export type TableAliasCols<TAliasCols = any> = AliasTableCols<TAliasCols> & {
    *  tbUserName: 'tb_user.name',
    * }`
    */
-  genFieldsAlias: <T extends AliasTableCols<TAliasCols> = any>(
+  genFieldsAlias: <T extends TAliasCols = any>(
     keyArr: ((keyof T) | '*')[],
     /** Default: false */
     useColAliasNameAsOutputName?: boolean,
