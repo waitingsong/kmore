@@ -299,13 +299,14 @@ export type MultiTableAliasCols<T extends TTables> = {
 }
 export type TableAliasCols<TAliasCols = any> = AliasTableCols<TAliasCols> & {
   /**
+   * ac.tb_foo.genFieldsAlias()
    * @returns object
    * `{
    *  tbUserUid: 'tb_user.uid',
    *  tbUserName: 'tb_user.name',
    * }`
    */
-  [ColumnExtPropKeys.genFieldsAliasFn]: <T extends AliasTableCols<TAliasCols> = any>(
+  genFieldsAlias: <T extends AliasTableCols<TAliasCols> = any>(
     keyArr: ((keyof T) | '*')[],
     /** Default: false */
     useColAliasNameAsOutputName?: boolean,
@@ -329,6 +330,7 @@ export interface ColAliasType<TColType> {
   input: string
   /** output column alias name */
   output: string
+  /** type of the column */
   _typePlaceholder: TColType
 }
 export type JointRetTable<K extends TableAliasCols> = {
