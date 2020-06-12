@@ -52,12 +52,12 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
 
 
 /**
- * Build tables in ts from generics type for specified ts file
+ * Build tables constant in ts from generics type for specified ts file
  *
- * @returns file path if src file need parsed
+ * @returns target path if src file parsed
  */
 export async function buildSrcTablesFile<T extends TTables>(
-  file: string,
+  srcFile: string,
   options: BuildSrcOpts,
 ): Promise<FilePath> {
 
@@ -68,7 +68,7 @@ export async function buildSrcTablesFile<T extends TTables>(
 
   let path = ''
   let content = ''
-  const map: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(file)
+  const map: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(srcFile)
 
   if (map.size) {
     map.forEach((arr, key) => {
