@@ -50,7 +50,7 @@ export function genAliasColumns<T extends TTables>(
         configurable: false,
         enumerable: false,
         writable: true,
-        value: (keyArr: any[], useColAliasNameAsOutputName = false) => {
+        value: (keyArr: string[] | void, useColAliasNameAsOutputName = false) => {
           return genKnexColumnsParam(tableFlds, keyArr, useColAliasNameAsOutputName)
         },
       })
@@ -70,13 +70,13 @@ export function genAliasColumns<T extends TTables>(
 
 export function genKnexColumnsParam<T extends TableAliasCols = any>(
   jointTableColumns: T,
-  keyArr: ((keyof T) | '*')[],
+  keyArr: ((keyof T) | '*')[] | void,
   useColAliasNameAsOutputName = false,
 ): KnexColumnsParma {
 
   const ret: KnexColumnsParma = {}
 
-  if (keyArr.length && keyArr.includes('*')) {
+  if (! keyArr || keyArr.includes('*')) {
     Object.keys(jointTableColumns).forEach((fldName) => {
       const { input, output } = jointTableColumns[fldName]
       if (! input || ! output) {
