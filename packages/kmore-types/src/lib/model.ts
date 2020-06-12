@@ -325,11 +325,13 @@ export type AliasTableCols<TAliasCols = any> = {
 export interface KnexColumnsParma {
   [out: string]: string
 }
-export interface ColAliasType<TColType> {
+export interface FieldAlias {
   /** input column name */
   input: string
   /** output column alias name */
   output: string
+}
+export interface ColAliasType<TColType> extends FieldAlias {
   /** type of the column */
   _typePlaceholder: TColType
 }
