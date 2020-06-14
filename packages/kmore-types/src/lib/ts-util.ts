@@ -7,6 +7,7 @@ import { pathResolve } from '@waiting/shared-core'
 import type {
   createProgram as createProgramOri,
   isCallExpression as isCallExpressionOri,
+  isTypeReferenceNode as isTypeReferenceNodeOri,
   forEachChild as forEachChildOri,
   CallExpression,
   JSDocTagInfo,
@@ -15,6 +16,7 @@ import type {
   SourceFile,
   Symbol as TsSymbol,
   TypeChecker,
+  TypeReferenceNode,
 } from 'typescript'
 
 import {
@@ -98,37 +100,43 @@ export function genInfoFromNode(
   }
   // console.info(node.getSourceFile().fileName)
 
-  // const typeName: Identifier | void = retrieveGenericsIdentifierFromTypeArguments(node)
-  // if (typeName && typeName.getText()) {
-  //   const gType = checker.getTypeAtLocation(typeName)
+  // if (ts.isIdentifier(node)) {
+  //   const sym = checker.getSymbolAtLocation(node)
   // }
-  const gType = checker.getTypeFromTypeNode(node.typeArguments[0])
+
+  const typeRefNode = retrieveTypeRefNodeFromGenerics(node)
+  if (! typeRefNode || ! typeRefNode.typeName) {
+    return
+  }
+  const gType = checker.getTypeAtLocation(typeRefNode.typeName)
+  // const gType = checker.getTypeFromTypeNode(refTypeNode)
   // const props = checker.getPropertiesOfType(type2)
   const sym = gType.getSymbol()
 
   /* istanbul ignore else */
-  if (sym) {
-    const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
+  if (! sym) {
+    return
+  }
 
-    const inputTypeName = sym.getName()
-    // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
-    const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
+  const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
+  const inputTypeName = sym.getName()
+  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
+  const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
 
-    // // @ts-expect-error
-    // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
-    // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
-    // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
-    const localTypeId = `${path}:typeid-${inputTypeName}`
+  // // @ts-expect-error
+  // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
+  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
+  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
+  const localTypeId = `${path}:typeid-${inputTypeName}`
 
-    const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(checker, sym)
-    /* istanbul ignore else */
-    if (tbTagMap.size) {
-      return {
-        callerTypeId,
-        localTypeId,
-        tbTagMap,
-        tbColTagMap,
-      }
+  const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(checker, sym)
+  /* istanbul ignore else */
+  if (tbTagMap.size) {
+    return {
+      callerTypeId,
+      localTypeId,
+      tbTagMap,
+      tbColTagMap,
     }
   }
 }
@@ -194,16 +202,28 @@ function retrieveInfoFromSymbolObject(
 }
 
 
-// function retrieveGenericsIdentifierFromTypeArguments(node: CallExpression): Identifier | void {
-//   /* istanbul ignore else */
-//   if (! node.typeArguments || node.typeArguments.length !== 1) {
-//     return
-//   }
-//   // typeNode TypeReference = 169
-//   const [typeNode] = node.typeArguments
-//   // @ts-ignore
-//   return typeNode.typeName
-// }
+/**
+ * Retrieve TypeReferenceNode
+ * @example genTbListFromType<TbListModel>()
+ */
+function retrieveTypeRefNodeFromGenerics(
+  node: CallExpression,
+): TypeReferenceNode | undefined {
+
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const { isTypeReferenceNode } = require('typescript') as {
+    isTypeReferenceNode: typeof isTypeReferenceNodeOri,
+  }
+
+  if (! node.typeArguments || node.typeArguments.length !== 1) {
+    return
+  }
+  const [typeNode] = node.typeArguments
+  // typeNode TypeReference = 169
+  if (isTypeReferenceNode(typeNode)) {
+    return typeNode
+  }
+}
 
 
 export function matchSourceFileWithFilePath(
