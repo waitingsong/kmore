@@ -253,14 +253,8 @@ export function matchSourceFileWithFilePath(
   for (const sourceFile of program.getSourceFiles()) {
     /* istanbul ignore else */
     if (! sourceFile.isDeclarationFile) {
-      // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const srcFilePath = typeof sourceFile.path === 'string'
-        // @ts-expect-error
-        ? sourceFile.path
-        : ''
-
-      if ((srcFilePath as string).toLowerCase() === srcLower) {
+      /* istanbul ignore else */
+      if (sourceFile.fileName.toLowerCase() === srcLower) {
         ret.sourceFile = sourceFile
         break
       }
