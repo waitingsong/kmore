@@ -112,7 +112,6 @@ export function genInfoFromNode(
   // const gType = checker.getTypeFromTypeNode(refTypeNode)
   // const props = checker.getPropertiesOfType(type2)
   const sym = gType.getSymbol()
-
   /* istanbul ignore else */
   if (! sym) {
     return
@@ -122,8 +121,6 @@ export function genInfoFromNode(
   const inputTypeName = sym.getName()
   // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
   const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
-
-  // // @ts-expect-error
   // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
   // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
   // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
@@ -141,7 +138,6 @@ export function genInfoFromNode(
   }
 }
 
-// ---- compiler ---
 
 function genTbListTagMapFromSymbol(
   checker: TypeChecker,
