@@ -5,10 +5,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { pathResolve } from '@waiting/shared-core'
 import type {
-  createProgram as createProgramOri,
-  isCallExpression as isCallExpressionOri,
-  isTypeReferenceNode as isTypeReferenceNodeOri,
-  forEachChild as forEachChildOri,
+  createProgram as createProgramType,
+  isCallExpression as isCallExpressionType,
+  isTypeReferenceNode as isTypeReferenceNodeType,
+  forEachChild as forEachChildType,
   CallExpression,
   JSDocTagInfo,
   Identifier,
@@ -212,7 +212,7 @@ function retrieveTypeRefNodeFromGenerics(
 
   // eslint-disable-next-line import/no-extraneous-dependencies
   const { isTypeReferenceNode } = require('typescript') as {
-    isTypeReferenceNode: typeof isTypeReferenceNodeOri,
+    isTypeReferenceNode: typeof isTypeReferenceNodeType,
   }
 
   if (! node.typeArguments || node.typeArguments.length !== 1) {
@@ -231,7 +231,7 @@ export function matchSourceFileWithFilePath(
 ): MatchedSourceFile {
   // eslint-disable-next-line import/no-extraneous-dependencies
   const { createProgram } = require('typescript') as {
-    createProgram: typeof createProgramOri,
+    createProgram: typeof createProgramType,
   }
 
   const srcPath = pathResolve(path).replace(/\\/gu, '/')
@@ -279,8 +279,8 @@ export function matchSourceFileWithFilePath(
 export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpression | void {
   // eslint-disable-next-line import/no-extraneous-dependencies
   const { isCallExpression, forEachChild } = require('typescript') as {
-    isCallExpression: typeof isCallExpressionOri,
-    forEachChild: typeof forEachChildOri,
+    isCallExpression: typeof isCallExpressionType,
+    forEachChild: typeof forEachChildType,
   }
 
   const visit = (node: Node, opts: WalkNodeWithPositionOps): CallExpression | void => {
@@ -316,8 +316,8 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpr
 export function walkNode(options: WalkNodeOps): Set<CallExpression> {
   // eslint-disable-next-line import/no-extraneous-dependencies
   const { isCallExpression, forEachChild } = require('typescript') as {
-    isCallExpression: typeof isCallExpressionOri,
-    forEachChild: typeof forEachChildOri,
+    isCallExpression: typeof isCallExpressionType,
+    forEachChild: typeof forEachChildType,
   }
 
   const ret = new Set<CallExpression>()
