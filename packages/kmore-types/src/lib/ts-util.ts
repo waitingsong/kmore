@@ -7,6 +7,7 @@ import { pathResolve } from '@waiting/shared-core'
 import type {
   createProgram as createProgramType,
   isCallExpression as isCallExpressionType,
+  isTypeLiteralNode as isTypeLiteralNodeType,
   isTypeReferenceNode as isTypeReferenceNodeType,
   forEachChild as forEachChildType,
   CallExpression,
@@ -105,9 +106,6 @@ export function genInfoFromNode(
   // }
 
   const typeRefNode = retrieveTypeRefNodeFromGenerics(node)
-  if (! typeRefNode || ! typeRefNode.typeName) {
-    return
-  }
   const gType = checker.getTypeAtLocation(typeRefNode.typeName)
   // const gType = checker.getTypeFromTypeNode(refTypeNode)
   // const props = checker.getPropertiesOfType(type2)
@@ -204,20 +202,33 @@ function retrieveInfoFromSymbolObject(
  */
 function retrieveTypeRefNodeFromGenerics(
   node: CallExpression,
-): TypeReferenceNode | undefined {
+): TypeReferenceNode {
 
   // eslint-disable-next-line import/no-extraneous-dependencies
-  const { isTypeReferenceNode } = require('typescript') as {
+  const {
+    isTypeReferenceNode,
+    isTypeLiteralNode,
+  } = require('typescript') as {
     isTypeReferenceNode: typeof isTypeReferenceNodeType,
+    isTypeLiteralNode: typeof isTypeLiteralNodeType,
   }
 
   if (! node.typeArguments || node.typeArguments.length !== 1) {
-    return
+    throw new TypeError('Generics param required, like genTbListFromType<TbListModel>()')
   }
   const [typeNode] = node.typeArguments
   // typeNode TypeReference = 169
   if (isTypeReferenceNode(typeNode)) {
     return typeNode
+  }
+  else if (isTypeLiteralNode(typeNode)) {
+    throw new TypeError(`Literal Type param not supported, such as
+    genTbListFromType<{ tb_user: { uid: number } }>(),
+    should be an TypeReference like: genTbListFromType<TbListModel>(),
+    `)
+  }
+  else {
+    throw new TypeError(`Not supported TypeNode Kind: ${node.kind}`)
   }
 }
 

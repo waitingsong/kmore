@@ -5,7 +5,7 @@ import {
   TbListTagMap,
   RetrieveInfoFromTypeOpts,
 } from '../src/index'
-import { retrieveLocalTypeItemFromType } from '../src/lib/compiler'
+import { retrieveLocalTypeItemFromType, genTbListFromType } from '../src/lib/compiler'
 import { cacheMap } from '../src/lib/config'
 import { buildTbListParam } from '../src/lib/util'
 
@@ -130,4 +130,17 @@ describe(filename, () => {
     })
   })
 
+  describe('Should genInfoFromNode() works', () => {
+    it('with invalid generics type param', () => {
+      try {
+        genTbListFromType<{ tb_user: { uid: number } }>()
+      }
+      catch (ex) {
+        return
+      }
+      assert(false, 'Should throw error but not')
+    })
+  })
+
 })
+
