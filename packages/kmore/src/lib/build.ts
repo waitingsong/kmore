@@ -9,7 +9,7 @@ import {
   genColsTsCodeFromTypes,
   DbPropKeys,
 } from 'kmore-types'
-import { Observable, defer } from 'rxjs'
+import { Observable } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 
 import { initBuildSrcOpts } from './config'
@@ -38,7 +38,7 @@ export function buildKTablesSource(options: BuildSrcOpts): Observable<FilePath> 
   const walk$ = walkDirForCallerFuncTsFiles(opts)
   const build$ = walk$.pipe(
     mergeMap((path) => {
-      return defer(() => buildKTablesFile(path, opts))
+      return buildKTablesFile(path, opts)
     }, opts.concurrent),
     // defaultIfEmpty(''),
   )
