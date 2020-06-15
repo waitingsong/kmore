@@ -15,8 +15,8 @@ import { initDb } from './helper'
 export const mochaHooks = async () => {
   // avoid run multi times
   if (! process.env.mochaRootHookFlag) {
-    await initDb()
     process.env.mochaRootHookFlag = 'true'
+    await initDb()
   }
 
   return {
