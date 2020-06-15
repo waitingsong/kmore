@@ -1,15 +1,32 @@
-// https://mochajs.org/#root-hook-plugins
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 
-export const mochaHooks = {
-  async beforeAll() {
-    void 0
-  },
+/**
+ * @see https://mochajs.org/#root-hook-plugins
+ * beforeAll:
+ *  - In serial mode(Mocha’s default ), before all tests begin, once only
+ *  - In parallel mode, run before all tests begin, for each file
+ * beforeEach:
+ *  - In both modes, run before each test
+ */
+export const mochaHooks = async () => {
+  // avoid run multi times
+  if (! process.env.mochaRootHookFlag) {
+    await Promise.resolve()
+    process.env.mochaRootHookFlag = 'true'
+  }
 
-  async afterAll() {
-    void 0
-  },
+  return {
+    beforeAll() {
+      void 0
+    },
+
+    afterAll() {
+      void 0
+    },
+  }
+
 }
 
