@@ -11,7 +11,7 @@ export const config: Config = {
   connection: {
     host: process.env.PGHOST ? process.env.PGHOST : 'localhost',
     user: process.env.PGUSER ? process.env.PGUSER : 'postgres',
-    password: process.env.PGPASSWORD ? process.env.PGPASSWORD : '',
+    password: process.env.PGPASSWORD ? process.env.PGPASSWORD : 'postgres',
     database: 'db_ci_test',
     requestTimeout: 10000,
   },
