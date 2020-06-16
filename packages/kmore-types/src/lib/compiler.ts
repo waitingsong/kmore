@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { CallExpression } from 'typescript'
-
 import {
   cacheMap as cacheMapTop,
   initGenTbListFromTypeOpts,
@@ -148,7 +146,7 @@ export function snakeToCamel(string: string): string {
 
 export function retrieveLocalTypeItemFromType(
   options: RetrieveInfoFromTypeOpts,
-): LocalTypeItem | void {
+): LocalTypeItem | undefined {
 
   const { caller } = options
   const { checker, sourceFile } = matchSourceFileWithFilePath(caller.path)
@@ -159,7 +157,8 @@ export function retrieveLocalTypeItemFromType(
     return
   }
 
-  const node: CallExpression | void = walkNodeWithPosition({
+  // genTbListFromType<TbListModel>()
+  const node = walkNodeWithPosition({
     sourceFile,
     matchLine: caller.line,
     matchColumn: caller.column,
