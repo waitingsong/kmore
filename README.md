@@ -40,7 +40,7 @@ Ensure `sourceMap` or `inlineSourceMap` is true in the tsconfig.json
 
 ### Create connection
 ```ts
-import { Config } from 'kmore'
+import { Config, TTables } from 'kmore'
 
 // connection config
 export const config: Config = {
@@ -55,7 +55,7 @@ export const config: Config = {
 }
 
 // Define Types of tables
-export interface TbListModel {
+export interface TbListModel extends TTables {
   tb_user: User
   tb_user_detail: UserDetail
 }
