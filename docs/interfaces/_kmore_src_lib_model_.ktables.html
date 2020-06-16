@@ -120,15 +120,20 @@
 					<div class="tsd-signature tsd-kind-icon">alias<wbr>Columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#multitablealiascols" class="tsd-signature-type">MultiTableAliasCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L80">kmore/src/lib/model.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L85">kmore/src/lib/model.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>For table joint</p>
 							<pre><code class="language-json">{
-   tb_alias: { tableNameColName: &quot;table_name.col_name&quot;, ...,}
-   ...,
+  tb_user: {
+    tbUserUid: &quot;tb_user.uid&quot;,
+    tbUserName: &quot;tb_user.name&quot;,
+    ...
+  },
+  tb_user_detail: {...},
+  ...,
 }</code></pre>
 						</div>
 					</div>
@@ -158,15 +163,20 @@
 					<div class="tsd-signature tsd-kind-icon">scoped<wbr>Columns<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#multitablescopedcols" class="tsd-signature-type">MultiTableScopedCols</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L90">kmore/src/lib/model.ts:90</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L100">kmore/src/lib/model.ts:100</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Columns mapping object, column name with table prefix, eg tb_foo.user</p>
 							<pre><code class="language-json">{
-   tb_alias: { col_alias: &quot;table_name.col_name&quot;, ...,}
-   ...,
+  tb_user: {
+    uid: &quot;tb_user.uid&quot;,
+    name: &quot;tb_user.name&quot;,
+    ...
+  },
+  tb_user_detail: {...},
+  ...,
 }</code></pre>
 						</div>
 					</div>
