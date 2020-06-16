@@ -12,7 +12,6 @@ import type {
   forEachChild as forEachChildType,
   CallExpression,
   JSDocTagInfo,
-  Identifier,
   Node,
   SourceFile,
   Symbol as TsSymbol,
@@ -320,15 +319,10 @@ export function walkNode(options: WalkNodeOps): Set<CallExpression> {
   const visitor = (node: Node, opts: WalkNodeOps): void => {
     /* istanbul ignore else */
     if (isCallExpression(node)) {
-      const expression = node.expression as Identifier | void
-
       /* istanbul ignore else */
-      if (expression) {
-        /* istanbul ignore else */
-        if (isCallerNameMatched(expression.getText(), options.matchFuncNameSet)) {
-          ret.add(node)
-          return
-        } // void else
+      if (isCallerNameMatched(node.expression.getText(), options.matchFuncNameSet)) {
+        ret.add(node)
+        return
       } // void else
     } // void else continue walk
 
