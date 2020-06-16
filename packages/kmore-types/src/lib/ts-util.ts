@@ -277,14 +277,14 @@ export function matchSourceFileWithFilePath(
 
 
 /** Retrieve node with specified position from caller */
-export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpression | void {
+export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpression | undefined {
   // eslint-disable-next-line import/no-extraneous-dependencies
   const { isCallExpression, forEachChild } = require('typescript') as {
     isCallExpression: typeof isCallExpressionType,
     forEachChild: typeof forEachChildType,
   }
 
-  const visit = (node: Node, opts: WalkNodeWithPositionOps): CallExpression | void => {
+  const visit = (node: Node, opts: WalkNodeWithPositionOps): CallExpression | undefined => {
     const { line, character } = opts.sourceFile.getLineAndCharacterOfPosition(node.getStart())
 
     /* istanbul ignore else */
