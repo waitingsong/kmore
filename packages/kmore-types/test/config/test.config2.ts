@@ -21,7 +21,7 @@ export interface TbListModel extends TTables {
    */
   tb_user_detail2: {
     uid: number,
-    address: string
+    address: string,
   }
 }
 export type TbListModelAlias = TbListModel
