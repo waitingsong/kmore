@@ -1,7 +1,10 @@
+import { TableModel, TTables } from '../src'
+
+
 export type TbListModelAlias = TbListModel
 
 /** table_name as key */
-export interface TbListModel {
+export interface TbListModel extends TTables {
   /**
    * @description 用户表
    * @table 表实际名称user

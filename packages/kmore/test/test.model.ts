@@ -1,8 +1,10 @@
+import { TTables } from '../src/index'
+
 
 export type TbListModelAlias = TbListModel
 
 /** table_name as key */
-export interface TbListModel {
+export interface TbListModel extends TTables {
   /**
    * @description 用户表
    * @table 表实际名称user
@@ -32,7 +34,6 @@ export interface UserDetail {
    */
   uid: number
   age: number
-  /** 住址 */
   address: string
 }
 

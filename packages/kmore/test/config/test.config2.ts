@@ -1,11 +1,11 @@
-import { genTbListFromType } from '../../src/index'
+import { genTbListFromType, TTables } from '../../src/index'
 
 
 export const tbList2 = genTbListFromType<TbListModel>({
   forceLoadTbListJs: true,
 })
 
-export interface TbListModel {
+export interface TbListModel extends TTables {
   /**
    * @description 用户表a
    * @table 表实际名称user2

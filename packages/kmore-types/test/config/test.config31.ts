@@ -5,7 +5,7 @@ import { User, UserDetail } from '../test.model'
 
 export const tbList31 = genFoo<UserInfoModel>()
 
-export interface UserInfoModel {
+export interface UserInfoModel extends TTables {
   tb_user: User
   tb_user_detail: UserDetail
 }
@@ -17,7 +17,7 @@ function genFoo<T extends TTables>(): KTablesBase<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function genBar<T extends object>(): KTablesBase<T> {
+function genBar<T extends TTables>(): KTablesBase<T> {
   const tbList = genTbListFromType<T>({
     /**
      * 2: the caller with generics type is up to two level, genFoo() -> fenBar(),

@@ -7,7 +7,7 @@ import { User, UserDetail } from '../test.model'
 export const kTablesBase3 = genFoo<UserInfoModel>()
 export const kTablesBase4 = genFoo<UserInfoModel>()
 
-export interface UserInfoModel {
+export interface UserInfoModel extends TTables {
   tb_user: User
   tb_user_detail: UserDetail
 }
