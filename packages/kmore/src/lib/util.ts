@@ -7,7 +7,6 @@ import {
   genVarName,
   loadFile,
   Tables,
-  Columns,
 } from 'kmore-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
@@ -198,28 +197,27 @@ export function genKTablesFromBase<T extends TTables>(
   }
 
   ktbs.scopedColumns = new Proxy(mtCols, {
-    get(target: MultiTableCols<T>, tbAlias: keyof Columns<T>, receiver: unknown) {
+    get(target: MultiTableCols<T>, tbAliasOrPropertyKey: keyof MultiTableCols<T>, receiver: unknown) {
       // eslint-disable-next-line no-console
       // console.log(`getting ${tbAlias.toString()}`)
 
-      // @ts-expect-error
-      const tbCols = target[tbAlias] as unknown // as Columns<T>
+      const tbCols = target[tbAliasOrPropertyKey] as unknown // as Columns<T>
 
       if (typeof tbCols === 'object' && !! tbCols) {
-        const tbCols2 = tbCols as Columns<T>
-        const cachedCols = getScopedColumnsColsCache<T>(tbCols2, tbAlias as string)
+        const tbCols2 = tbCols as MultiTableCols<T>
+        const cachedCols = getScopedColumnsColsCache<T>(tbCols2, tbAliasOrPropertyKey as string)
         /* istanbul ignore else */
         if (cachedCols) {
           return cachedCols
         }
 
         const scopedCols = createScopedColumns(tbCols2, createColumnNameFn)
-        setScopedColumnsColsCache(tbCols2, tbAlias as string, scopedCols)
+        setScopedColumnsColsCache(tbCols2, tbAliasOrPropertyKey as string, scopedCols)
 
         return scopedCols
       }
       else {
-        const data = Reflect.get(target, tbAlias, receiver) as unknown
+        const data = Reflect.get(target, tbAliasOrPropertyKey, receiver) as unknown
         return data
       }
     },

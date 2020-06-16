@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { basename } from '@waiting/shared-core'
-import {
-  ScopedColumns,
-  TTables,
-} from 'kmore-types'
+import { TTables } from 'kmore-types'
 import * as assert from 'power-assert'
 
 import {
@@ -183,17 +180,6 @@ describe(filename, () => {
         columns: co,
         scopedColumns: sc,
       } = db
-
-      // const alias = genAliasColumns(sc)
-      // const ps = genKnexColumnsParam(
-      //   ac.tb_user_detail,
-      //   ['uid', 'address'],
-      // )
-      // const ps2 = genKnexColumnsParam(
-      //   ac.tb_user_detail,
-      //   ['uid', 'address'],
-      //   true,
-      // )
 
       const ps1 = ac.tb_user.genFieldsAlias(['*'], true)
       const ps2 = ac.tb_user_detail.genFieldsAlias(['*'])

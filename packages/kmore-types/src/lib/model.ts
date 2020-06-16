@@ -175,9 +175,7 @@ export interface KTablesBase<T extends TTables> {
 /**
  * Type of db.tables
  */
-export type Tables<T extends TTables> = T extends void
-  ? EmptyTbList
-  : T extends never ? EmptyTbList : Record<keyof T, string>
+export type Tables<T extends TTables> = Record<keyof T, string>
 export interface EmptyTbList {
   readonly [key: string]: never
 }
@@ -185,30 +183,22 @@ export interface EmptyTbList {
 /**
  * Type of db.tableCols.tb_foo.col_bar
  */
-export type MultiTableCols<T extends TTables> = T extends void
-  ? EmptyTbList
-  : T extends never ? EmptyTbList : Columns<T>
+export type MultiTableCols<T extends TTables> = BaseMultiTableColumns<T> & BaseMultiTableColumnsExtProp<T>
 export enum ColumnExtPropKeys {
   tableAlias = '_tableAlias',
   tablesRef = '_tablesRef',
   sColsCacheMap = '_scopedColsCacheMap',
   genFieldsAliasFn = 'genFieldsAlias',
 }
-export type Columns<T extends TTables> = BaseMultiTableColumns<T> & BaseMultiTableColumnsExtProp<T>
 export interface BaseMultiTableColumnsExtProp<T extends TTables> {
   readonly [ColumnExtPropKeys.tableAlias]: TableAlias
   readonly [ColumnExtPropKeys.tablesRef]: KTablesBase<T>['tables']
-  readonly [ColumnExtPropKeys.sColsCacheMap]: Map<TableAlias, ScopedColumns<T>>
+  readonly [ColumnExtPropKeys.sColsCacheMap]: Map<TableAlias, MultiTableScopedCols<T>>
 }
 
 /**
  * Type of db.tableCols.tb_foo.col_bar,
  * value with table prefix, eg. `tb_foo.col_name`
- */
-export type MultiTableScopedCols<T extends TTables> = T extends void
-  ? EmptyTbList
-  : T extends never ? EmptyTbList : ScopedColumns<T>
-/**
  * {
  *  tbAlias1:
  *   {
@@ -218,18 +208,11 @@ export type MultiTableScopedCols<T extends TTables> = T extends void
  *  ...
  * }
  */
-export type ScopedColumns<T extends TTables> = BaseMultiTableColumns<T>
+export type MultiTableScopedCols<T extends TTables> = BaseMultiTableColumns<T>
 export type BaseMultiTableColumns<T extends TTables> = {
-  readonly [tbAlias in keyof T]: TableFields<T, tbAlias>
+  readonly [tbAlias in keyof T]: TableFields<T[tbAlias]>
 }
-export type TableFields<T, TbAlias extends keyof T = any> = {
-  readonly [colAlias in keyof T[TbAlias]]: string
-}
-// export type ScopedColumns<T extends TTables> = {
-//   readonly [tbAlias in keyof T]: {
-//     readonly [colAlias in keyof T[tbAlias]]: string
-//   }
-// }
+export type TableFields<F extends TableModel> = Record<keyof F, string>
 
 
 export type TableAlias = string

@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   ColumnExtPropKeys,
-  Columns,
   KTablesBase,
-  ScopedColumns,
+  MultiTableScopedCols,
   TableAlias,
+  TableFields,
+  MultiTableCols,
 } from 'kmore-types'
 
 import {
@@ -19,7 +18,7 @@ export function genColumnsWithExtProps<T extends TTables>(
   kTablesBase: KTablesBase<T>,
 ): KTablesBase<T>['columns'] {
 
-  const ret = {} as KTablesBase<T>['columns']
+  const ret: MultiTableCols<T> = {} as KTablesBase<T>['columns']
   const props = {
     configurable: false,
     enumerable: true,
@@ -28,10 +27,9 @@ export function genColumnsWithExtProps<T extends TTables>(
 
   Object.keys(kTablesBase.columns).forEach((tbAlias) => {
     const alias = tbAlias as keyof KTablesBase<T>['columns']
-    const cols = kTablesBase.columns[alias]
+    const cols = kTablesBase.columns[alias] as TableFields<T>
 
     const retCols = createColumnsProperties({
-      // @ts-expect-error
       columns: cols,
       tableAlias: tbAlias,
       tables: kTablesBase.tables,
@@ -46,10 +44,10 @@ export function genColumnsWithExtProps<T extends TTables>(
 }
 
 function createColumnsProperties<T extends TTables>(options: {
-  columns: Columns<T>,
+  columns: TableFields<T>,
   tableAlias: string,
   tables: KTablesBase<T>['tables'],
-}): Columns<T> {
+}): MultiTableCols<T> {
 
   const props = {
     configurable: false,
@@ -57,7 +55,7 @@ function createColumnsProperties<T extends TTables>(options: {
     writable: false,
   }
   const { tableAlias, tables } = options
-  const cols = options.columns
+  const cols = options.columns as unknown as MultiTableCols<T>
 
   if (typeof cols[ColumnExtPropKeys.tableAlias] === 'undefined') {
     Object.defineProperty(cols, ColumnExtPropKeys.tableAlias, {
@@ -83,18 +81,18 @@ function createColumnsProperties<T extends TTables>(options: {
 }
 
 export function getScopedColumnsColsCache<T extends TTables>(
-  columns: Columns<T>,
+  columns: MultiTableCols<T>,
   tableAlias: string,
-): ScopedColumns<T> | undefined {
+): MultiTableScopedCols<T> | undefined {
 
   const cacheMap = columns[ColumnExtPropKeys.sColsCacheMap]
   return cacheMap.get(tableAlias)
 }
 
 export function setScopedColumnsColsCache<T extends TTables>(
-  columns: Columns<T>,
+  columns: MultiTableCols<T>,
   tableAlias: string,
-  scopedColumns: ScopedColumns<T>,
+  scopedColumns: MultiTableScopedCols<T>,
 ): void {
 
   const cacheMap = columns[ColumnExtPropKeys.sColsCacheMap]
@@ -105,20 +103,20 @@ export function setScopedColumnsColsCache<T extends TTables>(
 }
 
 export function createScopedColumns<T extends TTables>(
-  columns: Columns<T>,
+  columns: MultiTableCols<T>,
   /** false will use original col name w/o table name prefix */
   createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,
-): ScopedColumns<T> {
+): MultiTableScopedCols<T> {
 
   const scopedCols = new Proxy(columns, {
-    get(targetCol: ScopedColumns<T>, colAlias: string, receiver2: unknown) {
+    get(targetCol: MultiTableScopedCols<T>, colAlias: string, receiver2: unknown) {
       const runTimeTbAlias = Reflect.get(targetCol, ColumnExtPropKeys.tableAlias, receiver2) as TableAlias
       const tbsRef = Reflect.get(
         targetCol,
         ColumnExtPropKeys.tablesRef,
         receiver2,
-      ) as Columns<T>[ColumnExtPropKeys.tablesRef]
-      const tbName = tbsRef[runTimeTbAlias as keyof Columns<T>[ColumnExtPropKeys.tablesRef]] as unknown
+      ) as MultiTableCols<T>[ColumnExtPropKeys.tablesRef]
+      const tbName = tbsRef[runTimeTbAlias as keyof MultiTableCols<T>[ColumnExtPropKeys.tablesRef]] as unknown
 
       if (typeof tbName === 'string' && tbName) {
         const colName = Reflect.get(targetCol, colAlias, receiver2) as string

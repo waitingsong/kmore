@@ -72,8 +72,13 @@ export interface KTables<T extends TTables> extends KTablesBase<T> {
   * For table joint
   * ```json
   * {
-  *    tb_alias: { tableNameColName: "table_name.col_name", ...,}
-  *    ...,
+  *   tb_user: {
+  *     tbUserUid: "tb_user.uid",
+  *     tbUserName: "tb_user.name",
+  *     ...
+  *   },
+  *   tb_user_detail: {...},
+  *   ...,
   * }
   * ```
   */
@@ -82,8 +87,13 @@ export interface KTables<T extends TTables> extends KTablesBase<T> {
   * Columns mapping object, column name with table prefix, eg tb_foo.user
   * ```json
   * {
-  *    tb_alias: { col_alias: "table_name.col_name", ...,}
-  *    ...,
+  *   tb_user: {
+  *     uid: "tb_user.uid",
+  *     name: "tb_user.name",
+  *     ...
+  *   },
+  *   tb_user_detail: {...},
+  *   ...,
   * }
   * ```
   */
@@ -114,8 +124,6 @@ export interface DbModel<T extends TTables> {
   readonly [DbPropKeys.aliasColumns]: MultiTableAliasCols<T>
   readonly [DbPropKeys.refTables]: DbRefBuilder<T>
 }
-/** @deprecated use `TTables` instead */
-// export type TTableListModel = TTables
 
 
 /** Type of db.refTables */
