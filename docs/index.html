@@ -99,7 +99,7 @@ npm install sqlite3</code></pre>
 				<a href="#create-connection" id="create-connection" style="color: inherit; text-decoration: none;">
 					<h3>Create connection</h3>
 				</a>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Config } <span class="hljs-keyword">from</span> <span class="hljs-string">'kmore'</span>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Config, TTables } <span class="hljs-keyword">from</span> <span class="hljs-string">'kmore'</span>
 
 <span class="hljs-comment">// connection config</span>
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> config: Config = {
@@ -114,7 +114,7 @@ npm install sqlite3</code></pre>
 }
 
 <span class="hljs-comment">// Define Types of tables</span>
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> TbListModel {
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> TbListModel <span class="hljs-keyword">extends</span> TTables {
   tb_user: User
   tb_user_detail: UserDetail
 }

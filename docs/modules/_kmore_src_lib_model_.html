@@ -87,7 +87,6 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_kmore_src_lib_model_.html#config" class="tsd-kind-icon">Config</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_kmore_src_lib_model_.html#createcolumnnamefn" class="tsd-kind-icon">Create<wbr>Column<wbr>Name<wbr>Fn</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_kmore_src_lib_model_.html#dbrefbuilder" class="tsd-kind-icon">Db<wbr>Ref<wbr>Builder</a></li>
-								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_kmore_src_lib_model_.html#tbquerybuilder" class="tsd-kind-icon">Tb<wbr>Query<wbr>Builder</a></li>
 							</ul>
 						</section>
@@ -102,7 +101,7 @@
 					<div class="tsd-signature tsd-kind-icon">Config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Config</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L61">kmore/src/lib/model.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L62">kmore/src/lib/model.ts:62</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -112,7 +111,7 @@
 					<div class="tsd-signature tsd-kind-icon">Create<wbr>Column<wbr>Name<wbr>Fn<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.createcolumnnameopts.html" class="tsd-signature-type">CreateColumnNameOpts</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L131">kmore/src/lib/model.ts:131</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L132">kmore/src/lib/model.ts:132</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -143,7 +142,7 @@
 					<div class="tsd-signature tsd-kind-icon">Db<wbr>Ref<wbr>Builder&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L121">kmore/src/lib/model.ts:121</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L122">kmore/src/lib/model.ts:122</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -154,7 +153,7 @@
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
 						<li>
-							<h4>T</h4>
+							<h4>T<span class="tsd-signature-symbol">: </span><a href="_kmore_types_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
 						</li>
 					</ul>
 					<div class="tsd-type-declaration">
@@ -163,36 +162,19 @@
 						</ul>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
-					<a name="ttablelistmodel" class="tsd-anchor"></a>
-					<h3>TTable<wbr>List<wbr>Model</h3>
-					<div class="tsd-signature tsd-kind-icon">TTable<wbr>List<wbr>Model<span class="tsd-signature-symbol">:</span> <a href="_kmore_types_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L117">kmore/src/lib/model.ts:117</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<dl class="tsd-comment-tags">
-							<dt>deprecated</dt>
-							<dd><p>use <code>TTables</code> instead</p>
-							</dd>
-						</dl>
-					</div>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 					<a name="tbquerybuilder" class="tsd-anchor"></a>
 					<h3>Tb<wbr>Query<wbr>Builder</h3>
-					<div class="tsd-signature tsd-kind-icon">Tb<wbr>Query<wbr>Builder&lt;TRecord, TResult&gt;<span class="tsd-signature-symbol">:</span> &lt;R, KeyExcludeOptional&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TTables</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">Tb<wbr>Query<wbr>Builder&lt;TRecord, TResult&gt;<span class="tsd-signature-symbol">:</span> &lt;R, KeyExcludeOptional&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TableModel</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L125">kmore/src/lib/model.ts:125</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L126">kmore/src/lib/model.ts:126</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
 					<ul class="tsd-type-parameters">
 						<li>
-							<h4>TRecord</h4>
+							<h4>TRecord<span class="tsd-signature-symbol">: </span><a href="_kmore_types_src_lib_model_.html#tablemodel" class="tsd-signature-type">TableModel</a></h4>
 						</li>
 						<li>
 							<h4>TResult</h4>
@@ -203,7 +185,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-has-type-parameter">
-									<li class="tsd-signature tsd-kind-icon">&lt;R, KeyExcludeOptional&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TTables</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></li>
+									<li class="tsd-signature tsd-kind-icon">&lt;R, KeyExcludeOptional&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TableModel</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -216,7 +198,7 @@
 												<h4>KeyExcludeOptional</h4>
 											</li>
 										</ul>
-										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">R</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TTables</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h4>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">R</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">TableModel</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JointTable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">KeyExcludeOptional</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">QueryBuilder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRecord</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h4>
 									</li>
 								</ul>
 							</li>
@@ -276,9 +258,6 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="_kmore_src_lib_model_.html#dbrefbuilder" class="tsd-kind-icon">Db<wbr>Ref<wbr>Builder</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
-						<a href="_kmore_src_lib_model_.html#ttablelistmodel" class="tsd-kind-icon">TTable<wbr>List<wbr>Model</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="_kmore_src_lib_model_.html#tbquerybuilder" class="tsd-kind-icon">Tb<wbr>Query<wbr>Builder</a>
