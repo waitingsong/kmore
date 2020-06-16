@@ -13,6 +13,7 @@ import {
   TableAliasCols,
   ColAliasType,
   KnexColumnsParma,
+  TableModel,
 } from 'kmore-types'
 import * as Knex from 'knex'
 
@@ -114,16 +115,16 @@ export interface DbModel<T extends TTables> {
   readonly [DbPropKeys.refTables]: DbRefBuilder<T>
 }
 /** @deprecated use `TTables` instead */
-export type TTableListModel = TTables
+// export type TTableListModel = TTables
 
 
 /** Type of db.refTables */
-export type DbRefBuilder<T> = {
+export type DbRefBuilder<T extends TTables> = {
   /** tbName: () => knex('tb_name') */
-  [key in keyof T]: TbQueryBuilder<T[key], T[key][]>
+  [tb in keyof T]: TbQueryBuilder<T[tb], T[tb][]>
 }
-export type TbQueryBuilder<TRecord, TResult = TRecord[]>
-  = <R = void, KeyExcludeOptional = void>() => R extends TTables
+export type TbQueryBuilder<TRecord extends TableModel, TResult = TRecord[]>
+  = <R = void, KeyExcludeOptional = void>() => R extends TableModel
     ? Knex.QueryBuilder<JointTable<TRecord, R, KeyExcludeOptional>, JointTable<TRecord, R, KeyExcludeOptional>[]>
     : Knex.QueryBuilder<TRecord, TResult>
 
