@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.19.0](https://github.com/waitingsong/kmore/compare/v0.18.0...v0.19.0) (2020-06-16)
+
+
+### Performance Improvements
+
+* **kmore-types:** update walkNode() ([ab8a0eb](https://github.com/waitingsong/kmore/commit/ab8a0eba1ad2c3713a5f8f0218cc83af209ac155))
+* **kmore-types:** update walkNodeWithPosition() ([600b9e8](https://github.com/waitingsong/kmore/commit/600b9e8ce25a1c0c7e5a73b5112fa2cdafa9b0f2))
+
+
+
+
+
 # [0.18.0](https://github.com/waitingsong/kmore/compare/v0.17.1...v0.18.0) (2020-06-15)
 
 **Note:** Version bump only for package kmore-types
