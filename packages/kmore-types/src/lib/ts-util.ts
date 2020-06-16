@@ -291,13 +291,7 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpr
     if (line + 1 === opts.matchLine && character + 1 === opts.matchColumn) {
       /* istanbul ignore else */
       if (isCallExpression(node)) {
-        const expression = node.expression as Identifier | void
-
-        if (expression) {
-          return node
-        }
-
-        return // stop walk
+        return node // stop walk
       }
     }
     // void else continue walk
