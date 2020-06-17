@@ -23,11 +23,8 @@ import {
   MultiTableAliasCols,
 } from './model'
 import {
-  createScopedColumns,
-  genColumnsWithExtProps,
-  getScopedColumnsColsCache,
-  setScopedColumnsColsCache,
   defaultCreateScopedColumnName,
+  genMultiTableScopedCols,
 } from './scoped-cols-util'
 
 
@@ -188,47 +185,19 @@ export function genKTablesFromBase<T extends TTables>(
     return kTablesBase
   }
 
-  const mtCols: MultiTableCols<T> = genColumnsWithExtProps(kTablesBase)
+  const scopedColumns = genMultiTableScopedCols(
+    kTablesBase,
+    createColumnNameFn,
+  )
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  const aliasColumns = genAliasColumns(scopedColumns) as MultiTableAliasCols<T>
+
   const ktbs: KTables<T> = {
-    columns: mtCols,
+    columns: kTablesBase.columns,
     tables: kTablesBase.tables,
-    scopedColumns: {} as MultiTableCols<T>,
-    aliasColumns: {} as MultiTableAliasCols<T>,
+    scopedColumns,
+    aliasColumns,
   }
-
-  ktbs.scopedColumns = new Proxy(mtCols, {
-    get(target: MultiTableCols<T>, tbAliasOrPropertyKey: keyof MultiTableCols<T>, receiver: unknown) {
-      // eslint-disable-next-line no-console
-      // console.log(`getting ${tbAlias.toString()}`)
-
-      const tbCols = target[tbAliasOrPropertyKey] as unknown // as Columns<T>
-
-      if (typeof tbCols === 'object' && !! tbCols) {
-        const tbCols2 = tbCols as MultiTableCols<T>
-        const cachedCols = getScopedColumnsColsCache<T>(tbCols2, tbAliasOrPropertyKey as string)
-        /* istanbul ignore else */
-        if (cachedCols) {
-          return cachedCols
-        }
-
-        const scopedCols = createScopedColumns(tbCols2, createColumnNameFn)
-        setScopedColumnsColsCache(tbCols2, tbAliasOrPropertyKey as string, scopedCols)
-
-        return scopedCols
-      }
-      else {
-        const data = Reflect.get(target, tbAliasOrPropertyKey, receiver) as unknown
-        return data
-      }
-    },
-    set() {
-      return false
-      // return Reflect.set(target, propKey, value, receiver)
-    },
-  })
-
-  ktbs.aliasColumns = genAliasColumns(ktbs.scopedColumns)
-
   return ktbs
 }
 

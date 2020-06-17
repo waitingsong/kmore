@@ -109,7 +109,7 @@ export interface TablesMapArrCommon<T extends TTables>
   length: 2
 }
 export type MultiTableColsCommon<T extends TTables> =
-  MultiTableCols<T> | MultiTableScopedCols<T> | MultiTableAliasCols<T>
+  MultiTableCols<T> | MultiTableAliasCols<T>
 
 /** GenericsTypeId scope in the file */
 export type LocalTypeMap = Map<LocalTypeId, TagsMapArr>
@@ -183,17 +183,12 @@ export interface EmptyTbList {
 /**
  * Type of db.tableCols.tb_foo.col_bar
  */
-export type MultiTableCols<T extends TTables> = BaseMultiTableColumns<T> & BaseMultiTableColumnsExtProp<T>
-export enum ColumnExtPropKeys {
-  tableAlias = '_tableAlias',
-  tablesRef = '_tablesRef',
-  sColsCacheMap = '_scopedColsCacheMap',
-  genFieldsAliasFn = 'genFieldsAlias',
+export type MultiTableCols<T extends TTables> = {
+  readonly [tbAlias in keyof T]: TableFields<T[tbAlias]>
 }
-export interface BaseMultiTableColumnsExtProp<T extends TTables> {
-  readonly [ColumnExtPropKeys.tableAlias]: TableAlias
-  readonly [ColumnExtPropKeys.tablesRef]: KTablesBase<T>['tables']
-  readonly [ColumnExtPropKeys.sColsCacheMap]: Map<TableAlias, MultiTableScopedCols<T>>
+export type TableFields<F extends TableModel> = Record<keyof F, string>
+export enum ColumnExtPropKeys {
+  genFieldsAliasFn = 'genFieldsAlias',
 }
 
 /**
@@ -208,11 +203,7 @@ export interface BaseMultiTableColumnsExtProp<T extends TTables> {
  *  ...
  * }
  */
-export type MultiTableScopedCols<T extends TTables> = BaseMultiTableColumns<T>
-export type BaseMultiTableColumns<T extends TTables> = {
-  readonly [tbAlias in keyof T]: TableFields<T[tbAlias]>
-}
-export type TableFields<F extends TableModel> = Record<keyof F, string>
+// export type MultiTableScopedCols<T extends TTables> = BaseMultiTableColumns<T>
 
 
 export type TableAlias = string

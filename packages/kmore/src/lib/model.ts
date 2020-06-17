@@ -4,7 +4,6 @@ import {
   JointTable,
   Tables,
   MultiTableCols,
-  MultiTableScopedCols,
   MultiTableAliasCols,
   KTablesBase,
   Options,
@@ -97,7 +96,7 @@ export interface KTables<T extends TTables> extends KTablesBase<T> {
   * }
   * ```
   */
-  scopedColumns: MultiTableScopedCols<T>
+  scopedColumns: MultiTableCols<T>
 }
 
 export interface KmoreOpts {
@@ -120,7 +119,7 @@ export interface DbModel<T extends TTables> {
   /** columns.tb_foo.ctime output col name, eg. `ctime` */
   readonly [DbPropKeys.columns]: MultiTableCols<T>
   /** scopedColumns.tb_foo.ctime output col name with table prefix, eg. `tb_foo.ctime` */
-  readonly [DbPropKeys.scopedColumns]: MultiTableScopedCols<T>
+  readonly [DbPropKeys.scopedColumns]: MultiTableCols<T>
   readonly [DbPropKeys.aliasColumns]: MultiTableAliasCols<T>
   readonly [DbPropKeys.refTables]: DbRefBuilder<T>
 }

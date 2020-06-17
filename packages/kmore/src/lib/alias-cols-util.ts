@@ -1,7 +1,7 @@
 import {
   TableFields,
   snakeToCamel,
-  MultiTableScopedCols,
+  MultiTableCols,
   ColumnExtPropKeys,
 } from 'kmore-types'
 
@@ -15,7 +15,7 @@ import {
 
 
 export function genAliasColumns<T extends TTables>(
-  scopedColumns: MultiTableScopedCols<T>,
+  scopedColumns: MultiTableCols<T>,
 ): MultiTableAliasCols<T> {
 
   const ret = {} as MultiTableAliasCols<T>
