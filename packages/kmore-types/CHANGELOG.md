@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.21.0](https://github.com/waitingsong/kmore/compare/v0.20.0...v0.21.0) (2020-06-17)
+
+
+### Code Refactoring
+
+* generation of scopedCols ([4852406](https://github.com/waitingsong/kmore/commit/48524064a30ba6232b332d5141ee8ac187d1f7a1))
+
+
+### BREAKING CHANGES
+
+* - remove type BaseMultiTableColumns, use MultiTableCols instead
+- remove type MultiTableScopedCols, use MultiTableCols instead
+
+
+
+
+
 # [0.20.0](https://github.com/waitingsong/kmore/compare/v0.19.0...v0.20.0) (2020-06-16)
 
 **Note:** Version bump only for package kmore-types
