@@ -13,12 +13,14 @@ import type {
  * Database's tables definition (extends TTables)
  * @example ```ts
  * interface Db extends TTables {
- *  tb_user: User
- *  tb_user_detail: UserDeatil
+ *  user: User
+ *  userDetail: UserDeatil
  * }
  * ```
  */
-export type TTables = Record<TableName, TableModel>
+export interface TTables {
+  [tb: string]: TableModel
+}
 /**
  * Table's (partial) fields definition
  * @example ```ts
@@ -28,7 +30,9 @@ export type TTables = Record<TableName, TableModel>
  * }
  * ```
  */
-export type TableModel = Record<FieldName, any>
+export interface TableModel {
+  [field: string]: any
+}
 
 export interface Options extends GenTbListFromTypeOpts {
   /** Exported table vaiable name prefix. Default is "tbs_", result will be "tbs_m_n" */
@@ -175,7 +179,9 @@ export interface KTablesBase<T extends TTables> {
 /**
  * Type of db.tables
  */
-export type Tables<T extends TTables> = Record<keyof T, string>
+export type Tables<T extends TTables> = {
+  [tb in keyof T]: string
+}
 export interface EmptyTbList {
   readonly [key: string]: never
 }
