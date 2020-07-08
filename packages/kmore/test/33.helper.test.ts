@@ -3,37 +3,37 @@ import * as assert from 'power-assert'
 
 import {
   kmore,
-  DbModel,
+  Kmore,
   getCurrentTime,
   EnumClient,
 } from '../src/index'
 
 import { config } from './test.config'
-import { TbListModel, TbListModelAlias } from './test.model'
+import { Db } from './test.model'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
-  let db: DbModel<TbListModel>
+  let km: Kmore<Db>
 
   before(() => {
-    db = kmore<TbListModel>({ config })
-    assert(db.tables && Object.keys(db.tables).length > 0)
+    km = kmore<Db>({ config })
+    assert(km.tables && Object.keys(km.tables).length > 0)
   })
   after(async () => {
-    await db.dbh.destroy() // !
+    await km.dbh.destroy() // !
   })
 
   describe('Should getCurrentTime() works', () => {
     it('with pg', async () => {
-      const time = await getCurrentTime(db.dbh, EnumClient.pg)
+      const time = await getCurrentTime(km.dbh, EnumClient.pg)
       assert(time)
     })
 
     it('with invalid client value', async () => {
       try {
-        await getCurrentTime(db.dbh, '')
+        await getCurrentTime(km.dbh, '')
       }
       catch (ex) {
         assert(true)

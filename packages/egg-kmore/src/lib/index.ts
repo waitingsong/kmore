@@ -5,8 +5,8 @@ import * as assert from 'assert'
 import { Agent, Application } from 'egg'
 import {
   kmore,
-  TTables,
   DbModel,
+  Kmore,
   Config,
   getCurrentTime,
   EnumClient,
@@ -21,8 +21,8 @@ export default (app: Application | Agent): void => {
   app.addSingleton('kmore', createOneClient)
 }
 
-function createOneClient<T extends TTables>(
-  clientOpts: ClientOpts<T>,
+function createOneClient<D extends DbModel>(
+  clientOpts: ClientOpts<D>,
   app: Application | Agent,
 ) {
 
@@ -58,11 +58,11 @@ function createOneClient<T extends TTables>(
     assert(false, '[egg-kmore] database connect config are required on config')
   }
 
-  const client = kmore<T>(
+  const client = kmore<D>(
     {
       config: clientOpts.knexConfig,
     },
-    clientOpts.kTables,
+    clientOpts.dbDict,
   )
 
   if (clientOpts.waitConnected) {
@@ -77,10 +77,10 @@ function createOneClient<T extends TTables>(
 }
 
 
-function checkConnected<T extends TTables>(
+function checkConnected<T extends DbModel>(
   app: Application | Agent,
   knexConfig: Config,
-  clientInstInst: DbModel<T>,
+  clientInstInst: Kmore<T>,
 ): void {
 
   const { client } = knexConfig

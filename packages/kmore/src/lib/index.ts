@@ -1,17 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { createNullObject, getCallerStack, KTablesBase, DbPropKeys } from 'kmore-types'
+import {
+  createNullObject,
+  getCallerStack,
+  DbDictBase,
+  KmorePropKeys,
+  hasExtColumns,
+  genDbDictFromBase,
+  loadDbDictParamFromCallerInfo,
+} from 'kmore-types'
 
 import { defaultPropDescriptor, initOptions } from './config'
-import { DbModel, TTables, KmoreOpts, KTables } from './model'
-import { loadTbListParamFromCallerInfo } from './tables'
+import { Kmore, DbModel, KmoreOpts, DbDict } from './model'
 import {
   bindDbh,
   bindTables,
   bindTablesCols,
   bindRefTables,
   bindTablesScopedCols,
-  hasExtColumns,
-  genKTablesFromBase,
   bindTablesAliasCols,
 } from './util'
 
@@ -19,7 +24,7 @@ import {
 /**
  * Knex factory with type-safe tables accessor
  *
- * @description T = { user: {id: number, name: string} }
+ * @description D = { user: {id: number, name: string} }
  *  Initialize db connection and generate type-safe tables accessor (name and builder)
  *  will get
  *    - db.dbh : the connection instance of knex
@@ -31,50 +36,49 @@ import {
  *        eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
  *  tables will be generated from generics automaitically when passing undefined or null value
  */
-export function kmore<T extends TTables>(
+export function kmore<D extends DbModel, Dict = void>(
   kmoreOpts: KmoreOpts,
   /**
    * Auto generate tables from generics, if value is void|null.
    * Disabled when false,
    * Throw error when empty object `{}`
    */
-  kTables?: KTablesBase<T> | KTables<T> | void | null | false,
-): DbModel<T> {
+  dbDict?: DbDictBase<D> | DbDict<D> | void | null | false,
+): Kmore<D, Dict> {
   const { config, options } = kmoreOpts
   const opts = options
     ? { ...initOptions, ...options }
     : { ...initOptions }
 
-  let ktbs = {} as KTables<T>
-  if (kTables) {
-    if (Object.keys(kTables).length) {
-      ktbs = hasExtColumns(kTables, DbPropKeys.scopedColumns) && hasExtColumns(kTables, DbPropKeys.aliasColumns)
-        ? kTables
-        : genKTablesFromBase(kTables)
+  let ktbs = {} as DbDict<D>
+  if (dbDict) {
+    if (Object.keys(dbDict).length) {
+      ktbs = hasExtColumns<D>(dbDict, KmorePropKeys.scopedColumns)
+        && hasExtColumns<D>(dbDict, KmorePropKeys.aliasColumns) ? dbDict : genDbDictFromBase<D>(dbDict)
     }
     else {
-      throw new TypeError('Parameter kTables is empty')
+      throw new TypeError('Parameter dbDict is empty')
     }
   }
-  else if (kTables === false) {
+  else if (dbDict === false) {
     // void, skip generation
   }
   else {
     // detect running env of the caller
     const caller = getCallerStack(opts.callerDistance)
-    const base = loadTbListParamFromCallerInfo<T>(opts, caller)
+    const base = loadDbDictParamFromCallerInfo<D>(opts, caller)
 
-    ktbs = genKTablesFromBase(base)
+    ktbs = genDbDictFromBase<D>(base)
   }
 
-  let db = createNullObject() as DbModel<T>
-  db = bindDbh<T>(defaultPropDescriptor, db, config)
-  db = bindTables<T>(defaultPropDescriptor, db, ktbs)
-  db = bindTablesCols<T>(defaultPropDescriptor, db, ktbs)
-  db = bindTablesScopedCols<T>(defaultPropDescriptor, db, ktbs)
-  db = bindTablesAliasCols<T>(defaultPropDescriptor, db, ktbs)
-  db = bindRefTables<T>(opts, defaultPropDescriptor, db)
+  let km = createNullObject() as Kmore<D>
+  km = bindDbh<D>(defaultPropDescriptor, km, config)
+  km = bindTables<D>(defaultPropDescriptor, km, ktbs)
+  km = bindTablesCols<D>(defaultPropDescriptor, km, ktbs)
+  km = bindTablesScopedCols<D>(defaultPropDescriptor, km, ktbs)
+  km = bindTablesAliasCols<D>(defaultPropDescriptor, km, ktbs)
+  km = bindRefTables<D>(opts, defaultPropDescriptor, km)
 
-  return db
+  return km as unknown as Kmore<D, Dict>
 }
 

@@ -1,20 +1,17 @@
+import { defaultCreateScopedColumnName } from './config'
 import {
-  KTablesBase,
-  MultiTableCols,
+  DbDictBase,
+  DbCols,
   TableAlias,
   TableFields,
-} from 'kmore-types'
-
-import {
-  TTables,
-  CreateColumnNameOpts,
+  DbModel,
   CreateColumnNameFn,
 } from './model'
 
 
 /**
  *
- * @returns - MultiTableCols<T> ```
+ * @returns - DbCols<T> ```
  * {
  *  tb_user: {
  *    uid: "tb_user.uid",
@@ -24,13 +21,13 @@ import {
  * }
  * ```
  */
-export function genMultiTableScopedCols<T extends TTables>(
-  kTablesBase: KTablesBase<T>,
+export function genDbScopedCols<D extends DbModel>(
+  dbDictBase: DbDictBase<D>,
   /** false will use original col name w/o table name prefix */
   createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,
-): MultiTableCols<T> {
+): DbCols<D> {
 
-  const ret = {} as MultiTableCols<T>
+  const ret = {} as DbCols<D>
 
   const props = {
     configurable: false,
@@ -38,12 +35,12 @@ export function genMultiTableScopedCols<T extends TTables>(
     writable: false,
   }
 
-  const { tables, columns } = kTablesBase
+  const { tables, columns } = dbDictBase
 
-  Object.entries(columns).forEach((tb: [TableAlias, TableFields<T[keyof T]>]) => {
+  Object.entries(columns).forEach((tb: [TableAlias, TableFields<D[keyof D]>]) => {
     const [tbAlias, tbFields] = tb
     const tableName = tables[tbAlias]
-    const tmpTableFields = {} as TableFields<T[keyof T]>
+    const tmpTableFields = {} as TableFields<D[keyof D]>
 
     Object.entries(tbFields).forEach((field: [string, string]) => {
       const [colKey, columnName] = field
@@ -68,11 +65,5 @@ export function genMultiTableScopedCols<T extends TTables>(
   })
 
   return ret
-}
-
-
-export function defaultCreateScopedColumnName(options: CreateColumnNameOpts): string {
-  const { tableName, columnName } = options
-  return `${tableName}.${columnName}`
 }
 

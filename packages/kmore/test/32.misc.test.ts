@@ -1,34 +1,34 @@
 import { basename } from '@waiting/shared-core'
-import { genTbListFromType } from 'kmore-types'
+import { genDbDictFromType } from 'kmore-types'
 import * as assert from 'power-assert'
 
 import {
   kmore,
-  DbModel,
+  Kmore,
 } from '../src/index'
 import { initOptions, cacheMap } from '../src/lib/config'
 
 import { config } from './test.config'
-import { TbListModel, TbListModelAlias } from './test.model'
+import { Db, DbAlias } from './test.model'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
-  let db: DbModel<TbListModel>
+  let km: Kmore<Db>
 
   before(() => {
-    db = kmore<TbListModel>({ config })
-    assert(db.tables && Object.keys(db.tables).length > 0)
+    km = kmore<Db>({ config })
+    assert(km.tables && Object.keys(km.tables).length > 0)
   })
   after(async () => {
-    await db.dbh.destroy() // !
+    await km.dbh.destroy() // !
   })
 
-  describe('Should genTbListFromType() works', () => {
+  describe('Should genDbDictFromType() works', () => {
     it('with normal type', () => {
-      const { tables, rb } = db
-      const ret = genTbListFromType<TbListModel>()
+      const { tables, rb } = km
+      const ret = genDbDictFromType<Db>()
 
       assert(ret && Object.keys(ret.tables).length === Object.keys(tables).length)
       Object.keys(ret.tables).forEach((tb) => {
@@ -37,8 +37,8 @@ describe(filename, () => {
     })
 
     it('with alias type', () => {
-      const { tables } = db
-      const ret = genTbListFromType<TbListModelAlias>()
+      const { tables } = km
+      const ret = genDbDictFromType<DbAlias>()
 
       assert(ret && Object.keys(ret.tables).length === Object.keys(tables).length)
       Object.keys(ret.tables).forEach((tb) => {
@@ -50,7 +50,7 @@ describe(filename, () => {
 
   describe('Should assignment of tablesRef name works', () => {
     it('normal', () => {
-      const { tables, rb } = db
+      const { tables, rb } = km
       Object.keys(tables).forEach((tb) => {
         const tbRef = rb[tb]
         assert(typeof tbRef === 'function')

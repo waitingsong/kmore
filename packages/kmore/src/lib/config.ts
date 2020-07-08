@@ -1,12 +1,12 @@
 
 export {
-  globalCallerFuncNameSet, DbPropKeys,
+  globalCallerFuncNameSet, KmorePropKeys,
 } from 'kmore-types'
 
 export {
   cacheMap,
   initBuildSrcOpts,
-  initGenTbListFromTypeOpts,
+  initGenDbDictFromTypeOpts,
   initOptions,
 } from 'kmore-types'
 

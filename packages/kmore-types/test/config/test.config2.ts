@@ -1,12 +1,12 @@
-import { TTables, genTbListFromType } from '../../src/index'
+import { DbModel, genDbDictFromType } from '../../src/index'
 
 
-genTbListFromType<TbListModelAlias>()
+genDbDictFromType<DbAlias>()
 
-export const tbList2 = genTbListFromType<TbListModel>()
-export const kTables21 = genTbListFromType<TbListModel>()
+export const dbDict2 = genDbDictFromType<Db>()
+export const dbDict21 = genDbDictFromType<Db>()
 
-export interface TbListModel extends TTables {
+export interface Db extends DbModel {
   /**
    * @description 用户表a
    * @table 表实际名称user2
@@ -24,5 +24,5 @@ export interface TbListModel extends TTables {
     address: string,
   }
 }
-export type TbListModelAlias = TbListModel
+export type DbAlias = Db
 

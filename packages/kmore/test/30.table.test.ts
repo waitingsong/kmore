@@ -1,39 +1,39 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, DbModel } from '../src/index'
+import { kmore, Kmore } from '../src/index'
 
 import { config } from './test.config'
-import { TbListModel } from './test.model'
+import { Db } from './test.model'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
-  let db: DbModel<TbListModel>
+  let km: Kmore<Db>
 
   before(() => {
-    db = kmore<TbListModel>({ config })
-    assert(db.tables && Object.keys(db.tables).length > 0)
+    km = kmore<Db>({ config })
+    assert(km.tables && Object.keys(km.tables).length > 0)
   })
   after(async () => {
-    await db.dbh.destroy() // !
+    await km.dbh.destroy() // !
   })
 
-  describe('Should accessing db.<tables> works', () => {
+  describe('Should accessing km.<tables> works', () => {
     it('with valid table value', async () => {
-      const { tables, rb } = db
+      const { tables, rb } = km
 
       for (const tbAlias of Object.keys(tables)) {
         assert(
           tbAlias && typeof rb[tbAlias] === 'function',
-          `Should db.${tbAlias} be typeof function, but not.`,
+          `Should km.${tbAlias} be typeof function, but not.`,
         )
       }
     })
 
     it('with valid table value', async () => {
-      const { rb } = db;
+      const { rb } = km;
 
       [
         Math.random(),
@@ -53,7 +53,7 @@ describe(filename, () => {
         try {
           // @ts-ignore
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          db[val]()
+          km[val]()
         }
         catch (ex) {
           return

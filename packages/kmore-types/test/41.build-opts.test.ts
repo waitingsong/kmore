@@ -1,19 +1,19 @@
 import { basename, pathResolve, normalize } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { buildSrcTablesFile } from '../src/lib/build'
-import { initOptions, initBuildSrcOpts, DbPropKeys } from '../src/lib/config'
-import { genTbListTsFilePath } from '../src/lib/util'
+import { genTbListTsFilePath, KmorePropKeys, DbDict } from '../src/index'
+import { buildDbDictFile } from '../src/lib/build'
+import { initOptions, initBuildSrcOpts } from '../src/lib/config'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
 
-  describe('Should buildSrcTablesFile() works', () => {
+  describe('Should buildDbDictFile() works', () => {
     it('with valid options', async () => {
       const path = './test/test.config.ts'
-      const targetPath = await buildSrcTablesFile(path, initBuildSrcOpts)
+      const targetPath = await buildDbDictFile(path, initBuildSrcOpts)
       const expectedPath = genTbListTsFilePath(pathResolve(path), initOptions.outputFileNameSuffix)
 
       assert(
@@ -21,20 +21,23 @@ describe(filename, () => {
         `retPath: ${targetPath}, expectedPath: ${expectedPath}`,
       )
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const mods = await import(targetPath)
-      const colSuffixArr = [
-        DbPropKeys.tables,
-        DbPropKeys.columns,
+      const mods: Record<string, DbDict> = await import(targetPath)
+      const keyArr = [
+        KmorePropKeys.tables,
+        KmorePropKeys.columns,
+        KmorePropKeys.aliasColumns,
+        KmorePropKeys.scopedColumns,
       ]
 
       assert(mods && typeof mods === 'object')
-      colSuffixArr.forEach((col) => {
-        const contains = Object.keys(mods).some(key => key.endsWith(col))
-        assert(contains === true, `${col} not existing`)
+      keyArr.forEach((col) => {
+        Object.values(mods).forEach((dict: DbDict) => {
+          const contains = Object.keys(dict).some(key => key === col)
+          assert(col && contains === true, `${col} not existing`)
+        })
       })
     })
   })
 
-
 })
+

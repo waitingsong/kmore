@@ -1,29 +1,30 @@
 import {
   Config,
-  KTables,
-  TTables,
+  DbDict,
+  DbModel,
 } from 'kmore'
 
 
 /** Config of egg-kmore */
-export interface EggKmoreConfig<T extends TTables> {
+export interface EggKmoreConfig<D extends DbModel> {
   /** Start in app worker, Default: true */
   app?: boolean
   /** Start in agent, Default: false */
   agent?: boolean
   default?: Partial<DefaultClientOpts>
-  client?: ClientOpts<T>
-  clients?: MuiltiClientsOpts<T>
+  client?: ClientOpts<D>
+  clients?: MuiltiClientsOpts<D>
 }
 
 export interface DefaultClientOpts {
   waitConnected: boolean
 }
-export interface ClientOpts<T extends TTables> {
+export interface ClientOpts<D extends DbModel> {
   knexConfig: Config
-  kTables: KTables<T>
+  dbDict: DbDict<D>
   waitConnected?: boolean
 }
-export interface MuiltiClientsOpts<T extends TTables> {
-  [db: string]: ClientOpts<T>
+export interface MuiltiClientsOpts<D extends DbModel> {
+  [db: string]: ClientOpts<D>
 }
+

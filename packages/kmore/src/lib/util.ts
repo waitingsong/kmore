@@ -1,96 +1,86 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   validateParamTables,
   createNullObject,
-  KTablesBase,
-  MultiTableCols,
-  LoadVarFromFileOpts,
-  genVarName,
-  loadFile,
-  Tables,
+  DbDictBase,
 } from 'kmore-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
 
-import { genAliasColumns } from './alias-cols-util'
-import { DbPropKeys } from './config'
+import { KmorePropKeys } from './config'
 import {
-  DbModel,
+  Kmore,
   DbRefBuilder,
   Options,
-  TTables,
-  KTables,
-  CreateColumnNameFn,
-  MultiTableAliasCols,
+  DbModel,
+  DbDict,
+  QueryBuilderExt,
 } from './model'
-import {
-  defaultCreateScopedColumnName,
-  genMultiTableScopedCols,
-} from './scoped-cols-util'
 
 
 // workaround for rollup
 const _Knex = Knex
 
-export function bindDbh<T extends TTables>(
+export function bindDbh<D extends DbModel, T = void>(
   propDescriptor: PropertyDescriptor,
-  db: DbModel<T>,
+  kmInst: Kmore<D, T>,
   config: Knex.Config,
-): DbModel<T> {
+): Kmore<D, T> {
 
-  Object.defineProperty(db, DbPropKeys.dbh, {
+  Object.defineProperty(kmInst, KmorePropKeys.dbh, {
     ...propDescriptor,
     value: _Knex(config),
   })
 
-  return db
+  return kmInst
 }
 
 
-export function bindTables<T extends TTables>(
+export function bindTables<D extends DbModel, T = void>(
   propDescriptor: PropertyDescriptor,
-  db: DbModel<T>,
-  kTables?: KTablesBase<T>,
-): DbModel<T> {
+  kmInst: Kmore<D, T>,
+  dbDict?: DbDictBase<D, T>,
+): Kmore<D, T> {
 
-  const key = DbPropKeys.tables
+  const key = KmorePropKeys.tables
 
-  if (kTables && kTables.tables && Object.keys(kTables.tables).length) {
-    validateParamTables(kTables.tables)
-    Object.defineProperty(db, DbPropKeys.tables, {
+  if (dbDict && dbDict.tables && Object.keys(dbDict.tables).length) {
+    validateParamTables(dbDict.tables)
+    Object.defineProperty(kmInst, KmorePropKeys.tables, {
       ...propDescriptor,
-      value: { ...kTables.tables },
+      value: { ...dbDict.tables },
     })
   }
   else {
-    Object.defineProperty(db, key, {
+    Object.defineProperty(kmInst, key, {
       ...propDescriptor,
       value: {},
     })
   }
 
-  return db
+  return kmInst
 }
 
 
-export function bindTablesCols<T extends TTables>(
+export function bindTablesCols<D extends DbModel, T = void>(
   propDescriptor: PropertyDescriptor,
-  db: DbModel<T>,
-  kTables?: KTablesBase<T>,
-): DbModel<T> {
+  kmInst: Kmore<D, T>,
+  dbDict?: DbDictBase<D, T>,
+): Kmore<D, T> {
 
-  const key = DbPropKeys.columns
-  Object.defineProperty(db, key, {
+  const key = KmorePropKeys.columns
+  Object.defineProperty(kmInst, key, {
     ...propDescriptor,
-    value: kTables && kTables.columns ? kTables.columns : {},
+    value: dbDict && dbDict.columns ? dbDict.columns : {},
   })
 
   // error: ColumnExtPropKeys missing, so assign above directly.
-  // if (kTables && kTables.columns && Object.keys(kTables.columns).length) {
-  //   Object.entries(kTables.columns).forEach((row) => {
+  // if (dbDict && dbDict.columns && Object.keys(dbDict.columns).length) {
+  //   Object.entries(dbDict.columns).forEach((row) => {
   //     // eslint-disable-next-line prefer-destructuring
   //     const tb: string = row[0]
   //     // eslint-disable-next-line prefer-destructuring
-  //     const col = row[1] as MultiTableCols<T>
+  //     const col = row[1] as DbCols<T>
   //     Object.defineProperty(db[key], tb, {
   //       ...propDescriptor,
   //       value: { ...col },
@@ -98,153 +88,110 @@ export function bindTablesCols<T extends TTables>(
   //   })
   // }
 
-  return db
+  return kmInst
 }
 
 
-export function bindTablesScopedCols<T extends TTables>(
+export function bindTablesScopedCols<D extends DbModel, T = void>(
   propDescriptor: PropertyDescriptor,
-  db: DbModel<T>,
-  kTables?: KTables<T>,
-): DbModel<T> {
+  kmInst: Kmore<D, T>,
+  dbDict?: DbDict<D, T>,
+): Kmore<D, T> {
 
-  const key = DbPropKeys.scopedColumns
-  Object.defineProperty(db, key, {
+  const key = KmorePropKeys.scopedColumns
+  Object.defineProperty(kmInst, key, {
     ...propDescriptor,
-    value: kTables && kTables.scopedColumns ? kTables.scopedColumns : {},
+    value: dbDict && dbDict.scopedColumns ? dbDict.scopedColumns : {},
   })
 
-  return db
+  return kmInst
 }
 
 
-export function bindTablesAliasCols<T extends TTables>(
+export function bindTablesAliasCols<D extends DbModel, T = void>(
   propDescriptor: PropertyDescriptor,
-  db: DbModel<T>,
-  kTables?: KTables<T>,
-): DbModel<T> {
+  kmInst: Kmore<D, T>,
+  dbDict?: DbDict<D, T>,
+): Kmore<D, T> {
 
-  const key = DbPropKeys.aliasColumns
-  Object.defineProperty(db, key, {
+  const key = KmorePropKeys.aliasColumns
+  Object.defineProperty(kmInst, key, {
     ...propDescriptor,
-    value: kTables && kTables.aliasColumns ? kTables.aliasColumns : {},
+    value: dbDict && dbDict.aliasColumns ? dbDict.aliasColumns : {},
   })
 
-  return db
+  return kmInst
 }
 
 
-export function bindRefTables<T extends TTables>(
+export function bindRefTables<D extends DbModel, T = void>(
   options: Options,
   propDescriptor: PropertyDescriptor,
-  db: DbModel<T>,
-): DbModel<T> {
+  kmInst: Kmore<D, T>,
+): Kmore<D, T> {
 
-  const rb = createNullObject() as DbRefBuilder<T>
+  const rb = createNullObject() as DbRefBuilder<D>
+  // const { aliasColumns: dbAliasCols } = kmInst
 
-  Object.defineProperty(db, DbPropKeys.refTables, {
+  Object.defineProperty(kmInst, KmorePropKeys.refTables, {
     ...propDescriptor,
     value: rb,
   })
 
-  Object.keys(db.tables).forEach((refName) => {
+  Object.keys(kmInst.tables).forEach((refName) => {
     Object.defineProperty(rb, refName, {
       ...propDescriptor,
-      value: (): Knex.QueryBuilder => db.dbh(refName),
+      value: (): QueryBuilderExt<D[keyof D]> => extRefTableFnProperty(kmInst, refName), // must dynamically!!
     })
+
     Object.defineProperty(rb[refName as keyof typeof rb], 'name', {
       ...propDescriptor,
       value: `${options.refTablesPrefix}${refName}`,
     })
   })
 
-  return db
-}
-
-export function hasExtColumns<T extends TTables>(
-  tables: KTablesBase<T> | KTables<T>,
-  key: DbPropKeys,
-): tables is KTables<T> {
-
-  return !! Object.prototype.hasOwnProperty.call(tables, key)
+  return kmInst
 }
 
 
-/**
- * Generate KTables from generics type T
- * Loading compiled js file if prod env
- */
-export function genKTablesFromBase<T extends TTables>(
-  kTablesBase: KTablesBase<T>,
-  /** false will use original col name w/o table name prefix */
-  createColumnNameFn: CreateColumnNameFn | false = defaultCreateScopedColumnName,
-): KTables<T> {
+function extRefTableFnProperty<D extends DbModel, T = void>(
+  db: Kmore<D, T>,
+  refName: keyof D,
+): QueryBuilderExt<D[keyof D]> {
 
-  if (hasExtColumns(kTablesBase, DbPropKeys.aliasColumns)
-    && hasExtColumns(kTablesBase, DbPropKeys.scopedColumns)) {
-    return kTablesBase
-  }
+  const rbTableObj = db.dbh(refName as string)
+  // rbTableObj = extRefTableFnKAlias(db, refName, rbTableObj)
 
-  const scopedColumns = genMultiTableScopedCols(
-    kTablesBase,
-    createColumnNameFn,
-  )
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  const aliasColumns = genAliasColumns(scopedColumns) as MultiTableAliasCols<T>
-
-  const ktbs: KTables<T> = {
-    columns: kTablesBase.columns,
-    tables: kTablesBase.tables,
-    scopedColumns,
-    aliasColumns,
-  }
-  return ktbs
+  return rbTableObj as QueryBuilderExt<D[keyof D]>
 }
 
+// function extRefTableFnKAlias<T extends DbModel>(
+//   db: Kmore<T>,
+//   refName: keyof T,
+//   rbTableObj: QueryBuilderExt | Knex.QueryBuilder,
+// ): QueryBuilderExt {
 
-/**
- * Load kTables var from a js file
- */
-export function loadKTablesVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTables<T> {
-  const { path, caller, options } = loadOpts
-  const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
+//   console.info('fafaf', { db, refName })
 
-  const keySuffixArr = [
-    DbPropKeys.tables,
-    DbPropKeys.columns,
-    DbPropKeys.aliasColumns,
-    DbPropKeys.scopedColumns,
-  ]
+//   const ret = rbTableObj
 
-  const ret = {} as KTables<T>
-  const props = {
-    configurable: false,
-    enumerable: true,
-    writable: false,
-  }
+//   const propDescriptor: PropertyDescriptor = {
+//     configurable: false,
+//     enumerable: true,
+//     writable: false,
+//   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const mods = loadFile(path)
+//   // @ts-expect-error
+//   const fn: QueryBuilderExt['kColumn'] = (alias: any | any[]) => {
+//     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+//     return ret.columns(alias)
+//   }
 
-  const tKey = `${tbVarName}_${DbPropKeys.tables}`
-  if (! mods || ! Object.getOwnPropertyDescriptor(mods, tKey)) {
-    throw new TypeError(`Error, load tables failed, key not existed: "${tKey}", path: "${path}"`)
-  }
+//   Object.defineProperty(ret, 'kColumn', {
+//     ...propDescriptor,
+//     value: fn,
+//   })
 
-  keySuffixArr.forEach((key) => {
-    const varName = `${tbVarName}_${key}`
-
-    const value = Object.getOwnPropertyDescriptor(mods, varName)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      ? mods[varName] as Tables<T> | MultiTableCols<T>
-      : {} as Tables<T> | MultiTableCols<T>
-
-    Object.defineProperty(ret, key, {
-      ...props,
-      value,
-    })
-  })
-
-  return ret
-}
+//   return ret as QueryBuilderExt
+// }
 

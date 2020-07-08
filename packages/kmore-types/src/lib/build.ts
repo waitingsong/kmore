@@ -1,18 +1,20 @@
-import { pathResolve, writeFileAsync } from '@waiting/shared-core'
+import { pathResolve, writeFileAsync, isFileExists, unlinkAsync } from '@waiting/shared-core'
 import { Observable } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 
-import { initBuildSrcOpts, globalCallerFuncNameSet, DbPropKeys } from './config'
+import { initBuildSrcOpts, globalCallerFuncNameSet } from './config'
 import {
-  TTables,
+  DbModel,
   FilePath,
   Tables,
-  CallerTbListMap,
+  CallerDbMap,
   BuildSrcOpts,
-  MultiTableCols,
+  BuildSrcRet,
+  DbCols,
   CallerTypeId,
-  MultiTableColsCommon,
-  TablesMapArrCommon,
+  DbDict,
+  TablesMapArr,
+  DbDictBase,
 } from './model'
 import {
   pickInfoFromCallerTypeId,
@@ -21,19 +23,22 @@ import {
   walkNode,
 } from './ts-util'
 import {
-  buildTbListParam,
+  buildDbParam,
   genTbListTsFilePath,
   genVarName,
+  buildDbColsParam,
   walkDirForCallerFuncTsFiles,
-  buildTbColListParam,
+  genDbDictFromBase,
 } from './util'
 
 
 /**
- * Generate tables .ts files,
+ * Generate dbDict .ts files, for CLI
+ * include extra scopedColumns, aliasColumns,
+ * for testing.
  * no path value emitted if no file generated.
  */
-export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
+export function buildSource(options: BuildSrcOpts): Observable<BuildSrcRet> {
   const opts: Required<BuildSrcOpts> = {
     ...initBuildSrcOpts,
     ...options,
@@ -42,7 +47,7 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
   const walk$ = walkDirForCallerFuncTsFiles(opts)
   const build$ = walk$.pipe(
     mergeMap((path) => {
-      return buildSrcTablesFile(path, opts)
+      return buildDbDict(path, opts)
     }, opts.concurrent),
     // defaultIfEmpty(''),
   )
@@ -50,52 +55,73 @@ export function buildSource(options: BuildSrcOpts): Observable<FilePath> {
   return build$
 }
 
+/**
+ * Build dbDict const and type code
+ */
+export async function buildDbDict<D extends DbModel>(
+  file: string,
+  options: BuildSrcOpts,
+): Promise<BuildSrcRet> {
+
+  const map: CallerDbMap<D> = retrieveTypeFromTsFile<D>(file)
+  const dictPath = await buildDbDictFile(file, options, map)
+  const DictTypePath = ''
+
+  return { dictPath, DictTypePath }
+}
+
 
 /**
- * Build tables constant in ts from generics type for specified ts file
+ * Build dbdict code from generics type for ts source file
  *
- * @returns target path if src file parsed
+ * @returns file path if src file need parsed
  */
-export async function buildSrcTablesFile<T extends TTables>(
-  srcFile: string,
+export async function buildDbDictFile<D extends DbModel>(
+  file: string,
   options: BuildSrcOpts,
-): Promise<FilePath> {
+  callerDbMap?: CallerDbMap<D>,
+): Promise<BuildSrcRet['dictPath']> {
 
   const opts: Required<BuildSrcOpts> = {
     ...initBuildSrcOpts,
     ...options,
   }
 
+  await unlinkBuildFile(file, opts)
+
   let path = ''
   let content = ''
-  const map: CallerTbListMap<T> = retrieveTypeFromTsFile<T>(srcFile)
+  const map: CallerDbMap<D> = callerDbMap ? callerDbMap : retrieveTypeFromTsFile<D>(file)
 
   if (map.size) {
     map.forEach((arr, key) => {
-      const [str, code] = genTsCodeFromTypes<T>(key, arr, opts)
+      const kdd = genDbDict(arr)
+
+      const [str, dbDictCode] = genDbDictConst(key, kdd, opts)
       if (! path) {
         path = str // all value are the same one
       }
-      content += code
+      content += `${dbDictCode}\n\n`
     })
 
     if (! path) {
       throw new Error('path value is empty')
     }
-    await saveFile(path, content, opts.outputBanner)
+    await appendDataToFile(path, content, opts.outputBanner)
     path = path.replace(/\\/ug, '/')
   }
 
   return path
 }
 
-export function retrieveTypeFromTsFile<T extends TTables>(
+
+function retrieveTypeFromTsFile<T extends DbModel>(
   file: FilePath,
-): CallerTbListMap<T> {
+): CallerDbMap<T> {
 
   const path = pathResolve(file).replace(/\\/ug, '/')
   const { checker, sourceFile } = matchSourceFileWithFilePath(path)
-  const ret = new Map() as CallerTbListMap<T>
+  const ret = new Map() as CallerDbMap<T>
 
   if (sourceFile) {
     const nodeSet = walkNode({
@@ -104,9 +130,9 @@ export function retrieveTypeFromTsFile<T extends TTables>(
     })
     const callerTypeMap = genCallerTypeMapFromNodeSet(nodeSet, checker, sourceFile, path)
 
-    callerTypeMap.forEach(([tbListTagMap, tbColListTagMap], callerTypeId) => {
-      const tbs: Tables<T> = buildTbListParam<T>(tbListTagMap)
-      const mtCols: MultiTableCols<T> = buildTbColListParam<T>(tbColListTagMap)
+    callerTypeMap.forEach(([dbTagMap, dbColsTagMap], callerTypeId) => {
+      const tbs: Tables<T> = buildDbParam<T>(dbTagMap)
+      const mtCols: DbCols<T> = buildDbColsParam<T>(dbColsTagMap)
       ret.set(callerTypeId, [tbs, mtCols])
     })
   }
@@ -114,80 +140,36 @@ export function retrieveTypeFromTsFile<T extends TTables>(
   return ret
 }
 
-export function genTsCodeFromTypes<T extends TTables>(
+function genDbDictConst<T extends DbModel>(
   callerTypeId: CallerTypeId,
-  arr: TablesMapArrCommon<T>,
+  dbDict: DbDict<T>,
   options: Required<BuildSrcOpts>,
 ): [FilePath, string] {
 
-  let path = ''
-  const codeArr: string[] = []
+  const { path, line, column } = pickInfoFromCallerTypeId(callerTypeId)
+  // const relativePath = relative(base, path)
+  const targetPath = genTbListTsFilePath(path, options.outputFileNameSuffix)
 
-  const [str, code] = genTablesTsCodeFromTypes<T>(
-    callerTypeId,
-    arr[0],
-    options.exportVarPrefix,
-    DbPropKeys.tables,
-    options.outputFileNameSuffix,
-  )
-  if (! path) {
-    path = str // all value are the same one
+  const dbDictVarName = genVarName(options.exportVarPrefix, line, column)
+  const code = `export const ${dbDictVarName} = ${JSON.stringify(dbDict, null, 2)} as const`
+
+  return [targetPath, code]
+}
+
+
+function genDbDict<D extends DbModel>(arr: TablesMapArr<D>): DbDict<D> {
+  const [tables, columns] = arr
+  const base: DbDictBase<D> = {
+    tables,
+    columns,
   }
-  codeArr.push(code)
-
-  const [, code2] = genColsTsCodeFromTypes<T>(
-    callerTypeId,
-    arr[1],
-    options.exportVarPrefix,
-    DbPropKeys.columns,
-    options.outputFileNameSuffix,
-  )
-  codeArr.push(code2)
-
-  return [path, codeArr.join('\n\n')]
-}
-
-export function genTablesTsCodeFromTypes<T extends TTables>(
-  callerTypeId: CallerTypeId,
-  tables: Tables<T>,
-  exportVarPrefix: string,
-  exportVarColsSuffix: string,
-  outputFileNameSuffix: string,
-): [FilePath, string] {
-
-  const { path, line, column } = pickInfoFromCallerTypeId(callerTypeId)
-  // const relativePath = relative(base, path)
-  const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
-
-  const tbVarName = genVarName(exportVarPrefix, line, column)
-  const tbTableVarName = `${tbVarName}_${exportVarColsSuffix}`
-  const code = `export const ${tbTableVarName} = ${JSON.stringify(tables, null, 2)} as const`
-
-  return [targetPath, code]
-}
-
-export function genColsTsCodeFromTypes<T extends TTables>(
-  callerTypeId: CallerTypeId,
-  columns: MultiTableColsCommon<T>,
-  exportVarPrefix: string,
-  exportVarColsSuffix: string,
-  outputFileNameSuffix: string,
-): [FilePath, string] {
-
-  const { path, line, column } = pickInfoFromCallerTypeId(callerTypeId)
-  // const relativePath = relative(base, path)
-  const targetPath = genTbListTsFilePath(path, outputFileNameSuffix)
-
-  const tbVarName = genVarName(exportVarPrefix, line, column)
-  const tbColVarName = `${tbVarName}_${exportVarColsSuffix}`
-  const code = `export const ${tbColVarName} = ${JSON.stringify(columns, null, 2)} as const`
-
-  return [targetPath, code]
+  const kdd = genDbDictFromBase(base)
+  return kdd
 }
 
 
 /** Save (k)tables of one file */
-export async function saveFile(
+async function appendDataToFile(
   path: string,
   code: string,
   outputPrefix: string,
@@ -197,7 +179,25 @@ export async function saveFile(
     ? `${outputPrefix}\n\n${code}\n\n`
     : `${code}\n\n`
 
-  await writeFileAsync(path, retCode)
+  await writeFileAsync(path, retCode, { flag: 'a' })
   return path.replace(/\\/gu, '/')
+}
+
+/**
+ * Unlink (k)tables file starting with path,
+ * create if not exists, empty if exists
+ */
+async function unlinkBuildFile(
+  path: string,
+  options: Required<BuildSrcOpts>,
+): Promise<string> {
+
+  const target = genTbListTsFilePath(path, options.outputFileNameSuffix)
+
+  if (await isFileExists(target)) {
+    await unlinkAsync(target)
+  }
+
+  return path
 }
 

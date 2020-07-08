@@ -1,20 +1,18 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { readFileLineRx } from '@waiting/shared-core'
+import { readFileLineRx, pathResolve } from '@waiting/shared-core'
 import { from as ofrom, of, Observable, iif, concat } from 'rxjs'
-import { map, filter, mergeMap, catchError, take } from 'rxjs/operators'
+import {
+  map, filter, mergeMap, catchError, take, reduce,
+} from 'rxjs/operators'
 import { walk, EntryType } from 'rxwalker'
 import * as sourceMapSupport from 'source-map-support'
 
+import { genAliasColumns } from './alias-cols-util'
 import {
   defaultPropDescriptor,
   reservedTbListKeys,
   initBuildSrcOpts,
   globalCallerFuncNameSet,
-  DbPropKeys,
+  defaultCreateScopedColumnName,
 } from './config'
 import {
   BuildSrcOpts,
@@ -22,15 +20,19 @@ import {
   CallerFuncName,
   CallerFuncNameSet,
   Tables,
-  MultiTableCols,
+  DbCols,
   FilePath,
-  KTablesBase,
   LoadVarFromFileOpts,
   Options,
-  TbListTagMap,
-  TbColListTagMap,
-  TTables,
+  DbTagMap,
+  DbColsTagMap,
+  DbModel,
+  DbDict,
+  DbDictBase,
+  KmorePropKeys,
 } from './model'
+import { genDbScopedCols } from './scoped-cols-util'
+
 
 
 /** Allow empty Object */
@@ -176,7 +178,7 @@ export function isTsFile(path: string): boolean {
 
 
 /** Build DbTables from TableListTagMap */
-export function buildTbListParam<T extends TTables>(tagMap: TbListTagMap): Tables<T> {
+export function buildDbParam<T extends DbModel>(tagMap: DbTagMap): Tables<T> {
   const ret = createNullObject() as Tables<T>
 
   if (tagMap.size) {
@@ -195,8 +197,8 @@ export function buildTbListParam<T extends TTables>(tagMap: TbListTagMap): Table
 }
 
 /** Build DbTableCols from TableColListTagMap */
-export function buildTbColListParam<T extends TTables>(tagMap: TbColListTagMap): MultiTableCols<T> {
-  const ret = createNullObject() as MultiTableCols<T>
+export function buildDbColsParam<T extends DbModel>(tagMap: DbColsTagMap): DbCols<T> {
+  const ret = createNullObject() as DbCols<T>
 
   if (tagMap.size) {
     tagMap.forEach((colListTagMap, tb) => {
@@ -223,7 +225,7 @@ export function buildTbColListParam<T extends TTables>(tagMap: TbColListTagMap):
 }
 
 /** Build DbTableScopedCols from TableColListTagMap */
-// export function buildTbScopedColListParam<T extends TTables>(
+// export function buildTbScopedColListParam<T extends DbModel>(
 //   tagMap: TbColListTagMap,
 //   tables: DbTables<T>,
 // ): DbTableScopedCols<T> {
@@ -285,6 +287,7 @@ export function isCallerNameMatched(
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createNullObject(): any {
   return Object.create(null)
 }
@@ -309,10 +312,25 @@ export function genVarName(
   return varName
 }
 
+/**
+ * Generate generics name of DbModel
+ */
+export function genDbName(
+  dbName: string,
+  exportVarSuffix: Options['DictTypeSuffix'],
+): string {
+
+  const varName = `${dbName}${exportVarSuffix}`
+  const fc = varName.slice(0, 1).toLowerCase()
+  const fend = varName.slice(1)
+  const ret = fc + fend
+  return ret
+}
+
 
 export function reWriteLoadingPath(
   path: FilePath,
-  rules: Options['forceLoadTbListJsPathReplaceRules'],
+  rules: Options['forceLoadDbDictJsPathReplaceRules'],
 ): FilePath {
 
   let ret = path
@@ -326,40 +344,25 @@ export function reWriteLoadingPath(
   return ret
 }
 
-
-export function loadTableVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): Tables<T> {
-  const kTables = loadVarFromFile<T>(loadOpts)
-  return kTables.tables
-}
-export function loadColumnVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): MultiTableCols<T> {
-  const kTables = loadVarFromFile<T>(loadOpts)
-  return kTables.columns
-}
 /**
- * Load kTablesBase var from a js file
+ * Load dbDictBase var from a js file
  */
-export function loadVarFromFile<T extends TTables>(loadOpts: LoadVarFromFileOpts): KTablesBase<T> {
+export function loadDbDictVarFromFile(loadOpts: LoadVarFromFileOpts): DbDict {
   const { path, caller, options } = loadOpts
-  const tbVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
-  const tableVarName = `${tbVarName}_${DbPropKeys.tables}`
-  const colVarName = `${tbVarName}_${DbPropKeys.columns}`
+
+  const dbDictVarName = genVarName(options.exportVarPrefix, caller.line, caller.column)
   const mods = loadFile(path)
 
   if (! mods) {
     throw new TypeError(`Loaded mods empty, path: "${path}"`)
   }
-  else if (typeof mods[tableVarName] !== 'object') {
-    throw new TypeError(`Loaded mods[${tableVarName}] not object, path: "${path}"`)
+  else if (typeof mods[dbDictVarName] === 'object') {
+    return mods[dbDictVarName]
   }
-  const tables = mods[tableVarName] as Tables<T>
-  const columns = typeof mods[colVarName] === 'object'
-    ? mods[colVarName] as MultiTableCols<T>
-    : {} as MultiTableCols<T>
-
-  return { tables, columns }
+  throw new TypeError(`Loaded mods[${dbDictVarName}] not object, path: "${path}"`)
 }
 
-export function loadFile(path: string): any {
+export function loadFile(path: string): Record<string, DbDict> {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   const mods = require(path)
   return mods
@@ -418,7 +421,18 @@ export function walkDirForCallerFuncTsFiles(options: BuildSrcOpts): Observable<F
     filter(path => path.length > 0),
   )
 
-  return path$
+  const ret$ = path$.pipe(
+    reduce((acc: string[], val: string) => {
+      const path = pathResolve(val)
+      if (! acc.includes(path)) {
+        acc.push(path)
+      }
+      return acc
+    }, []),
+    mergeMap(paths => ofrom(paths)),
+  )
+
+  return ret$
 }
 
 function ifPathContainsKey(path: FilePath, keys: string | string[]): boolean {
@@ -506,3 +520,63 @@ export function parseCallerFuncNames(
 
   return st
 }
+
+/**
+ * Generate DbDict from generics type T,
+ * Loading compiled js file if prod env.
+ * Param columnNameCreationFn ignored if dbDictBase is type DbDict<D>.
+ */
+export function genDbDictFromBase<D extends DbModel>(
+  dbDictBase: DbDictBase<D> | DbDict<D>,
+  /** false will use original col name w/o table name prefix */
+  columnNameCreationFn: Options['columnNameCreationFn'] = defaultCreateScopedColumnName,
+): DbDict<D> {
+
+  const ret = { ...dbDictBase } as DbDict<D>
+
+  if (! hasExtColumns(dbDictBase, KmorePropKeys.scopedColumns)) {
+    ret.scopedColumns = genDbScopedCols(dbDictBase, columnNameCreationFn)
+  }
+
+  if (! hasExtColumns(dbDictBase, KmorePropKeys.aliasColumns)) {
+    ret.aliasColumns = genAliasColumns(ret.scopedColumns)
+  }
+
+  return ret
+}
+
+export function hasExtColumns<D extends DbModel>(
+  dict: DbDictBase<D> | DbDict<D>,
+  key: KmorePropKeys,
+): dict is DbDict<D> {
+
+  if (! Object.prototype.hasOwnProperty.call(dict, KmorePropKeys.tables)) {
+    throw new TypeError('Value of parameter dbDictBase of has no tables property')
+  }
+  else if (! Object.prototype.hasOwnProperty.call(dict, KmorePropKeys.columns)) {
+    throw new TypeError('Value of parameter dbDictBase of has no columns property')
+  }
+  return !! Object.prototype.hasOwnProperty.call(dict, key)
+}
+
+
+/**
+ * tb_user => tbUser,
+ * tb-user => tbUser
+ */
+export function snakeToCamel(string: string): string {
+  return string.replace(/([-_][a-z])/uig, ($1) => {
+    return $1.toUpperCase()
+      .replace('-', '')
+      .replace('_', '')
+  })
+}
+
+/**
+ * tb_user.uid => tbUserUid,
+ * tb-user.uid => tbUserUid
+ */
+export function scopedSnakeToCamel(input: string): string {
+  return snakeToCamel(input.replace(/\./ug, '_'))
+}
+

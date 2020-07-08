@@ -2,12 +2,12 @@ import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
 import {
-  TbListTagMap,
+  DbTagMap,
   RetrieveInfoFromTypeOpts,
 } from '../src/index'
-import { retrieveLocalTypeItemFromType, genTbListFromType } from '../src/lib/compiler'
+import { retrieveLocalTypeItemFromType, genDbDictFromType } from '../src/lib/compiler'
 import { cacheMap } from '../src/lib/config'
-import { buildTbListParam } from '../src/lib/util'
+import { buildDbParam } from '../src/lib/util'
 
 
 const filename = basename(__filename)
@@ -20,11 +20,11 @@ describe(filename, () => {
         user: 'tb_user',
         userDetail: 'tb_user_detail',
       }
-      const tagMap = new Map() as TbListTagMap
+      const tagMap = new Map() as DbTagMap
 
       Object.keys(list).forEach(tb => tagMap.set(tb, []))
 
-      const ret = buildTbListParam(tagMap)
+      const ret = buildDbParam(tagMap)
 
       assert(ret && Object.keys(ret).length === Object.keys(list).length)
       Object.keys(list).forEach((key) => {
@@ -36,7 +36,7 @@ describe(filename, () => {
       ['', 0, true, false, null, void 0].forEach((val) => {
         try {
           // @ts-ignore
-          buildTbListParam(val)
+          buildDbParam(val)
         }
         catch (ex) {
           return
@@ -54,7 +54,7 @@ describe(filename, () => {
         },
         caller: {
           path: './test/test.config.ts',
-          line: 14,
+          line: 8,
           column: 23,
         },
       }
@@ -71,7 +71,7 @@ describe(filename, () => {
         },
         caller: {
           path: './test/test.config.ts',
-          line: 12,
+          line: 0,
           column: 23,
         },
       }
@@ -79,23 +79,6 @@ describe(filename, () => {
       const ret = retrieveLocalTypeItemFromType(opts)
       assert(! ret)
     })
-
-    it('with fake callerFuncName', () => {
-      const opts: RetrieveInfoFromTypeOpts = {
-        cacheMap: {
-          ...cacheMap,
-        },
-        caller: {
-          path: './test/test.config.ts',
-          line: 12,
-          column: 23,
-        },
-      }
-
-      const ret = retrieveLocalTypeItemFromType(opts)
-      assert(! ret)
-    })
-
 
     it('with fake caller.column', () => {
       const opts: RetrieveInfoFromTypeOpts = {
@@ -104,8 +87,8 @@ describe(filename, () => {
         },
         caller: {
           path: './test/test.config.ts',
-          line: 14,
-          column: 22,
+          line: 8,
+          column: 230,
         },
       }
 
@@ -130,10 +113,10 @@ describe(filename, () => {
     })
   })
 
-  describe('Should genInfoFromNode() works', () => {
+  describe('Should genDbDictFromType() works', () => {
     it('with invalid generics type param', () => {
       try {
-        genTbListFromType<{ tb_user: { uid: number } }>()
+        genDbDictFromType<{ tb_user: { uid: number } }>()
       }
       catch (ex) {
         return

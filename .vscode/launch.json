@@ -71,7 +71,7 @@
       "env": {
         "NODE_ENV": "local",
         "TS_NODE_PROJECT": "test/tsconfig.json",
-        "PGHOST": "",
+        "PGHOST": "192.168.0.8",
         "PGUSER": "",
         "PGPASSWORD": "",
       },

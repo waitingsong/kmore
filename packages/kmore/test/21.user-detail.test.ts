@@ -1,32 +1,32 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, DbModel } from '../src/index'
+import { kmore, Kmore } from '../src/index'
 
 import { validateUserDetailRows } from './helper'
 import { config } from './test.config'
-import { TbListModel, UserDetail } from './test.model'
+import { Db, UserDetail } from './test.model'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
-  let db: DbModel<TbListModel>
+  let km: Kmore<Db>
 
   before(() => {
-    db = kmore<TbListModel>({ config })
-    assert(db.tables && Object.keys(db.tables).length > 0)
+    km = kmore<Db>({ config })
+    assert(km.tables && Object.keys(km.tables).length > 0)
   })
 
   after(async () => {
-    await db.dbh.destroy() // !
+    await km.dbh.destroy() // !
   })
 
   describe('Should read table with tables param in array works', () => {
 
     it('Should constraint violation works', async () => {
-      const { rb } = db
-      const { tb_user_detail } = db.rb
+      const { rb } = km
+      const { tb_user_detail } = km.rb
 
       // insert
       await tb_user_detail()
@@ -46,7 +46,7 @@ describe(filename, () => {
         'Should count be "2"',
       )
 
-      await db.rb.tb_user_detail().select('*')
+      await km.rb.tb_user_detail().select('*')
         .then((rows) => {
           validateUserDetailRows(rows)
           return rows

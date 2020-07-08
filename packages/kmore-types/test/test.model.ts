@@ -1,15 +1,25 @@
-import { TableModel, TTables } from '../src'
+import { TableModel, DbModel } from '../src'
 
-
-export type TbListModelAlias = TbListModel
 
 /** table_name as key */
-export interface TbListModel extends TTables {
+export interface Db extends DbModel {
   /**
    * @description 用户表
    * @table 表实际名称user
    */
   tb_user: User
+  /**
+   * @description 用户详情表
+   * @table 表实际名称userDetail
+   */
+  tb_user_detail: UserDetail
+}
+export interface Db2 extends DbModel {
+  /**
+   * @description 用户表
+   * @table 表实际名称user
+   */
+  tb_user: User2
   /**
    * @description 用户详情表
    * @table 表实际名称userDetail
@@ -24,7 +34,12 @@ export interface User {
   uid: number
   name: string
   ctime: Date | 'now()'
-  userName: string
+}
+export interface User2 {
+  uid: number
+  name: string
+  ctime: Date | 'now()'
+  pwd: string
 }
 
 export interface UserDetail {
@@ -39,39 +54,72 @@ export interface UserDetail {
   address: string
 }
 
-export type JointTableColumnsAlias<T = any> = {
-  [col in keyof T]: ColAlias<T[col]>
-}
-export const jointTableUserDetail: JointTableColumnsAlias<UserDetail> = {
-  uid: {
-    in: 'tb_user_detail.uid',
-    out: 'userDetailUid',
-    result: 0,
+const tables = {
+  tb_user: 'tb_user',
+  tb_user_detail: 'tb_user_detail',
+} as const
+
+const columns = {
+  tb_user: {
+    uid: 'uid',
+    name: 'name',
+    ctime: 'ctime',
   },
-  age: {
-    in: 'tb_user_detail.uid',
-    out: 'userDetailUid',
-    result: 13,
+  tb_user_detail: {
+    uid: 'uid',
+    age: 'age',
+    address: 'address',
   },
-  address: {
-    in: 'tb_user_detail.uid',
-    out: 'userDetailUid',
-    result: 'ff',
+} as const
+
+const scopedColumns = {
+  tb_user: {
+    uid: 'tb_user.uid',
+    name: 'tb_user.name',
+    ctime: 'tb_user.ctime',
   },
+  tb_user_detail: {
+    uid: 'tb_user_detail.uid',
+    age: 'tb_user_detail.age',
+    address: 'tb_user_detail.address',
+  },
+} as const
+
+const aliasColumns = {
+  tb_user: {
+    uid: {
+      tbUserUid: 'tb_user.uid',
+    },
+    name: {
+      tbUserName: 'tb_user.name',
+    },
+    ctime: {
+      tbUserCtime: 'tb_user.ctime',
+    },
+  },
+  tb_user_detail: {
+    uid: {
+      tbUserDetailUid: 'tb_user_detail.uid',
+    },
+    age: {
+      tbUserDetailAge: 'tb_user_detail.age',
+    },
+    address: {
+      tbUserDetailAddress: 'tb_user_detail.address',
+    },
+  },
+} as const
+
+export const kdbConst = {
+  tables,
+  columns,
 }
-export interface ColAlias<T> {
-  /** input column name */
-  in: string
-  /** output column alias name */
-  out: string
-  result: T
+export const kddConst = {
+  tables,
+  columns,
+  aliasColumns,
+  scopedColumns,
 }
-export type JointRetTable<K extends JointTableColumnsAlias> = {
-  [col in keyof K]: K[col]['result']
-}
-export const jointRetUserDetail: JointRetTable<typeof jointTableUserDetail> = {
-  address: 'add',
-  uid: 333,
-  age: 23,
-}
+export type KDB = typeof kdbConst
+export type KDD = typeof kddConst
 

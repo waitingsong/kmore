@@ -1,30 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
-  JointTable,
   Tables,
-  MultiTableCols,
-  MultiTableAliasCols,
-  KTablesBase,
+  DbCols,
+  DbAliasCols,
+  DbDictBase,
+  DbDict,
   Options,
-  DbPropKeys,
+  KmorePropKeys,
   TTables,
+  DbModel,
   TableAliasCols,
-  ColAliasType,
   KnexColumnsParma,
   TableModel,
+  TableModelFromAlias,
 } from 'kmore-types'
 import * as Knex from 'knex'
 
 
 export {
-  MultiTableCols,
+  DbDict,
+  DbDictBase,
+  DbCols,
   Options,
   Tables,
   TTables,
-  MultiTableAliasCols,
+  DbModel,
+  DbAliasCols,
   TableAliasCols,
-  ColAliasType,
   KnexColumnsParma,
 }
 
@@ -37,20 +40,17 @@ export {
   LocalTypeId,
   CallerId,
   CallerTypeId,
-  CallerTbListMap,
+  CallerDbMap,
   LocalTypeMap,
   CallerTypeMap,
-  TbListTagMap,
-  TbListMap,
+  DbTagMap,
+  DbMap,
   GenericsArgName,
   CallerInfo,
   CallerTypeIdInfo,
-  GenTbListFromTypeOpts,
+  GenDbDictFromTypeOpts,
   RetrieveInfoFromTypeOpts,
   CallerFuncName,
-  ColumnType,
-  BaseTbType,
-  BaseTbListType,
   TableAlias,
   TableName,
   FilePath,
@@ -59,45 +59,6 @@ export {
 
 
 export type Config = Knex.Config
-
-/**
- * K(more)Tables array contains:
- *  tables: tables name
- *  columns: columns name of the tables
- *  scopedColumns: columns name with table prefix of the tables
- */
-export interface KTables<T extends TTables> extends KTablesBase<T> {
-  /**
-  * For table joint
-  * ```json
-  * {
-  *   tb_user: {
-  *     tbUserUid: "tb_user.uid",
-  *     tbUserName: "tb_user.name",
-  *     ...
-  *   },
-  *   tb_user_detail: {...},
-  *   ...,
-  * }
-  * ```
-  */
-  aliasColumns: MultiTableAliasCols<T>
-  /**
-  * Columns mapping object, column name with table prefix, eg tb_foo.user
-  * ```json
-  * {
-  *   tb_user: {
-  *     uid: "tb_user.uid",
-  *     name: "tb_user.name",
-  *     ...
-  *   },
-  *   tb_user_detail: {...},
-  *   ...,
-  * }
-  * ```
-  */
-  scopedColumns: MultiTableCols<T>
-}
 
 export interface KmoreOpts {
   config: Config
@@ -112,35 +73,50 @@ export interface KmoreOpts {
  * @description T = { user: {id: number, name: string} }
  *  will get db.user() => Knex.QueryBuilder<{id: number, name: string}>
  */
-export interface DbModel<T extends TTables> {
-  readonly [DbPropKeys.dbh]: Knex
-  /** tables.tb_foo output table name of tb_foo */
-  readonly [DbPropKeys.tables]: Tables<T>
-  /** columns.tb_foo.ctime output col name, eg. `ctime` */
-  readonly [DbPropKeys.columns]: MultiTableCols<T>
-  /** scopedColumns.tb_foo.ctime output col name with table prefix, eg. `tb_foo.ctime` */
-  readonly [DbPropKeys.scopedColumns]: MultiTableCols<T>
-  readonly [DbPropKeys.aliasColumns]: MultiTableAliasCols<T>
-  readonly [DbPropKeys.refTables]: DbRefBuilder<T>
+export interface Kmore<D extends DbModel = DbModel, Dict = void> extends DbDict<D, Dict> {
+  readonly [KmorePropKeys.dbh]: Knex
+  readonly [KmorePropKeys.refTables]: DbRefBuilder<D>
+  /**
+  * Type ref to generics param Db only, do NOT access as variable!
+  * @example ```ts
+  * const km = kmore<Db, KDD>({ config })
+  * type DbRef = typeof km.DbModel
+  * type User = DbRef['tb_user']  // equal to Db['tb_user']
+  * ```
+  */
+  readonly [KmorePropKeys.DbModel]: D
+  readonly [KmorePropKeys.DbModelAlias]: DbModelFromAlias<D, 'aliasColumns' extends keyof Dict ? Dict['aliasColumns'] : void>
 }
 
+
+type DbModelFromAlias<D extends DbModel, AC = any> = AC extends void
+  ? never
+  : {
+    [tb in keyof D]: tb extends keyof AC
+      // @ts-expect-error
+      ? TableModelFromAlias<D[tb], AC[tb]>
+      : never
+  }
+
+// ? TableModelFromAlias<D[tb], Dict['aliasColumns'][tb]>
 
 /** Type of db.refTables */
-export type DbRefBuilder<T extends TTables> = {
+export type DbRefBuilder<D extends DbModel> = {
   /** tbName: () => knex('tb_name') */
-  [tb in keyof T]: TbQueryBuilder<T[tb], T[tb][]>
+  [tb in keyof D]: TbQueryBuilder<D[tb]>
 }
-export type TbQueryBuilder<TRecord extends TableModel, TResult = TRecord[]>
-  = <R = void, KeyExcludeOptional = void>() => R extends TableModel
-    ? Knex.QueryBuilder<JointTable<TRecord, R, KeyExcludeOptional>, JointTable<TRecord, R, KeyExcludeOptional>[]>
-    : Knex.QueryBuilder<TRecord, TResult>
 
+export interface TbQueryBuilder<TRecord extends TableModel>
+  extends TbQueryBuilderInner<TRecord> { }
 
-export type CreateColumnNameFn = (options: CreateColumnNameOpts) => string
-export interface CreateColumnNameOpts {
-  tableName: string
-  columnName: string
+export type TbQueryBuilderInner<TRecord extends TableModel>
+  = <KeyExcludeOptional extends keyof TRecord | void = void>
+  () => QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
+
+export interface QueryBuilderExt<TRecord extends TableModel = TableModel, TResult extends TableModel[] = TRecord[]>
+  extends Knex.QueryBuilder<TRecord, TResult> {
 }
+
 
 export enum EnumClient {
   pg = 'pg',

@@ -18,7 +18,7 @@ export const tbs_4_24_columns = {
 } as const
 
 
-export interface TbListModel {
+export interface Db {
   tb_user: {
     tbUserUid: number,
     tbUserName: string,
@@ -29,4 +29,25 @@ export interface TbListModel {
     tbUserDetailAddress: string,
   }
 }
+export const tbs_0_0_aliasColumns = {
+  "tb_user": {
+    "uid": {
+      "tbUserUid": "tb_user.uid",
+    },
+    "name": {
+      "tbUserName": "tb_user.name",
+    }
+  },
+  "tb_user_detail": {
+    "uid": {
+      "tbUserDetailUid": "tb_user_detail.uid",
+    },
+    "age": {
+      "tbUserDetailAge": "tb_user_detail.age",
+    },
+    "address": {
+      "tbUserDetailAddress": "tb_user_detail.address",
+    }
+  }
+} as const
 

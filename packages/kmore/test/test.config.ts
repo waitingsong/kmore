@@ -1,8 +1,8 @@
 import * as assert from 'power-assert'
 
-import { Config, Tables, genTbListFromType, KTables } from '../src/index'
+import { Config, Tables, genDbDictFromType, DbDict } from '../src/index'
 
-import { TbListModel } from './test.model'
+import { Db } from './test.model'
 
 
 export const config: Config = {
@@ -22,14 +22,14 @@ export const config: Config = {
 }
 
 // for demo
-export const tbListObj: Tables<TbListModel> = {
+export const dbDictObj: Tables<Db> = {
   tb_user: 'tb_user',
   tb_user_detail: 'tb_user_detail',
 }
-export const kTables: KTables<TbListModel> = genTbListFromType<TbListModel>()
+export const dbDict: DbDict<Db> = genDbDictFromType<Db>()
 
-assert(kTables && Object.keys(kTables.tables).length > 0)
-assert(Object.keys(kTables.columns.tb_user).length > 0)
-assert(Object.keys(kTables.columns.tb_user_detail).length > 0)
-assert(Object.keys(kTables.tables).length === Object.keys(kTables.columns).length)
+assert(dbDict && Object.keys(dbDict.tables).length > 0)
+assert(Object.keys(dbDict.columns.tb_user).length > 0)
+assert(Object.keys(dbDict.columns.tb_user_detail).length > 0)
+assert(Object.keys(dbDict.tables).length === Object.keys(dbDict.columns).length)
 

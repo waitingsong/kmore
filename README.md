@@ -40,7 +40,7 @@ Ensure `sourceMap` or `inlineSourceMap` is true in the tsconfig.json
 
 ### Create connection
 ```ts
-import { Config, TTables } from 'kmore'
+import { Config, DbModel } from 'kmore'
 
 // connection config
 export const config: Config = {
@@ -55,7 +55,7 @@ export const config: Config = {
 }
 
 // Define Types of tables
-export interface TbListModel extends TTables {
+export interface Db extends DbModel {
   tb_user: User
   tb_user_detail: UserDetail
 }
@@ -83,10 +83,10 @@ export interface UserDetail {
  *        eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
  *  tables will be generated from generics automaitically when passing undefined or null value
  */
-const db = kmore<TbListModel>({ config })
+const db = kmore<Db>({ config })
 // or
-const kTables = genTbListFromType<TbListModel>()
-const db = kmore<TbListModel>({ config }, kTables)
+const kTables = genDbDictFromType<Db>()
+const db = kmore<Db>({ config }, kTables)
 
 ```
 

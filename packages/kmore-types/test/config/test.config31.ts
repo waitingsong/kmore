@@ -1,31 +1,29 @@
-import { KTablesBase, TTables } from '../../src'
-import { genTbListFromType } from '../../src/lib/compiler'
+import { DbDictBase, DbModel } from '../../src'
+import { genDbDictFromType } from '../../src/lib/compiler'
 import { User, UserDetail } from '../test.model'
 
 
-export const tbList31 = genFoo<UserInfoModel>()
+export const dbDict31 = genFoo<Db>(0)
 
-export interface UserInfoModel extends TTables {
+interface Db extends DbModel {
   tb_user: User
   tb_user_detail: UserDetail
 }
-export type TbListModelAlias = UserInfoModel
 
 
-function genFoo<T extends TTables>(): KTablesBase<T> {
-  return genBar<T>()
+function genFoo<T extends DbModel>(distance: number): DbDictBase<T> {
+  return genBar<T>(distance + 1)
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function genBar<T extends TTables>(): KTablesBase<T> {
-  const tbList = genTbListFromType<T>({
+function genBar<T extends DbModel>(distance: number): DbDictBase<T> {
+  const dbDict = genDbDictFromType<T>({
     /**
      * 2: the caller with generics type is up to two level, genFoo() -> fenBar(),
-     * 1: up to one level, outer genBar() -> genTbListFromType(),
-     * 0: calling genTbListFromType() with generics type directly
+     * 1: up to one level, outer genBar() -> genDbDictFromType(),
+     * 0: calling genDbDictFromType() with generics type directly
      */
-    callerDistance: 2,
+    callerDistance: distance + 1, // now is 2
   })
-  return tbList
+  return dbDict
 }
 

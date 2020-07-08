@@ -1,22 +1,24 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { accessSync, constants } from 'fs'
+
 import {
   cacheMap as cacheMapTop,
-  initGenTbListFromTypeOpts,
+  initGenDbDictFromTypeOpts,
   globalCallerFuncNameSet,
+  initOptions,
+  defaultCreateScopedColumnName,
 } from './config'
 import {
   RetrieveInfoFromTypeOpts,
   CallerInfo,
-  GenTbListFromTypeOpts,
-  TTables,
-  KTablesBase,
+  GenDbDictFromTypeOpts,
+  DbModel,
+  DbDictBase,
   TagsMapArr,
   LocalTypeItem,
-  // TbColListMap,
-  // TbColListTagMap,
-  // TbJointColListTagMap,
-  // ColListTagMap,
+  Options,
+  BuildSrcOpts,
+  DbDict,
 } from './model'
 import {
   genInfoFromNode,
@@ -24,23 +26,92 @@ import {
   walkNodeWithPosition,
 } from './ts-util'
 import {
-  buildTbListParam,
-  buildTbColListParam,
+  buildDbParam,
+  buildDbColsParam,
   getCallerStack,
   isTsFile,
+  reWriteLoadingPath,
+  loadDbDictVarFromFile,
+  genDbDictFromBase,
 } from './util'
 
 
 /**
- * Generate KTables from generics type T
+ * Generate DbDict from generics type T
+ * Loading compiled js file if prod env
  */
-export function genTbListFromType<T extends TTables>(
-  options?: Partial<GenTbListFromTypeOpts>,
-): KTablesBase<T> {
+export function genDbDictFromType<D extends DbModel>(
+  options?: Partial<Options>,
+): DbDict<D> {
 
-  const opts: GenTbListFromTypeOpts = options
-    ? { ...initGenTbListFromTypeOpts, ...options }
-    : { ...initGenTbListFromTypeOpts }
+  const opts = options
+    ? { ...initOptions, ...options }
+    : { ...initOptions }
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.forceLoadDbDictJs = true
+    if (opts.forceLoadDbDictJsPathReplaceRules === null) {
+      opts.forceLoadDbDictJsPathReplaceRules = [ [/\/src\//u, '/dist/'] ]
+    }
+  }
+  const caller = getCallerStack(opts.callerDistance)
+  const kdd = loadDbDictParamFromCallerInfo<D>(opts, caller, opts.columnNameCreationFn)
+  return kdd
+}
+
+export function loadDbDictParamFromCallerInfo<D extends DbModel>(
+  options: Options,
+  caller: CallerInfo,
+  /** false will use original col name w/o table name prefix */
+  columnNameCreationFn: Options['columnNameCreationFn'] = defaultCreateScopedColumnName,
+): DbDict<D> {
+
+  if (! options.forceLoadDbDictJs && isTsFile(caller.path)) {
+    return loadDbDictFromTsTypeFile<D>(options.callerDistance + 3, columnNameCreationFn)
+  }
+  else { // run in js or debug in ts
+    return loadDbDictFromJsBuiltFile(options, caller) as DbDict<D>
+  }
+}
+
+
+function loadDbDictFromTsTypeFile<D extends DbModel>(
+  callerDistance: BuildSrcOpts['callerDistance'],
+  /** false will use original col name w/o table name prefix */
+  columnNameCreationFn: Options['columnNameCreationFn'] = defaultCreateScopedColumnName,
+): DbDict<D> {
+
+  const base = genDbDictBaseFromType<D>({ callerDistance })
+  const ret = genDbDictFromBase(base, columnNameCreationFn)
+  return ret
+}
+
+function loadDbDictFromJsBuiltFile(
+  options: Options,
+  caller: CallerInfo,
+): DbDict {
+
+  const { outputFileNameSuffix, forceLoadDbDictJsPathReplaceRules } = options
+
+  let path = `${caller.path.slice(0, -3)}.${outputFileNameSuffix}.js`
+  path = reWriteLoadingPath(path, forceLoadDbDictJsPathReplaceRules)
+
+  accessSync(path, constants.R_OK)
+
+  const ret = loadDbDictVarFromFile({ path, caller, options })
+  return ret
+}
+
+/**
+ * Generate DbDictBase from generics type T
+ */
+function genDbDictBaseFromType<T extends DbModel>(
+  options?: Partial<GenDbDictFromTypeOpts>,
+): DbDictBase<T> {
+
+  const opts: GenDbDictFromTypeOpts = options
+    ? { ...initGenDbDictFromTypeOpts, ...options }
+    : { ...initGenDbDictFromTypeOpts }
 
   const depth = typeof opts.callerDistance === 'number' && opts.callerDistance > 0
     ? opts.callerDistance
@@ -48,7 +119,7 @@ export function genTbListFromType<T extends TTables>(
   const caller = getCallerStack(depth)
 
   if (isTsFile(caller.path)) {
-    return genTbListFromCaller<T>(caller, opts)
+    return genDbDictBaseFromCaller<T>(caller, opts)
   }
   else {
     throw TypeError('Not .ts file')
@@ -56,10 +127,10 @@ export function genTbListFromType<T extends TTables>(
 }
 
 
-export function genTbListFromCaller<T extends TTables>(
+function genDbDictBaseFromCaller<T extends DbModel>(
   caller: CallerInfo,
-  options: GenTbListFromTypeOpts,
-): KTablesBase<T> {
+  options: GenDbDictFromTypeOpts,
+): DbDictBase<T> {
 
   const opts: RetrieveInfoFromTypeOpts = {
     // callerDistance: initOptions.callerDistance,
@@ -75,7 +146,7 @@ export function genTbListFromCaller<T extends TTables>(
   if (localTypeId) { // from cache
     const tagsMapArr: TagsMapArr | undefined = opts.cacheMap.localTypeMap.get(localTypeId)
     if (tagsMapArr) {
-      return buildKTablesBaseFromTagsMapArr(tagsMapArr)
+      return buildDbDictBaseFromTagsMapArr(tagsMapArr)
     }
     else {
       throw new Error(`cacheMap.localTypeMap not contains key: "${localTypeId}".`)
@@ -96,7 +167,7 @@ export function genTbListFromCaller<T extends TTables>(
 
     if (tagsMapArr && tagsMapArr[0].size) {
       opts.cacheMap.localTypeMap.set(id, tagsMapArr)
-      return buildKTablesBaseFromTagsMapArr(tagsMapArr)
+      return buildDbDictBaseFromTagsMapArr(tagsMapArr)
     }
     else { // retrieved only localTypeId, then try from cache
       const tagsMapArr2 = opts.cacheMap.localTypeMap.get(id)
@@ -106,42 +177,21 @@ export function genTbListFromCaller<T extends TTables>(
       else if (! tagsMapArr2[0].size) {
         throw new Error(`cacheMap.localTypeMap key: "${id}" value empty.`)
       }
-      return buildKTablesBaseFromTagsMapArr(tagsMapArr2)
+      return buildDbDictBaseFromTagsMapArr(tagsMapArr2)
     }
   }
 }
 
-function buildKTablesBaseFromTagsMapArr<T extends TTables>(
+function buildDbDictBaseFromTagsMapArr<T extends DbModel>(
   tagsMapArr: TagsMapArr,
-): KTablesBase<T> {
+): DbDictBase<T> {
 
-  const [tbListTagMap, tbColListTagMap] = tagsMapArr
-  // const jointColumns = genJointColListTagMap(tbColListTagMap)
-  const ret: KTablesBase<T> = {
-    tables: buildTbListParam<T>(tbListTagMap),
-    columns: buildTbColListParam<T>(tbColListTagMap),
+  const [dbTagMap, dbColsTagMap] = tagsMapArr
+  const ret: DbDictBase<T> = {
+    tables: buildDbParam<T>(dbTagMap),
+    columns: buildDbColsParam<T>(dbColsTagMap),
   }
   return ret
-}
-
-// function genJointColListTagMap(tbColListTagMap: TbColListTagMap): TbJointColListTagMap {
-//   const ret: TbJointColListTagMap = new Map()
-
-//   tbColListTagMap.forEach((colListTagMap, tb) => {
-//     colListTagMap.forEach((tagInfo[], colAlias) => {
-
-//     })
-
-//   })
-
-//   return ret
-// }
-export function snakeToCamel(string: string): string {
-  return string.replace(/([-_][a-z])/iug, ($1) => {
-    return $1.toUpperCase()
-      .replace('-', '')
-      .replace('_', '')
-  })
 }
 
 export function retrieveLocalTypeItemFromType(
@@ -157,7 +207,7 @@ export function retrieveLocalTypeItemFromType(
     return
   }
 
-  // genTbListFromType<TbListModel>()
+  // genDbDictFromType<Db>()
   const node = walkNodeWithPosition({
     sourceFile,
     matchLine: caller.line,
@@ -176,13 +226,13 @@ export function retrieveLocalTypeItemFromType(
       sourceFile,
     })
     if (nodeInfo) {
-      const { localTypeId, tbTagMap, tbColTagMap } = nodeInfo
+      const { localTypeId, dbTagMap, dbColsTagMap } = nodeInfo
 
-      if (tbTagMap.size) {
-        // localTypeId: "/kmore-mono/packages/kmore-types/test/test.config.ts:typeid-TbListModel"
+      if (dbTagMap.size) {
+        // localTypeId: "/kmore-mono/packages/kmore-types/test/test.config.ts:typeid-Db"
         return {
           localTypeId,
-          tagsMapArr: [tbTagMap, tbColTagMap],
+          tagsMapArr: [dbTagMap, dbColsTagMap],
         }
       }
       else {

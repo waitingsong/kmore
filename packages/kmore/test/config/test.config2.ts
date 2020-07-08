@@ -1,11 +1,11 @@
-import { genTbListFromType, TTables } from '../../src/index'
+import { genDbDictFromType, DbModel } from '../../src/index'
 
 
-export const tbList2 = genTbListFromType<TbListModel>({
-  forceLoadTbListJs: true,
+export const dbDict2 = genDbDictFromType<Db>({
+  forceLoadDbDictJs: true,
 })
 
-export interface TbListModel extends TTables {
+export interface Db extends DbModel {
   /**
    * @description 用户表a
    * @table 表实际名称user2
@@ -17,7 +17,6 @@ export interface TbListModel extends TTables {
    */
   tb_user_detail: { uid: number, age: number, address: string }
 }
-export type TbListModelAlias = TbListModel
 
 export interface User {
   uid: number
@@ -25,5 +24,5 @@ export interface User {
 }
 
 
-export * as AC from './test.config2.__built-tables'
+export * as AC from './test.config2.__built-dict'
 

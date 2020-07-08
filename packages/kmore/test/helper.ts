@@ -1,36 +1,41 @@
 import * as Knex from 'knex'
 import * as assert from 'power-assert'
 
-import { kmore, DbModel, getCurrentTime, EnumClient, TableName } from '../src/index'
+import { kmore, Kmore, getCurrentTime, EnumClient, TableName } from '../src/index'
 
 import { config } from './test.config'
-import { User, TbListModel, UserDetail } from './test.model'
+import { User, Db, UserDetail } from './test.model'
 
 
 export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<void> {
-  for (const tb of tbs) {
+  for await (const tb of tbs) {
     // await dbh.schema.dropTableIfExists(tb).then()
     await dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
   }
 }
 
 export async function initDb(): Promise<void> {
-  const db: DbModel<TbListModel> = kmore<TbListModel>({ config })
-  await initTable(db)
-  await initUser(db)
-  await initUserDetail(db)
-  await db.dbh.destroy()
+  const km: Kmore<Db> = kmore<Db>({ config })
+  await dropTables(km.dbh, Object.values(km.tables))
+
+  const iso = await getTransactionIsolation(km.dbh)
+  console.log(`transaction_isolation: ${iso}`)
+  await setTimeZone(km.dbh, 'Asia/Chongqing') // 'UTC'
+
+  await initTable(km)
+  await initUser(km)
+  await initUserDetail(km)
+  await km.dbh.destroy()
 }
 
-async function initTable(db: DbModel<TbListModel>): Promise<void> {
-  assert(db.tables && Object.keys(db.tables).length > 0)
-  await dropTables(db.dbh, Object.values(db.tables))
+async function initTable(km: Kmore<Db>): Promise<void> {
+  assert(km.tables && Object.keys(km.tables).length > 0)
 
-  const time = await getCurrentTime(db.dbh, config.client)
+  const time = await getCurrentTime(km.dbh, config.client)
   assert(time)
   console.info(`CurrrentTime: ${time}`)
 
-  await db.dbh.schema
+  await km.dbh.schema
     .createTable('tb_user', (tb) => {
       tb.increments('uid').primary()
       tb.string('name', 30)
@@ -54,12 +59,12 @@ async function initTable(db: DbModel<TbListModel>): Promise<void> {
 }
 
 
-async function initUser(db: DbModel<TbListModel>): Promise<void> {
-  const { rb } = db
-  const { tb_user } = db.rb
+async function initUser(km: Kmore<Db>): Promise<void> {
+  const { rb } = km
+  const { tb_user } = km.rb
 
   // insert
-  await db.rb.tb_user()
+  await km.rb.tb_user()
     .insert([
       { name: 'user1', ctime: new Date() }, // ms
       { name: 'user2', ctime: 'now()' }, // μs
@@ -96,9 +101,9 @@ export function validateUserRows(rows: Partial<User>[]): void {
   })
 }
 
-async function initUserDetail(db: DbModel<TbListModel>): Promise<void> {
-  const { rb } = db
-  const { tb_user_detail } = db.rb
+async function initUserDetail(km: Kmore<Db>): Promise<void> {
+  const { rb } = km
+  const { tb_user_detail } = km.rb
 
   // insert
   await tb_user_detail()
@@ -122,7 +127,7 @@ async function initUserDetail(db: DbModel<TbListModel>): Promise<void> {
   )
 
   // validate insert result
-  await db.rb.tb_user_detail().select('*')
+  await km.rb.tb_user_detail().select('*')
     .then((rows) => {
       validateUserDetailRows(rows)
       return rows
@@ -154,3 +159,22 @@ export function validateUserDetailRows(rows: Partial<UserDetail>[]): void {
   })
 }
 
+
+async function getTransactionIsolation(dbh: Kmore['dbh']): Promise<string> {
+  return await dbh.raw('SHOW TRANSACTION ISOLATION LEVEL')
+    .then((rows) => {
+      return rows.rows[0] ? rows.rows[0].transaction_isolation : 'N/A'
+    })
+}
+
+async function setTimeZone(dbh: Kmore['dbh'], zone: string): Promise<string> {
+  // available select  pg_timezone_names()
+  await dbh.raw(`SET TIME ZONE '${zone}'`)
+    .then((rows) => {
+      return rows.rows[0] ? rows.rows[0].transaction_isolation : 'N/A'
+    })
+  return await dbh.raw('SHOW TIME ZONE')
+    .then((rows) => {
+      return rows.rows[0] ? rows.rows[0].TimeZone : 'N/A'
+    })
+}

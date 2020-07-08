@@ -3,30 +3,35 @@ import {
   CacheMap,
   CallerId,
   CallerFuncNameSet,
-  GenTbListFromTypeOpts,
+  GenDbDictFromTypeOpts,
   LocalTypeId,
-  MultiTableCols,
+  DbCols,
   Options,
   Tables,
   TagsMapArr,
-  TTables,
+  DbModel,
+  CreateColumnNameOpts,
 } from './model'
 
 
-export const globalCallerFuncNameSet: CallerFuncNameSet = new Set(['genTbListFromType', 'kmore'])
+export const globalCallerFuncNameSet: CallerFuncNameSet = new Set(['genDbDictFromType', 'kmore'])
 
-export const initGenTbListFromTypeOpts: GenTbListFromTypeOpts = {
+export const initGenDbDictFromTypeOpts: GenDbDictFromTypeOpts = {
   callerDistance: 0,
 }
 
 export const initOptions: Options = {
-  ...initGenTbListFromTypeOpts,
-  exportVarPrefix: 'tbs_',
-  forceLoadTbListJs: false,
-  forceLoadTbListJsPathReplaceRules: null,
+  ...initGenDbDictFromTypeOpts,
+  exportVarPrefix: 'dict_',
+  forceLoadDbDictJs: false,
+  forceLoadDbDictJsPathReplaceRules: null,
   outputBanner: '/* eslint-disable */',
-  outputFileNameSuffix: '__built-tables',
+  outputFileNameSuffix: '__built-dict',
   refTablesPrefix: 'reftb_',
+  DictTypeSuffix: 'Dict',
+  DictTypeFolder: './',
+  DictTypeFile: '.kmore.ts',
+  DictTypeBanner: '/* eslint-disable */\n/* tslint-disalbe */',
 }
 
 export const initBuildSrcOpts: Required<BuildSrcOpts> = {
@@ -35,20 +40,13 @@ export const initBuildSrcOpts: Required<BuildSrcOpts> = {
   concurrent: 5,
   excludePathKeys: ['node_modules'],
   maxScanLines: 128,
+  columnNameCreationFn: defaultCreateScopedColumnName,
 }
 
 export const reservedTbListKeys: string[] = [
   'constructor',
   '__proto__',
 ]
-export enum DbPropKeys {
-  'dbh' = 'dbh',
-  'tables' = 'tables',
-  'columns' = 'columns',
-  'scopedColumns' = 'scopedColumns',
-  'aliasColumns' = 'aliasColumns',
-  'refTables' = 'rb',
-}
 
 export const defaultPropDescriptor: PropertyDescriptor = {
   configurable: true,
@@ -59,11 +57,17 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 
 export const cacheMap: CacheMap = {
   /** CallerId -> TbListParam */
-  tbListMap: new Map<CallerId, Tables<TTables>>(),
-  tbColListMap: new Map<CallerId, MultiTableCols<TTables>>(),
+  dbMap: new Map<CallerId, Tables<DbModel>>(),
+  dbColsMap: new Map<CallerId, DbCols<DbModel>>(),
   /** CallerId -> LocalTypeId */
   callerIdToLocalTypeIdMap: new Map<CallerId, LocalTypeId>(),
   /** LocalTypeId -> TableListTagMap */
   localTypeMap: new Map<LocalTypeId, TagsMapArr>(),
+}
+
+
+export function defaultCreateScopedColumnName(options: CreateColumnNameOpts): string {
+  const { tableName, columnName } = options
+  return `${tableName}.${columnName}`
 }
 

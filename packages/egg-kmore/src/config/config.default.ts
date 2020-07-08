@@ -1,4 +1,4 @@
-import { TTables } from 'kmore'
+import { DbModel } from 'kmore'
 
 import { EggKmoreConfig, DefaultClientOpts } from '../lib/model'
 
@@ -11,7 +11,7 @@ export const defaultClientOpts: DefaultClientOpts = {
  * egg-kmore default config
  * @member Config#kmore
  */
-export const kmore: EggKmoreConfig<TTables> = {
+export const kmore: EggKmoreConfig<DbModel> = {
   app: true,
   agent: false,
   // client: master,

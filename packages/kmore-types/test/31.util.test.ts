@@ -7,7 +7,7 @@ import {
   validateTbName,
 } from '../src/lib/util'
 
-import { tbList } from './test.config'
+import { dbDict } from './test.config'
 
 
 const filename = basename(__filename)
@@ -16,11 +16,11 @@ describe(filename, () => {
 
   describe('Should validateTables() works', () => {
     it('with valid value', () => {
-      const tbs = { ...tbList.tables }
+      const tbs = { ...dbDict.tables }
 
       try {
         validateParamTables(tbs)
-        validateParamTables(tbList.tables)
+        validateParamTables(dbDict.tables)
       }
       catch (ex) {
         assert(false, ex)
@@ -118,16 +118,18 @@ describe(filename, () => {
 
 
   describe('Should validateTableName() works', () => {
-    ['', true, false, null, void 0, 123].forEach((val) => {
-      try {
-        validateTbName(val)
-        assert(false, `Should throw error, but NOT with "${val}"`)
-      }
-      catch (ex) {
-        return
-      }
-    })
+    it('with invalid object value', () => {
 
+      ['', true, false, null, void 0, 123].forEach((val) => {
+        try {
+          validateTbName(val)
+          assert(false, `Should throw error, but NOT with "${val}"`)
+        }
+        catch (ex) {
+          return
+        }
+      })
+    })
   })
 
 })

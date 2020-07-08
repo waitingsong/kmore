@@ -1,49 +1,54 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, DbModel } from '../src/index'
+import { kmore, Kmore } from '../src/index'
 
 import { validateUserRows } from './helper'
 import { config } from './test.config'
-import { User, TbListModel } from './test.model'
+import { User, Db } from './test.model'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
-  let db: DbModel<TbListModel>
+  let km: Kmore<Db>
 
   before(() => {
-    db = kmore<TbListModel>({ config })
-    assert(db.tables && Object.keys(db.tables).length > 0)
+    km = kmore<Db>({ config })
+    assert(km.tables && Object.keys(km.tables).length > 0)
   })
 
   after(async () => {
-    await db.dbh.destroy() // !
+    await km.dbh.destroy() // !
   })
 
   describe('Should read table with tables param in object works', () => {
     it('tb_user', async () => {
-      const { rb } = db
-      const { tb_user } = db.rb
+      const { rb } = km
+      const { tb_user } = km.rb
 
       // validate insert result
-      const countRes = await db.rb.tb_user().count()
+      const countRes = await km.rb.tb_user().count()
+      const ret = await km.rb.tb_user().select('*')
       assert(
-        countRes && countRes[0] && countRes[0].count === '2',
-        'Should count be "2"',
+        ret.length === 2,
+        `Should count be "2", but got ${JSON.stringify(ret)}`,
+      )
+      assert(
+        countRes[0].count === '2',
+        `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
       const countRes2 = await rb.tb_user().count()
       assert(
-        countRes2 && countRes2[0] && countRes2[0].count === '2',
-        'Should count be "2"',
+        countRes2[0].count === '2',
+        `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
       const countRes3 = await tb_user().count()
       assert(
-        countRes3 && countRes3[0] && countRes3[0].count === '2',
-        'Should count be "2"',
+        countRes3[0].count === '2',
+        `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
       await tb_user().select('*')

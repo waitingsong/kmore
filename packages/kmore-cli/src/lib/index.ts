@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { buildSource } from 'kmore-types'
+import { buildSource, BuildSrcRet } from 'kmore-types'
 import { Observable } from 'rxjs'
 
 import { RunCmdArgs, Options } from './model'
 
 
-export function runCmd(args: RunCmdArgs): Observable<string> {
+export function runCmd(args: RunCmdArgs): Observable<BuildSrcRet> {
   const { cmd, options, debug } = args
 
   debug && console.info(options)
@@ -20,7 +20,7 @@ export function runCmd(args: RunCmdArgs): Observable<string> {
 }
 
 
-function gen(options: Options): Observable<string> {
+function gen(options: Options): Observable<BuildSrcRet> {
   return buildSource(options)
 }
 

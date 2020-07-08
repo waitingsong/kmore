@@ -23,10 +23,10 @@ describe(filename, () => {
 
       runCmd(args)
         .pipe(
-          tap((targetPath) => {
-            assert(targetPath && targetPath.includes('test.config.__built-tables.ts'))
-            accessSync(targetPath)
-            void rimraf(targetPath)
+          tap(({ dictPath }) => {
+            assert(dictPath && dictPath.includes('test.config.__built-dict.ts'))
+            accessSync(dictPath)
+            void rimraf(dictPath)
           }),
           delay(1000),
           finalize(done),
@@ -47,10 +47,10 @@ describe(filename, () => {
 
       runCmd(args)
         .pipe(
-          tap((targetPath) => {
-            assert(targetPath && targetPath.includes('test.config.__built-tables.ts'))
-            accessSync(targetPath)
-            void rimraf(targetPath)
+          tap(({ dictPath }) => {
+            assert(dictPath && dictPath.includes('test.config.__built-dict.ts'))
+            accessSync(dictPath)
+            void rimraf(dictPath)
           }),
           delay(1000),
           finalize(done),

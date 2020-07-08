@@ -34,6 +34,7 @@
   "devDependencies": {
     "@types/source-map-support": "*",
     "cross-env": "7",
+    "rxrunscript": "5",
     "typescript": "3"
   },
   "peerDependencies": {

@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 // @ts-ignore fake import
-import { genTbListFromType, kmore, config, TTables } from 'kmore'
+import { genTbListFromType, kmore, config, DbModel } from 'kmore'
 
 
-genTbListFromType<TbListModelAlias>()
+genTbListFromType<DbAlias>()
 
-export const tbList = genTbListFromType<TbListModel>()
+export const tbList = genTbListFromType<Db>()
 
-export const db = kmore<TbListModel>(config)
+export const db = kmore<Db>(config)
 
-export interface TbListModel extends TTables {
+interface Db extends DbModel {
   user: string
   userDetail: string
 }
-export type TbListModelAlias = TbListModel
+
+type DbAlias = Db
 

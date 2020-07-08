@@ -1,6 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
-/* eslint-disable no-bitwise */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { pathResolve } from '@waiting/shared-core'
@@ -23,15 +21,15 @@ import {
   CallerTypeIdInfo,
   CallerTypeId,
   CallerTypeMap,
-  ColListTagMap,
+  TableTagMap,
   GenInfoFromNodeOps,
   LocalTypeId,
-  TbListTagMap,
-  TbColListTagMap,
+  DbTagMap,
+  DbColsTagMap,
   MatchedSourceFile,
   WalkNodeWithPositionOps,
   WalkNodeOps,
-  TbTagsMap,
+  DbTagsMap,
 } from './model'
 import { isCallerNameMatched } from './util'
 
@@ -74,7 +72,7 @@ export function genCallerTypeMapFromNodeSet(
       sourceFile,
     })
     if (obj) {
-      const { callerTypeId, tbTagMap, tbColTagMap } = obj
+      const { callerTypeId, dbTagMap: tbTagMap, dbColsTagMap: tbColTagMap } = obj
       retMap.set(callerTypeId, [tbTagMap, tbColTagMap])
     }
   })
@@ -82,7 +80,7 @@ export function genCallerTypeMapFromNodeSet(
   return retMap
 }
 
-interface GenInfoFromNodeRet extends Omit<TbTagsMap, 'tbScopedColTagMap'> {
+interface GenInfoFromNodeRet extends Omit<DbTagsMap, 'tbScopedColTagMap'> {
   callerTypeId: CallerTypeId
   localTypeId: LocalTypeId
 }
@@ -116,21 +114,21 @@ export function genInfoFromNode(
 
   const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart())
   const inputTypeName = sym.getName()
-  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-TbListModel"
+  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:4:1:typeid-Db"
   const callerTypeId = `${path}:${line + 1}:${character + 1}:typeid-${inputTypeName}`
   // const gTypeId: number = typeof gType.id === 'number' ? gType.id : Math.random()
   // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-76"
-  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-TbListModel"
+  // "/kmore-mono/packages/kmore-types/test/config/test.config2.ts:typeid-Db"
   const localTypeId = `${path}:typeid-${inputTypeName}`
 
-  const { tbTagMap, tbColTagMap } = genTbListTagMapFromSymbol(checker, sym)
+  const { dbTagMap, dbColsTagMap } = genTbListTagMapFromSymbol(checker, sym)
   /* istanbul ignore else */
-  if (tbTagMap.size) {
+  if (dbTagMap.size) {
     return {
       callerTypeId,
       localTypeId,
-      tbTagMap,
-      tbColTagMap,
+      dbTagMap,
+      dbColsTagMap,
     }
   }
 }
@@ -139,37 +137,36 @@ export function genInfoFromNode(
 function genTbListTagMapFromSymbol(
   checker: TypeChecker,
   symbol: TsSymbol,
-): Omit<TbTagsMap, 'tbScopedColTagMap'> {
+): Omit<DbTagsMap, 'tbScopedColTagMap'> {
 
   const { members } = symbol
   // Map<TableAlias, Map<TagName, TagComment> >
-  const tbTagMap = new Map() as TbListTagMap
-  const tbColTagMap = new Map() as TbColListTagMap
-  // const tbScopedColTagMap: TbScopedColListTagMap = new Map()
+  const dbTagMap = new Map() as DbTagMap
+  const dbColsTagMap = new Map() as DbColsTagMap
 
   /* istanbul ignore else */
   if (members) {
     members.forEach((tbNameSym: TsSymbol) => {
       const { name: tbName, tags } = retrieveInfoFromSymbolObject(tbNameSym)
       // tags can be empty array
-      tbTagMap.set(tbName, tags)
+      dbTagMap.set(tbName, tags)
 
       // fields
       const colTagMap = genColListTagMapFromTbSymbol(checker, tbNameSym)
-      tbColTagMap.set(tbName, colTagMap)
+      dbColsTagMap.set(tbName, colTagMap)
     })
   }
 
-  return { tbTagMap, tbColTagMap }
+  return { dbTagMap, dbColsTagMap }
 }
 
 
 function genColListTagMapFromTbSymbol(
   checker: TypeChecker,
   tbNameSym: TsSymbol,
-): ColListTagMap {
+): TableTagMap {
 
-  const ret = new Map() as ColListTagMap
+  const ret = new Map() as TableTagMap
   const tbType = checker.getTypeOfSymbolAtLocation(tbNameSym, tbNameSym.valueDeclaration)
   const sym = tbType.getSymbol()
 
@@ -197,13 +194,12 @@ function retrieveInfoFromSymbolObject(
 
 /**
  * Retrieve TypeReferenceNode
- * @example genTbListFromType<TbListModel>()
+ * @example genDbDictFromType<Db>()
  */
 function retrieveTypeRefNodeFromGenerics(
   node: CallExpression,
 ): TypeReferenceNode {
 
-  // eslint-disable-next-line import/no-extraneous-dependencies
   const {
     isTypeReferenceNode,
     isTypeLiteralNode,
@@ -212,9 +208,15 @@ function retrieveTypeRefNodeFromGenerics(
     isTypeLiteralNode: typeof isTypeLiteralNodeType,
   }
 
-  if (! node.typeArguments || node.typeArguments.length !== 1) {
-    throw new TypeError('Generics param required, like genTbListFromType<TbListModel>()')
+  if (! node.typeArguments) {
+    throw new TypeError('Generics param required, like kmore<Db>() genDbDictFromType<Db>() ')
   }
+  else if (node.typeArguments.length !== 1 && node.typeArguments.length !== 2) {
+    throw new TypeError(`Generics param required, like kmore<Db>() or genDbDictFromType<Db>(),
+    node.typeArguments.length: ${node.typeArguments.length}, should be 1 or 2
+    `)
+  }
+
   const [typeNode] = node.typeArguments
   // typeNode TypeReference = 169
   if (isTypeReferenceNode(typeNode)) {
@@ -222,8 +224,8 @@ function retrieveTypeRefNodeFromGenerics(
   }
   else if (isTypeLiteralNode(typeNode)) {
     throw new TypeError(`Literal Type param not supported, such as
-    genTbListFromType<{ tb_user: { uid: number } }>(),
-    should be an TypeReference like: genTbListFromType<TbListModel>(),
+    genDbDictFromType<{ tb_user: { uid: number } }>(),
+    should be an TypeReference like: genDbDictFromType<Db>(),
     `)
   }
   else {
@@ -235,7 +237,6 @@ function retrieveTypeRefNodeFromGenerics(
 export function matchSourceFileWithFilePath(
   path: string,
 ): MatchedSourceFile {
-  // eslint-disable-next-line import/no-extraneous-dependencies
   const { createProgram } = require('typescript') as {
     createProgram: typeof createProgramType,
   }
@@ -277,7 +278,6 @@ export function matchSourceFileWithFilePath(
 
 /** Retrieve node with specified position from caller */
 export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpression | undefined {
-  // eslint-disable-next-line import/no-extraneous-dependencies
   const { isCallExpression, forEachChild } = require('typescript') as {
     isCallExpression: typeof isCallExpressionType,
     forEachChild: typeof forEachChildType,
@@ -308,7 +308,6 @@ export function walkNodeWithPosition(options: WalkNodeWithPositionOps): CallExpr
 
 /** Retrieve node with specified matchFuncName */
 export function walkNode(options: WalkNodeOps): Set<CallExpression> {
-  // eslint-disable-next-line import/no-extraneous-dependencies
   const { isCallExpression, forEachChild } = require('typescript') as {
     isCallExpression: typeof isCallExpressionType,
     forEachChild: typeof forEachChildType,

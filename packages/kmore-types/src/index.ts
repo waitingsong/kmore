@@ -5,4 +5,5 @@ export * from './lib/build'
 export * from './lib/compiler'
 export * from './lib/ts-util'
 export * from './lib/util'
+export * from './lib/db-dict'
 
