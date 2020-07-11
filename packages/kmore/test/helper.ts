@@ -1,11 +1,13 @@
 import * as Knex from 'knex'
 import * as assert from 'power-assert'
 
-import { kmore, Kmore, getCurrentTime, EnumClient, TableName } from '../src/index'
+import { kmore, Kmore, getCurrentTime, EnumClient } from '../src/index'
 
 import { config } from './test.config'
 import { User, Db, UserDetail } from './test.model'
 
+
+type TableName = string
 
 export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<void> {
   for await (const tb of tbs) {

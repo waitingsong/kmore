@@ -9,7 +9,6 @@ import {
   DbDict,
   Options,
   KmorePropKeys,
-  TTables,
   DbModel,
   TableAliasCols,
   KnexColumnsParma,
@@ -26,39 +25,11 @@ export {
   DbCols,
   Options,
   Tables,
-  TTables,
   DbModel,
   DbAliasCols,
   TableAliasCols,
   KnexColumnsParma,
 }
-
-export {
-  PathReWriteRule,
-  BuildSrcOpts,
-  CacheMap,
-  CallerFuncNameSet,
-  CallerIdToLocalTypeIdMap,
-  LocalTypeId,
-  CallerId,
-  CallerTypeId,
-  CallerDbMap,
-  LocalTypeMap,
-  CallerTypeMap,
-  DbTagMap,
-  DbMap,
-  GenericsArgName,
-  CallerInfo,
-  CallerTypeIdInfo,
-  GenDbDictFromTypeOpts,
-  RetrieveInfoFromTypeOpts,
-  CallerFuncName,
-  TableAlias,
-  TableName,
-  FilePath,
-  FileName,
-} from 'kmore-types'
-
 
 export type KnexConfig = Knex.Config
 
