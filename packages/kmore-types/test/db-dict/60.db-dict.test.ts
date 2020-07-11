@@ -3,20 +3,20 @@ import * as assert from 'power-assert'
 import { run } from 'rxrunscript'
 
 
-import { genDbDictType, updateDbDictFile } from '../src/lib/db-dict'
+import { genDbDictTypeDeclaration, updateDbDictFile } from '../../src/lib/db-dict'
 
-import { kddConst } from './.kmore'
+import { kddConst } from './data'
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
 
-  describe('Should genDbDictType() works', () => {
-    const typeCode = genDbDictType(kddConst)
+  describe('Should genDbDictTypeDeclaration() works', () => {
+    const typeCode = genDbDictTypeDeclaration(kddConst)
     const random = Math.random().toString()
-    const tmpFile = join(__dirname, `temp.genDbDictType.${random}.ts`)
-    const cwd = join(__dirname, '../')
+    const tmpFile = join(__dirname, `temp.genDbDictTypeDeclaration.${random}.ts`)
+    const cwd = join(__dirname, '../../') // package dir
 
     it('noraml', () => {
       assert(typeCode.length, 'Should contains codes')
@@ -27,8 +27,8 @@ describe(filename, () => {
       await writeFileAsync(tmpFile, code)
     })
     it('eslint check', async () => {
-      const config = join(__dirname, '.eslintrc.yml')
-      const eslint = `eslint --fix "${tmpFile}" --config="${config}"`
+      const eslintConfig = join(cwd, 'test/.eslintrc.yml')
+      const eslint = `eslint --fix "${tmpFile}" --config="${eslintConfig}"`
       const ret = await run(eslint, null, { cwd }).toPromise()
       const buf = ret.slice(0, 1)
       assert(buf.byteLength === 0, ret.toString())
@@ -46,7 +46,7 @@ describe(filename, () => {
 
   describe('Should updateDbDictFile() works', () => {
     const dbDictTypeName = 'DbDict'
-    const typeCode = genDbDictType(kddConst, dbDictTypeName)
+    const typeCode = genDbDictTypeDeclaration(kddConst, dbDictTypeName)
     const random = Math.random().toString()
     const tmpFile = join(__dirname, `temp.updateDbDictFile.${random}.ts`)
 

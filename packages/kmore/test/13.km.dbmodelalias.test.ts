@@ -3,14 +3,14 @@ import { Equals } from '@waiting/shared-types'
 import { TableModelFromAlias } from 'kmore-types'
 import * as assert from 'power-assert'
 
-import { kmore, Kmore } from '../src/index'
+import { Kmore } from '../src/index'
 
-import { KDD2 as KDD } from './.kmore'
+import { DbDict as Dict } from './kmore/.kmore'
 import { User, Db, UserDetail } from './test.model'
 
 
-type UserAlias = TableModelFromAlias<User, KDD['aliasColumns']['tb_user']>
-type UserDetailAlias = TableModelFromAlias<UserDetail, KDD['aliasColumns']['tb_user_detail']>
+type UserAlias = TableModelFromAlias<User, Dict['aliasColumns']['tb_user']>
+type UserDetailAlias = TableModelFromAlias<UserDetail, Dict['aliasColumns']['tb_user_detail']>
 
 const filename = basename(__filename)
 
@@ -18,7 +18,7 @@ describe(filename, () => {
 
   describe('Should kmore.DbModelalias type works', () => {
     it('normal', async () => {
-      let km: Kmore<Db, KDD>
+      let km: Kmore<Db, Dict>
       type DbModelAliasRef = typeof km.DbModelAlias
 
       type UserAlias2 = DbModelAliasRef['tb_user']

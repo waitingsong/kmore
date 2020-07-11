@@ -7,6 +7,7 @@ import {
   hasExtColumns,
   genDbDictFromBase,
   loadDbDictParamFromCallerInfo,
+  DbDictModel,
 } from 'kmore-types'
 
 import { defaultPropDescriptor, initOptions } from './config'
@@ -36,7 +37,7 @@ import {
  *        eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
  *  tables will be generated from generics automaitically when passing undefined or null value
  */
-export function kmore<D extends DbModel, Dict = void>(
+export function kmore<D extends DbModel, Dict extends DbDictModel | void = void>(
   kmoreOpts: KmoreOpts,
   /**
    * Auto generate tables from generics, if value is void|null.
@@ -50,11 +51,12 @@ export function kmore<D extends DbModel, Dict = void>(
     ? { ...initOptions, ...options }
     : { ...initOptions }
 
-  let ktbs = {} as DbDict<D>
+  let kdd = {} as DbDict<D>
   if (dbDict) {
     if (Object.keys(dbDict).length) {
-      ktbs = hasExtColumns<D>(dbDict, KmorePropKeys.scopedColumns)
-        && hasExtColumns<D>(dbDict, KmorePropKeys.aliasColumns) ? dbDict : genDbDictFromBase<D>(dbDict)
+      // eslint-disable-next-line max-len
+      kdd = hasExtColumns<D>(dbDict, KmorePropKeys.scopedColumns) && hasExtColumns<D>(dbDict, KmorePropKeys.aliasColumns)
+        ? dbDict : genDbDictFromBase<D>(dbDict)
     }
     else {
       throw new TypeError('Parameter dbDict is empty')
@@ -68,15 +70,15 @@ export function kmore<D extends DbModel, Dict = void>(
     const caller = getCallerStack(opts.callerDistance)
     const base = loadDbDictParamFromCallerInfo<D>(opts, caller)
 
-    ktbs = genDbDictFromBase<D>(base)
+    kdd = genDbDictFromBase<D>(base)
   }
 
   let km = createNullObject() as Kmore<D>
   km = bindDbh<D>(defaultPropDescriptor, km, config)
-  km = bindTables<D>(defaultPropDescriptor, km, ktbs)
-  km = bindTablesCols<D>(defaultPropDescriptor, km, ktbs)
-  km = bindTablesScopedCols<D>(defaultPropDescriptor, km, ktbs)
-  km = bindTablesAliasCols<D>(defaultPropDescriptor, km, ktbs)
+  km = bindTables<D>(defaultPropDescriptor, km, kdd)
+  km = bindTablesCols<D>(defaultPropDescriptor, km, kdd)
+  km = bindTablesScopedCols<D>(defaultPropDescriptor, km, kdd)
+  km = bindTablesAliasCols<D>(defaultPropDescriptor, km, kdd)
   km = bindRefTables<D>(opts, defaultPropDescriptor, km)
 
   return km as unknown as Kmore<D, Dict>

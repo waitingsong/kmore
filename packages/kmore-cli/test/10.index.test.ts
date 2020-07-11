@@ -23,10 +23,13 @@ describe(filename, () => {
 
       runCmd(args)
         .pipe(
-          tap(({ dictPath }) => {
+          tap(({ dictPath, DictTypePath }) => {
             assert(dictPath && dictPath.includes('test.config.__built-dict.ts'))
+            assert(DictTypePath && DictTypePath.includes('.kmore.ts'))
             accessSync(dictPath)
-            void rimraf(dictPath)
+            accessSync(DictTypePath)
+            // void rimraf(dictPath)
+            // void rimraf(DictTypePath)
           }),
           delay(1000),
           finalize(done),
@@ -36,7 +39,7 @@ describe(filename, () => {
       return
     })
 
-    it(' with --basedir .test/', (done) => {
+    it('with --basedir .test/ 2', (done) => {
       const args: RunCmdArgs = {
         cmd: 'gen',
         debug: true,
@@ -47,10 +50,13 @@ describe(filename, () => {
 
       runCmd(args)
         .pipe(
-          tap(({ dictPath }) => {
+          tap(({ dictPath, DictTypePath }) => {
             assert(dictPath && dictPath.includes('test.config.__built-dict.ts'))
+            assert(DictTypePath && DictTypePath.includes('.kmore.ts'))
             accessSync(dictPath)
+            accessSync(DictTypePath)
             void rimraf(dictPath)
+            void rimraf(DictTypePath)
           }),
           delay(1000),
           finalize(done),

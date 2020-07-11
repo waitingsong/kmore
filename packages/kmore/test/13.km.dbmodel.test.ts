@@ -3,14 +3,14 @@ import { Equals } from '@waiting/shared-types'
 import { TableModelFromAlias } from 'kmore-types'
 import * as assert from 'power-assert'
 
-import { kmore, Kmore } from '../src/index'
+import { Kmore } from '../src/index'
 
-import { KDD2 as KDD } from './.kmore'
+import { DbDict as Dict } from './kmore/.kmore'
 import { User, Db, UserDetail } from './test.model'
 
 
-type UserAlias = TableModelFromAlias<User, KDD['aliasColumns']['tb_user']>
-type UserDetailAlias = TableModelFromAlias<UserDetail, KDD['aliasColumns']['tb_user_detail']>
+type UserAlias = TableModelFromAlias<User, Dict['aliasColumns']['tb_user']>
+type UserDetailAlias = TableModelFromAlias<UserDetail, Dict['aliasColumns']['tb_user_detail']>
 
 const filename = basename(__filename)
 
@@ -18,7 +18,7 @@ describe(filename, () => {
 
   describe('Should kmore.DbModel type works', () => {
     it('normal', async () => {
-      let km: Kmore<Db, KDD>
+      let km: Kmore<Db, Dict>
 
       type DbRef = typeof km.DbModel
       const t11: Equals<Db, DbRef> = true
@@ -26,12 +26,12 @@ describe(filename, () => {
       const t13: Equals<Db['tb_user_detail'], DbRef['tb_user_detail']> = true
       const t14: Equals<Db['tb_user']['uid'], DbRef['tb_user']['uid']> = true
 
-      type UserAlias2 = TableModelFromAlias<DbRef['tb_user'], KDD['aliasColumns']['tb_user']>
+      type UserAlias2 = TableModelFromAlias<DbRef['tb_user'], Dict['aliasColumns']['tb_user']>
       const t21: Equals<UserAlias, UserAlias2> = true
       const t22: Equals<UserAlias['tbUserUid'], UserAlias2['tbUserUid']> = true
       const t23: Equals<UserAlias['tbUserUid'], UserAlias2['tb_user.uid']> = true
 
-      type UserDetailAlias2 = TableModelFromAlias<DbRef['tb_user_detail'], KDD['aliasColumns']['tb_user_detail']>
+      type UserDetailAlias2 = TableModelFromAlias<DbRef['tb_user_detail'], Dict['aliasColumns']['tb_user_detail']>
       const t31: Equals<UserDetailAlias, UserDetailAlias2> = true
       const t32: Equals<UserDetailAlias['tbUserDetailUid'], UserDetailAlias2['tbUserDetailUid']> = true
       const t33: Equals<UserDetailAlias['tbUserDetailUid'], UserDetailAlias2['tb_user_detail.uid']> = true
@@ -45,11 +45,11 @@ describe(filename, () => {
       const t13: Equals<Db['tb_user_detail'], DbRef['tb_user_detail']> = true
       const t14: Equals<Db['tb_user']['uid'], DbRef['tb_user']['uid']> = true
 
-      type UserAlias2 = TableModelFromAlias<DbRef['tb_user'], KDD['aliasColumns']['tb_user']>
+      type UserAlias2 = TableModelFromAlias<DbRef['tb_user'], Dict['aliasColumns']['tb_user']>
       const t21: Equals<UserAlias, UserAlias2> = true
       const t22: Equals<UserAlias['tbUserUid'], UserAlias2['tbUserUid']> = true
 
-      type UserDetailAlias2 = TableModelFromAlias<DbRef['tb_user_detail'], KDD['aliasColumns']['tb_user_detail']>
+      type UserDetailAlias2 = TableModelFromAlias<DbRef['tb_user_detail'], Dict['aliasColumns']['tb_user_detail']>
       const t31: Equals<UserDetailAlias, UserDetailAlias2> = true
       const t32: Equals<UserDetailAlias['tbUserDetailUid'], UserDetailAlias2['tbUserDetailUid']> = true
     })

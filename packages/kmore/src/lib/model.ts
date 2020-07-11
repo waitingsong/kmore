@@ -5,6 +5,7 @@ import {
   DbCols,
   DbAliasCols,
   DbDictBase,
+  DbDictModel,
   DbDict,
   Options,
   KmorePropKeys,
@@ -21,6 +22,7 @@ import * as Knex from 'knex'
 export {
   DbDict,
   DbDictBase,
+  DbDictModel,
   DbCols,
   Options,
   Tables,
@@ -73,7 +75,7 @@ export interface KmoreOpts {
  * @description T = { user: {id: number, name: string} }
  *  will get db.user() => Knex.QueryBuilder<{id: number, name: string}>
  */
-export interface Kmore<D extends DbModel = DbModel, Dict = void> extends DbDict<D, Dict> {
+export interface Kmore<D extends DbModel = DbModel, Dict extends DbDictModel | void = void> extends DbDict<D, Dict> {
   readonly [KmorePropKeys.dbh]: Knex
   readonly [KmorePropKeys.refTables]: DbRefBuilder<D>
   /**
@@ -106,6 +108,7 @@ export type DbRefBuilder<D extends DbModel> = {
   [tb in keyof D]: TbQueryBuilder<D[tb]>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TbQueryBuilder<TRecord extends TableModel>
   extends TbQueryBuilderInner<TRecord> { }
 
@@ -113,9 +116,8 @@ export type TbQueryBuilderInner<TRecord extends TableModel>
   = <KeyExcludeOptional extends keyof TRecord | void = void>
   () => QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
 
-export interface QueryBuilderExt<TRecord extends TableModel = TableModel, TResult extends TableModel[] = TRecord[]>
-  extends Knex.QueryBuilder<TRecord, TResult> {
-}
+export type QueryBuilderExt<TRecord extends TableModel = TableModel, TResult extends TableModel[] = TRecord[]>
+ = Knex.QueryBuilder<TRecord, TResult>
 
 
 export enum EnumClient {

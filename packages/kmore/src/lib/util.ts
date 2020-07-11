@@ -3,6 +3,7 @@ import {
   validateParamTables,
   createNullObject,
   DbDictBase,
+  DbDictModel,
 } from 'kmore-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
@@ -21,11 +22,11 @@ import {
 // workaround for rollup
 const _Knex = Knex
 
-export function bindDbh<D extends DbModel, T = void>(
+export function bindDbh<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
-  kmInst: Kmore<D, T>,
+  kmInst: Kmore<D, DD>,
   config: Knex.Config,
-): Kmore<D, T> {
+): Kmore<D, DD> {
 
   Object.defineProperty(kmInst, KmorePropKeys.dbh, {
     ...propDescriptor,
@@ -36,11 +37,11 @@ export function bindDbh<D extends DbModel, T = void>(
 }
 
 
-export function bindTables<D extends DbModel, T = void>(
+export function bindTables<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
-  kmInst: Kmore<D, T>,
-  dbDict?: DbDictBase<D, T>,
-): Kmore<D, T> {
+  kmInst: Kmore<D, DD>,
+  dbDict?: DbDictBase<D, DD>,
+): Kmore<D, DD> {
 
   const key = KmorePropKeys.tables
 
@@ -62,11 +63,11 @@ export function bindTables<D extends DbModel, T = void>(
 }
 
 
-export function bindTablesCols<D extends DbModel, T = void>(
+export function bindTablesCols<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
-  kmInst: Kmore<D, T>,
-  dbDict?: DbDictBase<D, T>,
-): Kmore<D, T> {
+  kmInst: Kmore<D, DD>,
+  dbDict?: DbDictBase<D, DD>,
+): Kmore<D, DD> {
 
   const key = KmorePropKeys.columns
   Object.defineProperty(kmInst, key, {
@@ -92,11 +93,11 @@ export function bindTablesCols<D extends DbModel, T = void>(
 }
 
 
-export function bindTablesScopedCols<D extends DbModel, T = void>(
+export function bindTablesScopedCols<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
-  kmInst: Kmore<D, T>,
-  dbDict?: DbDict<D, T>,
-): Kmore<D, T> {
+  kmInst: Kmore<D, DD>,
+  dbDict?: DbDict<D, DD>,
+): Kmore<D, DD> {
 
   const key = KmorePropKeys.scopedColumns
   Object.defineProperty(kmInst, key, {
@@ -108,11 +109,11 @@ export function bindTablesScopedCols<D extends DbModel, T = void>(
 }
 
 
-export function bindTablesAliasCols<D extends DbModel, T = void>(
+export function bindTablesAliasCols<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
-  kmInst: Kmore<D, T>,
-  dbDict?: DbDict<D, T>,
-): Kmore<D, T> {
+  kmInst: Kmore<D, DD>,
+  dbDict?: DbDict<D, DD>,
+): Kmore<D, DD> {
 
   const key = KmorePropKeys.aliasColumns
   Object.defineProperty(kmInst, key, {
@@ -124,11 +125,11 @@ export function bindTablesAliasCols<D extends DbModel, T = void>(
 }
 
 
-export function bindRefTables<D extends DbModel, T = void>(
+export function bindRefTables<D extends DbModel, DD extends DbDictModel | void = void>(
   options: Options,
   propDescriptor: PropertyDescriptor,
-  kmInst: Kmore<D, T>,
-): Kmore<D, T> {
+  kmInst: Kmore<D, DD>,
+): Kmore<D, DD> {
 
   const rb = createNullObject() as DbRefBuilder<D>
   // const { aliasColumns: dbAliasCols } = kmInst
@@ -154,8 +155,8 @@ export function bindRefTables<D extends DbModel, T = void>(
 }
 
 
-function extRefTableFnProperty<D extends DbModel, T = void>(
-  db: Kmore<D, T>,
+function extRefTableFnProperty<D extends DbModel, DD extends DbDictModel | void = void>(
+  db: Kmore<D, DD>,
   refName: keyof D,
 ): QueryBuilderExt<D[keyof D]> {
 

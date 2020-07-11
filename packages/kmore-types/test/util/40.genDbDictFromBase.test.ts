@@ -1,11 +1,10 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { CreateColumnNameOpts } from '../src'
-import { genDbDictFromBase } from '../src/lib/util'
-
-import { dbDict4, dbDict4Base, dbDict4Empty } from './config/test.config4'
-import { dbDict } from './test.config'
+import { CreateColumnNameOpts } from '../../src'
+import { genDbDictFromBase } from '../../src/lib/util'
+import { dbDict4, dbDict4Base, dbDict4Empty } from '../config/test.config4'
+import { dbDict } from '../test.config'
 
 
 const filename = basename(__filename)

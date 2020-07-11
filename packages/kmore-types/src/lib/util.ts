@@ -1,9 +1,9 @@
-import { readFileLineRx, pathResolve } from '@waiting/shared-core'
+import { readFileLineRx, pathResolve, join, dirname, isDirExists } from '@waiting/shared-core'
 import { from as ofrom, of, Observable, iif, concat } from 'rxjs'
 import {
   map, filter, mergeMap, catchError, take, reduce,
 } from 'rxjs/operators'
-import { walk, EntryType } from 'rxwalker'
+import { walk, EntryType, Filepath } from 'rxwalker'
 import * as sourceMapSupport from 'source-map-support'
 
 import { genAliasColumns } from './alias-cols-util'
@@ -30,8 +30,11 @@ import {
   DbDict,
   DbDictBase,
   KmorePropKeys,
+  CallerTypeId,
+  DbAliasCols,
 } from './model'
 import { genDbScopedCols } from './scoped-cols-util'
+import { pickInfoFromCallerTypeId } from './ts-util'
 
 
 
@@ -293,15 +296,77 @@ export function createNullObject(): any {
 }
 
 
-export function genTbListTsFilePath(
-  path: string,
+export function genDbDictTsFilePath(
+  srcPath: string,
   outputFileNameSuffix: Options['outputFileNameSuffix'],
 ): FilePath {
 
-  const ret = path.slice(0, -3) + `.${outputFileNameSuffix}.ts`
-  return ret.replace(/\\/gu, '/')
+  const ret = srcPath.slice(0, -3) + `.${outputFileNameSuffix}.ts`
+  return ret.replace(/\\/ug, '/')
 }
 
+/**
+ * Return relative or absolute path
+ */
+export async function genDbDictTypeTsFilePath(
+  srcPath: Filepath,
+  targetDir: Options['DictTypeFolder'],
+  targetFileName: Options['DictTypeFileName'],
+): Promise<FilePath> {
+
+  if (! targetFileName) {
+    throw new TypeError('Value of targetFileName empty.')
+  }
+
+  const arr = ['.', './']
+  let ret = ''
+
+  if (targetDir === false || arr.includes(targetDir)) {
+    const dir = dirname(srcPath)
+    ret = join(dir, targetFileName)
+  }
+  else if (await isDirExists(targetDir)) {
+    ret = join(targetDir, targetFileName)
+  }
+  else {
+    const dir = dirname(srcPath)
+    ret = join(dir, targetFileName)
+  }
+
+  if (! ret) {
+    throw new TypeError('Result path empty.')
+  }
+  return ret.replace(/\\/ug, '/')
+}
+
+/**
+ * Generate DbDict Type name from generics name of DbModel,
+ * validate by the content to avoid confliction.
+ *
+ * @example 'DbModelDict' => 'DbModelDictAlias{1|2|3|...}'
+ */
+export function genValidDictTypeAliasName(
+  content: string,
+  dictTypeName: string,
+): string {
+
+  const id = `${dictTypeName}Alias`
+  if (! includeExportTypeName(content, id)) {
+    return id
+  }
+
+  for (let i = 1; i < 10000; i += 1) {
+    const name = `${id}${i}`
+    if (! includeExportTypeName(content, name)) {
+      return id
+    }
+  }
+
+  return id + Math.random().toString().slice(10)
+}
+
+
+/** Generate dict var name to output */
 export function genVarName(
   exportVarPrefix: Options['exportVarPrefix'],
   line: number,
@@ -313,17 +378,48 @@ export function genVarName(
 }
 
 /**
- * Generate generics name of DbModel
+ * Generate DbDict Type name from generics name of DbModel
+ * @example 'DbModel' => 'DbModelDict'
  */
-export function genDbName(
-  dbName: string,
-  exportVarSuffix: Options['DictTypeSuffix'],
+export function genDictTypeName(
+  dbModelName: string,
+  nameSuffix: Options['DictTypeSuffix'],
+): string {
+  return `${dbModelName}${nameSuffix}`
+}
+/**
+ * Generate dict var name from DictTypeName, will be write to the file together with DictType declaration
+ * @example 'DbModelDict' => 'dbModelDict'
+ */
+export function genDictVarNameFromDictTypeName(
+  dictTypeName: string,
+): string {
+  const ret = dictTypeName.slice(0, 1).toLowerCase() + dictTypeName.slice(1)
+  return ret
+}
+/**
+ * Generate dict var name from DictTypeName, will be write to the file together with DictType declaration
+ * @example 'DbModel' => 'dbModelDict'
+ */
+export function genDictVarNameFromDbName(
+  dbModelName: string,
+  nameSuffix: Options['DictTypeSuffix'],
+): string {
+  const typeName = genDictTypeName(dbModelName, nameSuffix)
+  const ret = typeName.slice(0, 1).toLowerCase() + typeName.slice(1)
+  return ret
+}
+/**
+ * Generate DbDict Type name from generics name of DbModel
+ * @example 'DbModel' => 'DbModelDict'
+ */
+export function genDictTypeNameFromCallerId(
+  id: CallerTypeId,
+  nameSuffix: Options['DictTypeSuffix'],
 ): string {
 
-  const varName = `${dbName}${exportVarSuffix}`
-  const fc = varName.slice(0, 1).toLowerCase()
-  const fend = varName.slice(1)
-  const ret = fc + fend
+  const { typeId } = pickInfoFromCallerTypeId(id)
+  const ret = genDictTypeName(typeId, nameSuffix)
   return ret
 }
 
@@ -336,8 +432,8 @@ export function reWriteLoadingPath(
   let ret = path
   /* istanbul ignore else */
   if (rules && rules.length) {
-    rules.forEach(([regx, str]) => {
-      ret = ret.replace(regx, str)
+    rules.forEach(([re, str]) => {
+      ret = ret.replace(re, str)
     })
   }
 
@@ -578,5 +674,235 @@ export function snakeToCamel(string: string): string {
  */
 export function scopedSnakeToCamel(input: string): string {
   return snakeToCamel(input.replace(/\./ug, '_'))
+}
+
+
+export function includeExportTypeName(
+  content: string,
+  typeName: string,
+): boolean {
+
+  const name = typeName.trim()
+  if (! content || ! name) {
+    return false
+  }
+
+  const needles = [
+    `export interface ${name}`,
+    `export interface '${name}'`,
+    `export interface "${name}"`,
+  ]
+
+  // const ret = needles.some(needle => content.includes(needle))
+  const ret = needles.some((needle) => {
+    const bb = content.includes(needle)
+    return bb
+  })
+  return ret
+}
+
+
+/**
+ * Retrieve dict var name and type name from the content by the dict const
+ */
+export function retrieveDictInfoByDictConst(
+  content: string,
+  dbDict: DbDict,
+): { dictVarName: string, dictTypeName: string } {
+
+  const ret = { dictVarName: '', dictTypeName: '' }
+  if (! content.trim().length) {
+    return ret
+  }
+
+  const dictMap = retrieveDictVarMapFrom(content)
+  if (! dictMap.size) {
+    return ret
+  }
+
+  for (const [id, dict] of dictMap.entries()) {
+    if (dictObjectEquals(dict, dbDict)) {
+      ret.dictVarName = id.trim()
+      break
+    }
+  }
+
+  if (ret.dictVarName) {
+    const dictTypeName = ret.dictVarName.slice(0, 1).toUpperCase() + ret.dictVarName.slice(1).trim()
+    if (includeExportTypeName(content, dictTypeName)) {
+      ret.dictTypeName = dictTypeName
+    }
+  }
+
+  return ret
+}
+
+/**
+ * Whether content has the same dict variable
+ */
+export function hasSameDictVar(
+  content: string,
+  dbDict: DbDict,
+): boolean {
+
+  if (! content.trim().length) {
+    return false
+  }
+
+  const dicts = retrieveDictVarsFrom(content)
+  if (! dicts.length) {
+    return false
+  }
+  const ret = dicts.some(dict => dictObjectEquals(dict, dbDict))
+  return ret
+}
+
+
+export function retrieveDictVarMapFrom(
+  content: string,
+): Map<string, DbDict> {
+
+  const ret = new Map<string, DbDict>()
+
+  if (! content.trim().length) {
+    return ret
+  }
+
+  const re = /^export const\s+(\S+?)\s+=.+$/ugm
+  let arr = re.exec(content)
+  while (arr) {
+    const [pick, id] = arr
+    if (! pick || ! id || ! pick.includes('{') || ! pick.includes('}')) {
+      continue
+    }
+    const start = pick.indexOf('{')
+    const end = pick.lastIndexOf('}')
+    const json = pick.slice(start, end + 1)
+    const dict = JSON.parse(json) as DbDict
+    if (typeof dict === 'object') {
+      ret.set(id, dict)
+    }
+    arr = re.exec(content)
+  }
+
+  return ret
+}
+export function retrieveDictVarsFrom(
+  content: string,
+): DbDict[] {
+
+  const dictMap = retrieveDictVarMapFrom(content)
+  const ret = Array.from(dictMap.values())
+  return ret
+}
+
+
+/**
+ * If deep equal of two Dict object
+ */
+export function dictObjectEquals(d1: DbDict, d2: DbDict): boolean {
+  if (! d1 || ! d2) {
+    throw new TypeError('invalid param 1')
+  }
+  else if (typeof d1 !== 'object') {
+    throw new TypeError('d1 invalid param')
+  }
+  else if (typeof d2 !== 'object') {
+    throw new TypeError('d2 invalid param')
+  }
+  else if (Array.isArray(d1) || Array.isArray(d2)) {
+    throw new TypeError('invalid param array')
+  }
+
+  // recursive object equality check
+  const keys1 = Object.keys(d1) as (keyof DbDict)[]
+  const keys2 = Object.keys(d2) as (keyof DbDict)[]
+
+  const r1 = keys2.every(key => keys1.includes(key))
+  if (! r1) { return false }
+
+  const r2 = dictElementEquals(d1.tables, d2.tables)
+  const r3 = dictColsEquals(d1.columns, d2.columns)
+  const r4 = dictColsEquals(d1.scopedColumns, d2.scopedColumns)
+  const r5 = dictAliasColsEquals(d1.aliasColumns, d2.aliasColumns)
+  const ret = r1 && r2 && r3 && r4 && r5
+
+  return ret
+}
+
+function dictElementEquals(t1: Record<string, string>, t2: Record<string, string>): boolean {
+  if (! t1 || ! t2) {
+    throw new TypeError('Invalid value of param to compare.')
+  }
+  const keys1 = Object.keys(t1)
+  const keys2 = Object.keys(t2)
+  if (keys1.length === 0 && keys2.length === 0) {
+    return true
+  }
+  else if (keys1.length !== keys2.length) {
+    return false
+  }
+  const ret = keys1.every((key) => {
+    if (! keys2.includes(key)) {
+      return false
+    }
+    const v1 = t1[key]
+    const v2 = t2[key]
+    return typeof v1 === 'string' && v1 === v2
+  })
+
+  return ret
+}
+function dictColsEquals(
+  cols1: DbCols,
+  cols2: DbCols,
+): boolean {
+
+  if (! cols1 || ! cols2) {
+    throw new TypeError('Invalid value of param to compare')
+  }
+  const keys1 = Object.keys(cols1)
+  const keys2 = Object.keys(cols2)
+  if (keys1.length === 0 && keys2.length === 0) {
+    return true
+  }
+  else if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  const ret = keys1.every((key) => {
+    if (! keys2.includes(key)) {
+      return false
+    }
+    return dictElementEquals(cols1[key], cols2[key])
+  })
+
+  return ret
+}
+function dictAliasColsEquals(
+  cols1: DbAliasCols,
+  cols2: DbAliasCols,
+): boolean {
+
+  if (! cols1 || ! cols2) {
+    throw new TypeError('Invalid value of dictAliasColsEquals() param to compare.')
+  }
+  const keys1 = Object.keys(cols1)
+  const keys2 = Object.keys(cols2)
+  if (keys1.length === 0 && keys2.length === 0) {
+    return true
+  }
+  else if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  const ret = keys1.every((key) => {
+    if (! keys2.includes(key)) {
+      return false
+    }
+    return dictColsEquals(cols1[key], cols2[key])
+  })
+
+  return ret
 }
 

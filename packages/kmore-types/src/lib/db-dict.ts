@@ -48,9 +48,13 @@ async function checkDbDictNameDup(
 }
 
 /**
- * Generate type of DbDict from dbDict variable
+ * Generate DbDict type declaration code from dbDict variable
+ *
+ * @returns ```ts
+ * export interface DbDict {....}
+ * ```
  */
-export function genDbDictType(
+export function genDbDictTypeDeclaration(
   dbDict: DbDict,
   dbDictExportName = 'DbDict',
 ): string {
@@ -89,7 +93,8 @@ export function genDbDictType(
   const aliasColsTypeNode = genAliasColsNode(dbDict.aliasColumns)
   ast = updateSourceFile('aliasColumns', aliasColsTypeNode, ast, dbDictExportName)
 
-  const ret = ts.createPrinter().printFile(ast)
+  const code = ts.createPrinter().printFile(ast)
+  const ret = code.replace(/\r\n/ug, '\n').replace(/\r/ug, '\n')
   return ret
 }
 
@@ -276,13 +281,11 @@ function updateSourceFile(
     return visitor
   }
 
-
   const ret = ts.transform<ts.Node>(ast, [transformerFactory])
   const sourceFileRet = ret.transformed[0] as ts.SourceFile | undefined
   if (! sourceFileRet) {
     throw new Error('result error')
   }
-
   // const printer = ts.createPrinter()
   // const codeAfterTransform = printer.printNode(ts.EmitHint.Unspecified, sourceFileRet, ast)
   // console.info({ codeAfterTransform })

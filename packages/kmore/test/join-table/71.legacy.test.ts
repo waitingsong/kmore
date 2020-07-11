@@ -6,10 +6,10 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, Kmore } from '../src/index'
+import { kmore, Kmore } from '../../src/index'
+import { User, Db, UserDetail } from '../test.model'
 
-import { config } from './test.config'
-import { User, Db, UserDetail } from './test.model'
+import { config } from './config'
 
 
 const filename = basename(__filename)

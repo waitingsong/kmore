@@ -2,7 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   UnionToIntersection,
-  DbModel, TableModel, 
+  DbModel, TableModel,
 } from '@waiting/shared-types'
 import type {
   CallExpression,
@@ -36,13 +36,20 @@ export enum KmorePropKeys {
   'dummy' = 'dymmy',
 }
 
+export interface DbDictModel extends DbDictModelBase {
+  [KmorePropKeys.tables]: Record<string, string>
+  [KmorePropKeys.columns]: DbCols
+  [KmorePropKeys.scopedColumns]: DbCols
+  [KmorePropKeys.aliasColumns]: DbAliasCols
+}
+type DbDictModelBase = Pick<DbDictModel, KmorePropKeys.tables | KmorePropKeys.columns>
 
 /**
  * K(more)Tables array contains:
  *  tables: tables name
  *  columns: columns name of the tables
  */
-export interface DbDictBase<D extends DbModel = DbModel, DD = void> {
+export interface DbDictBase<D extends DbModel = DbModel, DD extends DbDictModelBase | void = void> {
   /**
    * Tables alias/name pairs
    * { tb_name: "tb_name" }
@@ -69,7 +76,8 @@ export interface DbDictBase<D extends DbModel = DbModel, DD = void> {
  *  columns: columns name of the tables
  *  scopedColumns: columns name with table prefix of the tables
  */
-export interface DbDict<D extends DbModel = DbModel, DD = void> extends DbDictBase<D, DD> {
+export interface DbDict<D extends DbModel = DbModel, DD extends DbDictModel | void = void>
+  extends DbDictBase<D, DD> {
   /**
   * For table joint
   * ```json
@@ -148,9 +156,13 @@ export interface Options extends GenDbDictFromTypeOpts {
   /** Exported type name suffix. Default is "Dict" */
   DictTypeSuffix: string
   /** File name of auto generated Types of dbDict. Default is ".kmore.ts" */
-  DictTypeFile: string
-  /** File folder of auto generated Types of dbDict. Default is "./" under current dir */
-  DictTypeFolder: string
+  DictTypeFileName: string
+  /**
+   * File folder of auto generated Types of dbDict, relative or absolute folder.
+   * Path must exists if is relative path, otherwise overwrited by false.
+   * Default is false, under the same dir of the source file
+   */
+  DictTypeFolder: string | false
   /** Banner at the top of target file. Such as "// eslint-disable"  */
   DictTypeBanner: string
 }
@@ -414,71 +426,6 @@ export interface LoadVarFromFileOpts {
  */
 export interface KnexColumnsParma {
   [out: string]: string
-}
-
-
-// type AliasCols = typeof ac_user
-// type TA1 = TableModelFromAlias<User, AliasCols>
-// declare const foo1: TA1['tbUserUid']
-// declare const foo2: TA1['tb_user.uid']
-// declare const foo3: TA1['tb_user.ctime']
-// type J1 = JointTableFromAliasConst<User, AliasCols>
-// type J1k = JointTableFromAliasConstKey<User, AliasCols>
-// type J1v = JointTableFromAliasConstValue<User, AliasCols>
-// type TF1 = TypeFromJointTable<J1>
-
-/**
- * Generate TableAlias type from TableModel and typeof AliasConst
- *
- * @example ```ts
- *  TableModelFromAlias<User, typeof acUser>
- * ```
- * @param T - table model ```ts
- *  interface User {
- *   uid: number
- *   name: string
- *   ctime: Date | string
- *  }
- * ```
- * @param TAliasConst - type from a variable/const, not a interface/type directly ```ts
- *  const acUser = {
- *   uid: { tbUserUid: 'tb_user.uid' },
- *   name: { tbUserName: 'tb_user.name' },
- *   ctime: { tbUserCtime: 'tb_user.ctime' },
- *  } as const
- *  typeof acUser
- * ```
- * @returns ```ts
- *  type {
- *   tbUserUid: number
- *   tbUserName: string
- *   tbUserCtime: Date | string
- *   'tb_user.uid': number
- *   'tb_user.name': string
- *   'tb_user.ctime': Date | string
- *  }
- * ```
- */
-export type TableModelFromAlias<T extends TableModel, TAliasConst extends TableAliasCols<T>>
-   = Readonly<TypeFromJointTable<JointTableFromAliasConst<T, TAliasConst>>>
-
-/**
- *
- * @example ```ts
- * interface UserAlias {
- *  uid: {
- *    tbUserUid: number
- *    'tb_user.uid': number
- *  }
- *  name: {
- *    tbUserName: string
- *    'tb_user.name': string
- *  }
- * }
- * ```
- */
-interface AliasTableModel {
-  [fld: string]: TableModel
 }
 
 

@@ -1,18 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-// @ts-ignore fake import
-import { genTbListFromType, kmore, config, DbModel } from 'kmore'
+// @ts-ignore  below is fake import!!
+import { genDbDictFromType, kmore, config, DbModel } from 'kmore'
 
 
-genTbListFromType<DbAlias>()
+genDbDictFromType<DbAlias>()
 
-export const tbList = genTbListFromType<Db>()
+export const dbDict = genDbDictFromType<Db>()
 
-export const db = kmore<Db>(config)
+export const kmInst = kmore<Db>(config)
 
 interface Db extends DbModel {
-  user: string
-  userDetail: string
+  user: {
+    uid: number,
+    name: string,
+  }
+  userDetail: {
+    uid: number,
+    address: string,
+  }
 }
 
 type DbAlias = Db
