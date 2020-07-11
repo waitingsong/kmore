@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Knex from 'knex'
 
-import { Config, EnumClient } from './model'
+import { KnexConfig, EnumClient } from './model'
 
 
 export async function getCurrentTime(
   dbh: Knex,
-  clientType: Config['client'],
+  clientType: KnexConfig['client'],
 ): Promise<string> {
 
   const res = await dbh.raw('SELECT now() AS currenttime;')

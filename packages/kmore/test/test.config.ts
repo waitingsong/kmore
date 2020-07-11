@@ -1,11 +1,11 @@
 import * as assert from 'power-assert'
 
-import { Config, Tables, genDbDictFromType, DbDict } from '../src/index'
+import { KnexConfig, Tables, genDbDictFromType, DbDict } from '../src/index'
 
 import { Db } from './test.model'
 
 
-export const config: Config = {
+export const config: KnexConfig = {
   client: 'pg',
   // connection: process.env.PG_CONNECTION_STRING,
   connection: {

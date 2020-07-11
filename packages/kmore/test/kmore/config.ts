@@ -1,13 +1,13 @@
 import * as assert from 'power-assert'
 
-import { kmore, Config } from '../../src/index'
+import { kmore, KnexConfig } from '../../src/index'
 import { Db } from '../test.model'
 
 // file .kmore.ts will be automatically generated
 import { DbDict, dbDict } from './.kmore'
 
 
-export const config: Config = {
+export const config: KnexConfig = {
   client: 'pg',
   // connection: process.env.PG_CONNECTION_STRING,
   connection: {

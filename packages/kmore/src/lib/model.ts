@@ -16,7 +16,7 @@ import {
   TableModel,
   TableModelFromAlias,
 } from 'kmore-types'
-import * as Knex from 'knex'
+import type * as Knex from 'knex'
 
 
 export {
@@ -60,10 +60,10 @@ export {
 } from 'kmore-types'
 
 
-export type Config = Knex.Config
+export type KnexConfig = Knex.Config
 
 export interface KmoreOpts {
-  config: Config
+  config: KnexConfig
   options?: Partial<Options>
 }
 

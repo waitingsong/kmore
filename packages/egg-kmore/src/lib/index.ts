@@ -7,7 +7,7 @@ import {
   kmore,
   DbModel,
   Kmore,
-  Config,
+  KnexConfig,
   getCurrentTime,
   EnumClient,
 } from 'kmore'
@@ -79,7 +79,7 @@ function createOneClient<D extends DbModel>(
 
 function checkConnected<T extends DbModel>(
   app: Application | Agent,
-  knexConfig: Config,
+  knexConfig: KnexConfig,
   clientInstInst: Kmore<T>,
 ): void {
 

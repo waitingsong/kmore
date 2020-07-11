@@ -11,6 +11,7 @@ import * as Knex from 'knex'
 import { KmorePropKeys } from './config'
 import {
   Kmore,
+  KnexConfig,
   DbRefBuilder,
   Options,
   DbModel,
@@ -25,7 +26,7 @@ const _Knex = Knex
 export function bindDbh<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
   kmInst: Kmore<D, DD>,
-  config: Knex.Config,
+  config: KnexConfig,
 ): Kmore<D, DD> {
 
   Object.defineProperty(kmInst, KmorePropKeys.dbh, {
