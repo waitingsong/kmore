@@ -3,16 +3,16 @@ import { basename } from '@waiting/shared-core'
 import { EqualsExt, FormatIntersect } from '@waiting/shared-types'
 import * as assert from 'power-assert'
 
-import { kmInst } from './config'
+import { kmInst1 as kmInst } from './config'
 
 
 type Db = typeof kmInst.DbModel
-type DbModelAlias = typeof kmInst.DbModelAlias
+type DbAlias = typeof kmInst.DbModelAlias
 
 type User = Db['tb_user']
 type UserDetail = Db['tb_user_detail']
-type UserAlias = DbModelAlias['tb_user']
-type UserDetailAlias = DbModelAlias['tb_user_detail']
+type UserAlias = DbAlias['tb_user']
+type UserDetailAlias = DbAlias['tb_user_detail']
 
 
 const filename = basename(__filename)

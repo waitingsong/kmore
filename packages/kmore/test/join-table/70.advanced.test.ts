@@ -3,16 +3,16 @@ import { basename } from '@waiting/shared-core'
 import { EqualsExt, FormatIntersect } from '@waiting/shared-types'
 import * as assert from 'power-assert'
 
-import { kmInst2 as kmInst } from './config'
+import { kmInst } from './config'
 
 
 type Db = typeof kmInst.DbModel
-type DbModelAlias = typeof kmInst.DbModelAlias
+type DblAlias = typeof kmInst.DbModelAlias
 
 type User = Db['tb_user']
 type UserDetail = Db['tb_user_detail']
-type UserAlias = DbModelAlias['tb_user']
-type UserDetailAlias = DbModelAlias['tb_user_detail']
+type UserAlias = DblAlias['tb_user']
+type UserDetailAlias = DblAlias['tb_user_detail']
 
 
 const filename = basename(__filename)
@@ -90,8 +90,8 @@ describe(filename, () => {
 
       interface RowType {
         name: User['name']
-        tbUserDetailUid: UserDetailAlias['tbUserDetailUid']
         tbUserUid: UserAlias['tbUserUid']
+        tbUserDetailUid: UserDetailAlias['tbUserDetailUid']
       }
       type R1 = typeof ret
       type R2 = FormatIntersect<R1>

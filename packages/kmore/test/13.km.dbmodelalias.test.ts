@@ -5,7 +5,7 @@ import * as assert from 'power-assert'
 
 import { Kmore } from '../src/index'
 
-import { DbDict as Dict } from './kmore/.kmore'
+import { DbDict as Dict } from './join-table/.kmore'
 import { User, Db, UserDetail } from './test.model'
 
 

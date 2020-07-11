@@ -6,29 +6,25 @@
 import { basename } from '@waiting/shared-core'
 import * as assert from 'power-assert'
 
-import { kmore, Kmore } from '../../src/index'
-import { User, Db, UserDetail } from '../test.model'
+import { kmInst3 as kmInst } from './config'
 
-import { config } from './config'
+
+type Db = typeof kmInst.DbModel
+
+type User = Db['tb_user']
+type UserDetail = Db['tb_user_detail']
 
 
 const filename = basename(__filename)
 
 describe(filename, () => {
-  let km: Kmore<Db>
-
   before(() => {
-    km = kmore<Db>({ config })
-    assert(km.tables && Object.keys(km.tables).length > 0)
-  })
-
-  after(async () => {
-    await km.dbh.destroy() // !
+    assert(kmInst.tables && Object.keys(kmInst.tables).length > 0)
   })
 
   describe('Should inner join table works', () => {
     it('tb_user join tb_user_detail via scopedColumns', async () => {
-      const { tables: t, rb, scopedColumns: sc } = km
+      const { tables: t, rb, scopedColumns: sc } = kmInst
 
       await rb.tb_user()
         .innerJoin<UserDetail>(
@@ -49,7 +45,7 @@ describe(filename, () => {
     })
 
     it.skip('tb_user join tb_user_detail via scopedColumns and KeyExcludeOptional', async () => {
-      const { tables: t, rb, scopedColumns: sc } = km
+      const { tables: t, rb, scopedColumns: sc } = kmInst
 
       await rb.tb_user()
         .select(sc.tb_user.uid, sc.tb_user.name)
@@ -70,7 +66,7 @@ describe(filename, () => {
     })
 
     it.skip('tb_user join tb_user_detail via scopedColumns and KeyExcludeOptional/key', async () => {
-      const { tables: t, rb, scopedColumns: sc } = km
+      const { tables: t, rb, scopedColumns: sc } = kmInst
 
       await rb.tb_user()
         .select()
@@ -94,7 +90,7 @@ describe(filename, () => {
 
 
     it('tb_user join tb_user_detail', async () => {
-      const { tables: t, rb } = km
+      const { tables: t, rb } = kmInst
 
       await rb.tb_user()
         .select(`${t.tb_user}.uid`, `${t.tb_user}.name`)

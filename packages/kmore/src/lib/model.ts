@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
-  Tables,
-  DbCols,
   DbAliasCols,
+  DbCols,
+  DbDict,
   DbDictBase,
   DbDictModel,
-  DbDict,
-  Options,
-  KmorePropKeys,
   DbModel,
-  TableAliasCols,
+  KmorePropKeys,
   KnexColumnsParma,
+  Options,
+  Tables,
+  TableAliasCols,
   TableModel,
   TableModelFromAlias,
 } from 'kmore-types'
@@ -19,16 +19,16 @@ import type * as Knex from 'knex'
 
 
 export {
+  DbAliasCols,
+  DbCols,
   DbDict,
   DbDictBase,
   DbDictModel,
-  DbCols,
+  DbModel,
+  KnexColumnsParma,
   Options,
   Tables,
-  DbModel,
-  DbAliasCols,
   TableAliasCols,
-  KnexColumnsParma,
 }
 
 export type KnexConfig = Knex.Config
