@@ -1,7 +1,6 @@
 # [kmore](https://waitingsong.github.io/kmore/)
 
-A [Knex](https://knexjs.org/) little more typed factory of SQL query builder powed by TypeScript,
-with auto-generated type-safe tables accessor for Node.js".
+A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScript type support.
 
 
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
@@ -10,14 +9,19 @@ with auto-generated type-safe tables accessor for Node.js".
 [![Node CI](https://github.com/waitingsong/kmore/workflows/Node%20CI/badge.svg)](https://github.com/waitingsong/kmore/actions)
 [![Build Status](https://travis-ci.org/waitingsong/kmore.svg?branch=master)](https://travis-ci.org/waitingsong/kmore)
 [![Build status](https://ci.appveyor.com/api/projects/status/nkseik96p23fcvpm/branch/master?svg=true)](https://ci.appveyor.com/project/waitingsong/kmore/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/waitingsong/kmore/badge.svg?branch=master)](https://coveralls.io/github/waitingsong/kmore?branch=master)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
 
+## Features
+- Type-safe property of tables accessor 
+- Type-safe join table easily
+- Type-safe auto-completion in IDE
+
+
 ## Installation
 ```sh
-npm install kmore knex
+npm install kmore kmore-cli knex
 
 # Then add one of the following:
 npm install pg
@@ -26,10 +30,10 @@ npm install oracle
 npm install sqlite3
 ```
 
-## Usage
+## Basic usage
 
 ### Build configuration:
-Ensure `sourceMap` or `inlineSourceMap` is true in the tsconfig.json
+Ensure `sourceMap` or `inlineSourceMap` is true in the `tsconfig.json`
 ```json
 {
   "compilerOptions": {
@@ -38,14 +42,22 @@ Ensure `sourceMap` or `inlineSourceMap` is true in the tsconfig.json
 }
 ```
 
+Edit the `package.json`
+```json
+{
+  "script": {
+    "db:gen": "kmore gen --path src/ test/"
+  },
+}
+```
+
 ### Create connection
 ```ts
-import { Config, TTables } from 'kmore'
+import { KnexConfig, DbModel } from 'kmore'
 
 // connection config
-export const config: Config = {
+export const config: KnexConfig = {
   client: 'pg',
-  // connection: process.env.PG_CONNECTION_STRING,
   connection: {
     host: 'localhost',
     user: 'postgres',
@@ -54,8 +66,8 @@ export const config: Config = {
   },
 }
 
-// Define Types of tables
-export interface TbListModel extends TTables {
+// Define database model
+export interface Db extends DbModel {
   tb_user: User
   tb_user_detail: UserDetail
 }
@@ -63,7 +75,7 @@ export interface TbListModel extends TTables {
 export interface User {
   uid: number
   name: string
-  ctime: Date | 'now()'
+  ctime: string
 }
 export interface UserDetail {
   uid: number
@@ -71,28 +83,15 @@ export interface UserDetail {
   address: string
 }  
 
-/**
- *  Initialize db connection and generate type-safe tables accessor (name and builder)
- *  will get
- *    - db.dbh : the connection instance of knex
- *        eg. db.dbh<OtherType>('tb_other').select()
- *    - db.tables : tables name accessor containing table key/value paris
- *    - db.columns : table column names accessor containing table key/value paris
- *    - db.scopedColumns : table column names accessor containing table key/value paris, with table prefix
- *    - db.rb : tables builder accessor,
- *        eg. db.rb.user() =>  Knex.QueryBuilder<{id: number, name: string}>
- *  tables will be generated from generics automaitically when passing undefined or null value
- */
-const db = kmore<TbListModel>({ config })
+export const km = kmore<Db>({ config })
 // or
-const kTables = genTbListFromType<TbListModel>()
-const db = kmore<TbListModel>({ config }, kTables)
-
+const dict = genDbDictFromType<Db>()
+export const km = kmore<Db>({ config }, dict)
 ```
 
 ### Create tables with instance of knex
 ```ts
-await db.dbh.schema
+await km.dbh.schema
   .createTable('tb_user', (tb) => {
     tb.increments('uid')
     tb.string('name', 30)
@@ -114,8 +113,8 @@ await db.dbh.schema
 
 ### Inert rows via auto generated table accessor
 ```ts
-// auto generated accessort tb_user() and tb_user_detail() on db.rb
-const { tb_user, tb_user_detail } = db.rb
+// auto generated accessort tb_user() and tb_user_detail() on km.rb
+const { tb_user, tb_user_detail } = km.rb
 
 await tb_user()
   .insert([
@@ -135,7 +134,7 @@ await tb_user_detail()
 
 ### Join tables
 ```ts
-const { tables: t, rb, scopedColumns: sc } = db
+const { tables: t, scopedColumns: sc, rb } = km
 
 await rb.tb_user<UserDetail>()
   .select()
@@ -157,11 +156,75 @@ await rb.tb_user<UserDetail>()
 ### Use instance of knex
 ```ts
 // drop table
-await db.dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
+await km.dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
 
 // disconnect
-await db.dbh.destroy()
+await km.dbh.destroy()
 ```
+
+
+## Advanced usage
+
+### Build DictType
+```sh
+npm run db:gen
+```
+
+### Create connection
+```ts
+import { KnexConfig, DbModel } from 'kmore'
+// this file contains type of the dbDict, created after `npm run db:gen`
+import { DbDict } from './.kmore'
+
+// pass `DbDict` as 2nd generics parameter
+export const km = kmore<Db, DbDict>({ config })
+```
+
+### Join tables
+```ts
+type Db = typeof km.DbModel
+type DblAlias = typeof km.DbModelAlias
+
+type User = Db['tb_user']
+type UserAlias = DbAlias['tb_user']
+type UserDetailAlias = DbAlias['tb_user_detail']
+
+const {
+  rb,
+  tables: t,
+  aliasColumns: ac,
+  scopedColumns: sc,
+} = km
+
+const cols = [
+  ac.tb_user.uid,
+  ac.tb_user_detail.uid,
+]
+
+const ret = await rb.tb_user()
+  .select('name')
+  .innerJoin<UserDetailAlias & UserAlias>(
+    t.tb_user_detail,
+    sc.tb_user.uid,
+    sc.tb_user_detail.uid,
+  )
+  .columns(cols)
+  .then(rows => rows[0])
+
+assert(Object.keys(ret).length === 3)
+assert(typeof ret.name === 'string')
+assert(typeof ret.tbUserUid === 'number')
+assert(typeof ret.tbUserDetailUid === 'number')
+
+// typeof the result equals to the following type:
+interface RetType {
+  name: User['name']
+  tbUserUid: UserAlias['tbUserUid']
+  tbUserDetailUid: UserDetailAlias['tbUserDetailUid']
+}
+```
+
+More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/master/packages/kmore/test/join-table/70.advanced.test.ts)
 
 
 ## Demo
