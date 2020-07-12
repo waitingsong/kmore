@@ -79,13 +79,11 @@ export type DbRefBuilder<D extends DbModel> = {
   [tb in keyof D]: TbQueryBuilder<D[tb]>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TbQueryBuilder<TRecord extends TableModel>
-  extends TbQueryBuilderInner<TRecord> { }
-
-export type TbQueryBuilderInner<TRecord extends TableModel>
+export type TbQueryBuilder<TRecord extends TableModel>
   = <KeyExcludeOptional extends keyof TRecord | void = void>
-  () => QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
+  () => KeyExcludeOptional extends void
+    ? QueryBuilderExt<TRecord>
+    : QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
 
 export type QueryBuilderExt<TRecord extends TableModel = TableModel, TResult extends TableModel[] = TRecord[]>
  = Knex.QueryBuilder<TRecord, TResult>
