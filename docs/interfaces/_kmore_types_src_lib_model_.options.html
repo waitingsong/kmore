@@ -69,7 +69,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_kmore_types_src_lib_model_.gentblistfromtypeopts.html" class="tsd-signature-type">GenTbListFromTypeOpts</a>
+						<a href="_kmore_types_src_lib_model_.gendbdictfromtypeopts.html" class="tsd-signature-type">GenDbDictFromTypeOpts</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">Options</span>
@@ -85,10 +85,15 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#dicttypebanner" class="tsd-kind-icon">Dict<wbr>Type<wbr>Banner</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#dicttypefilename" class="tsd-kind-icon">Dict<wbr>Type<wbr>File<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#dicttypefolder" class="tsd-kind-icon">Dict<wbr>Type<wbr>Folder</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#dicttypesuffix" class="tsd-kind-icon">Dict<wbr>Type<wbr>Suffix</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_types_src_lib_model_.options.html#callerdistance" class="tsd-kind-icon">caller<wbr>Distance</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#columnnamecreationfn" class="tsd-kind-icon">column<wbr>Name<wbr>Creation<wbr>Fn</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#exportvarprefix" class="tsd-kind-icon">export<wbr>Var<wbr>Prefix</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#forceloadtblistjs" class="tsd-kind-icon">force<wbr>Load<wbr>TbList<wbr>Js</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#forceloadtblistjspathreplacerules" class="tsd-kind-icon">force<wbr>Load<wbr>TbList<wbr>JsPath<wbr>Replace<wbr>Rules</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#forceloaddbdictjs" class="tsd-kind-icon">force<wbr>Load<wbr>DbDict<wbr>Js</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#forceloaddbdictjspathreplacerules" class="tsd-kind-icon">force<wbr>Load<wbr>DbDict<wbr>JsPath<wbr>Replace<wbr>Rules</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#outputbanner" class="tsd-kind-icon">output<wbr>Banner</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#outputfilenamesuffix" class="tsd-kind-icon">output<wbr>File<wbr>Name<wbr>Suffix</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_types_src_lib_model_.options.html#reftablesprefix" class="tsd-kind-icon">ref<wbr>Tables<wbr>Prefix</a></li>
@@ -99,6 +104,68 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="dicttypebanner" class="tsd-anchor"></a>
+					<h3>Dict<wbr>Type<wbr>Banner</h3>
+					<div class="tsd-signature tsd-kind-icon">Dict<wbr>Type<wbr>Banner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L167">kmore-types/src/lib/model.ts:167</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Banner at the top of target file. Such as &quot;// eslint-disable&quot;</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="dicttypefilename" class="tsd-anchor"></a>
+					<h3>Dict<wbr>Type<wbr>File<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">Dict<wbr>Type<wbr>File<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L159">kmore-types/src/lib/model.ts:159</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>File name of auto generated Types of dbDict. Default is &quot;.kmore.ts&quot;</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="dicttypefolder" class="tsd-anchor"></a>
+					<h3>Dict<wbr>Type<wbr>Folder</h3>
+					<div class="tsd-signature tsd-kind-icon">Dict<wbr>Type<wbr>Folder<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L165">kmore-types/src/lib/model.ts:165</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>File folder of auto generated Types of dbDict, relative or absolute folder.
+								Path must exists if is relative path, otherwise overwrited by false.
+							Default is false, under the same dir of the source file</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="dicttypesuffix" class="tsd-anchor"></a>
+					<h3>Dict<wbr>Type<wbr>Suffix</h3>
+					<div class="tsd-signature tsd-kind-icon">Dict<wbr>Type<wbr>Suffix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L157">kmore-types/src/lib/model.ts:157</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Exported type name suffix. Default is &quot;Dict&quot;</p>
+						</div>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="callerdistance" class="tsd-anchor"></a>
 					<h3>caller<wbr>Distance</h3>
@@ -106,13 +173,31 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_kmore_types_src_lib_model_.options.html">Options</a>.<a href="_kmore_types_src_lib_model_.options.html#callerdistance">callerDistance</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L231">kmore-types/src/lib/model.ts:231</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L362">kmore-types/src/lib/model.ts:362</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Distance from genTbListFromType() or kmore(),
-							Default: 0 means calling genTbListFromType() or kmore()  directly</p>
+							<p>Distance from genDbDictFromType() or kmore(),
+							Default: 0 means calling genDbDictFromType() or kmore()  directly</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="columnnamecreationfn" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> column<wbr>Name<wbr>Creation<wbr>Fn</h3>
+					<div class="tsd-signature tsd-kind-icon">column<wbr>Name<wbr>Creation<wbr>Fn<span class="tsd-signature-symbol">:</span> <a href="../modules/_kmore_types_src_lib_model_.html#createcolumnnamefn" class="tsd-signature-type">CreateColumnNameFn</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L134">kmore-types/src/lib/model.ts:134</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Function to generate scoped column string with table name and columns name,
+								&#39;tb_user&#39;, &#39;name&#39; =&gt; &#39;tb_user.name&#39;.
+								false will use original col name w/o table name prefix: &#39;tb_user&#39;, &#39;name&#39; =&gt; &#39;name&#39;,
+							Default value defaultCreateScopedColumnName (in config.ts)</p>
 						</div>
 					</div>
 				</section>
@@ -122,22 +207,22 @@
 					<div class="tsd-signature tsd-kind-icon">export<wbr>Var<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L35">kmore-types/src/lib/model.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L136">kmore-types/src/lib/model.ts:136</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Exported table vaiable name prefix. Default is &quot;tbs_&quot;, result will be &quot;tbs_m_n&quot;</p>
+							<p>Exported table vaiable name prefix. Default is &quot;dict_&quot;, result will be &quot;dict_m_n&quot;</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="forceloadtblistjs" class="tsd-anchor"></a>
-					<h3>force<wbr>Load<wbr>TbList<wbr>Js</h3>
-					<div class="tsd-signature tsd-kind-icon">force<wbr>Load<wbr>TbList<wbr>Js<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="forceloaddbdictjs" class="tsd-anchor"></a>
+					<h3>force<wbr>Load<wbr>DbDict<wbr>Js</h3>
+					<div class="tsd-signature tsd-kind-icon">force<wbr>Load<wbr>DbDict<wbr>Js<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L41">kmore-types/src/lib/model.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L142">kmore-types/src/lib/model.ts:142</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -149,17 +234,17 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="forceloadtblistjspathreplacerules" class="tsd-anchor"></a>
-					<h3>force<wbr>Load<wbr>TbList<wbr>JsPath<wbr>Replace<wbr>Rules</h3>
-					<div class="tsd-signature tsd-kind-icon">force<wbr>Load<wbr>TbList<wbr>JsPath<wbr>Replace<wbr>Rules<span class="tsd-signature-symbol">:</span> <a href="_kmore_types_src_lib_model_.pathrewriterule.html" class="tsd-signature-type">PathReWriteRule</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<a name="forceloaddbdictjspathreplacerules" class="tsd-anchor"></a>
+					<h3>force<wbr>Load<wbr>DbDict<wbr>JsPath<wbr>Replace<wbr>Rules</h3>
+					<div class="tsd-signature tsd-kind-icon">force<wbr>Load<wbr>DbDict<wbr>JsPath<wbr>Replace<wbr>Rules<span class="tsd-signature-symbol">:</span> <a href="_kmore_types_src_lib_model_.pathrewriterule.html" class="tsd-signature-type">PathReWriteRule</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L48">kmore-types/src/lib/model.ts:48</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L149">kmore-types/src/lib/model.ts:149</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Rewrite loading path during forceLoadTbListJs:true,
+							<p>Rewrite loading path during forceLoadDbDictJs:true,
 								Default: null
 							Default: [ [//src//u, &#39;/dist/&#39;] ] if process.env.NODE_ENV === &#39;production&#39;</p>
 						</div>
@@ -176,7 +261,7 @@
 					<div class="tsd-signature tsd-kind-icon">output<wbr>Banner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L50">kmore-types/src/lib/model.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L151">kmore-types/src/lib/model.ts:151</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -191,12 +276,12 @@
 					<div class="tsd-signature tsd-kind-icon">output<wbr>File<wbr>Name<wbr>Suffix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L52">kmore-types/src/lib/model.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L153">kmore-types/src/lib/model.ts:153</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>File name suffix of built tables. w/o ext, eg: build-tables</p>
+							<p>File name suffix of built tables. w/o ext, eg: build-dict</p>
 						</div>
 					</div>
 				</section>
@@ -206,7 +291,7 @@
 					<div class="tsd-signature tsd-kind-icon">ref<wbr>Tables<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L54">kmore-types/src/lib/model.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore-types/src/lib/model.ts#L155">kmore-types/src/lib/model.ts:155</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -250,17 +335,32 @@
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
 						<a href="_kmore_types_src_lib_model_.options.html" class="tsd-kind-icon">Options</a>
 						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_types_src_lib_model_.options.html#dicttypebanner" class="tsd-kind-icon">Dict<wbr>Type<wbr>Banner</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_types_src_lib_model_.options.html#dicttypefilename" class="tsd-kind-icon">Dict<wbr>Type<wbr>File<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_types_src_lib_model_.options.html#dicttypefolder" class="tsd-kind-icon">Dict<wbr>Type<wbr>Folder</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_types_src_lib_model_.options.html#dicttypesuffix" class="tsd-kind-icon">Dict<wbr>Type<wbr>Suffix</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="_kmore_types_src_lib_model_.options.html#callerdistance" class="tsd-kind-icon">caller<wbr>Distance</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_kmore_types_src_lib_model_.options.html#columnnamecreationfn" class="tsd-kind-icon">column<wbr>Name<wbr>Creation<wbr>Fn</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_kmore_types_src_lib_model_.options.html#exportvarprefix" class="tsd-kind-icon">export<wbr>Var<wbr>Prefix</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_types_src_lib_model_.options.html#forceloadtblistjs" class="tsd-kind-icon">force<wbr>Load<wbr>TbList<wbr>Js</a>
+								<a href="_kmore_types_src_lib_model_.options.html#forceloaddbdictjs" class="tsd-kind-icon">force<wbr>Load<wbr>DbDict<wbr>Js</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_kmore_types_src_lib_model_.options.html#forceloadtblistjspathreplacerules" class="tsd-kind-icon">force<wbr>Load<wbr>TbList<wbr>JsPath<wbr>Replace<wbr>Rules</a>
+								<a href="_kmore_types_src_lib_model_.options.html#forceloaddbdictjspathreplacerules" class="tsd-kind-icon">force<wbr>Load<wbr>DbDict<wbr>JsPath<wbr>Replace<wbr>Rules</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_kmore_types_src_lib_model_.options.html#outputbanner" class="tsd-kind-icon">output<wbr>Banner</a>

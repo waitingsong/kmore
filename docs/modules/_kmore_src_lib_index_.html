@@ -81,13 +81,13 @@
 					<a name="kmore" class="tsd-anchor"></a>
 					<h3>kmore</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">kmore&lt;T&gt;<span class="tsd-signature-symbol">(</span>kmoreOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.kmoreopts.html" class="tsd-signature-type">KmoreOpts</a>, kTables<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">KTablesBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_kmore_src_lib_model_.ktables.html" class="tsd-signature-type">KTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.dbmodel.html" class="tsd-signature-type">DbModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">kmore&lt;D, Dict&gt;<span class="tsd-signature-symbol">(</span>kmoreOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.kmoreopts.html" class="tsd-signature-type">KmoreOpts</a>, dbDict<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">DbDictBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">DbDict</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_kmore_src_lib_model_.kmore.html" class="tsd-signature-type">Kmore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/index.ts#L34">kmore/src/lib/index.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/index.ts#L40">kmore/src/lib/index.ts:40</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -96,7 +96,7 @@
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>description</dt>
-									<dd><p>T = { user: {id: number, name: string} }
+									<dd><p>D = { user: {id: number, name: string} }
 											Initialize db connection and generate type-safe tables accessor (name and builder)
 										will get</p>
 										<ul>
@@ -115,7 +115,10 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T<span class="tsd-signature-symbol">: </span><a href="_kmore_types_src_lib_model_.html#ttables" class="tsd-signature-type">TTables</a></h4>
+									<h4>D<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DbModel</span></h4>
+								</li>
+								<li>
+									<h4>Dict<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DbDictModel</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -124,10 +127,10 @@
 									<h5>kmoreOpts: <a href="../interfaces/_kmore_src_lib_model_.kmoreopts.html" class="tsd-signature-type">KmoreOpts</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> kTables: <span class="tsd-signature-type">KTablesBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_kmore_src_lib_model_.ktables.html" class="tsd-signature-type">KTables</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> dbDict: <span class="tsd-signature-type">DbDictBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">DbDict</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_kmore_src_lib_model_.dbmodel.html" class="tsd-signature-type">DbModel</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_kmore_src_lib_model_.kmore.html" class="tsd-signature-type">Kmore</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
