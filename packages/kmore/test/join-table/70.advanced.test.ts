@@ -105,7 +105,6 @@ describe(filename, () => {
         rb,
         tables: t,
         aliasColumns: ac,
-        scopedColumns: sc,
       } = kmInst
 
       const cols = [
@@ -119,10 +118,8 @@ describe(filename, () => {
       const ret = await rb.tb_user()
         .innerJoin<UserDetailAlias & UserAlias>(
           t.tb_user_detail,
-          // sc.tb_user.uid,
-          // sc.tb_user_detail.uid,
-          ac.tb_user.uid.tbUserUid, // 'tb_user.uid'
-          ac.tb_user_detail.uid.tbUserDetailUid, // 'tb_user_detail.uid'
+          ac.tb_user.uid.tbUserUid, // instead of sc.
+          ac.tb_user_detail.uid.tbUserDetailUid, // instead of sc.
         )
         .select('name')
         .columns(cols)
@@ -144,7 +141,6 @@ describe(filename, () => {
       const {
         rb,
         tables: t,
-        scopedColumns: sc,
         aliasColumns: ac,
       } = kmInst
 
@@ -159,8 +155,6 @@ describe(filename, () => {
       const ret = await rb.tb_user()
         .innerJoin<UserDetailAlias & UserAlias>(
           t.tb_user_detail,
-          // sc.tb_user.uid,
-          // sc.tb_user_detail.uid,
           ac.tb_user.uid.tbUserUid,
           ac.tb_user_detail.uid.tbUserDetailUid,
         )
