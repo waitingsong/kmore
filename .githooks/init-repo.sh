@@ -20,7 +20,7 @@ git init \
   && git submodule update --init --recursive \
   && echo It may going for a long time. Plese wait... \
   && npm run bootstrap \
-  && git checkout -- .travis.yml appveyor.yml \
+  && git checkout -- .travis.yml \
   && cd .githooks && tsc \
   && node gen-file-from-example.js
 
