@@ -9,7 +9,6 @@
 ![](https://img.shields.io/badge/lang-TypeScript-blue.svg)
 [![Node CI](https://github.com/waitingsong/kmore/workflows/Node%20CI/badge.svg)](https://github.com/waitingsong/kmore/actions)
 [![Build Status](https://travis-ci.org/waitingsong/kmore.svg?branch=master)](https://travis-ci.org/waitingsong/kmore)
-[![Build status](https://ci.appveyor.com/api/projects/status/nkseik96p23fcvpm/branch/master?svg=true)](https://ci.appveyor.com/project/waitingsong/kmore/branch/master)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
