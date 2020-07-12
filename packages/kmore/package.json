@@ -5,13 +5,10 @@
   "description": "A SQL query builder based on knex with powerful TypeScript type support",
   "keywords": [
     "knex",
-    "typed knex",
     "typeorm",
     "sql",
     "query",
     "database",
-    "pg",
-    "postgres",
     "postgresql",
     "oracle",
     "AST",
