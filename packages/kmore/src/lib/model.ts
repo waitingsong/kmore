@@ -31,6 +31,15 @@ export {
 
 export type KnexConfig = Knex.Config
 
+export enum EnumClient {
+  pg = 'pg',
+  mssql = 'mssql',
+  mysql = 'mysql',
+  mysql2 = 'mysql2',
+  sqlite3 = 'sqlite3',
+  oracledb = 'oracledb',
+}
+
 export interface KmoreOpts {
   config: KnexConfig
   options?: Partial<Options>
@@ -85,14 +94,4 @@ export type TbQueryBuilder<TRecord extends TableModel>
 
 export type QueryBuilderExt<TRecord extends TableModel = TableModel, TResult extends TableModel[] = TRecord[]>
  = Knex.QueryBuilder<TRecord, TResult>
-
-
-export enum EnumClient {
-  pg = 'pg',
-  mssql = 'mssql',
-  mysql = 'mysql',
-  mysql2 = 'mysql2',
-  sqlite3 = 'sqlite3',
-  oracledb = 'oracledb',
-}
 
