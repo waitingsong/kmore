@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import {
-  UnionToIntersection,
-  DbModel, TableModel,
+  AliasColumn,
+  DbModel,
+  TableAliasCols,
+  TableModel,
 } from '@waiting/shared-types'
 import type {
   CallExpression,
@@ -13,7 +15,10 @@ import type {
 
 
 export {
-  DbModel, TableModel,
+  AliasColumn,
+  DbModel,
+  TableAliasCols,
+  TableModel,
 }
 
 export enum KmorePropKeys {
@@ -317,34 +322,6 @@ export type DbAliasCols<D extends DbModel = DbModel, DD = void> = {
     ? TableAliasCols<D[tb], DD[tb]>
     : TableAliasCols<D[tb]>
 }
-/**
- * ```
- * @returns if TAC valid
- * ```ts
- * interface {
- *    uid: {
- *      tbUserUid: "tb_user.uid"
- *    },
- *    name: {
- *      tbUserName: "tb_user.name"
- *    }
- * }
- * if TAC void
- * ```ts
- * interface {
- *    uid: Record<string, string>
- *    name: Record<string, string>
- * }
- * ```
- */
-export type TableAliasCols<TModel extends TableModel = TableModel, TAC = void> = {
-  [fld in keyof TModel]: TAC extends void
-    ? KnexColumnsParma
-    : fld extends keyof TAC
-      ? { [out in keyof TAC[fld]]: TAC[fld][out] }
-      : KnexColumnsParma
-}
-
 
 export type TableAlias = string
 export type TableColAlias = string
@@ -415,139 +392,6 @@ export interface LoadVarFromFileOpts {
   options: Options
 }
 
-
-/**
- * output field: inupt field
- * {
- *  uid: 'tb_user_detail.uid',
- *  tbUserDetailUid: 'tb_user_detail.uid',
- *  tbUserDetailAge: 'tb_user_detail.age',
- * }
- */
-export interface KnexColumnsParma {
-  [out: string]: string
-}
-
-
-// type AliasCols = typeof ac_user
-// type TA1 = TableModelFromAlias<User, AliasCols>
-// declare const foo1: TA1['tbUserUid']
-// declare const foo2: TA1['tb_user.uid']
-// declare const foo3: TA1['tb_user.ctime']
-// type J1 = JointTableFromAliasConst<User, AliasCols>
-// type J1k = JointTableFromAliasConstKey<User, AliasCols>
-// type J1v = JointTableFromAliasConstValue<User, AliasCols>
-// type TF1 = TypeFromJointTable<J1>
-
-/**
- * Generate TableAlias type from TableModel and typeof AliasConst
- *
- * @example ```ts
- *  TableModelFromAlias<User, typeof acUser>
- * ```
- * @param T - table model ```ts
- *  interface User {
- *   uid: number
- *   name: string
- *   ctime: Date | string
- *  }
- * ```
- * @param TAliasConst - type from a variable/const, not a interface/type directly ```ts
- *  const acUser = {
- *   uid: { tbUserUid: 'tb_user.uid' },
- *   name: { tbUserName: 'tb_user.name' },
- *   ctime: { tbUserCtime: 'tb_user.ctime' },
- *  } as const
- *  typeof acUser
- * ```
- * @returns ```ts
- *  type {
- *   tbUserUid: number
- *   tbUserName: string
- *   tbUserCtime: Date | string
- *   'tb_user.uid': number
- *   'tb_user.name': string
- *   'tb_user.ctime': Date | string
- *  }
- * ```
- */
-export type TableModelFromAlias<T extends TableModel, TAliasConst extends TableAliasCols<T>>
-   = Readonly<TypeFromJointTable<JointTableFromAliasConst<T, TAliasConst>>>
-
-/**
- *
- * @example ```ts
- * interface UserAlias {
- *  uid: {
- *    tbUserUid: number
- *    'tb_user.uid': number
- *  }
- *  name: {
- *    tbUserName: string
- *    'tb_user.name': string
- *  }
- * }
- * ```
- */
-interface AliasTableModel {
-  [fld: string]: TableModel
-}
-type TypeFromJointTable<T extends AliasTableModel>
-  = OverwriteNeverToUnknown<UnionToIntersection<FlateJointTable<T>>>
-
-
-/**
- * @returns ```ts
- * {
- *  uid: { tbUserUid: number }
- *  name: { tbUserName: string }
- *  ...
- * } & {
- *  uid: { 'tb_user.uid': number }
- *  name: { 'tb_user.name': string }
- * }
- * ```
- */
-type JointTableFromAliasConst<TModel extends TableModel, TAliasConst extends TableAliasCols<TModel>>
-  = JointTableFromAliasConstKey<TModel, TAliasConst> & JointTableFromAliasConstValue<TModel, TAliasConst>
-/**
- * @returns ```ts
- * {
- *  uid: { tbUserUid: number }
- *  name: { tbUserName: string }
- *  ...
- * }
- * ```
- */
-type JointTableFromAliasConstKey<TModel extends TableModel, TAliasConst extends TableAliasCols<TModel>> = {
-  [fld in keyof TModel]: {
-    [output in keyof TAliasConst[fld]]: TModel[fld]
-  }
-}
-/**
- * @returns ```ts
- * {
- *  uid: { 'tb_user.uid': number }
- *  name: { 'tb_user.name': string }
- *  ...
- * }
- * ```
- */
-type JointTableFromAliasConstValue<TModel extends TableModel, TAliasConst extends TableAliasCols<TModel>> = {
-  // [fld in keyof TModel]: Record<TAliasConst[fld], TModel[fld]>
-  [fld in keyof TModel]: {
-    [output in TAliasConst[fld][keyof TAliasConst[fld]]]: TModel[fld]
-  }
-}
-
-type OverwriteNeverToUnknown<T extends any> = T extends TableModel ? {
-  [fld in keyof T]: T[fld] extends never ? unknown : T[fld]
-} : never
-type FlateJointTable<T extends AliasTableModel> = T extends {[fld: string]: infer F}
-  ? F extends TableModel
-    ? {[output in keyof F]: F[output]}
-    : never
-  : never
 
 export type CreateColumnNameFn = (options: CreateColumnNameOpts) => string
 export interface CreateColumnNameOpts {

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
+import { FullTableModelFromDictAlias } from '@waiting/shared-types'
 import {
   DbAliasCols,
   DbCols,
@@ -8,12 +9,10 @@ import {
   DbDictModel,
   DbModel,
   KmorePropKeys,
-  KnexColumnsParma,
   Options,
   Tables,
   TableAliasCols,
   TableModel,
-  TableModelFromAlias,
 } from 'kmore-types'
 import type * as Knex from 'knex'
 
@@ -25,7 +24,6 @@ export {
   DbDictBase,
   DbDictModel,
   DbModel,
-  KnexColumnsParma,
   Options,
   Tables,
   TableAliasCols,
@@ -67,7 +65,7 @@ type DbModelFromAlias<D extends DbModel, AC = any> = AC extends void
   : {
     [tb in keyof D]: tb extends keyof AC
       // @ts-expect-error
-      ? TableModelFromAlias<D[tb], AC[tb]>
+      ? FullTableModelFromDictAlias<D[tb], AC[tb]>
       : never
   }
 

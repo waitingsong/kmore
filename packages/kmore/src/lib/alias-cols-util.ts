@@ -1,7 +1,6 @@
-import {
-  TableAliasCols,
-  KnexColumnsParma,
-} from './model'
+import { AliasColumn } from '@waiting/shared-types'
+
+import { TableAliasCols } from './model'
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,9 +8,9 @@ export function genKnexColumnsParam<T extends TableAliasCols = any>(
   jointTableColumns: T,
   keyArr: ((keyof T) | '*')[] | void,
   useColAliasNameAsOutputName = false,
-): KnexColumnsParma {
+): AliasColumn {
 
-  const ret: KnexColumnsParma = {}
+  const ret: AliasColumn = {}
 
   if (! keyArr || keyArr.includes('*')) {
     Object.keys(jointTableColumns).forEach((fldName) => {
@@ -39,7 +38,7 @@ export function genKnexColumnsParam<T extends TableAliasCols = any>(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function updateProps<T extends TableAliasCols = any>(
-  obj: KnexColumnsParma,
+  obj: AliasColumn,
   key: keyof T,
   value: string,
 ): void {

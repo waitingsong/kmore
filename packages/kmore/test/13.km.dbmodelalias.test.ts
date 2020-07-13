@@ -1,6 +1,8 @@
 import { basename } from '@waiting/shared-core'
-import { Equals } from '@waiting/shared-types'
-import { TableModelFromAlias } from 'kmore-types'
+import {
+  Equals,
+  FullTableModelFromDictAlias,
+} from '@waiting/shared-types'
 import * as assert from 'power-assert'
 
 import { Kmore } from '../src/index'
@@ -9,8 +11,8 @@ import { DbDict as Dict } from './join-table/.kmore'
 import { User, Db, UserDetail } from './test.model'
 
 
-type UserAlias = TableModelFromAlias<User, Dict['aliasColumns']['tb_user']>
-type UserDetailAlias = TableModelFromAlias<UserDetail, Dict['aliasColumns']['tb_user_detail']>
+type UserAlias = FullTableModelFromDictAlias<User, Dict['aliasColumns']['tb_user']>
+type UserDetailAlias = FullTableModelFromDictAlias<UserDetail, Dict['aliasColumns']['tb_user_detail']>
 
 const filename = basename(__filename)
 

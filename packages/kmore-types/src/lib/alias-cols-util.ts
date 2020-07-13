@@ -1,10 +1,10 @@
 import {
-  TableFields,
+  AliasColumn,
+  DbAliasCols,
   DbCols,
   DbModel,
-  DbAliasCols,
   TableAliasCols,
-  KnexColumnsParma,
+  TableFields,
 } from './model'
 import { scopedSnakeToCamel } from './util'
 
@@ -24,7 +24,7 @@ export function genAliasColumns<D extends DbModel>(
       const [colAlias, scopedColName] = field
       // tb_user.uid -> tbUserUid
       const output = scopedSnakeToCamel(scopedColName)
-      const value: KnexColumnsParma = {
+      const value: AliasColumn = {
         [output]: scopedColName,
       }
 
