@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/waitingsong/kmore/compare/v1.1.1...v2.0.0) (2020-07-13)
+
+
+### Features
+
+* **kmore-types:** refactor types ([314c956](https://github.com/waitingsong/kmore/commit/314c956c014fcea88bcc3726e8e9908ad213aebb))
+
+
+
+
+
 ## [1.1.1](https://github.com/waitingsong/kmore/compare/v1.1.0...v1.1.1) (2020-07-12)
 
 **Note:** Version bump only for package kmore
