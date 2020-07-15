@@ -41,7 +41,7 @@ export enum KmorePropKeys {
   'dummy' = 'dymmy',
 }
 
-export interface DbDictModel extends DbDictModelBase {
+export interface DbDictModel {
   [KmorePropKeys.tables]: Record<string, string>
   [KmorePropKeys.columns]: DbCols
   [KmorePropKeys.scopedColumns]: DbCols
