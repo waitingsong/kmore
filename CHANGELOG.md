@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/waitingsong/kmore/compare/v2.0.0...v2.0.1) (2020-07-16)
+
+
+### Bug Fixes
+
+* **kmore-types:** type def of DbDictModel ([d2b11d7](https://github.com/waitingsong/kmore/commit/d2b11d7c41ee088d7fac983b88883d315ed07f23))
+
+
+
+
+
 # [2.0.0](https://github.com/waitingsong/kmore/compare/v1.1.1...v2.0.0) (2020-07-13)
 
 
