@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.2](https://github.com/waitingsong/kmore/compare/v2.0.1...v2.0.2) (2021-01-24)
+
+
+### Bug Fixes
+
+* **egg-kmore:** add missing files ([564cb07](https://github.com/waitingsong/kmore/commit/564cb07a8429c8c071ec3ddc782588cba861bf5b))
+* **egg-kmore:** import ([10a88f8](https://github.com/waitingsong/kmore/commit/10a88f82211f4ce2b438437398ab3989ca34002a))
+* **kmore-types:** getStack() ([2f73158](https://github.com/waitingsong/kmore/commit/2f731587b4f300f5392d9a10728b537b4c3c35c0))
+
+
+
+
+
 ## [2.0.1](https://github.com/waitingsong/kmore/compare/v2.0.0...v2.0.1) (2020-07-16)
 
 
