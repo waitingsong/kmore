@@ -50,7 +50,7 @@ describe(filename, () => {
   describe('Should loading aliasColumns works', () => {
     it('normal', () => {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      const src = tbs_16_10_aliasColumns
+      const src = tbs_18_10_aliasColumns
       const { aliasColumns: retTableCols } = km
 
       assert(retTableCols && Object.keys(retTableCols).length)
@@ -77,7 +77,7 @@ describe(filename, () => {
   describe('Should loading scopedColumns works', () => {
     it('normal', () => {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      const src = tbs_16_10_scopedColumns
+      const src = tbs_18_10_scopedColumns
       const { scopedColumns: retTableCols } = km
 
       assert(retTableCols && Object.keys(retTableCols).length)
@@ -102,7 +102,7 @@ describe(filename, () => {
 
 
 // eslint-disable-next-line no-var
-var tbs_16_10_scopedColumns = {
+var tbs_18_10_scopedColumns = {
   tb_user: {
     uid: 'tb_user.uid',
     name: 'tb_user.name',
@@ -116,7 +116,7 @@ var tbs_16_10_scopedColumns = {
 } as const
 
 // eslint-disable-next-line no-var
-var tbs_16_10_aliasColumns = {
+var tbs_18_10_aliasColumns = {
   tb_user: {
     uid: {
       tbUserUid: 'tb_user.uid',
