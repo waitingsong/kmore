@@ -35,7 +35,7 @@ jobs:
         env:
           CI: true
           # pgsql
-          PGHOST: postgres
+          PGHOST: localhost
           PGUSER: postgres
           PGPASSWORD: postgres
           # redis
