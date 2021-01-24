@@ -27,7 +27,7 @@
   "dependencies": {
     "@waiting/shared-core": "5",
     "@waiting/shared-types": "5",
-    "rxjs": "^6.5.2",
+    "rxjs": "6",
     "rxwalker": "^3.0.0",
     "source-map-support": "^0.5.13"
   },
@@ -35,13 +35,13 @@
     "@types/source-map-support": "*",
     "cross-env": "7",
     "rxrunscript": "5",
-    "typescript": "3"
+    "typescript": "4"
   },
   "peerDependencies": {
-    "typescript": "^3.9"
+    "typescript": "^4.1"
   },
   "engines": {
-    "node": ">=10.16.0"
+    "node": ">=12.13.0"
   },
   "files": [
     "dist"
@@ -56,6 +56,7 @@
     "rp:w": "npm run tsc:w | rollup -wc rollup.config.js",
     "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha",
     "test:browser": "cd .config && npm run browser && cd ..",
+    "test:local": "cross-env TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --parallel=false",
     "tsc": "tsc -p tsconfig.json",
     "tsc:w": "tsc -p tsconfig.json -w"
   },
@@ -79,9 +80,10 @@
       ".ts"
     ],
     "reporter": [
-      "text-summary",
+      "html",
       "json",
-      "html"
+      "text",
+      "text-summary"
     ],
     "all": true
   }

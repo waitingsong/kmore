@@ -11,7 +11,7 @@ import { CliArgs, CmdType, InputOptions } from './model'
 
 export function parseCliArgs(argv: typeof yargs.argv): CliArgs {
   const args: CliArgs = { ...initialCliArgs }
-  const cmdArr: string[] = argv._
+  const cmdArr: string[] = argv._.map(value => value.toString())
 
   args.cmd = parseCmd(cmdArr)
   args.needHelp = !! argv.h

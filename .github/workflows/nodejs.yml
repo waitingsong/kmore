@@ -45,17 +45,17 @@ jobs:
         uses: codecov/codecov-action@v1
 
 
-    # services:
-    #   postgres:
-    #     image: postgres:alpine
-    #     ports:
-    #       - 5432:5432
-    #     env:
-    #       POSTGRES_USER: postgres
-    #       POSTGRES_PASSWORD: postgres
-    #       POSTGRES_DB: db_ci_test
-    #     # needed because the postgres container does not provide a healthcheck
-    #     options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    services:
+      postgres:
+        image: postgres:alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: db_ci_test
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     #   # Label used to access the service container
     #   redis:
     #     image: redis

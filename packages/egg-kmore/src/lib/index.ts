@@ -50,7 +50,7 @@ function createOneClient<D extends DbModel>(
       '[egg-kmore] connecting %s@%s:%s/%s',
       user,
       host,
-      port,
+      port ? port : '',
       database,
     )
   }

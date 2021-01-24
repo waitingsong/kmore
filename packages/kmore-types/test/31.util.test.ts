@@ -202,6 +202,7 @@ describe(filename, () => {
         const ret7 = dictObjectEquals(dict, needle)
         assert(ret7 === true)
 
+        // @ts-expect-error
         delete dict.scopedColumns
         delete needle.scopedColumns
         try {
