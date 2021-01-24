@@ -6,7 +6,7 @@ import {
   DbDictModel,
 } from 'kmore-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as Knex from 'knex'
+import Knex from 'knex'
 
 import { KmorePropKeys } from './config'
 import {
@@ -20,9 +20,6 @@ import {
 } from './model'
 
 
-// workaround for rollup
-const _Knex = Knex
-
 export function bindDbh<D extends DbModel, DD extends DbDictModel | void = void>(
   propDescriptor: PropertyDescriptor,
   kmInst: Kmore<D, DD>,
@@ -31,7 +28,7 @@ export function bindDbh<D extends DbModel, DD extends DbDictModel | void = void>
 
   Object.defineProperty(kmInst, KmorePropKeys.dbh, {
     ...propDescriptor,
-    value: _Knex(config),
+    value: Knex(config),
   })
 
   return kmInst
