@@ -67,7 +67,7 @@
 				<p><a href=""><img src="https://img.shields.io/github/tag/waitingsong/kmore.svg" alt="GitHub tag"></a>
 					<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
 					<img src="https://img.shields.io/badge/lang-TypeScript-blue.svg" alt="">
-					<a href="https://github.com/waitingsong/kmore/actions"><img src="https://github.com/waitingsong/kmore/workflows/Node%20CI/badge.svg" alt="Node CI"></a>
+					<a href="https://github.com/waitingsong/kmore/actions"><img src="https://github.com/waitingsong/kmore/workflows/ci/badge.svg" alt="ci"></a>
 					<a href="https://travis-ci.org/waitingsong/kmore"><img src="https://travis-ci.org/waitingsong/kmore.svg?branch=master" alt="Build Status"></a>
 					<a href="https://conventionalcommits.org"><img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg" alt="Conventional Commits"></a>
 				<a href="https://lernajs.io/"><img src="https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg" alt="lerna"></a></p>
@@ -97,29 +97,29 @@ npm install sqlite3</code></pre>
 				</a>
 				<p>Ensure <code>sourceMap</code> or <code>inlineSourceMap</code> is true in the <code>tsconfig.json</code></p>
 				<pre><code class="language-json">{
-  <span class="hljs-attr">"compilerOptions"</span>: {
-    <span class="hljs-attr">"sourceMap"</span>: <span class="hljs-literal">true</span>
+  <span class="hljs-attr">&quot;compilerOptions&quot;</span>: {
+    <span class="hljs-attr">&quot;sourceMap&quot;</span>: <span class="hljs-literal">true</span>
   },
 }</code></pre>
 				<p>Edit the <code>package.json</code></p>
 				<pre><code class="language-json">{
-  <span class="hljs-attr">"script"</span>: {
-    <span class="hljs-attr">"db:gen"</span>: <span class="hljs-string">"kmore gen --path src/ test/"</span>
+  <span class="hljs-attr">&quot;script&quot;</span>: {
+    <span class="hljs-attr">&quot;db:gen&quot;</span>: <span class="hljs-string">&quot;kmore gen --path src/ test/&quot;</span>
   },
 }</code></pre>
 				<a href="#create-connection" id="create-connection" style="color: inherit; text-decoration: none;">
 					<h3>Create connection</h3>
 				</a>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { KnexConfig, DbModel } <span class="hljs-keyword">from</span> <span class="hljs-string">'kmore'</span>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { KnexConfig, DbModel } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;kmore&#x27;</span>
 
 <span class="hljs-comment">// connection config</span>
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> config: KnexConfig = {
-  client: <span class="hljs-string">'pg'</span>,
+  client: <span class="hljs-string">&#x27;pg&#x27;</span>,
   connection: {
-    host: <span class="hljs-string">'localhost'</span>,
-    user: <span class="hljs-string">'postgres'</span>,
-    password: <span class="hljs-string">'foo'</span>,
-    database: <span class="hljs-string">'db_ci_test'</span>,
+    host: <span class="hljs-string">&#x27;localhost&#x27;</span>,
+    user: <span class="hljs-string">&#x27;postgres&#x27;</span>,
+    password: <span class="hljs-string">&#x27;foo&#x27;</span>,
+    database: <span class="hljs-string">&#x27;db_ci_test&#x27;</span>,
   },
 }
 
@@ -148,19 +148,19 @@ npm install sqlite3</code></pre>
 					<h3>Create tables with instance of knex</h3>
 				</a>
 				<pre><code class="language-ts"><span class="hljs-keyword">await</span> km.dbh.schema
-  .createTable(<span class="hljs-string">'tb_user'</span>, <span class="hljs-function">(<span class="hljs-params">tb</span>) =&gt;</span> {
-    tb.increments(<span class="hljs-string">'uid'</span>)
-    tb.string(<span class="hljs-string">'name'</span>, <span class="hljs-number">30</span>)
-    tb.timestamp(<span class="hljs-string">'ctime'</span>, { useTz: <span class="hljs-literal">false</span> })
+  .createTable(<span class="hljs-string">&#x27;tb_user&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">tb</span>) =&gt;</span> {
+    tb.increments(<span class="hljs-string">&#x27;uid&#x27;</span>)
+    tb.string(<span class="hljs-string">&#x27;name&#x27;</span>, <span class="hljs-number">30</span>)
+    tb.timestamp(<span class="hljs-string">&#x27;ctime&#x27;</span>, { useTz: <span class="hljs-literal">false</span> })
   })
-  .createTable(<span class="hljs-string">'tb_user_detail'</span>, <span class="hljs-function">(<span class="hljs-params">tb</span>) =&gt;</span> {
-    tb.integer(<span class="hljs-string">'uid'</span>)
-    tb.foreign(<span class="hljs-string">'uid'</span>)
-      .references(<span class="hljs-string">'tb_user.uid'</span>)
-      .onDelete(<span class="hljs-string">'CASCADE'</span>)
-      .onUpdate(<span class="hljs-string">'CASCADE'</span>)
-    tb.integer(<span class="hljs-string">'age'</span>)
-    tb.string(<span class="hljs-string">'address'</span>, <span class="hljs-number">255</span>)
+  .createTable(<span class="hljs-string">&#x27;tb_user_detail&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">tb</span>) =&gt;</span> {
+    tb.integer(<span class="hljs-string">&#x27;uid&#x27;</span>)
+    tb.foreign(<span class="hljs-string">&#x27;uid&#x27;</span>)
+      .references(<span class="hljs-string">&#x27;tb_user.uid&#x27;</span>)
+      .onDelete(<span class="hljs-string">&#x27;CASCADE&#x27;</span>)
+      .onUpdate(<span class="hljs-string">&#x27;CASCADE&#x27;</span>)
+    tb.integer(<span class="hljs-string">&#x27;age&#x27;</span>)
+    tb.string(<span class="hljs-string">&#x27;address&#x27;</span>, <span class="hljs-number">255</span>)
   })
   .catch(<span class="hljs-function">(<span class="hljs-params">err: <span class="hljs-built_in">Error</span></span>) =&gt;</span> {
     assert(<span class="hljs-literal">false</span>, err.message)
@@ -173,17 +173,17 @@ npm install sqlite3</code></pre>
 
 <span class="hljs-keyword">await</span> tb_user()
   .insert([
-    { name: <span class="hljs-string">'user1'</span>, ctime: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>() }, <span class="hljs-comment">// ms</span>
-    { name: <span class="hljs-string">'user2'</span>, ctime: <span class="hljs-string">'now()'</span> }, <span class="hljs-comment">// μs</span>
+    { name: <span class="hljs-string">&#x27;user1&#x27;</span>, ctime: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>() }, <span class="hljs-comment">// ms</span>
+    { name: <span class="hljs-string">&#x27;user2&#x27;</span>, ctime: <span class="hljs-string">&#x27;now()&#x27;</span> }, <span class="hljs-comment">// μs</span>
   ])
   .then()
 
 <span class="hljs-keyword">await</span> tb_user_detail()
   .insert([
-    { uid: <span class="hljs-number">1</span>, age: <span class="hljs-number">10</span>, address: <span class="hljs-string">'address1'</span> },
-    { uid: <span class="hljs-number">2</span>, age: <span class="hljs-number">10</span>, address: <span class="hljs-string">'address1'</span> },
+    { uid: <span class="hljs-number">1</span>, age: <span class="hljs-number">10</span>, address: <span class="hljs-string">&#x27;address1&#x27;</span> },
+    { uid: <span class="hljs-number">2</span>, age: <span class="hljs-number">10</span>, address: <span class="hljs-string">&#x27;address1&#x27;</span> },
   ])
-  .returning(<span class="hljs-string">'*'</span>)
+  .returning(<span class="hljs-string">&#x27;*&#x27;</span>)
   .then()</code></pre>
 				<a href="#join-tables" id="join-tables" style="color: inherit; text-decoration: none;">
 					<h3>Join tables</h3>
@@ -209,7 +209,7 @@ npm install sqlite3</code></pre>
 					<h3>Use instance of knex</h3>
 				</a>
 				<pre><code class="language-ts"><span class="hljs-comment">// drop table</span>
-<span class="hljs-keyword">await</span> km.dbh.raw(<span class="hljs-string">`DROP TABLE IF EXISTS "<span class="hljs-subst">${tb}</span>" CASCADE;`</span>).then()
+<span class="hljs-keyword">await</span> km.dbh.raw(<span class="hljs-string">`DROP TABLE IF EXISTS &quot;<span class="hljs-subst">${tb}</span>&quot; CASCADE;`</span>).then()
 
 <span class="hljs-comment">// disconnect</span>
 <span class="hljs-keyword">await</span> km.dbh.destroy()</code></pre>
@@ -223,9 +223,9 @@ npm install sqlite3</code></pre>
 				<a href="#create-connection-1" id="create-connection-1" style="color: inherit; text-decoration: none;">
 					<h3>Create connection</h3>
 				</a>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { KnexConfig, DbModel } <span class="hljs-keyword">from</span> <span class="hljs-string">'kmore'</span>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { KnexConfig, DbModel } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;kmore&#x27;</span>
 <span class="hljs-comment">// this file contains type of the dbDict, created after `npm run db:gen`</span>
-<span class="hljs-keyword">import</span> { DbDict } <span class="hljs-keyword">from</span> <span class="hljs-string">'./.kmore'</span>
+<span class="hljs-keyword">import</span> { DbDict } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./.kmore&#x27;</span>
 
 <span class="hljs-comment">// pass `DbDict` as 2nd generics parameter</span>
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> km = kmore&lt;Db, DbDict&gt;({ config })</code></pre>
@@ -235,9 +235,9 @@ npm install sqlite3</code></pre>
 				<pre><code class="language-ts"><span class="hljs-keyword">type</span> Db = <span class="hljs-keyword">typeof</span> km.DbModel
 <span class="hljs-keyword">type</span> DblAlias = <span class="hljs-keyword">typeof</span> km.DbModelAlias
 
-<span class="hljs-keyword">type</span> User = Db[<span class="hljs-string">'tb_user'</span>]
-<span class="hljs-keyword">type</span> UserAlias = DbAlias[<span class="hljs-string">'tb_user'</span>]
-<span class="hljs-keyword">type</span> UserDetailAlias = DbAlias[<span class="hljs-string">'tb_user_detail'</span>]
+<span class="hljs-keyword">type</span> User = Db[<span class="hljs-string">&#x27;tb_user&#x27;</span>]
+<span class="hljs-keyword">type</span> UserAlias = DbAlias[<span class="hljs-string">&#x27;tb_user&#x27;</span>]
+<span class="hljs-keyword">type</span> UserDetailAlias = DbAlias[<span class="hljs-string">&#x27;tb_user_detail&#x27;</span>]
 
 <span class="hljs-keyword">const</span> {
   rb,
@@ -252,7 +252,7 @@ npm install sqlite3</code></pre>
 ]
 
 <span class="hljs-keyword">const</span> ret = <span class="hljs-keyword">await</span> rb.tb_user()
-  .select(<span class="hljs-string">'name'</span>)
+  .select(<span class="hljs-string">&#x27;name&#x27;</span>)
   .innerJoin&lt;UserDetailAlias &amp; UserAlias&gt;(
     t.tb_user_detail,
     sc.tb_user.uid,
@@ -262,15 +262,15 @@ npm install sqlite3</code></pre>
   .then(<span class="hljs-function"><span class="hljs-params">rows</span> =&gt;</span> rows[<span class="hljs-number">0</span>])
 
 assert(<span class="hljs-built_in">Object</span>.keys(ret).length === <span class="hljs-number">3</span>)
-assert(<span class="hljs-keyword">typeof</span> ret.name === <span class="hljs-string">'string'</span>)
-assert(<span class="hljs-keyword">typeof</span> ret.tbUserUid === <span class="hljs-string">'number'</span>)
-assert(<span class="hljs-keyword">typeof</span> ret.tbUserDetailUid === <span class="hljs-string">'number'</span>)
+assert(<span class="hljs-keyword">typeof</span> ret.name === <span class="hljs-string">&#x27;string&#x27;</span>)
+assert(<span class="hljs-keyword">typeof</span> ret.tbUserUid === <span class="hljs-string">&#x27;number&#x27;</span>)
+assert(<span class="hljs-keyword">typeof</span> ret.tbUserDetailUid === <span class="hljs-string">&#x27;number&#x27;</span>)
 
 <span class="hljs-comment">// typeof the result equals to the following type:</span>
 <span class="hljs-keyword">interface</span> RetType {
-  name: User[<span class="hljs-string">'name'</span>]
-  tbUserUid: UserAlias[<span class="hljs-string">'tbUserUid'</span>]
-  tbUserDetailUid: UserDetailAlias[<span class="hljs-string">'tbUserDetailUid'</span>]
+  name: User[<span class="hljs-string">&#x27;name&#x27;</span>]
+  tbUserUid: UserAlias[<span class="hljs-string">&#x27;tbUserUid&#x27;</span>]
+  tbUserDetailUid: UserDetailAlias[<span class="hljs-string">&#x27;tbUserDetailUid&#x27;</span>]
 }</code></pre>
 				<p>More examples of join see <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/test/join-table/70.advanced.test.ts">joint-table</a></p>
 				<a href="#demo" id="demo" style="color: inherit; text-decoration: none;">
@@ -389,6 +389,5 @@ assert(<span class="hljs-keyword">typeof</span> ret.tbUserDetailUid === <span cl
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>

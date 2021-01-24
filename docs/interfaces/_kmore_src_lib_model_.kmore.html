@@ -84,10 +84,10 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>D<span class="tsd-signature-symbol">: </span><a href="../enums/_kmore_types_src_lib_model_.kmorepropkeys.html#dbmodel" class="tsd-signature-type">DbModel</a></h4>
+						<h4>D<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DbModel</span> = <span class="tsd-signature-type">DbModel</span></h4>
 					</li>
 					<li>
-						<h4>Dict<span class="tsd-signature-symbol">: </span><a href="_kmore_types_src_lib_model_.dbdictmodel.html" class="tsd-signature-type">DbDictModel</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+						<h4>Dict<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DbDictModel</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span> = <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -95,7 +95,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="tsd-signature-type">any</span>
+						<span class="tsd-signature-type">DbDict</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">Kmore</span>
@@ -115,6 +115,10 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.kmore.html#_kmorepropkeys_dbmodel_" class="tsd-kind-icon">[<wbr>Kmore<wbr>Prop<wbr>Keys.<wbr>DbModel]</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.kmore.html#_kmorepropkeys_dbh_" class="tsd-kind-icon">[<wbr>Kmore<wbr>Prop<wbr>Keys.dbh]</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_kmore_src_lib_model_.kmore.html#_kmorepropkeys_reftables_" class="tsd-kind-icon">[<wbr>Kmore<wbr>Prop<wbr>Keys.ref<wbr>Tables]</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.kmore.html#aliascolumns" class="tsd-kind-icon">alias<wbr>Columns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.kmore.html#columns" class="tsd-kind-icon">columns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.kmore.html#scopedcolumns" class="tsd-kind-icon">scoped<wbr>Columns</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_kmore_src_lib_model_.kmore.html#tables" class="tsd-kind-icon">tables</a></li>
 							</ul>
 						</section>
 					</div>
@@ -149,7 +153,7 @@
 							<dt>example</dt>
 							<dd><pre><code class="language-ts"><span class="hljs-keyword">const</span> km = kmore&lt;Db, KDD&gt;({ config })
 <span class="hljs-keyword">type</span> DbRef = <span class="hljs-keyword">typeof</span> km.DbModel
-<span class="hljs-keyword">type</span> User = DbRef[<span class="hljs-string">'tb_user'</span>]  <span class="hljs-comment">// equal to Db['tb_user']</span></code></pre>
+<span class="hljs-keyword">type</span> User = DbRef[<span class="hljs-string">&#x27;tb_user&#x27;</span>]  <span class="hljs-comment">// equal to Db[&#x27;tb_user&#x27;]</span></code></pre>
 							</dd>
 						</dl>
 					</div>
@@ -173,6 +177,94 @@
 							<li>Defined in <a href="https://github.com/waitingsong/kmore/blob/master/packages/kmore/src/lib/model.ts#L58">kmore/src/lib/model.ts:58</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="aliascolumns" class="tsd-anchor"></a>
+					<h3>alias<wbr>Columns</h3>
+					<div class="tsd-signature tsd-kind-icon">alias<wbr>Columns<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"aliasColumns"</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">DbAliasCols</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;aliasColumns&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">DbAliasCols</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_kmore_src_lib_model_.kmore.html">Kmore</a>.<a href="_kmore_src_lib_model_.kmore.html#aliascolumns">aliasColumns</a></p>
+						<ul>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:74</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>For table joint</p>
+							<pre><code class="language-json">{
+  tb_user: {
+    tbUserUid: &quot;tb_user.uid&quot;,
+    tbUserName: &quot;tb_user.name&quot;,
+    ...
+  },
+  tb_user_detail: {
+    tbUserDetailUid: &quot;tb_user_detail.uid&quot;
+  },
+  ...,
+}</code></pre>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="columns" class="tsd-anchor"></a>
+					<h3>columns</h3>
+					<div class="tsd-signature tsd-kind-icon">columns<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"columns"</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">DbCols</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;columns&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">DbCols</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_kmore_src_lib_model_.kmore.html">Kmore</a>.<a href="_kmore_src_lib_model_.kmore.html#columns">columns</a></p>
+						<ul>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:49</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Columns mapping object, tb_name w/o table prefix</p>
+							<pre><code class="language-json">{
+   tb_name: { col_alias: &quot;col_name&quot;, ..., }
+}</code></pre>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="scopedcolumns" class="tsd-anchor"></a>
+					<h3>scoped<wbr>Columns</h3>
+					<div class="tsd-signature tsd-kind-icon">scoped<wbr>Columns<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"scopedColumns"</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">DbCols</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;scopedColumns&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">DbCols</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_kmore_src_lib_model_.kmore.html">Kmore</a>.<a href="_kmore_src_lib_model_.kmore.html#scopedcolumns">scopedColumns</a></p>
+						<ul>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:89</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Columns mapping object, column name with table prefix, eg tb_foo.user</p>
+							<pre><code class="language-json">{
+  tb_user: {
+    uid: &quot;tb_user.uid&quot;,
+    name: &quot;tb_user.name&quot;,
+    ...
+  },
+  tb_user_detail: {...},
+  ...,
+}</code></pre>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="tables" class="tsd-anchor"></a>
+					<h3>tables</h3>
+					<div class="tsd-signature tsd-kind-icon">tables<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"tables"</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">Tables</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Dict</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">&quot;tables&quot;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">Tables</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">D</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_kmore_src_lib_model_.kmore.html">Kmore</a>.<a href="_kmore_src_lib_model_.kmore.html#tables">tables</a></p>
+						<ul>
+							<li>Defined in kmore-types/dist/lib/model.d.ts:40</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Tables alias/name pairs
+							{ tb_name: &quot;tb_name&quot; }</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -224,6 +316,18 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_kmore_src_lib_model_.kmore.html#_kmorepropkeys_reftables_" class="tsd-kind-icon">[<wbr>Kmore<wbr>Prop<wbr>Keys.ref<wbr>Tables]</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_kmore_src_lib_model_.kmore.html#aliascolumns" class="tsd-kind-icon">alias<wbr>Columns</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_kmore_src_lib_model_.kmore.html#columns" class="tsd-kind-icon">columns</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_kmore_src_lib_model_.kmore.html#scopedcolumns" class="tsd-kind-icon">scoped<wbr>Columns</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_kmore_src_lib_model_.kmore.html#tables" class="tsd-kind-icon">tables</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -274,6 +378,5 @@
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
