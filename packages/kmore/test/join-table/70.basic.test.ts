@@ -4,9 +4,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 
 import { kmInst3 as kmInst } from './config'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 type Db = typeof kmInst.DbModel

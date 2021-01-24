@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/indent */
 import { basename } from '@waiting/shared-core'
 import { EqualsExt, FormatIntersect } from '@waiting/shared-types'
-import * as assert from 'power-assert'
 
 import { kmInst } from './config'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 type Db = typeof kmInst.DbModel

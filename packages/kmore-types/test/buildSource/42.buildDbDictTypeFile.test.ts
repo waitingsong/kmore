@@ -7,11 +7,13 @@ import {
   isFileExists,
   readFileAsync,
 } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import rewire = require('rewire')
 
 import { BuildSrcOpts, genDbDictTypeTsFilePath, DbModel, CallerDbMap, BuildSrcRet } from '../../src/index'
 import { initBuildSrcOpts } from '../../src/lib/config'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

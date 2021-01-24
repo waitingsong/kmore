@@ -1,11 +1,13 @@
 import { basename } from '@waiting/shared-core'
 import * as knex from 'knex'
-import * as assert from 'power-assert'
 
 import { kmore, Kmore } from '../src/index'
 
 import { config } from './test.config'
 import { Db, User } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

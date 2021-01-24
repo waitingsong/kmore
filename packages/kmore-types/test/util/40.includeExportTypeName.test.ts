@@ -1,7 +1,9 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 
 import { includeExportTypeName } from '../../src/lib/util'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

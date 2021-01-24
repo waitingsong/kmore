@@ -2,11 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { basename } from '@waiting/shared-core'
 import { Equals } from '@waiting/shared-types'
-import * as assert from 'power-assert'
 
 import { DbDictBase } from '../src/index'
 
 import { Db, KDB } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

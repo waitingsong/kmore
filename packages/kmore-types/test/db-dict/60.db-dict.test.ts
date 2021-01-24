@@ -1,11 +1,13 @@
 import { basename, join, writeFileAsync, unlinkAsync, readFileAsync } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import { run } from 'rxrunscript'
 
 
 import { genDbDictTypeDeclaration, updateDbDictFile } from '../../src/lib/db-dict'
 
 import { kddConst } from './data'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

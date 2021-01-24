@@ -1,8 +1,9 @@
-import * as assert from 'power-assert'
-
 import { genDbDictFromType } from '../src/lib/compiler'
 
 import { Db } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 export const dbDict = genDbDictFromType<Db>()

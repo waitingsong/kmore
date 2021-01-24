@@ -1,10 +1,12 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 
 import { CreateColumnNameOpts } from '../../src'
 import { genDbDictFromBase } from '../../src/lib/util'
 import { dbDict4, dbDict4Base, dbDict4Empty } from '../config/test.config4'
 import { dbDict } from '../test.config'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

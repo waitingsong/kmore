@@ -1,10 +1,12 @@
 import { accessSync } from 'fs'
 
 import { basename, rimraf } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import { tap, finalize, delay } from 'rxjs/operators'
 
 import { runCmd, RunCmdArgs } from '../src/index'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

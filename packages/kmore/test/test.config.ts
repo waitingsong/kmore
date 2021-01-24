@@ -1,8 +1,9 @@
-import * as assert from 'power-assert'
-
 import { KnexConfig, Tables, genDbDictFromType, DbDict } from '../src/index'
 
 import { Db } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 export const config: KnexConfig = {

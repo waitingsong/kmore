@@ -1,6 +1,5 @@
 import { basename } from '@waiting/shared-core'
 import { genDbDictFromType } from 'kmore-types'
-import * as assert from 'power-assert'
 
 import {
   kmore,
@@ -10,6 +9,9 @@ import { initOptions, cacheMap } from '../src/lib/config'
 
 import { config } from './test.config'
 import { Db, DbAlias } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

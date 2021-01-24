@@ -1,7 +1,8 @@
-import * as assert from 'power-assert'
-
 import { DbModel, genDbDictFromType } from '../../src'
 import { User, UserDetail } from '../test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 // will create type alias for equal type declartion to the Db

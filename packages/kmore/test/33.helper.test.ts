@@ -1,5 +1,4 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 
 import {
   kmore,
@@ -10,6 +9,9 @@ import {
 
 import { config } from './test.config'
 import { Db } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

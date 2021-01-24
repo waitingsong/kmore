@@ -3,12 +3,14 @@ import {
   Equals,
   FullTableModelFromDictAlias,
 } from '@waiting/shared-types'
-import * as assert from 'power-assert'
 
 import { Kmore } from '../src/index'
 
 import { DbDict as Dict } from './join-table/.kmore'
 import { User, Db, UserDetail } from './test.model'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 type UserAlias = FullTableModelFromDictAlias<User, Dict['aliasColumns']['tb_user']>

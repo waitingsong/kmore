@@ -1,5 +1,4 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 
 import {
   DbTagMap,
@@ -8,6 +7,9 @@ import {
 import { retrieveLocalTypeItemFromType, genDbDictFromType } from '../src/lib/compiler'
 import { cacheMap } from '../src/lib/config'
 import { buildDbParam } from '../src/lib/util'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

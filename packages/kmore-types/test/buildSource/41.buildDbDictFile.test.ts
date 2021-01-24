@@ -1,6 +1,5 @@
 /* eslint-disable import/first */
 import { basename, pathResolve, normalize } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 import rewire = require('rewire')
 
 import {
@@ -13,6 +12,9 @@ import {
   BuildSrcRet,
 } from '../../src/index'
 import { initOptions, initBuildSrcOpts } from '../../src/lib/config'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

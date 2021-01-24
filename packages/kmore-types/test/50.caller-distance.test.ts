@@ -1,10 +1,12 @@
 import { basename } from '@waiting/shared-core'
-import * as assert from 'power-assert'
 
 import { validateParamTables } from '../src/lib/util'
 
 import { dbDict3 } from './config/test.config3'
 import { dbDict31 } from './config/test.config31'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 const filename = basename(__filename)

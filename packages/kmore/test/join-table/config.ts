@@ -1,10 +1,11 @@
-import * as assert from 'power-assert'
-
 import { kmore, KnexConfig } from '../../src/index'
 import { Db } from '../test.model'
 
 // file .kmore.ts will be automatically generated
 import { DbDict, dbDict } from './.kmore'
+
+// eslint-disable-next-line import/order
+import assert = require('power-assert')
 
 
 export const config: KnexConfig = {
