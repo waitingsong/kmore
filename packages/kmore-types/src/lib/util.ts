@@ -4,7 +4,7 @@ import {
   map, filter, mergeMap, catchError, take, reduce,
 } from 'rxjs/operators'
 import { walk, EntryType, Filepath } from 'rxwalker'
-import * as sourceMapSupport from 'source-map-support'
+import { install } from 'source-map-support'
 
 import { genAliasColumns } from './alias-cols-util'
 import {
@@ -37,6 +37,7 @@ import { genDbScopedCols } from './scoped-cols-util'
 import { pickInfoFromCallerTypeId } from './ts-util'
 
 
+install()
 
 /** Allow empty Object */
 export function validateParamTables(tbs: unknown): void {
@@ -117,23 +118,19 @@ export function getCallerStack(callerDistance: number): CallerInfo {
  */
 export function getStack(depth = 0): CallerInfo {
   // Save original Error.prepareStackTrace
-  let origPrepareStackTrace = Error.prepareStackTrace
+  const origPrepareStackTrace = Error.prepareStackTrace
 
   /* istanbul ignore else */
   if (! origPrepareStackTrace) {
-    sourceMapSupport.install()
-    if (! Error.prepareStackTrace) {
-      throw new Error('Error.prepareStackTrace not defined')
-    }
-    origPrepareStackTrace = Error.prepareStackTrace
+    throw new Error('Error.prepareStackTrace not defined')
   }
   // void else in debug hooked by source-map-support already
 
   // Override with function that just returns `stack`
   Error.prepareStackTrace = function(_err, stack) {
     const target = stack[depth + 1]
-    // @ts-expect-error
-    return origPrepareStackTrace(_err, [target])
+    const ret = origPrepareStackTrace(_err, [target])
+    return ret
   }
 
   const limit = Error.stackTraceLimit
