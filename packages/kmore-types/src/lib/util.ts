@@ -128,12 +128,11 @@ export function getStack(depth = 0): CallerInfo {
   }
   // void else in debug hooked by source-map-support already
 
-  const patchedPrepareStackTrace = Error.prepareStackTrace
   // Override with function that just returns `stack`
   Error.prepareStackTrace = function(_err, stack) {
     const target = stack[depth + 1]
     // @ts-expect-error
-    return patchedPrepareStackTrace(_err, [target])
+    return origPrepareStackTrace(_err, [target])
   }
 
   const limit = Error.stackTraceLimit
