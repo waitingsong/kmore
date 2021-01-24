@@ -117,7 +117,7 @@ export function getCallerStack(callerDistance: number): CallerInfo {
  */
 export function getStack(depth = 0): CallerInfo {
   // Save original Error.prepareStackTrace
-  const origPrepareStackTrace = Error.prepareStackTrace
+  let origPrepareStackTrace = Error.prepareStackTrace
 
   /* istanbul ignore else */
   if (! origPrepareStackTrace) {
@@ -125,6 +125,7 @@ export function getStack(depth = 0): CallerInfo {
     if (! Error.prepareStackTrace) {
       throw new Error('Error.prepareStackTrace not defined')
     }
+    origPrepareStackTrace = Error.prepareStackTrace
   }
   // void else in debug hooked by source-map-support already
 
