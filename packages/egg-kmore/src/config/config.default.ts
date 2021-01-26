@@ -21,3 +21,4 @@ export const kmore: EggKmoreConfig<DbModel> = {
   // },
   default: defaultClientOpts,
 }
+

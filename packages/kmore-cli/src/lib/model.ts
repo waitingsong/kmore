@@ -18,3 +18,4 @@ export interface RunCmdArgs {
 export interface CliArgs extends RunCmdArgs {
   needHelp: boolean
 }
+
