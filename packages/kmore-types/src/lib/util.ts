@@ -37,8 +37,6 @@ import { genDbScopedCols } from './scoped-cols-util'
 import { pickInfoFromCallerTypeId } from './ts-util'
 
 
-install()
-
 /** Allow empty Object */
 export function validateParamTables(tbs: unknown): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -118,17 +116,24 @@ export function getCallerStack(callerDistance: number): CallerInfo {
  */
 export function getStack(depth = 0): CallerInfo {
   // Save original Error.prepareStackTrace
-  const origPrepareStackTrace = Error.prepareStackTrace
+  let origPrepareStackTrace = Error.prepareStackTrace
 
   /* istanbul ignore else */
   if (! origPrepareStackTrace) {
-    throw new Error('Error.prepareStackTrace not defined')
+    // MUST installing inner getStack()
+    install()
+    /* istanbul ignore else */
+    if (! Error.prepareStackTrace) {
+      throw new Error('Error.prepareStackTrace not defined')
+    }
+    origPrepareStackTrace = Error.prepareStackTrace
   }
   // void else in debug hooked by source-map-support already
 
   // Override with function that just returns `stack`
   Error.prepareStackTrace = function(_err, stack) {
     const target = stack[depth + 1]
+    // @ts-expect-error
     const ret = origPrepareStackTrace(_err, [target])
     return ret
   }
