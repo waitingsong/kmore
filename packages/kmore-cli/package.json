@@ -1,7 +1,7 @@
 {
   "name": "kmore-cli",
   "author": "waiting",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Command line to generate dicts from ts source files for kmore",
   "keywords": [
     "kmore",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@waiting/shared-core": "5",
     "@waiting/shared-types": "5",
-    "kmore-types": "^2.0.4",
+    "kmore-types": "^2.0.5",
     "rxjs": "6",
     "yargs": "16"
   },

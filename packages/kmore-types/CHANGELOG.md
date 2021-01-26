@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/waitingsong/kmore/compare/v2.0.4...v2.0.5) (2021-01-26)
+
+
+### Bug Fixes
+
+* **kmore-types:** loading position of source-map-support ([b5f8c20](https://github.com/waitingsong/kmore/commit/b5f8c20745ccc592340c687af9ee4e66f1d6ec28))
+
+
+
+
+
 ## [2.0.4](https://github.com/waitingsong/kmore/compare/v2.0.3...v2.0.4) (2021-01-26)
 
 **Note:** Version bump only for package kmore-types
