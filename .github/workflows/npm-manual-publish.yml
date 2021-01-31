@@ -25,19 +25,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - name: Verify
-        run: |
-          echo $GITHUB_REF
-          # echo ${{ github.ref }}
-          uname -a
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get -qq -y update > /dev/null
-          apt-get -qq -y install dnsutils jq net-tools > /dev/null
-          netstat -tunpl
-          dig httpbin
-          curl http://httpbin/get
-        env:
-          CI: true
 
       - name: npm build
         run: |
@@ -68,8 +55,13 @@ jobs:
         uses: codecov/codecov-action@v1
 
     services:
-      httpbin:
-        image: kennethreitz/httpbin
+      postgres:
+        image: postgres:alpine
         ports:
-          - 80:80 # no 443
-
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: db_ci_test
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
