@@ -25,6 +25,20 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Verify
+        run: |
+          echo $GITHUB_REF
+          # echo ${{ github.ref }}
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get -qq -y update > /dev/null
+          apt-get -qq -y install dnsutils jq net-tools > /dev/null
+          uname -a
+          # github project/settings/Secrets/New repository secret: NPM_TOKEN
+          npm whoami
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: npm build
         run: |
@@ -43,9 +57,11 @@ jobs:
 
       - name: npm publish
         run: |
-          git config --global user.name 'github-actions[bot]'
+          git config user.name $GITHUB_ACTOR
+          git config user.email gh-actions-${GITHUB_ACTOR}@github.com
           # npm run pub major
-          bash .scripts/publish.sh --conventional-commits --create-release github ${{ github.event.inputs.semver }}
+          bash .scripts/publish.sh --yes --conventional-commits --create-release github ${{ github.event.inputs.semver }}
+          git push -v origin --follow-tags
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
