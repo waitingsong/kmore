@@ -36,7 +36,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types": "6",
+    "@waiting/shared-types": "7",
     "kmore": "^2.0.5",
     "kmore-cli": "^2.0.5"
   },
