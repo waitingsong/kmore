@@ -9,6 +9,7 @@ parserOptions:
 rules:
   # Use tsconfig.json noUnusedLocals:true instead
   "@typescript-eslint/no-unused-vars": 0
+  "node/no-unpublished-import": ['error', { "tryExtensions": [".ts"] }]
   '@typescript-eslint/no-unsafe-return': 0
   '@typescript-eslint/no-unsafe-member-access': 0
   '@typescript-eslint/no-unsafe-assignment': 0

@@ -2,15 +2,7 @@
 
 name: ci
 
-on:
-  push:
-    # branches-ignore:
-    #   - release
-    # tags-ignore:
-    #   - v*
-  pull_request:
-    # branches-ignore:
-    #   - release
+on: [push, pull_request]
 
 jobs:
   build:
@@ -43,13 +35,15 @@ jobs:
         run: |
           openssl version
           node -v
-          npm i -g lerna
+          npm i -g lerna nyc rollup
           npm run bootstrap
           npm run build --if-present
+        env:
+          CI: true
       - name: npm ci
         run: |
           # lint must after build
-          lerna run lint:nofix
+          npm run lint:s
           npm run ci
         env:
           CI: true
