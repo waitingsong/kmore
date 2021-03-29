@@ -31,12 +31,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types": "7",
+    "@waiting/shared-types": "8",
     "kmore-types": "^2.0.5",
     "rxjs": "6"
   },
   "devDependencies": {
-    "@waiting/shared-core": "7",
+    "@waiting/shared-core": "8",
     "cross-env": "7",
     "knex": "^0.21.0",
     "pg": "^8.2.1"
