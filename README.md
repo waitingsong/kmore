@@ -258,21 +258,21 @@ This repository contains all these packages. Below you will find a summary of ea
 [`kmore-cli`]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-cli
 [`egg-kmore`]: https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore
 
-[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=86400
+[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=7200
 [kmore-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore/CHANGELOG.md
 [kmore-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
 [kmore-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
 [kmore-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore
 [kmore-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore#info=devDependencies
 
-[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=86400
+[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=7200
 [types-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-types/CHANGELOG.md
 [types-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
 [types-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
 [types-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-types
 [types-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-types#info=devDependencies
 
-[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=86400
+[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=7200
 [cli-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-clie/CHANGELOG.md
 [cli-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
 [cli-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
@@ -280,7 +280,7 @@ This repository contains all these packages. Below you will find a summary of ea
 [cli-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-cli#info=devDependencies
 
 
-[egg-svg]: https://img.shields.io/npm/v/egg-kmore.svg?maxAge=86400
+[egg-svg]: https://img.shields.io/npm/v/egg-kmore.svg?maxAge=7200
 [egg-ch]: https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore/CHANGELOG.md
 [egg-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore
 [egg-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore
