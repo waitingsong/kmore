@@ -3,13 +3,12 @@
  * kmore-cli
  * command: gen  case insensitive
  */
-
-import * as yargs from 'yargs'
+import yargs from 'yargs'
 
 import { genCmdHelp, helpDefault } from '../lib/helper'
 import { runCmd } from '../lib/index'
-import { CliArgs } from '../lib/model'
-import { parseCliArgs, parseCliOpts } from '../lib/parse-opts'
+import { parseCliArgs, parseCliOpts } from '../lib/process-opts'
+import { CliArgs } from '../lib/types'
 // log(yargs.argv)
 
 let args!: CliArgs

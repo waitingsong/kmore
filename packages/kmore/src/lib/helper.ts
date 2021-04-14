@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 
-import { KnexConfig, EnumClient } from './model'
+import { EnumClient, KnexConfig } from './types'
 
 
 export async function getCurrentTime(
@@ -9,9 +9,9 @@ export async function getCurrentTime(
   clientType: KnexConfig['client'],
 ): Promise<string> {
 
-  const res = await dbh.raw('SELECT now() AS currenttime;')
-
   if (typeof clientType === 'string' && clientType) {
+    const res = await dbh.raw('SELECT now() AS currenttime;')
+
     switch (clientType) {
       case EnumClient.pg:
         return parseRespCommon(res)
@@ -23,9 +23,9 @@ export async function getCurrentTime(
         return parseRespMysql2(res)
 
       default:
-        throw new TypeError(`Unsupported client value: '${clientType}' for getCurrentTime().
-        Only ${EnumClient.pg}, ${EnumClient.mysql}, ${EnumClient.mysql2} so far.
-        `)
+        console.warn(`Unsupported client value: '${clientType}' for getCurrentTime().
+        Only ${EnumClient.pg}, ${EnumClient.mysql}, ${EnumClient.mysql2} so far. `)
+        return ''
     }
   }
   else {

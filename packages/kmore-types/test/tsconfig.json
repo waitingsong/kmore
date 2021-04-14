@@ -6,6 +6,7 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "noUnusedLocals": false,
+    "strictPropertyInitialization": false,
     "target": "ESNEXT"
   },
   "include": [

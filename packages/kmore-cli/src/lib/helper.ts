@@ -1,5 +1,5 @@
 import { cmdSet, tw2 } from './config'
-import { CmdType } from './model'
+import { CmdType } from './types'
 
 
 export function genCmdHelp(command: CmdType | ''): string {

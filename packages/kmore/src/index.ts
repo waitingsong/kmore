@@ -1,11 +1,14 @@
 
 export * from './lib/index'
-export * from './lib/model'
-export * from './lib/helper'
-
 export {
-  BuildSrcOpts,
-  genDbDictFromType,
-  PathReWriteRule,
+  DbDict,
+  DbDictType,
+  DictTables,
+  DictColumns,
+  DictScoped,
+  DictAlias,
+  ScopedColumnsType,
+  AliasColumnsType,
+  genDbDict,
 } from 'kmore-types'
 

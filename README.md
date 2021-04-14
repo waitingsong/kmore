@@ -32,14 +32,6 @@ npm install sqlite3
 ## Basic usage
 
 ### Build configuration:
-Ensure `sourceMap` or `inlineSourceMap` is true in the `tsconfig.json`
-```json
-{
-  "compilerOptions": {
-    "sourceMap": true
-  },
-}
-```
 
 Edit the `package.json`
 ```json
@@ -52,7 +44,7 @@ Edit the `package.json`
 
 ### Create connection
 ```ts
-import { KnexConfig, DbModel } from 'kmore'
+import { KnexConfig, kmoreFactory, genDbDict } from 'kmore'
 
 // connection config
 export const config: KnexConfig = {
@@ -66,26 +58,24 @@ export const config: KnexConfig = {
 }
 
 // Define database model
-export interface Db extends DbModel {
-  tb_user: User
-  tb_user_detail: UserDetail
+export interface Db {
+  tb_user: UserDo
+  tb_user_ext: UserExtDo
 }
 
-export interface User {
+export interface UserDo {
   uid: number
   name: string
-  ctime: string
+  ctime: Date
 }
-export interface UserDetail {
+export interface UserExtDo {
   uid: number
   age: number
   address: string
 }  
 
-export const km = kmore<Db>({ config })
-// or
-const dict = genDbDictFromType<Db>()
-export const km = kmore<Db>({ config }, dict)
+const dict = genDbDict<Db>()
+export const km = kmoreFactory({ config, dict })
 ```
 
 ### Create tables with instance of knex
@@ -96,7 +86,7 @@ await km.dbh.schema
     tb.string('name', 30)
     tb.timestamp('ctime', { useTz: false })
   })
-  .createTable('tb_user_detail', (tb) => {
+  .createTable('tb_user_ext', (tb) => {
     tb.integer('uid')
     tb.foreign('uid')
       .references('tb_user.uid')
@@ -113,16 +103,16 @@ await km.dbh.schema
 ### Inert rows via auto generated table accessor
 ```ts
 // auto generated accessort tb_user() and tb_user_detail() on km.rb
-const { tb_user, tb_user_detail } = km.rb
+const { ref_tb_user, ref_tb_user_detail } = km.refTables
 
-await tb_user()
+await ref_tb_user()
   .insert([
     { name: 'user1', ctime: new Date() }, // ms
     { name: 'user2', ctime: 'now()' }, // μs
   ])
   .then()
 
-await tb_user_detail()
+await ref_tb_user_detail()
   .insert([
     { uid: 1, age: 10, address: 'address1' },
     { uid: 2, age: 10, address: 'address1' },

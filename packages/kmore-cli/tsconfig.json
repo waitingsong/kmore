@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "declaration": true,
+    "declaration": false,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
@@ -9,12 +9,15 @@
     "moduleResolution": "node",
     "newLine": "lf",
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
     "pretty": true,
     "skipLibCheck": true,
+    "sourceMap": false,
     "strict": true,
+    "strictPropertyInitialization": false,
     "target": "ES2019",
     "types" : ["node", "mocha"]
   },

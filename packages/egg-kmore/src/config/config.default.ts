@@ -1,6 +1,4 @@
-import { DbModel } from 'kmore'
-
-import { EggKmoreConfig, DefaultClientOpts } from '../lib/model'
+import { EggKmoreConfig, DefaultClientOpts } from '../lib/types'
 
 
 export const defaultClientOpts: DefaultClientOpts = {
@@ -11,7 +9,7 @@ export const defaultClientOpts: DefaultClientOpts = {
  * egg-kmore default config
  * @member Config#kmore
  */
-export const kmore: EggKmoreConfig<DbModel> = {
+export const kmore: EggKmoreConfig = {
   app: true,
   agent: false,
   // client: master,

@@ -20,7 +20,7 @@
   "es2015": "",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.ts",
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
@@ -38,25 +38,33 @@
   "devDependencies": {
     "@waiting/shared-core": "8",
     "cross-env": "7",
-    "knex": "^0.21.0",
+    "knex": "^0.95.0",
     "pg": "^8.2.1"
   },
   "peerDependencies": {
-    "knex": ">=0.21.0",
-    "typescript": "4"
+    "knex": ">=0.95.0",
+    "typescript": ">=4.1"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.15.0"
   },
   "files": [
+    "src/**/*.ts",
+    "bin/*.js",
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "npm run tsc && npm run rp",
-    "clean": "rm -rf dist/* .vscode/.tsbuildinfo .vscode/.tsbuildinfo.* ",
-    "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc mocha",
+    "clean": "rm -rf dist/* -rf && npm run clean:lock && npm run clean:cache",
+    "clean:cache": "rm -rf .eslintcache .vscode/.tsbuildinfo .vscode/.tsbuildinfo.*",
+    "clean:lock": "rm package-lock.json -f",
+    "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json nyc mocha --parallel=false",
     "lint": "eslint --fix --cache {src,test}/**/*.ts",
     "lint:nofix": "eslint --cache {src,test}/**/*.ts",
+    "purge": "npm run clean && rm node_modules -rf",
     "rp": "rollup -c rollup.config.js",
     "rp:w": "npm run tsc:w | rollup -wc rollup.config.js",
     "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha",

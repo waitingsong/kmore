@@ -1,9 +1,9 @@
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 
-import { kmore, Kmore, getCurrentTime, EnumClient } from '../src/index'
+import { kmoreFactory, Kmore, getCurrentTime, EnumClient } from '../src/index'
 
-import { config } from './test.config'
-import { User, Db, UserDetail } from './test.model'
+import { config, dbDict } from './test.config'
+import { Db, UserDo, UserExtDo } from './test.model'
 
 // eslint-disable-next-line import/order
 import assert = require('power-assert')
@@ -19,8 +19,8 @@ export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<
 }
 
 export async function initDb(): Promise<void> {
-  const km: Kmore<Db> = kmore<Db>({ config })
-  await dropTables(km.dbh, Object.values(km.tables))
+  const km = kmoreFactory({ config, dict: dbDict })
+  await dropTables(km.dbh, Object.values(km.dict.tables))
 
   const iso = await getTransactionIsolation(km.dbh)
   console.log(`transaction_isolation: ${iso}`)
@@ -28,33 +28,37 @@ export async function initDb(): Promise<void> {
 
   await initTable(km)
   await initUser(km)
-  await initUserDetail(km)
+  await initUserExt(km)
   await km.dbh.destroy()
 }
 
 async function initTable(km: Kmore<Db>): Promise<void> {
-  assert(km.tables && Object.keys(km.tables).length > 0)
+  const { dict } = km
+  assert(dict.tables && Object.keys(dict.tables).length > 0)
 
   const time = await getCurrentTime(km.dbh, config.client)
   assert(time)
   console.info(`CurrrentTime: ${time}`)
 
+  const { tables, scoped } = km.dict
+  const { tb_user, tb_user_ext } = dict.columns
+
   await km.dbh.schema
-    .createTable('tb_user', (tb) => {
-      tb.increments('uid').primary()
-      tb.string('name', 30)
-      tb.timestamp('ctime', { useTz: false })
+    .createTable(tables.tb_user, (tb) => {
+      tb.increments(tb_user.uid).primary()
+      tb.string(tb_user.name, 30)
+      tb.timestamp(tb_user.ctime, { useTz: false })
     })
-    .createTable('tb_user_detail', (tb) => {
+    .createTable(tables.tb_user_ext, (tb) => {
       config.client === EnumClient.mysql || config.client === EnumClient.mysql2
-        ? tb.integer('uid').unsigned().primary()
-        : tb.integer('uid').primary()
-      tb.foreign('uid')
-        .references('tb_user.uid')
+        ? tb.integer(tb_user_ext.uid).unsigned().primary()
+        : tb.integer(tb_user_ext.uid).primary()
+      tb.foreign(tb_user_ext.uid)
+        .references(scoped.tb_user.uid) // 'tb_user.uid'
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
-      tb.integer('age')
-      tb.string('address', 255)
+      tb.integer(tb_user_ext.age)
+      tb.string(tb_user_ext.address, 255)
     })
     .catch((err: Error) => {
       assert(false, err.message)
@@ -64,14 +68,18 @@ async function initTable(km: Kmore<Db>): Promise<void> {
 
 
 async function initUser(km: Kmore<Db>): Promise<void> {
-  const { rb } = km
-  const { tb_user } = km.rb
+  const { ref_tb_user } = km.refTables
+  const { tb_user } = km.dict.columns
 
   // insert
-  await km.rb.tb_user()
+  await ref_tb_user()
     .insert([
       { name: 'user1', ctime: new Date() }, // ms
-      { name: 'user2', ctime: 'now()' }, // μs
+      // { name: 'user2', ctime: 'now()' }, // μs
+      {
+        [tb_user.name]: 'user2',
+        [tb_user.ctime]: 'now()', // us
+      },
     ])
     .returning('*')
     .then((rows) => {
@@ -84,11 +92,12 @@ async function initUser(km: Kmore<Db>): Promise<void> {
 
 }
 
-export function validateUserRows(rows: Partial<User>[]): void {
+export function validateUserRows(rows: Partial<UserDo>[]): void {
   assert(Array.isArray(rows) && rows.length > 0)
 
   rows.forEach((row) => {
     assert(row && row.uid)
+    assert(typeof row.ctime === 'object')
 
     switch (row.uid) {
       case 1:
@@ -105,35 +114,34 @@ export function validateUserRows(rows: Partial<User>[]): void {
   })
 }
 
-async function initUserDetail(km: Kmore<Db>): Promise<void> {
-  const { rb } = km
-  const { tb_user_detail } = km.rb
+async function initUserExt(km: Kmore<Db>): Promise<void> {
+  const { ref_tb_user_ext } = km.refTables
 
   // insert
-  await tb_user_detail()
+  await ref_tb_user_ext()
     .insert([
       { uid: 1, age: 10, address: 'address1' },
       { uid: 2, age: 10, address: 'address1' },
     ])
     .returning('*')
     .then((rows) => {
-      validateUserDetailRows(rows)
+      validateUserExtRows(rows)
       return rows
     })
     .catch((err: Error) => {
       assert(false, err.message)
     })
 
-  const countRes = await rb.tb_user_detail().count()
+  const countRes = await km.refTables.ref_tb_user_ext().count()
   assert(
     countRes && countRes[0] && countRes[0].count === '2',
     'Should count be "2"',
   )
 
   // validate insert result
-  await km.rb.tb_user_detail().select('*')
+  await ref_tb_user_ext().select('*')
     .then((rows) => {
-      validateUserDetailRows(rows)
+      validateUserExtRows(rows)
       return rows
     })
     .catch((err: Error) => {
@@ -142,7 +150,7 @@ async function initUserDetail(km: Kmore<Db>): Promise<void> {
 
 }
 
-export function validateUserDetailRows(rows: Partial<UserDetail>[]): void {
+export function validateUserExtRows(rows: Partial<UserExtDo>[]): void {
   assert(Array.isArray(rows) && rows.length > 0)
 
   rows.forEach((row) => {
@@ -182,3 +190,4 @@ async function setTimeZone(dbh: Kmore['dbh'], zone: string): Promise<string> {
       return rows.rows[0] ? rows.rows[0].TimeZone : 'N/A'
     })
 }
+

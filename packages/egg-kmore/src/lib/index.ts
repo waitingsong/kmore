@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable import/no-extraneous-dependencies */
 import assert from 'assert'
 
-// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line node/no-unpublished-import
 import { Agent, Application } from 'egg'
 import {
-  kmore,
-  DbModel,
+  kmoreFactory,
   Kmore,
   KnexConfig,
   getCurrentTime,
   EnumClient,
 } from 'kmore'
 
-import { ClientOpts } from './model'
+import { ClientOpts } from './types'
 
 
 let count = 0
@@ -21,8 +21,8 @@ export default (app: Application | Agent): void => {
   app.addSingleton('kmore', createOneClient)
 }
 
-function createOneClient<D extends DbModel>(
-  clientOpts: ClientOpts<D>,
+function createOneClient(
+  clientOpts: ClientOpts,
   app: Application | Agent,
 ) {
 
@@ -58,12 +58,10 @@ function createOneClient<D extends DbModel>(
     assert(false, '[egg-kmore] database connect config are required on config')
   }
 
-  const client = kmore<D>(
-    {
-      config: clientOpts.knexConfig,
-    },
-    clientOpts.dbDict,
-  )
+  const client = kmoreFactory({
+    config: clientOpts.knexConfig,
+    dict: clientOpts.dict,
+  })
 
   if (clientOpts.waitConnected) {
     checkConnected(app, clientOpts.knexConfig, client)
@@ -77,10 +75,10 @@ function createOneClient<D extends DbModel>(
 }
 
 
-function checkConnected<T extends DbModel>(
+function checkConnected(
   app: Application | Agent,
   knexConfig: KnexConfig,
-  clientInstInst: Kmore<T>,
+  clientInstInst: Kmore,
 ): void {
 
   const { client } = knexConfig

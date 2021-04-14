@@ -1,41 +1,59 @@
-/* eslint-disable @typescript-eslint/indent */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { basename } from '@waiting/shared-core'
 
-import { kmInst3 as kmInst } from './config'
+import { kmoreFactory, Kmore } from '../../src/index'
+import { config, dbDict } from '../test.config'
 
 // eslint-disable-next-line import/order
 import assert = require('power-assert')
 
 
-type Db = typeof kmInst.DbModel
-
-type User = Db['tb_user']
-type UserDetail = Db['tb_user_detail']
-
-
 const filename = basename(__filename)
 
 describe(filename, () => {
+  const km = kmoreFactory({ config, dict: dbDict })
+  type Db = typeof km.DbModel
+  type UserDo = Db['tb_user']
+  type UserExtDo = Db['tb_user_ext']
+
+  const validateUserRows = (rows: Partial<UserDo>[]): void => {
+    assert(Array.isArray(rows) && rows.length === 1)
+
+    rows.forEach((row) => {
+      assert(row && row.uid)
+
+      switch (row.uid) {
+        case 1:
+          assert(row.name === 'user1', JSON.stringify(row))
+          break
+        default:
+          assert(false, `Should row.uid be 1 or 2, but got ${row.uid ? row.uid : 'n/a'}`)
+          break
+      }
+    })
+  }
+
+
   before(() => {
-    assert(kmInst.tables && Object.keys(kmInst.tables).length > 0)
+    assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
+  })
+
+  after(async () => {
+    await km.dbh.destroy() // !
   })
 
   describe('Should inner join table works', () => {
-    it('tb_user join tb_user_detail via scopedColumns', async () => {
-      const { tables: t, rb, scopedColumns: sc } = kmInst
+    it('tb_user join tb_user_ext', async () => {
+      const { refTables } = km
+      const { tables, scoped } = km.dict
 
-      await rb.tb_user()
-        .innerJoin<UserDetail>(
-          t.tb_user_detail,
-          sc.tb_user.uid,
-          sc.tb_user_detail.uid,
-        )
+      await refTables.ref_tb_user()
+        .innerJoin<UserExtDo>(
+        tables.tb_user_ext,
+        scoped.tb_user.uid,
+        scoped.tb_user_ext.uid,
+      )
         .select('*')
-        .where(sc.tb_user.uid, 1)
+        .where(scoped.tb_user.uid, 1)
         .then((rows) => {
           validateUserRows(rows)
           const [row] = rows
@@ -46,17 +64,18 @@ describe(filename, () => {
         })
     })
 
-    it.skip('tb_user join tb_user_detail via scopedColumns and KeyExcludeOptional', async () => {
-      const { tables: t, rb, scopedColumns: sc } = kmInst
+    it('tb_user join tb_user_ext 2', async () => {
+      const { refTables } = km
+      const { tables, scoped } = km.dict
 
-      await rb.tb_user()
-        .select(sc.tb_user.uid, sc.tb_user.name)
+      await refTables.ref_tb_user()
+        .select(scoped.tb_user.uid, scoped.tb_user.name)
         .innerJoin(
-          t.tb_user_detail,
-          sc.tb_user.uid,
-          sc.tb_user_detail.uid,
+          tables.tb_user_ext,
+          scoped.tb_user.uid,
+          scoped.tb_user_ext.uid,
         )
-        .where(sc.tb_user.uid, 1)
+        .where(scoped.tb_user.uid, 1)
         .then((rows) => {
           validateUserRows(rows)
           const [row] = rows
@@ -66,65 +85,8 @@ describe(filename, () => {
           return rows
         })
     })
-
-    it.skip('tb_user join tb_user_detail via scopedColumns and KeyExcludeOptional/key', async () => {
-      const { tables: t, rb, scopedColumns: sc } = kmInst
-
-      await rb.tb_user()
-        .select()
-        .innerJoin(
-          t.tb_user_detail,
-          sc.tb_user.uid,
-          sc.tb_user_detail.uid,
-        )
-        .where(sc.tb_user.uid, 1)
-        .then((rows) => {
-          validateUserRows(rows)
-          const [row] = rows
-          // assert(row && row.uid)
-          assert(row && row.name)
-          // types of row has no key `age`, but var row has key `age`
-          // @ts-ignore
-          assert(row && typeof row.age === 'number')
-          return rows
-        })
-    })
-
-
-    it('tb_user join tb_user_detail', async () => {
-      const { tables: t, rb } = kmInst
-
-      await rb.tb_user()
-        .select(`${t.tb_user}.uid`, `${t.tb_user}.name`)
-        .innerJoin(
-          t.tb_user_detail,
-          `${t.tb_user}.uid`,
-          `${t.tb_user_detail}.uid`,
-        )
-        .where(`${t.tb_user}.uid`, 1)
-        .then((rows) => {
-          validateUserRows(rows)
-          return rows
-        })
-    })
   })
 
 })
 
 
-function validateUserRows(rows: Partial<User>[]): void {
-  assert(Array.isArray(rows) && rows.length === 1)
-
-  rows.forEach((row) => {
-    assert(row && row.uid)
-
-    switch (row.uid) {
-      case 1:
-        assert(row.name === 'user1', JSON.stringify(row))
-        break
-      default:
-        assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
-        break
-    }
-  })
-}

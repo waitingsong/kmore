@@ -9,4 +9,6 @@ rules:
   '@typescript-eslint/no-unsafe-member-access': 0
   '@typescript-eslint/no-unsafe-assignment': 0
   unicorn/filename-case: 0
+  lines-between-class-members: 0
+  padded-blocks: 0
 

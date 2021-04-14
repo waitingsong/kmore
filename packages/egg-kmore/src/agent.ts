@@ -1,13 +1,13 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable import/no-extraneous-dependencies */
+// eslint-disable-next-line node/no-unpublished-import
 import { Agent } from 'egg'
-import { DbModel } from 'kmore'
 
 import kmore from './lib/index'
-import { EggKmoreConfig } from './lib/model'
+import { EggKmoreConfig } from './lib/types'
 
 
 export default (agent: Agent): void => {
-  if ((agent.config.kmore as EggKmoreConfig<DbModel>).agent) {
+  if ((agent.config.kmore as EggKmoreConfig).agent) {
     kmore(agent)
   }
 }

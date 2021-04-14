@@ -1,13 +1,13 @@
 import { basename } from '@waiting/shared-core'
 
 import {
-  kmore,
+  kmoreFactory,
   Kmore,
   getCurrentTime,
   EnumClient,
 } from '../src/index'
 
-import { config } from './test.config'
+import { config, dbDict } from './test.config'
 import { Db } from './test.model'
 
 // eslint-disable-next-line import/order
@@ -20,8 +20,8 @@ describe(filename, () => {
   let km: Kmore<Db>
 
   before(() => {
-    km = kmore<Db>({ config })
-    assert(km.tables && Object.keys(km.tables).length > 0)
+    km = kmoreFactory<Db>({ config, dict: dbDict })
+    assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
   })
   after(async () => {
     await km.dbh.destroy() // !

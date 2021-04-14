@@ -1,10 +1,10 @@
 import { basename } from '@waiting/shared-core'
 
-import { kmore, Kmore } from '../src/index'
+import { kmoreFactory, Kmore } from '../src/index'
 
 import { validateUserRows } from './helper'
-import { config } from './test.config'
-import { User, Db } from './test.model'
+import { config, dbDict } from './test.config'
+import { Db, UserDo } from './test.model'
 
 // eslint-disable-next-line import/order
 import assert = require('power-assert')
@@ -16,8 +16,8 @@ describe(filename, () => {
   let km: Kmore<Db>
 
   before(() => {
-    km = kmore<Db>({ config })
-    assert(km.tables && Object.keys(km.tables).length > 0)
+    km = kmoreFactory({ config, dict: dbDict })
+    assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
   })
 
   after(async () => {
@@ -26,34 +26,34 @@ describe(filename, () => {
 
   describe('Should read table with tables param in object works', () => {
     it('tb_user', async () => {
-      const { rb } = km
-      const { tb_user } = km.rb
+      const { refTables } = km
+      const { ref_tb_user } = km.refTables
 
       // validate insert result
-      const countRes = await km.rb.tb_user().count()
-      const ret = await km.rb.tb_user().select('*')
+      const countRes = await km.refTables.ref_tb_user().count()
+      const ret = await km.refTables.ref_tb_user().select('*')
       assert(
         ret.length === 2,
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
       assert(
-        countRes[0].count === '2',
+        countRes[0] && countRes[0].count === '2',
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
-      const countRes2 = await rb.tb_user().count()
+      const countRes2 = await refTables.ref_tb_user().count()
       assert(
-        countRes2[0].count === '2',
+        countRes2[0] && countRes2[0].count === '2',
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
-      const countRes3 = await tb_user().count()
+      const countRes3 = await ref_tb_user().count()
       assert(
-        countRes3[0].count === '2',
+        countRes3[0] && countRes3[0].count === '2',
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
-      await tb_user().select('*')
+      await ref_tb_user().select('*')
         .then((rows) => {
           validateUserRows(rows)
           return rows
