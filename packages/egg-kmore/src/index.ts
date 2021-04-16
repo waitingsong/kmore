@@ -1,4 +1,5 @@
 
 export * from 'kmore'
-export * from './lib/types'
+
+export * from './lib/index'
 

@@ -1,22 +1,13 @@
-import { EggKmoreConfig, DefaultClientOpts } from '../lib/types'
+import { initialEggConfig } from '../lib/config'
+import { KmoreEggConfig } from '../lib/types'
 
 
-export const defaultClientOpts: DefaultClientOpts = {
-  waitConnected: true,
-}
-
+/* istanbul ignore next */
 /**
  * egg-kmore default config
  * @member Config#kmore
  */
-export const kmore: EggKmoreConfig = {
-  app: true,
-  agent: false,
-  // client: master,
-  // clients: {
-  //   master,
-  //   slave,
-  // },
-  default: defaultClientOpts,
+export const kmore: KmoreEggConfig = {
+  ...initialEggConfig,
 }
 
