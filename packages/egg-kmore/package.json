@@ -39,13 +39,8 @@
     "kmore-cli": "^2.0.5"
   },
   "devDependencies": {
-    "autod": "3",
-    "autod-egg": "1",
     "cross-env": "7",
     "egg": "2",
-    "egg-bin": "4",
-    "egg-core": "4",
-    "egg-mock": "4",
     "knex": "^0.95.0",
     "pg": "^8.2.1"
   },
@@ -77,13 +72,13 @@
     "clean": "rm -rf dist/* && npm run clean:lock && npm run clean:cache",
     "clean:cache": "rm .eslintcache .vscode/.tsbuildinfo .vscode/.tsbuildinfo.* -f",
     "clean:lock": "rm package-lock.json -f",
-    "cov": "npm run build:fixtures && cross-env TS_NODE_PROJECT=test/tsconfig.json egg-bin cov test/**/*.test.ts",
+    "cov": "",
     "lint": "eslint --fix --cache {src,test}/**/*.ts",
     "lint:nofix": "eslint --cache {src,test}/**/*.ts",
     "purge": "npm run clean && rm node_modules -rf",
     "rp": "rollup -c rollup.config.js",
     "rp:w": "npm run tsc:w | rollup -wc rollup.config.js",
-    "test": "npm run build:fixtures && cross-env TS_NODE_PROJECT=test/tsconfig.json egg-bin test test/**/*.test.ts",
+    "test": "",
     "test:local": "npm run build:fixtures && cross-env TS_NODE_PROJECT=test/tsconfig.json egg-bin test test/**/*.test.ts",
     "tsc": "tsc -p tsconfig.json",
     "tsc:w": "tsc -p tsconfig.json -w"
