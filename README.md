@@ -112,7 +112,7 @@ await ref_tb_user()
   ])
   .then()
 
-await ref_tb_user_detail()
+const affectedRows = await ref_tb_user_detail()
   .insert([
     { uid: 1, age: 10, address: 'address1' },
     { uid: 2, age: 10, address: 'address1' },
@@ -123,24 +123,56 @@ await ref_tb_user_detail()
 
 ### Join tables
 ```ts
-const { tables: t, scopedColumns: sc, rb } = km
+const { refTables } = km
+const { tables, scoped } = km.dict
 
-await rb.tb_user<UserDetail>()
-  .select()
-  .innerJoin(
-    t.tb_user_detail,
-    sc.tb_user.uid,
-    sc.tb_user_detail.uid,
-  )
-  .where(sc.tb_user.uid, 1)
-  .then((rows) => {
-    const [row] = rows
-    assert(row && row.uid)
-    assert(row && row.name)
-    assert(row && row.age)
-    return rows
-  })
+const ret = await refTables.ref_tb_user()
+  .innerJoin<UserExtDo>(
+  tables.tb_user_ext,
+  scoped.tb_user.uid,
+  scoped.tb_user_ext.uid,
+)
+  .select('*')
+  .where(scoped.tb_user.uid, 1)
+
+const cols = [
+  alias.tb_user.uid, // { tbUser: 'tb_user.uid' }
+  alias.tb_user_ext.uid, // { tbUserExt: 'tb_user_ext.uid' }
+]
+
+// --------------
+
+type CT = DbDictType<Db>
+type CT_USER = CT['tb_user']
+type CT_USER_EXT = CT['tb_user_ext']
+
+const ret = await refTables.ref_tb_user()
+  .innerJoin<CT_USER & CT_USER_EXT>(
+  tables.tb_user_ext,
+  scoped.tb_user.uid,
+  scoped.tb_user_ext.uid,
+)
+  .columns(cols)
+  .then(rows => rows[0])
+
+
+const cols = {
+  uid: scoped.tb_user.uid,
+  foo: scoped.tb_user_ext.uid,
+}
+
+const ret = await refTables.ref_tb_user()
+  .innerJoin<CT_USER & CT_USER_EXT>(
+  tables.tb_user_ext,
+  scoped.tb_user.uid,
+  scoped.tb_user_ext.uid,
+)
+  .columns(cols)
+  .then(rows => rows[0])
 ```
+
+More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/master/packages/kmore/test/join-table/71.advanced.test.ts)
+
 
 ### Use instance of knex
 ```ts
@@ -150,70 +182,6 @@ await km.dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
 // disconnect
 await km.dbh.destroy()
 ```
-
-
-## Advanced usage
-
-### Build DictType
-```sh
-npm run db:gen
-```
-
-### Create connection
-```ts
-import { KnexConfig, DbModel } from 'kmore'
-// this file contains type of the dbDict, created after `npm run db:gen`
-import { DbDict } from './.kmore'
-
-// pass `DbDict` as 2nd generics parameter
-export const km = kmore<Db, DbDict>({ config })
-```
-
-### Join tables
-```ts
-type Db = typeof km.DbModel
-type DblAlias = typeof km.DbModelAlias
-
-type User = Db['tb_user']
-type UserAlias = DbAlias['tb_user']
-type UserDetailAlias = DbAlias['tb_user_detail']
-
-const {
-  rb,
-  tables: t,
-  aliasColumns: ac,
-  scopedColumns: sc,
-} = km
-
-const cols = [
-  ac.tb_user.uid,
-  ac.tb_user_detail.uid,
-]
-
-const ret = await rb.tb_user()
-  .select('name')
-  .innerJoin<UserDetailAlias & UserAlias>(
-    t.tb_user_detail,
-    sc.tb_user.uid,
-    sc.tb_user_detail.uid,
-  )
-  .columns(cols)
-  .then(rows => rows[0])
-
-assert(Object.keys(ret).length === 3)
-assert(typeof ret.name === 'string')
-assert(typeof ret.tbUserUid === 'number')
-assert(typeof ret.tbUserDetailUid === 'number')
-
-// typeof the result equals to the following type:
-interface RetType {
-  name: User['name']
-  tbUserUid: UserAlias['tbUserUid']
-  tbUserDetailUid: UserDetailAlias['tbUserDetailUid']
-}
-```
-
-More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/master/packages/kmore/test/join-table/70.advanced.test.ts)
 
 
 ## Demo
