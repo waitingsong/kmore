@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "@edge https://uk.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
           apk upgrade --no-cache > /dev/null
-          apk add apache2-utils bash bind-tools curl git jq net-tools nodejs=~14 npm openssh openssl postgresql-client tar tzdata zstd > /dev/null
+          apk add apache2-utils bash bind-tools curl git jq net-tools nodejs npm openssh openssl postgresql-client tar tzdata zstd > /dev/null
           sed -i "s#:/bin/ash#:/bin/bash#g" /etc/passwd
           echo "alias sh='/bin/bash ';" >> /root/.bashrc
           docker -v
