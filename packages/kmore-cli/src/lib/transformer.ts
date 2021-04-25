@@ -37,7 +37,13 @@ export function buildSource(options: Options): Observable<FilePath> {
       opts.path = opts.path.map(str => str.replace(/\\/ug, '/'))
     }
 
-    if (! opts.project) {
+    if (opts.project) {
+      const project = opts.project.replace(/\\/ug, '/')
+      if (project.startsWith('.') || ! project.includes('/')) {
+        opts.project = `${process.cwd()}/${project}`
+      }
+    }
+    else {
       const tsopts: TsConfigResolverOptions = {
         cache: CacheStrategy.Directory,
       }
