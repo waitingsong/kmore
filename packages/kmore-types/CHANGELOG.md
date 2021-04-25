@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.1.0 (2021-04-25)
+
+
+### Features
+
+* **kmore-cli:** current path if opts.project is relative file ([aaea903](https://github.com/waitingsong/kmore/commit/aaea9034f1e0b45062bc97efdd85917bbbe94917))
+
+
+
+
+
 # 3.0.0 (2021-04-23)
 
 **Note:** Version bump only for package kmore-types
