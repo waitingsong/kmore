@@ -9,10 +9,11 @@ import assert = require('power-assert')
 export const config: KnexConfig = {
   client: 'pg',
   connection: {
-    host: process.env.PGHOST ? process.env.PGHOST : 'localhost',
-    user: process.env.PGUSER ? process.env.PGUSER : 'postgres',
-    password: process.env.PGPASSWORD ? process.env.PGPASSWORD : 'postgres',
-    database: 'db_ci_test',
+    host: process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : 'localhost',
+    port: process.env.POSTGRES_PORT ? +process.env.POSTGRES_PORT : 5432,
+    database: process.env.POSTGRES_DB ? process.env.POSTGRES_DB : 'db_ci_test',
+    user: process.env.POSTGRES_USER ? process.env.POSTGRES_USER : 'postgres',
+    password: process.env.POSTGRES_PASSWORD ? process.env.POSTGRES_PASSWORD : 'postgres',
     requestTimeout: 3000,
   },
   acquireConnectionTimeout: 5000,
