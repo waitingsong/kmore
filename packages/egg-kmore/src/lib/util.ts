@@ -1,12 +1,12 @@
 import assert from 'assert'
 
 import {
-  initialEggConfig,
   initialClientOptions,
+  initialEggConfig,
 } from './config'
 import {
-  KmoreEggConfig,
   ClientOptions,
+  KmoreEggConfig,
 } from './types'
 
 
