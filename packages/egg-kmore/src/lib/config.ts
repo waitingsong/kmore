@@ -21,18 +21,3 @@ export const initialEggConfig: Readonly<KmoreEggConfig> = {
   agent: false,
 }
 
-
-/**
- * egg-kmore default config
- * @member Config#kmore
- */
-export const kmore: KmoreEggConfig = {
-  appWork: true,
-  agent: false,
-  // client: master,
-  // clients: {
-  //   master,
-  //   slave,
-  // },
-}
-
