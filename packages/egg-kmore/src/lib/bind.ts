@@ -23,7 +23,11 @@ export function bindOnAppOrAgent(app: Application | Agent): void {
   app.addSingleton(pluginName, createOneClient)
 }
 
-function createOneClient(options: ClientOptions, app: Application | Agent): Kmore {
+function createOneClient(
+  options: ClientOptions, 
+  app: Application | Agent,
+): Kmore {
+
   const opts: ClientOptions = parseOptions(options)
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   assert(opts && Object.keys(opts).length, `[egg-${pluginName}] config empty`)
