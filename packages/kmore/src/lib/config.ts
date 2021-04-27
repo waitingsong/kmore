@@ -1,3 +1,5 @@
+import { KmoreEvent } from './types'
+
 
 export const defaultPropDescriptor: PropertyDescriptor = {
   configurable: false,
@@ -5,3 +7,14 @@ export const defaultPropDescriptor: PropertyDescriptor = {
   writable: false,
 } as const
 
+
+export const initKmoreEvent: KmoreEvent = {
+  type: 'unknown',
+  identifier: void 0,
+  queryUid: '',
+  data: void 0,
+  respData: [],
+  respRawData: void 0,
+  exData: void 0,
+  exError: void 0,
+}

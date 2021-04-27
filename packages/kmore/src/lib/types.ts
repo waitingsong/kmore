@@ -20,7 +20,7 @@ export type DbQueryBuilder<D, Prefix extends string = 'ref_'> = {
   [tb in keyof D as `${Prefix}${tb & string}`]: TbQueryBuilder<D[tb]>
 }
 
-export type TbQueryBuilder<TRecord> = () => Knex.QueryBuilder<TRecord, TRecord[]>
+export type TbQueryBuilder<TRecord> = (identifier?: unknown) => Knex.QueryBuilder<TRecord, TRecord[]>
 
 // export type QueryBuilderExt<TRecord, TResult = TRecord[]>
 //  = Knex.QueryBuilder<TRecord, TResult>
@@ -30,11 +30,21 @@ export type TbQueryBuilder<TRecord> = () => Knex.QueryBuilder<TRecord, TRecord[]
 //     ? QueryBuilderExt<TRecord>
 //     : QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
 
+export interface KmoreEvent <T = unknown> {
+  type: 'query' | 'queryError' | 'queryResponse' | 'unknown'
+  identifier: unknown
+  queryUid: string // 'mXxtvuJLHkZI816UZic57'
+  data: OnQueryCbData | undefined
+  respData: unknown[]
+  respRawData: OnQueryRespCbRawData<T> | undefined
+  exData: OnQueryErrorCbData | undefined
+  exError: OnQueryErrorCbErr | undefined
+}
 
-export interface OnQueryArgData {
-  __knexUid: string
-  __knexTxId: undefined | string
-  method: string // 'select'
+export interface OnQueryCbData {
+  __knexUid: string // "__knexUid3"
+  __knexTxId: undefined | string // "trx2"
+  method: string // 'select', 'raw'
   options: Record<string, unknown>
   timeout: boolean
   cancelOnTimeout: boolean
@@ -43,7 +53,32 @@ export interface OnQueryArgData {
   sql: string
 }
 
-export interface OnQueryErrorArgData {
+export interface OnQueryRespCbRawData <T = unknown> {
+  __knexUid: string // '__knexUid3'
+  __knexTxId: string | undefined // 'trx2'
+  method: string // 'select'
+  options: Record<string, unknown>
+  timeout: boolean
+  cancelOnTimeout: boolean
+  bindings: unknown[]
+  __knexQueryUid: string // 'vFFCb1Utd8Aosbumkfm_v'
+  sql: string // 'select * from "tb_user" where "uid" = $1 for update'
+  queryContext: unknown
+  response: RawResponse<T>
+}
+export interface RawResponse <T = unknown> {
+  command: string // 'SELECT'
+  rowCount: number | null // 1
+  oid?: unknown
+  rows: Record<string, T>[]
+  fields: Record<string, string | number>[]
+  _parsers: unknown[] | unknown
+  _types: unknown
+  RowCtor: unknown
+  rowAsArray: boolean
+}
+
+export interface OnQueryErrorCbData {
   __knexUid: string // "__knexUid2"
   __knexTxId: undefined | string
   queryContext: unknown
@@ -56,7 +91,7 @@ export interface OnQueryErrorArgData {
   sql: string // 'select "*x" from "tb_user"'
 }
 
-export interface OnQueryErrorArgErr {
+export interface OnQueryErrorCbErr {
   code: string // '42703'
   column: unknown
   constraint: unknown
@@ -78,3 +113,4 @@ export interface OnQueryErrorArgErr {
   table: unknown
   where: unknown
 }
+

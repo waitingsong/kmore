@@ -24,7 +24,7 @@ export function bindOnAppOrAgent(app: Application | Agent): void {
 }
 
 function createOneClient(
-  options: ClientOptions, 
+  options: ClientOptions,
   app: Application | Agent,
 ): Kmore {
 
