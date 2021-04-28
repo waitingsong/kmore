@@ -32,10 +32,11 @@ export type TbQueryBuilder<TRecord> = (identifier?: unknown) => Knex.QueryBuilde
 
 export interface KmoreEvent <T = unknown> {
   type: 'query' | 'queryError' | 'queryResponse' | 'unknown'
+  /** passed from external */
   identifier: unknown
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
   data: OnQueryData | undefined
-  respData: unknown[]
+  respData: RawResponse<T>
   respRawData: OnQueryRespRawData<T> | undefined
   exData: OnQueryErrorData | undefined
   exError: OnQueryErrorErr | undefined

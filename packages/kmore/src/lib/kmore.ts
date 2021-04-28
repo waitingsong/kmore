@@ -14,6 +14,7 @@ import {
   OnQueryErrorData,
   OnQueryErrorErr,
   OnQueryRespRawData,
+  RawResponse,
 } from './types'
 
 
@@ -58,7 +59,7 @@ export class Kmore<D = unknown> {
         const queryUid = this.pickQueryUidFrom(data)
         this.processKnexOnEvent({ type: 'query', data, queryUid })
       })
-      .on('query-response', (data: JsonObject[], raw: OnQueryRespRawData): void => {
+      .on('query-response', (data: RawResponse, raw: OnQueryRespRawData): void => {
         const queryUid = this.pickQueryUidFrom(raw)
         this.processKnexOnEvent({
           type: 'queryResponse', respData: data, respRawData: raw, queryUid,
