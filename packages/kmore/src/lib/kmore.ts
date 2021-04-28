@@ -75,15 +75,16 @@ export class Kmore<D = unknown> {
     this.subject = new Subject()
   }
 
-  register<T = unknown>(
-    eventFilterCallback?: (ev: KmoreEvent<T>) => boolean,
+  register<K = unknown, T = unknown>(
+    eventFilterCallback?: (ev: KmoreEvent<T>, identifier?: K) => boolean,
+    identifier?: K,
   ): Observable<KmoreEvent<T>> {
 
     const stream$ = this.subject.asObservable() as Observable<KmoreEvent<T>>
     const ret$ = stream$.pipe(
       filter((ev) => {
         const flag = typeof eventFilterCallback === 'function'
-          ? eventFilterCallback(ev)
+          ? eventFilterCallback(ev, identifier)
           : true
         return flag
       }),

@@ -166,6 +166,59 @@ describe(filename, () => {
         })
       assert(typeof subsp.unsubscribe === 'function')
     })
+
+
+    it('register with id', (done) => {
+      const id = Symbol('subscription')
+      km.refTables.ref_tb_user(id)
+        .select('*')
+        .where('uid', 1)
+        .catch(() => [])
+
+      const subsp = km.register(
+        (ev, id2) => ev.identifier === id && id2 === id,
+        id,
+      )
+        .subscribe({
+          next: (ev) => {
+            if (ev.type === 'queryResponse') {
+              const ret = ev.respData
+              assert(ret && Array.isArray(ret))
+              assert(ret && ret.length === 1)
+              subsp.unsubscribe()
+              done()
+            }
+          },
+          error: done,
+        })
+      assert(typeof subsp.unsubscribe === 'function')
+    })
+
+    it('register w/o id', (done) => {
+      const id = Symbol('subscription')
+      km.refTables.ref_tb_user(id)
+        .select('*')
+        .where('uid', 1)
+        .catch(() => [])
+
+      const subsp = km.register(
+        (ev, id2) => ev.identifier === id && ! id2 && id2 !== id,
+      )
+        .subscribe({
+          next: (ev) => {
+            if (ev.type === 'queryResponse') {
+              const ret = ev.respData
+              assert(ret && Array.isArray(ret))
+              assert(ret && ret.length === 1)
+              subsp.unsubscribe()
+              done()
+            }
+          },
+          error: done,
+        })
+      assert(typeof subsp.unsubscribe === 'function')
+    })
+
   })
 
 })
