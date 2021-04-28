@@ -34,10 +34,10 @@ export interface KmoreEvent <T = unknown> {
   type: 'query' | 'queryError' | 'queryResponse' | 'unknown'
   /** passed from external */
   identifier: unknown
+  /** __knexQueryUid */
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
   data: OnQueryData | undefined
-  respData: RawResponse<T>
-  respRawData: OnQueryRespRawData<T> | undefined
+  respRaw: OnQueryRespRaw<T> | undefined
   exData: OnQueryErrorData | undefined
   exError: OnQueryErrorErr | undefined
 }
@@ -54,23 +54,23 @@ export interface OnQueryData {
   timeout: boolean
 }
 
-export interface OnQueryRespRawData <T = unknown> {
+export interface OnQueryRespRaw <T = unknown> {
   __knexUid: string // '__knexUid3'
   __knexTxId: string | undefined // 'trx2'
   __knexQueryUid: string // 'vFFCb1Utd8Aosbumkfm_v'
   bindings: unknown[]
   cancelOnTimeout: boolean
-  method: string // 'select'
+  method: string // 'select', 'raw'
   options: Record<string, unknown>
   queryContext: unknown
-  response: RawResponse<T>
+  response: QueryResponse<T>
   sql: string // 'select * from "tb_user" where "uid" = $1 for update'
   timeout: boolean
 }
-export interface RawResponse <T = unknown> {
+export interface QueryResponse <T = unknown> {
   _parsers: unknown[] | unknown
   _types: unknown
-  command: string // 'SELECT'
+  command: string // 'SELECT', 'DROP'
   fields: Record<string, string | number>[]
   oid?: unknown
   rowAsArray: boolean

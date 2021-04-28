@@ -13,8 +13,7 @@ export const initKmoreEvent: KmoreEvent = {
   identifier: void 0,
   queryUid: '',
   data: void 0,
-  respData: [],
-  respRawData: void 0,
+  respRaw: void 0,
   exData: void 0,
   exError: void 0,
 }

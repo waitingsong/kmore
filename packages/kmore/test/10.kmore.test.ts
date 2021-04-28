@@ -7,7 +7,8 @@ import {
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,
-  OnQueryRespRawData,
+  OnQueryRespRaw,
+  QueryResponse,
 } from '../src/index'
 
 import { config } from './test.config'
@@ -82,7 +83,7 @@ describe(filename, () => {
         .subscribe({
           next: (ev) => {
             if (ev.type === 'queryResponse') {
-              const ret = ev.respData
+              const ret = ev.respRaw?.response.rows
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
               subsp.unsubscribe()
@@ -131,7 +132,7 @@ describe(filename, () => {
         // .on('query', (data: OnQueryData) => {
         //   console.log(data)
         // })
-        // .on('query-response', (data: JsonObject[], raw: OnQueryRespRawData) => {
+        // .on('query-response', (resp: QueryResponse, raw: OnQueryRespRaw) => {
         //   void raw
         //   console.info(data)
         // })
@@ -152,7 +153,7 @@ describe(filename, () => {
               queryUid = ev.queryUid
             }
             else if (ev.type === 'queryResponse') {
-              const ret = ev.respData
+              const ret = ev.respRaw?.response.rows
 
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
@@ -182,7 +183,7 @@ describe(filename, () => {
         .subscribe({
           next: (ev) => {
             if (ev.type === 'queryResponse') {
-              const ret = ev.respData
+              const ret = ev.respRaw?.response.rows
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
               subsp.unsubscribe()
@@ -207,7 +208,7 @@ describe(filename, () => {
         .subscribe({
           next: (ev) => {
             if (ev.type === 'queryResponse') {
-              const ret = ev.respData
+              const ret = ev.respRaw?.response.rows
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
               subsp.unsubscribe()

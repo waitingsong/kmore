@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { JsonObject } from '@waiting/shared-types'
 import { DbDict } from 'kmore-types'
 import { Knex, knex } from 'knex'
 import { Observable, Subject } from 'rxjs'
@@ -13,20 +12,10 @@ import {
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,
-  OnQueryRespRawData,
-  RawResponse,
+  OnQueryRespRaw,
+  QueryResponse,
 } from './types'
 
-
-export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
-  const dbh: Knex = knex(options.config)
-  const km = new Kmore<D>(
-    options.config,
-    options.dict,
-    dbh,
-  )
-  return km
-}
 
 export class Kmore<D = unknown> {
   readonly refTables: DbQueryBuilder<D, 'ref_'>
@@ -69,10 +58,10 @@ export class Kmore<D = unknown> {
         const queryUid = this.pickQueryUidFrom(data)
         this.processKnexOnEvent({ type: 'query', data, queryUid })
       })
-      .on('query-response', (data: RawResponse, raw: OnQueryRespRawData): void => {
+      .on('query-response', (_: QueryResponse, raw: OnQueryRespRaw): void => {
         const queryUid = this.pickQueryUidFrom(raw)
         this.processKnexOnEvent({
-          type: 'queryResponse', respData: data, respRawData: raw, queryUid,
+          type: 'queryResponse', respRaw: raw, queryUid,
         })
       })
       .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
@@ -112,7 +101,7 @@ export class Kmore<D = unknown> {
     this.subject.next(ev)
   }
 
-  private pickQueryUidFrom(input: OnQueryData | OnQueryErrorData | OnQueryRespRawData): string {
+  private pickQueryUidFrom(input: OnQueryData | OnQueryErrorData | OnQueryRespRaw): string {
     return input.__knexQueryUid ? input.__knexQueryUid : ''
   }
 
@@ -154,14 +143,13 @@ export class Kmore<D = unknown> {
             data,
           })
         })
-        .on('query-response', (data: JsonObject[], raw: OnQueryRespRawData): void => {
+        .on('query-response', (_: QueryResponse, raw: OnQueryRespRaw): void => {
           const queryUid = this.pickQueryUidFrom(raw)
           this.processKnexOnEvent({
             type: 'queryResponse',
             identifier,
             queryUid,
-            respData: data,
-            respRawData: raw,
+            respRaw: raw,
           })
         })
         .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
@@ -193,3 +181,13 @@ export interface KmoreFactoryOpts<D> {
   dict: DbDict<D>
 }
 export type EventCallback = (event: KmoreEvent) => void
+
+export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
+  const dbh: Knex = knex(options.config)
+  const km = new Kmore<D>(
+    options.config,
+    options.dict,
+    dbh,
+  )
+  return km
+}
