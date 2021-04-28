@@ -4,10 +4,10 @@ import { JsonObject } from '@waiting/shared-types'
 import {
   kmoreFactory,
   genDbDict,
-  OnQueryCbData,
-  OnQueryErrorCbData,
-  OnQueryErrorCbErr,
-  OnQueryRespCbRawData,
+  OnQueryData,
+  OnQueryErrorData,
+  OnQueryErrorErr,
+  OnQueryRespRawData,
 } from '../src/index'
 
 import { config } from './test.config'
@@ -126,16 +126,16 @@ describe(filename, () => {
 
     it('subscription w/o id', (done) => {
       km.refTables.ref_tb_user()
-        .select('*')
+        .select('*xx')
         .where('uid', 1)
-        // .on('query', (data: OnQueryCbData) => {
+        // .on('query', (data: OnQueryData) => {
         //   console.log(data)
         // })
-        // .on('query-response', (data: JsonObject[], raw: OnQueryRespCbRawData) => {
+        // .on('query-response', (data: JsonObject[], raw: OnQueryRespRawData) => {
         //   void raw
         //   console.info(data)
         // })
-        // .on('query-error', (err: OnQueryErrorCbErr, data: OnQueryErrorCbData) => {
+        // .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData) => {
         //   console.log(err, data)
         // })
         .catch(() => [])

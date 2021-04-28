@@ -34,14 +34,14 @@ export interface KmoreEvent <T = unknown> {
   type: 'query' | 'queryError' | 'queryResponse' | 'unknown'
   identifier: unknown
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
-  data: OnQueryCbData | undefined
+  data: OnQueryData | undefined
   respData: unknown[]
-  respRawData: OnQueryRespCbRawData<T> | undefined
-  exData: OnQueryErrorCbData | undefined
-  exError: OnQueryErrorCbErr | undefined
+  respRawData: OnQueryRespRawData<T> | undefined
+  exData: OnQueryErrorData | undefined
+  exError: OnQueryErrorErr | undefined
 }
 
-export interface OnQueryCbData {
+export interface OnQueryData {
   __knexUid: string // "__knexUid3"
   __knexTxId: undefined | string // "trx2"
   __knexQueryUid: string // 'mXxtvuJLHkZI816UZic57'
@@ -53,7 +53,7 @@ export interface OnQueryCbData {
   timeout: boolean
 }
 
-export interface OnQueryRespCbRawData <T = unknown> {
+export interface OnQueryRespRawData <T = unknown> {
   __knexUid: string // '__knexUid3'
   __knexTxId: string | undefined // 'trx2'
   __knexQueryUid: string // 'vFFCb1Utd8Aosbumkfm_v'
@@ -78,7 +78,7 @@ export interface RawResponse <T = unknown> {
   rows: Record<string, T>[]
 }
 
-export interface OnQueryErrorCbData {
+export interface OnQueryErrorData {
   __knexUid: string // "__knexUid2"
   __knexTxId: undefined | string
   __knexQueryUid: string // 'rhS1Gw1-uA79HFgn1Ob9g'
@@ -91,7 +91,7 @@ export interface OnQueryErrorCbData {
   timeout: boolean
 }
 
-export interface OnQueryErrorCbErr {
+export interface OnQueryErrorErr {
   code: string // '42703'
   column: unknown
   constraint: unknown
