@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.3.0 (2021-04-28)
+
+
+### Features
+
+* **kmore:** kmore.register() accept optional parameter identifier ([67299ca](https://github.com/waitingsong/kmore/commit/67299ca195b992a9c43ec7140fca3a8bb07f1899))
+
+
+
+
+
 # 3.2.0 (2021-04-28)
 
 **Note:** Version bump only for package kmore-types
