@@ -44,51 +44,51 @@ export interface KmoreEvent <T = unknown> {
 export interface OnQueryCbData {
   __knexUid: string // "__knexUid3"
   __knexTxId: undefined | string // "trx2"
+  __knexQueryUid: string // 'mXxtvuJLHkZI816UZic57'
+  bindings: unknown[]
+  cancelOnTimeout: boolean
   method: string // 'select', 'raw'
   options: Record<string, unknown>
-  timeout: boolean
-  cancelOnTimeout: boolean
-  bindings: unknown[]
-  __knexQueryUid: string // 'mXxtvuJLHkZI816UZic57'
   sql: string
+  timeout: boolean
 }
 
 export interface OnQueryRespCbRawData <T = unknown> {
   __knexUid: string // '__knexUid3'
   __knexTxId: string | undefined // 'trx2'
+  __knexQueryUid: string // 'vFFCb1Utd8Aosbumkfm_v'
+  bindings: unknown[]
+  cancelOnTimeout: boolean
   method: string // 'select'
   options: Record<string, unknown>
-  timeout: boolean
-  cancelOnTimeout: boolean
-  bindings: unknown[]
-  __knexQueryUid: string // 'vFFCb1Utd8Aosbumkfm_v'
-  sql: string // 'select * from "tb_user" where "uid" = $1 for update'
   queryContext: unknown
   response: RawResponse<T>
+  sql: string // 'select * from "tb_user" where "uid" = $1 for update'
+  timeout: boolean
 }
 export interface RawResponse <T = unknown> {
-  command: string // 'SELECT'
-  rowCount: number | null // 1
-  oid?: unknown
-  rows: Record<string, T>[]
-  fields: Record<string, string | number>[]
   _parsers: unknown[] | unknown
   _types: unknown
-  RowCtor: unknown
+  command: string // 'SELECT'
+  fields: Record<string, string | number>[]
+  oid?: unknown
   rowAsArray: boolean
+  rowCount: number | null // 1
+  RowCtor: unknown
+  rows: Record<string, T>[]
 }
 
 export interface OnQueryErrorCbData {
   __knexUid: string // "__knexUid2"
   __knexTxId: undefined | string
-  queryContext: unknown
+  __knexQueryUid: string // 'rhS1Gw1-uA79HFgn1Ob9g'
+  bindings: unknown[]
+  cancelOnTimeout: boolean
   method: string
   options: Record<string, unknown>
-  timeout: boolean
-  cancelOnTimeout: boolean
-  bindings: unknown[]
-  __knexQueryUid: string // 'rhS1Gw1-uA79HFgn1Ob9g'
+  queryContext: unknown
   sql: string // 'select "*x" from "tb_user"'
+  timeout: boolean
 }
 
 export interface OnQueryErrorCbErr {
