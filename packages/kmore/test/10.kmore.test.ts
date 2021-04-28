@@ -126,7 +126,7 @@ describe(filename, () => {
 
     it('subscription w/o id', (done) => {
       km.refTables.ref_tb_user()
-        .select('*xx')
+        .select('*')
         .where('uid', 1)
         // .on('query', (data: OnQueryData) => {
         //   console.log(data)
