@@ -10,10 +10,10 @@ import {
   DbQueryBuilder,
   KmoreEvent,
   KnexConfig,
-  OnQueryCbData,
-  OnQueryErrorCbData,
-  OnQueryErrorCbErr,
-  OnQueryRespCbRawData,
+  OnQueryData,
+  OnQueryErrorData,
+  OnQueryErrorErr,
+  OnQueryRespRawData,
 } from './types'
 
 
@@ -54,14 +54,21 @@ export class Kmore<D = unknown> {
   ) {
 
     const dbhBindEvent = dbh
-      .on('query', (data: OnQueryCbData): void => {
-        this.processKnexOnEvent({ type: 'query', data })
+      .on('query', (data: OnQueryData): void => {
+        const queryUid = this.pickQueryUidFrom(data)
+        this.processKnexOnEvent({ type: 'query', data, queryUid })
       })
-      .on('query-response', (data: JsonObject[], raw: OnQueryRespCbRawData): void => {
-        this.processKnexOnEvent({ type: 'queryResponse', respData: data, respRawData: raw })
+      .on('query-response', (data: JsonObject[], raw: OnQueryRespRawData): void => {
+        const queryUid = this.pickQueryUidFrom(raw)
+        this.processKnexOnEvent({
+          type: 'queryResponse', respData: data, respRawData: raw, queryUid,
+        })
       })
-      .on('query-error', (err: OnQueryErrorCbErr, data: OnQueryErrorCbData): void => {
-        this.processKnexOnEvent({ type: 'queryError', exError: err, exData: data })
+      .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
+        const queryUid = this.pickQueryUidFrom(data)
+        this.processKnexOnEvent({
+          type: 'queryError', exError: err, exData: data, queryUid,
+        })
       })
     this.dbh = dbhBindEvent
     this.refTables = this.createRefTables(dbh, 'ref_')
@@ -93,6 +100,10 @@ export class Kmore<D = unknown> {
     this.subject.next(ev)
   }
 
+  private pickQueryUidFrom(input: OnQueryData | OnQueryErrorData | OnQueryRespRawData): string {
+    return input.__knexQueryUid ? input.__knexQueryUid : ''
+  }
+
   private createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
     const rb = {} as DbQueryBuilder<D>
 
@@ -122,28 +133,31 @@ export class Kmore<D = unknown> {
     let refTable = dbh(refName)
     if (identifier) {
       refTable = refTable
-        .on('query', (data: OnQueryCbData): void => {
+        .on('query', (data: OnQueryData): void => {
+          const queryUid = this.pickQueryUidFrom(data)
           this.processKnexOnEvent({
             type: 'query',
             identifier,
-            queryUid: data.__knexQueryUid,
+            queryUid,
             data,
           })
         })
-        .on('query-response', (data: JsonObject[], raw: OnQueryRespCbRawData): void => {
+        .on('query-response', (data: JsonObject[], raw: OnQueryRespRawData): void => {
+          const queryUid = this.pickQueryUidFrom(raw)
           this.processKnexOnEvent({
             type: 'queryResponse',
             identifier,
-            queryUid: raw.__knexQueryUid,
+            queryUid,
             respData: data,
             respRawData: raw,
           })
         })
-        .on('query-error', (err: OnQueryErrorCbErr, data: OnQueryErrorCbData): void => {
+        .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
+          const queryUid = this.pickQueryUidFrom(data)
           this.processKnexOnEvent({
             type: 'queryError',
             identifier,
-            queryUid: data.__knexQueryUid,
+            queryUid,
             exError: err,
             exData: data,
           })
