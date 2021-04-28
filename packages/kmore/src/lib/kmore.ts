@@ -18,6 +18,16 @@ import {
 } from './types'
 
 
+export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
+  const dbh: Knex = knex(options.config)
+  const km = new Kmore<D>(
+    options.config,
+    options.dict,
+    dbh,
+  )
+  return km
+}
+
 export class Kmore<D = unknown> {
   readonly refTables: DbQueryBuilder<D, 'ref_'>
 
@@ -183,14 +193,3 @@ export interface KmoreFactoryOpts<D> {
   dict: DbDict<D>
 }
 export type EventCallback = (event: KmoreEvent) => void
-
-export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
-  const dbh: Knex = knex(options.config)
-  const km = new Kmore<D>(
-    options.config,
-    options.dict,
-    dbh,
-  )
-  return km
-}
-
