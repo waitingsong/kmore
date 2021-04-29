@@ -34,8 +34,16 @@ export interface KmoreEvent <T = unknown> {
   type: 'query' | 'queryError' | 'queryResponse' | 'unknown'
   /** passed from external */
   identifier: unknown
+  /** __knexUid */
+  kUid: string
   /** __knexQueryUid */
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
+  /** __knexTxId */
+  trxId: string | undefined
+  /** select, raw */
+  method: string
+  /** SELECT, DROP */
+  command: string | undefined
   data: OnQueryData | undefined
   respRaw: OnQueryRespRaw<T> | undefined
   exData: OnQueryErrorData | undefined

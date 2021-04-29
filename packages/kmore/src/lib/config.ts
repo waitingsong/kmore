@@ -11,7 +11,11 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 export const initKmoreEvent: KmoreEvent = {
   type: 'unknown',
   identifier: void 0,
+  kUid: '',
   queryUid: '',
+  trxId: void 0,
+  method: '',
+  command: void 0,
   data: void 0,
   respRaw: void 0,
   exData: void 0,

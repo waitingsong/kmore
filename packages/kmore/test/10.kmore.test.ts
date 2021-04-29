@@ -72,6 +72,65 @@ describe(filename, () => {
       assert(ret.length === 1)
     })
 
+    it('transaction subscription', (done) => {
+      const { dbh } = km
+      const id = Symbol('subscription')
+
+      dbh.transaction()
+        .then((trx) => {
+          const subsp = km.register(ev => ev.identifier === id)
+            .subscribe({
+              next: (ev) => {
+                assert(ev.identifier === id)
+                assert(ev.kUid)
+                assert(ev.queryUid)
+                assert(typeof ev.trxId === 'string' && ev.trxId)
+                assert(ev.method === 'select')
+
+                if (ev.type === 'query') {
+                  assert(! ev.command)
+                  assert(typeof ev.exData === 'undefined')
+                  assert(typeof ev.exError === 'undefined')
+                  assert(typeof ev.respRaw === 'undefined')
+                }
+                else if (ev.type === 'queryResponse') {
+                  assert(ev.command === 'SELECT')
+                  assert(ev.respRaw)
+
+                  const rows = ev.respRaw ? ev.respRaw.response.rows : null
+                  assert(rows && Array.isArray(rows))
+                  assert(rows && rows.length === 1)
+
+                  subsp.unsubscribe()
+                  done()
+                }
+              },
+              error: done,
+            })
+          assert(typeof subsp.unsubscribe === 'function')
+
+          km.refTables.ref_tb_user(id)
+            .transacting(trx)
+            .forUpdate()
+            .select('*')
+            .where('uid', 1)
+            .then((rows) => {
+              void trx.commit()
+              return rows
+            })
+            .catch(() => {
+              void trx.rollback()
+              return []
+            })
+
+        })
+        .catch((ex) => {
+          assert(false, ex)
+          done()
+        })
+    })
+
+
     it('subscription with id', (done) => {
       const id = Symbol('subscription')
       km.refTables.ref_tb_user(id)
@@ -82,10 +141,27 @@ describe(filename, () => {
       const subsp = km.register(ev => ev.identifier === id)
         .subscribe({
           next: (ev) => {
-            if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw?.response.rows
+            assert(ev.identifier === id)
+
+            assert(ev.kUid)
+            assert(ev.queryUid)
+            assert(typeof ev.trxId === 'undefined')
+            assert(ev.method === 'select')
+
+            if (ev.type === 'query') {
+              assert(! ev.command)
+              assert(typeof ev.exData === 'undefined')
+              assert(typeof ev.exError === 'undefined')
+              assert(typeof ev.respRaw === 'undefined')
+            }
+            else if (ev.type === 'queryResponse') {
+              assert(ev.command === 'SELECT')
+              assert(ev.respRaw)
+
+              const ret = ev.respRaw ? ev.respRaw.response.rows : null
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
+
               subsp.unsubscribe()
               done()
             }
@@ -153,7 +229,7 @@ describe(filename, () => {
               queryUid = ev.queryUid
             }
             else if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw?.response.rows
+              const ret = ev.respRaw ? ev.respRaw.response.rows : null
 
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
@@ -182,10 +258,17 @@ describe(filename, () => {
       )
         .subscribe({
           next: (ev) => {
+            assert(ev.kUid)
+            assert(ev.queryUid)
+            assert(typeof ev.trxId === 'undefined')
+            assert(ev.method === 'select')
+            assert(! ev.command)
+
             if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw?.response.rows
+              const ret = ev.respRaw ? ev.respRaw.response.rows : null
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
+
               subsp.unsubscribe()
               done()
             }
@@ -208,7 +291,7 @@ describe(filename, () => {
         .subscribe({
           next: (ev) => {
             if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw?.response.rows
+              const ret = ev.respRaw ? ev.respRaw.response.rows : null
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
               subsp.unsubscribe()

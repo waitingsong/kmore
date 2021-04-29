@@ -56,18 +56,27 @@ export class Kmore<D = unknown> {
     const dbhBindEvent = dbh
       .on('query', (data: OnQueryData): void => {
         const queryUid = this.pickQueryUidFrom(data)
-        this.processKnexOnEvent({ type: 'query', data, queryUid })
-      })
-      .on('query-response', (_: QueryResponse, raw: OnQueryRespRaw): void => {
-        const queryUid = this.pickQueryUidFrom(raw)
         this.processKnexOnEvent({
-          type: 'queryResponse', respRaw: raw, queryUid,
+          type: 'query',
+          data,
+          queryUid,
+        })
+      })
+      .on('query-response', (_: QueryResponse, respRaw: OnQueryRespRaw): void => {
+        const queryUid = this.pickQueryUidFrom(respRaw)
+        this.processKnexOnEvent({
+          type: 'queryResponse',
+          respRaw,
+          queryUid,
         })
       })
       .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
         const queryUid = this.pickQueryUidFrom(data)
         this.processKnexOnEvent({
-          type: 'queryError', exError: err, exData: data, queryUid,
+          type: 'queryError',
+          exError: err,
+          exData: data,
+          queryUid,
         })
       })
     this.dbh = dbhBindEvent
@@ -98,6 +107,26 @@ export class Kmore<D = unknown> {
       ...initKmoreEvent,
       ...input,
     }
+    if (ev.type === 'query') {
+      const data = input.data as OnQueryData
+      ev.method = data.method
+      ev.kUid = data.__knexUid
+      ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
+    }
+    else if (ev.type === 'queryResponse') {
+      const data = input.respRaw as OnQueryRespRaw
+      ev.method = data.method
+      ev.command = data.response.command
+      ev.kUid = data.__knexUid
+      ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
+    }
+    else if (ev.type === 'queryError') {
+      const data = input.exData as OnQueryErrorData
+      ev.method = data.method
+      ev.kUid = data.__knexUid
+      ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
+    }
+
     this.subject.next(ev)
   }
 
@@ -143,13 +172,13 @@ export class Kmore<D = unknown> {
             data,
           })
         })
-        .on('query-response', (_: QueryResponse, raw: OnQueryRespRaw): void => {
-          const queryUid = this.pickQueryUidFrom(raw)
+        .on('query-response', (_: QueryResponse, respRaw: OnQueryRespRaw): void => {
+          const queryUid = this.pickQueryUidFrom(respRaw)
           this.processKnexOnEvent({
             type: 'queryResponse',
             identifier,
             queryUid,
-            respRaw: raw,
+            respRaw,
           })
         })
         .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
