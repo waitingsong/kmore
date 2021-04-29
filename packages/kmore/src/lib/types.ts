@@ -38,7 +38,12 @@ export interface KmoreEvent <T = unknown> {
   kUid: string
   /** __knexQueryUid */
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
-  /** __knexTxId */
+  /**
+   * @description Note: may keep value of the latest transaction id,
+   * even if no transaction this query!
+   * __knexTxId
+   *
+   */
   trxId: string | undefined
   /** select, raw */
   method: string
@@ -52,6 +57,12 @@ export interface KmoreEvent <T = unknown> {
 
 export interface OnQueryData {
   __knexUid: string // "__knexUid3"
+  /**
+   * @description Note: may keep value of the latest transaction id,
+   * even if no transaction this query!
+   * __knexTxId
+   *
+   */
   __knexTxId: undefined | string // "trx2"
   __knexQueryUid?: string // 'mXxtvuJLHkZI816UZic57'
   bindings: unknown[] | undefined
