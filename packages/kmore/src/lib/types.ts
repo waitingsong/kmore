@@ -53,27 +53,28 @@ export interface KmoreEvent <T = unknown> {
 export interface OnQueryData {
   __knexUid: string // "__knexUid3"
   __knexTxId: undefined | string // "trx2"
-  __knexQueryUid: string // 'mXxtvuJLHkZI816UZic57'
-  bindings: unknown[]
-  cancelOnTimeout: boolean
-  method: string // 'select', 'raw'
-  options: Record<string, unknown>
-  sql: string
-  timeout: boolean
+  __knexQueryUid?: string // 'mXxtvuJLHkZI816UZic57'
+  bindings: unknown[] | undefined
+  cancelOnTimeout?: boolean
+  method?: string // 'select', 'raw'
+  options?: Record<string, unknown>
+  sql: string // 'select *....', 'COMMIT;'
+  timeout?: boolean
 }
 
 export interface OnQueryRespRaw <T = unknown> {
   __knexUid: string // '__knexUid3'
   __knexTxId: string | undefined // 'trx2'
-  __knexQueryUid: string // 'vFFCb1Utd8Aosbumkfm_v'
-  bindings: unknown[]
-  cancelOnTimeout: boolean
-  method: string // 'select', 'raw'
-  options: Record<string, unknown>
+  __knexQueryUid?: string // 'vFFCb1Utd8Aosbumkfm_v'
+  bindings: unknown[] | undefined
+  cancelOnTimeout?: boolean
+  method?: string // 'select', 'raw'
+  options?: Record<string, unknown>
   queryContext: unknown
   response: QueryResponse<T>
+  returning?: string
   sql: string // 'select * from "tb_user" where "uid" = $1 for update'
-  timeout: boolean
+  timeout?: boolean
 }
 export interface QueryResponse <T = unknown> {
   _parsers: unknown[] | unknown
@@ -90,7 +91,7 @@ export interface QueryResponse <T = unknown> {
 export interface OnQueryErrorData {
   __knexUid: string // "__knexUid2"
   __knexTxId: undefined | string
-  __knexQueryUid: string // 'rhS1Gw1-uA79HFgn1Ob9g'
+  __knexQueryUid: string | undefined // 'rhS1Gw1-uA79HFgn1Ob9g'
   bindings: unknown[]
   cancelOnTimeout: boolean
   method: string

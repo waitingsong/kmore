@@ -109,13 +109,13 @@ export class Kmore<D = unknown> {
     }
     if (ev.type === 'query') {
       const data = input.data as OnQueryData
-      ev.method = data.method
+      ev.method = data.method ? data.method : ''
       ev.kUid = data.__knexUid
       ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
     }
     else if (ev.type === 'queryResponse') {
       const data = input.respRaw as OnQueryRespRaw
-      ev.method = data.method
+      ev.method = data.method ? data.method : ''
       ev.command = data.response.command
       ev.kUid = data.__knexUid
       ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
