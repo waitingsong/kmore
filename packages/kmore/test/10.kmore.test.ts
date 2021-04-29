@@ -72,70 +72,18 @@ describe(filename, () => {
       assert(ret.length === 1)
     })
 
-    it('transaction subscription', (done) => {
-      const { dbh } = km
-      const id = Symbol('subscription')
-
-      dbh.transaction()
-        .then((trx) => {
-          const subsp = km.register(ev => ev.identifier === id)
-            .subscribe({
-              next: (ev) => {
-                assert(ev.identifier === id)
-                assert(ev.kUid)
-                assert(ev.queryUid)
-                assert(typeof ev.trxId === 'string' && ev.trxId)
-                assert(ev.method === 'select')
-
-                if (ev.type === 'query') {
-                  assert(! ev.command)
-                  assert(typeof ev.exData === 'undefined')
-                  assert(typeof ev.exError === 'undefined')
-                  assert(typeof ev.respRaw === 'undefined')
-                }
-                else if (ev.type === 'queryResponse') {
-                  assert(ev.command === 'SELECT')
-                  assert(ev.respRaw)
-
-                  const rows = ev.respRaw ? ev.respRaw.response.rows : null
-                  assert(rows && Array.isArray(rows))
-                  assert(rows && rows.length === 1)
-
-                  subsp.unsubscribe()
-                  done()
-                }
-              },
-              error: done,
-            })
-          assert(typeof subsp.unsubscribe === 'function')
-
-          km.refTables.ref_tb_user(id)
-            .transacting(trx)
-            .forUpdate()
-            .select('*')
-            .where('uid', 1)
-            .then((rows) => {
-              void trx.commit()
-              return rows
-            })
-            .catch(() => {
-              void trx.rollback()
-              return []
-            })
-
-        })
-        .catch((ex) => {
-          assert(false, ex)
-          done()
-        })
-    })
-
-
     it('subscription with id', (done) => {
       const id = Symbol('subscription')
       km.refTables.ref_tb_user(id)
         .select('*')
-        .where('uid', 1)
+        .where('uid', 2)
+        // .on('query', (data: OnQueryData) => {
+        //   console.log(data)
+        // })
+        // .on('query-response', (resp: QueryResponse, raw: OnQueryRespRaw) => {
+        //   void raw
+        //   console.info(resp, raw)
+        // })
         .catch(() => [])
 
       const subsp = km.register(ev => ev.identifier === id)
@@ -145,7 +93,9 @@ describe(filename, () => {
 
             assert(ev.kUid)
             assert(ev.queryUid)
-            assert(typeof ev.trxId === 'undefined')
+            // trxId should empty, but keep value of the latest transaction
+            // https://github.com/knex/knex/issues/4460
+            // assert(typeof ev.trxId === 'undefined')
             assert(ev.method === 'select')
 
             if (ev.type === 'query') {
@@ -205,16 +155,6 @@ describe(filename, () => {
       km.refTables.ref_tb_user()
         .select('*')
         .where('uid', 1)
-        // .on('query', (data: OnQueryData) => {
-        //   console.log(data)
-        // })
-        // .on('query-response', (resp: QueryResponse, raw: OnQueryRespRaw) => {
-        //   void raw
-        //   console.info(data)
-        // })
-        // .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData) => {
-        //   console.log(err, data)
-        // })
         .catch(() => [])
 
       let queryUid = ''
@@ -244,7 +184,6 @@ describe(filename, () => {
       assert(typeof subsp.unsubscribe === 'function')
     })
 
-
     it('register with id', (done) => {
       const id = Symbol('subscription')
       km.refTables.ref_tb_user(id)
@@ -260,11 +199,17 @@ describe(filename, () => {
           next: (ev) => {
             assert(ev.kUid)
             assert(ev.queryUid)
-            assert(typeof ev.trxId === 'undefined')
-            assert(ev.method === 'select')
-            assert(! ev.command)
+            // trxId should empty, but keep value of the latest transaction
+            // https://github.com/knex/knex/issues/4460
+            // assert(typeof ev.trxId === 'undefined')
 
-            if (ev.type === 'queryResponse') {
+            assert(ev.method === 'select')
+
+            if (ev.type === 'query') {
+              assert(! ev.command)
+            }
+            else if (ev.type === 'queryResponse') {
+              assert(ev.command === 'SELECT')
               const ret = ev.respRaw ? ev.respRaw.response.rows : null
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)
