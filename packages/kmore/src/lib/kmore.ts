@@ -161,7 +161,7 @@ export class Kmore<D = unknown> {
   ) {
 
     let refTable = dbh(refName)
-    if (identifier) {
+    if (typeof identifier !== 'undefined') {
       refTable = refTable
         .on('query', (data: OnQueryData): void => {
           const queryUid = this.pickQueryUidFrom(data)
