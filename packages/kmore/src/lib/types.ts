@@ -53,6 +53,7 @@ export interface KmoreEvent <T = unknown> {
   respRaw: OnQueryRespRaw<T> | undefined
   exData: OnQueryErrorData | undefined
   exError: OnQueryErrorErr | undefined
+  timestamp: number
 }
 
 export interface OnQueryData {
