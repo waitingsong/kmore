@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 4.1.0 (2021-05-07)
+
+
+### Features
+
+* **kmore:** add KmoreEvent['timestamp'] ([2efde5b](https://github.com/waitingsong/npm-mono-base/commit/2efde5b0b26a8662923a064a4c76c5cf36cb7ff0))
+
+
+
+
+
 # 4.0.0 (2021-04-29)
 
 **Note:** Version bump only for package demo
