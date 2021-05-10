@@ -34,7 +34,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types": "8",
+    "@waiting/shared-types": "9",
     "kmore": "^4.1.0",
     "kmore-cli": "^4.1.0"
   },
@@ -69,8 +69,8 @@
   "scripts": {
     "build": "npm run tsc && npm run rp",
     "build:fixtures": "tsc -p test/fixtures/tsconfig.json",
-    "clean": "rm -rf dist/* && npm run clean:lock && npm run clean:cache",
-    "clean:cache": "rm .eslintcache .vscode/.tsbuildinfo .vscode/.tsbuildinfo.* -f",
+    "clean": "npm run clean:lock & npm run clean:cache & rm -rf dist/* -rf",
+    "clean:cache": "rm -rf .eslintcache .vscode/.tsbuildinfo .vscode/.tsbuildinfo.*",
     "clean:lock": "rm package-lock.json -f",
     "cov": "",
     "lint": "eslint --fix --cache {src,test}/**/*.ts",
