@@ -32,7 +32,7 @@
     "@waiting/shared-types-dev": "2",
     "kmore-types": "^4.1.0",
     "rxjs": "7",
-    "rxwalker": "3",
+    "rxwalker": "4",
     "tsconfig-resolver": "^3.0.1",
     "yargs": "17"
   },
