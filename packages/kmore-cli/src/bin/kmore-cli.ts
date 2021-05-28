@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable node/no-process-exit */
 /**
  * kmore-cli
@@ -12,6 +13,7 @@ import { CliArgs } from '../lib/types'
 // log(yargs.argv)
 
 let args!: CliArgs
+
 
 try {
   args = parseCliArgs(yargs.argv)

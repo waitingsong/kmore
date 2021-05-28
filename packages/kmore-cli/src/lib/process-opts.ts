@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import yargs from 'yargs'
 
 import { cmdSet, initialCliArgs } from './config'
