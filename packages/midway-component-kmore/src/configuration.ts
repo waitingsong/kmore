@@ -5,7 +5,6 @@ import { join } from 'path'
 import { App, Config, Configuration, Logger } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { IMidwayWebApplication } from '@midwayjs/web'
-import { identity } from 'rxjs'
 
 import { DbManager } from './lib/kmore'
 import { KmoreComponentConfig } from './lib/types'
@@ -31,7 +30,7 @@ export class AutoConfiguration {
 
   async onStop(): Promise<void> {
     if (this.dbManager) {
-      const map = this.dbManager.getAllInstance()
+      const map = this.dbManager.getAllInstances()
       for (const [id, inst] of map) {
         try {
           await inst.dbh.destroy()

@@ -10,6 +10,8 @@ import { Kmore, kmoreFactory, KmoreFactoryOpts } from 'kmore'
 import { DbConfig, KmoreComponentConfig } from './types'
 
 
+type KmoreList = Map<string, Kmore>
+
 /**
  * Database 管理类
  */
@@ -18,9 +20,7 @@ import { DbConfig, KmoreComponentConfig } from './types'
 export class DbManager {
   @Logger() private readonly logger: ILogger
 
-  readonly instanceId = Symbol(new Date().getTime().toString())
-
-  private kmoreList: Map<string, Kmore>
+  private kmoreList: KmoreList = new Map<string, Kmore>()
 
   init(config: KmoreComponentConfig): void {
     Object.entries(config).forEach(([identifier, row]) => {
@@ -33,7 +33,7 @@ export class DbManager {
     })
   }
 
-  getAllInstance(): Map<string, Kmore> {
+  getAllInstances(): KmoreList {
     return this.kmoreList
   }
 
