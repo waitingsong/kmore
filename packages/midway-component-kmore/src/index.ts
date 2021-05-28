@@ -1,6 +1,6 @@
 import type { Context } from 'egg'
 
-import { DbManager } from './lib/kmore'
+import { DbManager } from './lib/db-man'
 import { KmoreComponentConfig } from './lib/types'
 
 

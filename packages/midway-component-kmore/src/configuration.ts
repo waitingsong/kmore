@@ -6,7 +6,7 @@ import { App, Config, Configuration, Logger } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { IMidwayWebApplication } from '@midwayjs/web'
 
-import { DbManager } from './lib/kmore'
+import { DbManager } from './lib/db-man'
 import { KmoreComponentConfig } from './lib/types'
 
 
