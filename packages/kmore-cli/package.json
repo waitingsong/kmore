@@ -27,8 +27,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "9",
-    "@waiting/shared-types": "9",
+    "@waiting/shared-core": "10",
+    "@waiting/shared-types": "10",
     "@waiting/shared-types-dev": "2",
     "kmore-types": "^5.0.0",
     "rxjs": "7",
