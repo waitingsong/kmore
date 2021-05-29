@@ -18,6 +18,7 @@ type KmoreList = Map<string, Kmore>
 @Provide()
 @Scope(ScopeEnum.Singleton)
 export class DbManager {
+
   @Logger() private readonly logger: ILogger
 
   private kmoreList: KmoreList = new Map<string, Kmore>()
