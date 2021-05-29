@@ -54,31 +54,15 @@ export class Kmore<D = unknown> {
   ) {
 
     const dbhBindEvent = dbh
-      .on('query', (data: OnQueryData): void => {
-        const queryUid = this.pickQueryUidFrom(data)
-        this.processKnexOnEvent({
-          type: 'query',
-          data,
-          queryUid,
-        })
-      })
-      .on('query-response', (_: QueryResponse, respRaw: OnQueryRespRaw): void => {
-        const queryUid = this.pickQueryUidFrom(respRaw)
-        this.processKnexOnEvent({
-          type: 'queryResponse',
-          respRaw,
-          queryUid,
-        })
-      })
-      .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
-        const queryUid = this.pickQueryUidFrom(data)
-        this.processKnexOnEvent({
-          type: 'queryError',
-          exError: err,
-          exData: data,
-          queryUid,
-        })
-      })
+      .on('query', (data: OnQueryData) => this.bindOnQuery(void 0, data))
+      .on(
+        'query-response',
+        (_: QueryResponse, respRaw: OnQueryRespRaw) => this.bindOnQueryResp(void 0, _, respRaw),
+      )
+      .on(
+        'query-error',
+        (err: OnQueryErrorErr, data: OnQueryErrorData) => this.bindOnQueryError(void 0, err, data),
+      )
     this.dbh = dbhBindEvent
     this.refTables = this.createRefTables(dbh, 'ref_')
     this.subject = new Subject()
@@ -101,6 +85,36 @@ export class Kmore<D = unknown> {
     return ret$
   }
 
+  private bindOnQuery(identifier: unknown, data: OnQueryData): void {
+    const queryUid = this.pickQueryUidFrom(data)
+    this.processKnexOnEvent({
+      type: 'query',
+      identifier,
+      data,
+      queryUid,
+    })
+  }
+
+  private bindOnQueryResp(identifier: unknown, _: QueryResponse, respRaw: OnQueryRespRaw): void {
+    const queryUid = this.pickQueryUidFrom(respRaw)
+    this.processKnexOnEvent({
+      type: 'queryResponse',
+      identifier,
+      respRaw,
+      queryUid,
+    })
+  }
+
+  private bindOnQueryError(identifier: unknown, err: OnQueryErrorErr, data: OnQueryErrorData): void {
+    const queryUid = this.pickQueryUidFrom(data)
+    this.processKnexOnEvent({
+      type: 'queryError',
+      identifier,
+      exError: err,
+      exData: data,
+      queryUid,
+    })
+  }
 
   private processKnexOnEvent(input: Partial<KmoreEvent>): void {
     const ev: KmoreEvent = {
@@ -164,34 +178,15 @@ export class Kmore<D = unknown> {
     let refTable = dbh(refName)
     if (typeof identifier !== 'undefined') {
       refTable = refTable
-        .on('query', (data: OnQueryData): void => {
-          const queryUid = this.pickQueryUidFrom(data)
-          this.processKnexOnEvent({
-            type: 'query',
-            identifier,
-            queryUid,
-            data,
-          })
-        })
-        .on('query-response', (_: QueryResponse, respRaw: OnQueryRespRaw): void => {
-          const queryUid = this.pickQueryUidFrom(respRaw)
-          this.processKnexOnEvent({
-            type: 'queryResponse',
-            identifier,
-            queryUid,
-            respRaw,
-          })
-        })
-        .on('query-error', (err: OnQueryErrorErr, data: OnQueryErrorData): void => {
-          const queryUid = this.pickQueryUidFrom(data)
-          this.processKnexOnEvent({
-            type: 'queryError',
-            identifier,
-            queryUid,
-            exError: err,
-            exData: data,
-          })
-        })
+        .on('query', (data: OnQueryData) => this.bindOnQuery(identifier, data))
+        .on(
+          'query-response',
+          (_: QueryResponse, respRaw: OnQueryRespRaw) => this.bindOnQueryResp(identifier, _, respRaw),
+        )
+        .on(
+          'query-error',
+          (err: OnQueryErrorErr, data: OnQueryErrorData) => this.bindOnQueryError(identifier, err, data),
+        )
     }
 
     return refTable
