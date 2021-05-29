@@ -120,7 +120,7 @@ export class Kmore<D = unknown> {
     const ev: KmoreEvent = {
       ...initKmoreEvent,
       ...input,
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
     }
     if (ev.type === 'query') {
       const data = input.data as OnQueryData

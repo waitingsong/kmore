@@ -20,6 +20,6 @@ export const initKmoreEvent: KmoreEvent = {
   respRaw: void 0,
   exData: void 0,
   exError: void 0,
-  timestamp: new Date().getTime(),
+  timestamp: Date.now(),
 }
 
