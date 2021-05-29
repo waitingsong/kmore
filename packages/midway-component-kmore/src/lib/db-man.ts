@@ -38,8 +38,8 @@ export class DbManager {
     return this.kmoreList
   }
 
-  getInstance(identifier: string): Kmore | undefined {
-    return this.kmoreList.get(identifier)
+  getInstance(dbId: string): Kmore | undefined {
+    return this.kmoreList.get(dbId)
   }
 
   private initKmore(dbConfig: DbConfig): Kmore {

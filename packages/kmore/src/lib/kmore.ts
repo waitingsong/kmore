@@ -21,7 +21,7 @@ import {
 export class Kmore<D = unknown> {
   readonly refTables: DbQueryBuilder<D, 'ref_'>
 
-  private readonly subject: Subject<KmoreEvent>
+  protected readonly subject: Subject<KmoreEvent>
 
   /**
   * Generics parameter, do NOT access as variable!
@@ -86,7 +86,7 @@ export class Kmore<D = unknown> {
     return ret$
   }
 
-  private createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
+  protected createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
     const rb = {} as DbQueryBuilder<D>
 
     Object.keys(this.dict.tables).forEach((refName) => {
@@ -106,11 +106,11 @@ export class Kmore<D = unknown> {
     return rb
   }
 
-  private extRefTableFnProperty(
+  protected extRefTableFnProperty(
     dbh: Knex,
     refName: string,
     identifier?: unknown,
-  ) {
+  ): Knex.QueryBuilder {
 
     let refTable = dbh(refName)
     if (typeof identifier !== 'undefined') {
