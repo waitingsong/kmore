@@ -4,7 +4,8 @@ import { Knex, knex } from 'knex'
 import { Observable, Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'
 
-import { defaultPropDescriptor, initKmoreEvent } from './config'
+import { defaultPropDescriptor } from './config'
+import { bindOnQuery, bindOnQueryError, bindOnQueryResp } from './event'
 import {
   DbQueryBuilder,
   KmoreEvent,
@@ -54,14 +55,14 @@ export class Kmore<D = unknown> {
   ) {
 
     const dbhBindEvent = dbh
-      .on('query', (data: OnQueryData) => this.bindOnQuery(void 0, data))
+      .on('query', (data: OnQueryData) => bindOnQuery(this.subject, void 0, data))
       .on(
         'query-response',
-        (_: QueryResponse, respRaw: OnQueryRespRaw) => this.bindOnQueryResp(void 0, _, respRaw),
+        (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(this.subject, void 0, _, respRaw),
       )
       .on(
         'query-error',
-        (err: OnQueryErrorErr, data: OnQueryErrorData) => this.bindOnQueryError(void 0, err, data),
+        (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, void 0, err, data),
       )
     this.dbh = dbhBindEvent
     this.refTables = this.createRefTables(dbh, 'ref_')
@@ -83,70 +84,6 @@ export class Kmore<D = unknown> {
       }),
     )
     return ret$
-  }
-
-  private bindOnQuery(identifier: unknown, data: OnQueryData): void {
-    const queryUid = this.pickQueryUidFrom(data)
-    this.processKnexOnEvent({
-      type: 'query',
-      identifier,
-      data,
-      queryUid,
-    })
-  }
-
-  private bindOnQueryResp(identifier: unknown, _: QueryResponse, respRaw: OnQueryRespRaw): void {
-    const queryUid = this.pickQueryUidFrom(respRaw)
-    this.processKnexOnEvent({
-      type: 'queryResponse',
-      identifier,
-      respRaw,
-      queryUid,
-    })
-  }
-
-  private bindOnQueryError(identifier: unknown, err: OnQueryErrorErr, data: OnQueryErrorData): void {
-    const queryUid = this.pickQueryUidFrom(data)
-    this.processKnexOnEvent({
-      type: 'queryError',
-      identifier,
-      exError: err,
-      exData: data,
-      queryUid,
-    })
-  }
-
-  private processKnexOnEvent(input: Partial<KmoreEvent>): void {
-    const ev: KmoreEvent = {
-      ...initKmoreEvent,
-      ...input,
-      timestamp: Date.now(),
-    }
-    if (ev.type === 'query') {
-      const data = input.data as OnQueryData
-      ev.method = data.method ? data.method : ''
-      ev.kUid = data.__knexUid
-      ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
-    }
-    else if (ev.type === 'queryResponse') {
-      const data = input.respRaw as OnQueryRespRaw
-      ev.method = data.method ? data.method : ''
-      ev.command = data.response.command
-      ev.kUid = data.__knexUid
-      ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
-    }
-    else if (ev.type === 'queryError') {
-      const data = input.exData as OnQueryErrorData
-      ev.method = data.method
-      ev.kUid = data.__knexUid
-      ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
-    }
-
-    this.subject.next(ev)
-  }
-
-  private pickQueryUidFrom(input: OnQueryData | OnQueryErrorData | OnQueryRespRaw): string {
-    return input.__knexQueryUid ? input.__knexQueryUid : ''
   }
 
   private createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
@@ -178,14 +115,14 @@ export class Kmore<D = unknown> {
     let refTable = dbh(refName)
     if (typeof identifier !== 'undefined') {
       refTable = refTable
-        .on('query', (data: OnQueryData) => this.bindOnQuery(identifier, data))
+        .on('query', (data: OnQueryData) => bindOnQuery(this.subject, identifier, data))
         .on(
           'query-response',
-          (_: QueryResponse, respRaw: OnQueryRespRaw) => this.bindOnQueryResp(identifier, _, respRaw),
+          (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(this.subject, identifier, _, respRaw),
         )
         .on(
           'query-error',
-          (err: OnQueryErrorErr, data: OnQueryErrorData) => this.bindOnQueryError(identifier, err, data),
+          (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, identifier, err, data),
         )
     }
 
