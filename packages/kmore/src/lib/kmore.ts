@@ -51,6 +51,7 @@ export class Kmore<D = unknown> {
     public readonly config: KnexConfig,
     public readonly dict: DbDict<D>,
     public dbh: Knex,
+    public instanceId: string | symbol,
     // private readonly eventCallback?: (event: KmoreEvent) => void,
   ) {
 
@@ -93,8 +94,10 @@ export class Kmore<D = unknown> {
       const name = `${prefix}${refName}`
       Object.defineProperty(rb, name, {
         ...defaultPropDescriptor,
-        // value: (): QueryBuilderExt<D[keyof D]> => this.extRefTableFnProperty(refName), // must dynamically!!
-        value: (identifier?: unknown) => this.extRefTableFnProperty(dbh, refName, identifier), // must dynamically!!
+        value: (identifier?: unknown) => {
+          const id = typeof identifier === 'undefined' ? this.instanceId : identifier
+          return this.extRefTableFnProperty(dbh, refName, id)
+        }, // must dynamically!!
       })
 
       Object.defineProperty(rb[name as keyof typeof rb], 'name', {
@@ -141,15 +144,19 @@ export class Kmore<D = unknown> {
 export interface KmoreFactoryOpts<D> {
   config: KnexConfig
   dict: DbDict<D>
+  instanceId?: string | symbol
+  dbh?: Knex
 }
 export type EventCallback = (event: KmoreEvent) => void
 
 export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
-  const dbh: Knex = knex(options.config)
+  const dbh: Knex = options.dbh ? options.dbh : knex(options.config)
+  const instanceId = options.instanceId ? options.instanceId : Symbol(Date.now())
   const km = new Kmore<D>(
     options.config,
     options.dict,
     dbh,
+    instanceId,
   )
   return km
 }
