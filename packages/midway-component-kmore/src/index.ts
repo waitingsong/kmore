@@ -11,13 +11,10 @@ export * from './lib/types'
 
 declare module '@midwayjs/core' {
   interface Context {
-    dbManager: DbManager
+    dbManager?: DbManager
   }
 }
 declare module 'egg' {
-  interface Application {
-    dbManager?: DbManager
-  }
   interface EggAppConfig {
     kmore: KmoreComponentConfig
   }

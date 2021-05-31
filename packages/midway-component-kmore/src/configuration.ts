@@ -2,11 +2,19 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import { join } from 'path'
 
-import { App, Config, Configuration, Logger } from '@midwayjs/decorator'
+import {
+  // App,
+  Config,
+  Configuration,
+  Inject,
+  Logger,
+} from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { IMidwayWebApplication } from '@midwayjs/web'
+import {
+  // IMidwayWebApplication,
+  IMidwayWebContext,
+} from '@midwayjs/web'
 
-import { DbManager } from './lib/db-man'
 import { KmoreComponentConfig } from './lib/types'
 
 
@@ -17,20 +25,19 @@ const namespace = 'kmore'
   importConfigs: [join(__dirname, 'config')],
 })
 export class AutoConfiguration {
-  @App() readonly app: IMidwayWebApplication
+  // @App() readonly app: IMidwayWebApplication
   @Logger() private readonly logger: ILogger
+  @Inject() readonly ctx: IMidwayWebContext
 
   @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
 
-  private dbManager: DbManager | undefined
-
-  async onReady(): Promise<void> {
-    this.dbManager = this.app.dbManager
-  }
+  // async onReady(): Promise<void> {
+  // }
 
   async onStop(): Promise<void> {
-    if (this.dbManager) {
-      const map = this.dbManager.getAllInstances()
+    const { dbManager } = this.ctx
+    if (dbManager) {
+      const map = dbManager.getAllInstances()
       for (const [id, inst] of map) {
         try {
           await inst.dbh.destroy()
@@ -42,3 +49,4 @@ export class AutoConfiguration {
     }
   }
 }
+
