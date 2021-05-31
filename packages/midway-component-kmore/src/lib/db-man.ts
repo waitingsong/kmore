@@ -5,11 +5,15 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { Kmore, kmoreFactory, KmoreFactoryOpts } from 'kmore'
+import {
+  Kmore,
+  kmoreFactory,
+  KmoreFactoryOpts,
+} from 'kmore'
 
 import { DbConfig, KmoreComponentConfig } from './types'
 
-
+/** dbId: Kmore */
 type KmoreList = Map<string, Kmore>
 
 /**
@@ -24,14 +28,19 @@ export class DbManager {
   private kmoreList: KmoreList = new Map<string, Kmore>()
 
   init(config: KmoreComponentConfig): void {
-    Object.entries(config).forEach(([identifier, row]) => {
-      if (this.kmoreList.get(identifier)) {
-        this.logger.info(`Database already initialized, identifier: "${identifier}"`)
-        return
-      }
-      const km = this.initKmore(row)
-      this.kmoreList.set(identifier, km)
+    Object.entries(config).forEach(([dbId, row]) => {
+      this.createInstance(dbId, row)
     })
+  }
+
+  createInstance(dbId: string, row: DbConfig): Kmore | undefined {
+    if (this.kmoreList.get(dbId)) {
+      this.logger.info(`Database already initialized, identifier: "${dbId}"`)
+      return
+    }
+    const km = this.createKmore(row)
+    this.kmoreList.set(dbId, km)
+    return km
   }
 
   getAllInstances(): KmoreList {
@@ -42,7 +51,7 @@ export class DbManager {
     return this.kmoreList.get(dbId)
   }
 
-  private initKmore(dbConfig: DbConfig): Kmore {
+  private createKmore(dbConfig: DbConfig): Kmore {
     const { config, dict } = dbConfig
     const opts: KmoreFactoryOpts<unknown> = {
       config,
