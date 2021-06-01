@@ -8,7 +8,6 @@ import { DbDict } from 'kmore-types'
 import { Knex } from 'knex'
 
 
-
 @Provide()
 export class KmoreComponent<D = unknown> extends Kmore<D> {
 

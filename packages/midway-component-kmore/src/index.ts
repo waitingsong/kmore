@@ -15,6 +15,9 @@ declare module '@midwayjs/core' {
   }
 }
 declare module 'egg' {
+  interface Application {
+    dbManager: DbManager
+  }
   interface EggAppConfig {
     kmore: KmoreComponentConfig
   }

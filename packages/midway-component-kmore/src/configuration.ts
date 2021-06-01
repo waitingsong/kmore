@@ -3,7 +3,7 @@
 import { join } from 'path'
 
 import {
-  // App,
+  App,
   Config,
   Configuration,
   Inject,
@@ -11,10 +11,11 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import {
-  // IMidwayWebApplication,
+  IMidwayWebApplication,
   IMidwayWebContext,
 } from '@midwayjs/web'
 
+import { DbManager } from './lib/db-man'
 import { KmoreComponentConfig } from './lib/types'
 
 
@@ -25,17 +26,19 @@ const namespace = 'kmore'
   importConfigs: [join(__dirname, 'config')],
 })
 export class AutoConfiguration {
-  // @App() readonly app: IMidwayWebApplication
+  @App() readonly app: IMidwayWebApplication
   @Logger() private readonly logger: ILogger
   @Inject() readonly ctx: IMidwayWebContext
+  @Inject() readonly dbManager: DbManager
 
   @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
 
-  // async onReady(): Promise<void> {
-  // }
+  async onReady(): Promise<void> {
+    this.app.dbManager = this.dbManager
+  }
 
   async onStop(): Promise<void> {
-    const { dbManager } = this.ctx
+    const { dbManager } = this
     if (dbManager) {
       const map = dbManager.getAllInstances()
       for (const [id, inst] of map) {
