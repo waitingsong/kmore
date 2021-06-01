@@ -67,6 +67,7 @@ export class DbManager {
     const opts: KmoreFactoryOpts<unknown> = {
       config,
       dict,
+      dbId,
     }
     const km = kmoreFactory(opts)
     return km
