@@ -28,12 +28,14 @@ const namespace = 'kmore'
 export class AutoConfiguration {
   @App() readonly app: IMidwayWebApplication
   @Logger() private readonly logger: ILogger
+
   @Inject() readonly ctx: IMidwayWebContext
   @Inject() readonly dbManager: DbManager
 
   @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
 
   async onReady(): Promise<void> {
+    this.dbManager.init(this.kmoreConfig)
     this.app.dbManager = this.dbManager
   }
 

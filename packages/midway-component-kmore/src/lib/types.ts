@@ -6,6 +6,11 @@ export interface DbConfig {
   config: KnexConfig
   dict: DbDict<unknown>
   /**
+   * Auto connect when service onReady
+   * @default true
+   */
+  isAutoConnect: boolean
+  /**
    * 强制采样请求处理时间（毫秒）阈值
    * 负数不采样
    */

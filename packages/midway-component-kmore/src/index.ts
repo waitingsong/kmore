@@ -5,8 +5,9 @@ import { KmoreComponentConfig } from './lib/types'
 
 
 export { AutoConfiguration as Configuration } from './configuration'
-export type { DbManager }
+export { DbManager }
 export * from './lib/types'
+export { KmoreComponent } from './lib/kmore'
 
 
 declare module '@midwayjs/core' {

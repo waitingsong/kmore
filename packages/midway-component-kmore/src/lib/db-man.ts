@@ -27,19 +27,24 @@ export class DbManager {
 
   private kmoreList: KmoreList = new Map<string, Kmore>()
 
-  init(config: KmoreComponentConfig): void {
-    Object.entries(config).forEach(([dbId, row]) => {
+  init(componentConfig: KmoreComponentConfig): void {
+    Object.entries(componentConfig).forEach(([dbId, row]) => {
       this.createInstance(dbId, row)
     })
   }
 
-  createInstance(dbId: string, row: DbConfig): Kmore | undefined {
+  createInstance(dbId: string, dbConfig: DbConfig): Kmore | undefined {
     if (this.kmoreList.get(dbId)) {
       this.logger.info(`Database already initialized, identifier: "${dbId}"`)
       return
     }
-    const km = this.createKmore(row)
-    this.kmoreList.set(dbId, km)
+
+    if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
+      return
+    }
+
+    const km = this.createKmore(dbId, dbConfig)
+    km && this.kmoreList.set(dbId, km)
     return km
   }
 
@@ -51,8 +56,14 @@ export class DbManager {
     return this.kmoreList.get(dbId)
   }
 
-  private createKmore(dbConfig: DbConfig): Kmore {
+  private createKmore(dbId: string, dbConfig: DbConfig): Kmore | undefined {
     const { config, dict } = dbConfig
+
+    if (! config || ! Object.keys(config).length) {
+      this.logger.warn(`Param dbConfig has no element, identifier: "${dbId}"`)
+      return
+    }
+
     const opts: KmoreFactoryOpts<unknown> = {
       config,
       dict,

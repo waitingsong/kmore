@@ -7,6 +7,7 @@ export const kmore: KmoreComponentConfig = {
   master: {
     config: {},
     dict: {} as DbDict<unknown>,
+    isAutoConnect: true,
     sampleThrottleMs: 300,
   },
 }
