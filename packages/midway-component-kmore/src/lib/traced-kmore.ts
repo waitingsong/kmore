@@ -26,6 +26,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   logger: Logger
 
   dbEventObb: Observable<KmoreEvent> | undefined
+  dbEventSubscription: Subscription | undefined
   // queryEventObb: Observable<KmoreEvent> | undefined
   queryEventSubscription: Subscription | undefined
   RespAndExEventSubscription: Subscription | undefined
@@ -61,8 +62,9 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     }
 
     this.registerDbObservable(this.instanceId)
-    this.subscribeDbEventRespAndEx()
-    this.subscribeQueryEvent()
+    this.subscribeEvent()
+    void this.subscribeDbEventRespAndEx
+    void this.subscribeQueryEvent
   }
 
 
@@ -114,6 +116,52 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     return flag
   }
 
+  protected subscribeEvent(): void {
+    if (! this.dbEventObb) {
+      throw new Error('dbEventObb invalid')
+    }
+
+    const subsp = this.dbEventObb.pipe(
+      filter((ev) => {
+        return ev.type === 'query' || ev.type === 'queryResponse' || ev.type === 'queryError'
+      }),
+    ).subscribe({
+      next: (ev) => {
+        if (ev.type === 'query') {
+          const { name: tagClass } = this.constructor
+          processQueryEventWithEventId({
+            dbConfig: this.dbConfig,
+            ev,
+            logger: this.logger,
+            queryUidSpanMap: this.queryUidSpanMap,
+            reqId: this.ctx.reqId,
+            tagClass,
+            tracerManager: this.ctx.tracerManager,
+          })
+        }
+        else {
+          processQueryRespAndExEventWithEventId({
+            dbConfig: this.dbConfig,
+            ev,
+            logger: this.logger,
+            queryUidSpanMap: this.queryUidSpanMap,
+          })
+        }
+      },
+      error: (ex) => {
+        this.logger.error(ex)
+      },
+    })
+
+    this.dbEventSubscription = subsp
+    this.ctx.res && this.ctx.res.once('finish', () => this.unSubscribeEvent())
+  }
+
+  protected unSubscribeEvent(): void {
+    this.dbEventSubscription?.unsubscribe()
+  }
+
+
   protected subscribeQueryEvent(): void {
     if (! this.dbEventObb) {
       throw new Error('dbEventObb invalid')
@@ -154,9 +202,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   }
 
 
-
   private subscribeDbEventRespAndEx(): void {
-
     if (! this.dbEventObb) {
       throw new Error('BaseRepo.dbEventObb invalid')
     }
