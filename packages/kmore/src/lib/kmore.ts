@@ -153,7 +153,7 @@ export type EventCallback = (event: KmoreEvent) => void
 export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
   const dbId = options.dbId ? options.dbId : ''
   const dbh: Knex = options.dbh ? options.dbh : knex(options.config)
-  const instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now())
+  const instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
   const km = new Kmore<D>(
     options.config,
     options.dict,
