@@ -33,6 +33,7 @@
     "@waiting/shared-types": "10",
     "kmore-types": "^5.0.0",
     "kmore": "^5.0.0",
+    "midway-component-jaeger": "^1.1.0",
     "opentracing": "^0.14.5",
     "rxjs": "7"
   },
@@ -43,12 +44,10 @@
     "@midwayjs/mock": "^2.10.18",
     "@midwayjs/web": "^2.10.18",
     "cross-env": "7",
-    "egg": "^2.29.0",
-    "midway-component-jaeger": "^1.1.0"
+    "egg": "^2.29.0"
   },
   "peerDependencies": {
     "knex": ">=0.95.0",
-    "midway-component-jaeger": "^1.1.0",
     "typescript": ">=4.1"
   },
   "engines": {

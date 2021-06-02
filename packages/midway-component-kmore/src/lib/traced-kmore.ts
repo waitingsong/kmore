@@ -8,6 +8,7 @@ import {
 } from 'kmore'
 import { Knex } from 'knex'
 import {
+  Logger,
   SpanLogInput,
   TracerManager,
   TracerLog,
@@ -23,6 +24,7 @@ import { DbConfig } from './types'
 @Provide()
 export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   public ctx: Context
+  public logger: Logger
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventRespAndExSubscription: Subscription | undefined
@@ -34,7 +36,8 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
-    public context?: Context,
+    context?: Context,
+    logger?: Logger,
   ) {
 
     super(
@@ -49,6 +52,13 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     }
     else {
       throw new TypeError('Parameter context undefined')
+    }
+
+    if (logger) {
+      this.logger = logger
+    }
+    else {
+      throw new TypeError('Parameter logger undefined')
     }
 
     this.registerDbObservable(this.instanceId)
@@ -119,7 +129,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
         processQueryRespAndExEventWithEventId({
           dbConfig: this.dbConfig,
           ev,
-          logger: loggers.getLogger('logger'),
+          logger: this.logger,
           queryUidSpanMap: this.queryUidSpanMap,
         })
       },
@@ -152,7 +162,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
         processQueryEventWithEventId({
           dbConfig: this.dbConfig,
           ev,
-          logger: this.ctx.logger,
+          logger: this.logger,
           queryUidSpanMap: this.queryUidSpanMap,
           reqId: this.ctx.reqId,
           tagClass,

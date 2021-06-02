@@ -1,6 +1,7 @@
 import { IMidwayWebContext as Context } from '@midwayjs/web'
 import { DbDict, KnexConfig } from 'kmore'
 import { Knex } from 'knex'
+import { Logger } from 'midway-component-jaeger'
 
 
 export type KmoreComponentConfig <DbId extends string = string> = Record<DbId, DbConfig>
@@ -26,9 +27,10 @@ export interface DbConfig <T = unknown> {
 
 export interface KmoreComponentFactoryOpts<D> {
   dbConfig: DbConfig<D>
+  ctx?: Context
+  dbh?: Knex
   dbId?: string
   instanceId?: string | symbol
-  dbh?: Knex
-  ctx?: Context
+  logger?: Logger
 }
 

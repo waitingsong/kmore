@@ -8,6 +8,7 @@ import { ILogger } from '@midwayjs/logger'
 import { IMidwayWebContext as Context } from '@midwayjs/web'
 import { Kmore } from 'kmore'
 import { Knex, knex } from 'knex'
+import { Logger as JLogger } from 'midway-component-jaeger'
 
 import { KmoreComponent } from './kmore'
 import { TracedKmoreComponent } from './traced-kmore'
@@ -30,9 +31,10 @@ export class DbManager <DbId extends string = any> {
   init(
     componentConfig: KmoreComponentConfig,
     ctx?: Context,
+    logger?: JLogger,
   ): void {
     Object.entries(componentConfig).forEach(([dbId, row]) => {
-      this.createInstance(dbId as DbId, row, ctx)
+      this.createInstance(dbId as DbId, row, ctx, logger)
     })
   }
 
@@ -40,6 +42,7 @@ export class DbManager <DbId extends string = any> {
     dbId: DbId,
     dbConfig: DbConfig<T>,
     ctx?: Context,
+    logger?: JLogger,
   ): Kmore<T> | undefined {
     if (this.kmoreList.get(dbId)) {
       this.logger.info(`Database already initialized, identifier: "${dbId}"`)
@@ -50,7 +53,7 @@ export class DbManager <DbId extends string = any> {
       return
     }
 
-    const km = this.createKmore<T>(dbId, dbConfig, ctx)
+    const km = this.createKmore<T>(dbId, dbConfig, ctx, logger)
     km && this.kmoreList.set(dbId, km)
     return km
   }
@@ -71,6 +74,7 @@ export class DbManager <DbId extends string = any> {
     dbId: string,
     dbConfig: DbConfig<T>,
     ctx?: Context,
+    logger?: JLogger,
   ): Kmore<T> | undefined {
     const { config, enableTracing } = dbConfig
 
@@ -83,6 +87,7 @@ export class DbManager <DbId extends string = any> {
       dbConfig,
       dbId,
       ctx,
+      logger,
     }
     const km = enableTracing
       ? kmoreComponentFactory<T>(opts, TracedKmoreComponent)
@@ -98,6 +103,6 @@ export function kmoreComponentFactory<D>(
   component: typeof KmoreComponent | typeof TracedKmoreComponent,
 ): KmoreComponent<D> {
   const dbh: Knex = options.dbh ? options.dbh : knex(options.dbConfig.config)
-  const km = new component<D>(options.dbConfig, dbh, options.ctx)
+  const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
   return km
 }
