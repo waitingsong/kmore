@@ -4,7 +4,6 @@ import { join } from 'path'
 
 import {
   App,
-  Config,
   Configuration,
   Inject,
   Logger,
@@ -16,7 +15,6 @@ import {
 } from '@midwayjs/web'
 
 import { DbManager } from './lib/db-man'
-import { KmoreComponentConfig } from './lib/types'
 
 
 const namespace = 'kmore'
@@ -32,10 +30,10 @@ export class AutoConfiguration {
   @Inject() readonly ctx: IMidwayWebContext
   @Inject() readonly dbManager: DbManager
 
-  @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
+  // @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
 
   async onReady(): Promise<void> {
-    this.dbManager.init(this.kmoreConfig)
+    // this.dbManager.init(this.kmoreConfig)
     // @ts-expect-error
     this.app.dbManager = this.dbManager
   }

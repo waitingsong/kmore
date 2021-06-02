@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Inject, Provide } from '@midwayjs/decorator'
+import { Provide } from '@midwayjs/decorator'
 import { loggers, ILogger } from '@midwayjs/logger'
 import { IMidwayWebContext as Context } from '@midwayjs/web'
 import {
@@ -22,7 +22,7 @@ import { DbConfig } from './types'
 
 @Provide()
 export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
-  @Inject() readonly ctx: Context
+  public ctx: Context
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventRespAndExSubscription: Subscription | undefined
@@ -34,6 +34,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
+    public context?: Context,
   ) {
 
     super(
@@ -42,6 +43,13 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
       dbh,
       Symbol(Date.now()),
     )
+
+    if (context) {
+      this.ctx = context
+    }
+    else {
+      throw new TypeError('Parameter context undefined')
+    }
 
     this.registerDbObservable(this.instanceId)
     this.subscribeDbEventRespAndEx()

@@ -1,3 +1,4 @@
+import { IMidwayWebContext as Context } from '@midwayjs/web'
 import { DbDict, KnexConfig } from 'kmore'
 import { Knex } from 'knex'
 
@@ -28,5 +29,6 @@ export interface KmoreComponentFactoryOpts<D> {
   dbId?: string
   instanceId?: string | symbol
   dbh?: Knex
+  ctx?: Context
 }
 
