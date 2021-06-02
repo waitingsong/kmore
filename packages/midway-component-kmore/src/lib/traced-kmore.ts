@@ -26,9 +26,9 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   logger: Logger
 
   dbEventObb: Observable<KmoreEvent> | undefined
-  dbEventRespAndExSubscription: Subscription | undefined
   // queryEventObb: Observable<KmoreEvent> | undefined
   queryEventSubscription: Subscription | undefined
+  RespAndExEventSubscription: Subscription | undefined
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
@@ -149,7 +149,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.queryEventSubscription = subsp
     this.ctx.res && this.ctx.res.once('finish', () => {
       this.unSubscribeQueryEvent()
-      this.unSubscribeEvent()
+      this.unSubscribeRespAndExEvent()
     })
   }
 
@@ -176,15 +176,15 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
       },
     })
 
-    this.dbEventRespAndExSubscription = subspRespAndEx
+    this.RespAndExEventSubscription = subspRespAndEx
   }
 
   protected unSubscribeQueryEvent(): void {
     this.queryEventSubscription?.unsubscribe()
   }
 
-  protected unSubscribeEvent(): void {
-    this.dbEventRespAndExSubscription?.unsubscribe()
+  protected unSubscribeRespAndExEvent(): void {
+    this.RespAndExEventSubscription?.unsubscribe()
   }
 
 }
