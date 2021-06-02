@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Provide } from '@midwayjs/decorator'
-import { loggers, ILogger } from '@midwayjs/logger'
+// import { Provide } from '@midwayjs/decorator'
+// import { loggers, ILogger } from '@midwayjs/logger'
 import { IMidwayWebContext as Context } from '@midwayjs/web'
 import {
   Kmore,
@@ -21,7 +21,6 @@ import { filter } from 'rxjs/operators'
 import { DbConfig } from './types'
 
 
-@Provide()
 export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
   ctx: Context
   logger: Logger
@@ -61,7 +60,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
       throw new TypeError('Parameter logger undefined')
     }
 
-    this.registerDbObservable()
+    this.registerDbObservable(this.instanceId)
     this.subscribeDbEventRespAndEx()
     this.subscribeQueryEvent()
   }
@@ -70,25 +69,27 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.dbEventRespAndExSubscription?.unsubscribe()
   }
 
-  private registerDbObservable(): void {
-
-    const obb = this.register((ev) => {
-      return this.eventFilter(ev, this.instanceId)
-    })
-    // const obb = this.register<string | symbol, Span>(
-    //   (ev, id) => this.eventFilter(ev, id, this.instanceId),
-    //   tracerInstId,
-    // )
+  private registerDbObservable(
+    tracerInstId: string | symbol,
+  ): void {
+    // const obb = this.register((ev) => {
+    //   return this.eventFilter(ev, this.instanceId)
+    // })
+    const obb = this.register<string | symbol, Span>(
+      (ev, id) => this.eventFilter(ev, id, this.instanceId),
+      tracerInstId,
+    )
     this.dbEventObb = obb
   }
 
 
   private eventFilter(
     ev: KmoreEvent,
+    id: unknown,
     currId: string | symbol | undefined,
   ): boolean {
 
-    const { identifier: id, type, queryUid } = ev
+    const { type, queryUid } = ev
 
     // if (ev.identifier) {
     //   return false
@@ -188,7 +189,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 interface ProcessQueryEventWithIdOpts {
   dbConfig: DbConfig
   ev: KmoreEvent
-  logger: ILogger
+  logger: Logger
   queryUidSpanMap: Map<string, QuerySpanInfo>
   reqId: string
   tagClass: string
@@ -198,6 +199,7 @@ function processQueryEventWithEventId(options: ProcessQueryEventWithIdOpts): voi
   const {
     dbConfig,
     ev,
+    logger,
     queryUidSpanMap,
     reqId,
     tagClass,
@@ -218,6 +220,7 @@ function processQueryEventWithEventId(options: ProcessQueryEventWithIdOpts): voi
   const opts: ProcessOpts = {
     ev,
     dbConfig,
+    logger,
     queryUidSpanMap,
     spanInfo: {
       reqId,
@@ -232,7 +235,7 @@ function processQueryEventWithEventId(options: ProcessQueryEventWithIdOpts): voi
 interface ProcessQueryRespAndExEventWithIdOpts {
   dbConfig: DbConfig
   ev: KmoreEvent
-  logger: ILogger
+  logger: Logger
   queryUidSpanMap: Map<string, QuerySpanInfo>
 }
 function processQueryRespAndExEventWithEventId(options: ProcessQueryRespAndExEventWithIdOpts): void {
@@ -252,6 +255,7 @@ function processQueryRespAndExEventWithEventId(options: ProcessQueryRespAndExEve
     const opts: ProcessOpts = {
       ev,
       dbConfig,
+      logger,
       queryUidSpanMap,
       spanInfo,
     }
@@ -262,6 +266,7 @@ function processQueryRespAndExEventWithEventId(options: ProcessQueryRespAndExEve
 interface ProcessOpts {
   dbConfig: DbConfig
   ev: KmoreEvent
+  logger: Logger
   spanInfo: QuerySpanInfo
   queryUidSpanMap: Map<string, QuerySpanInfo>
 }
@@ -322,6 +327,7 @@ function caseQuery(options: ProcessOpts): void {
 
 
 function caseQueryResp(options: ProcessOpts): void {
+  const { logger } = options
   const { config: knexConfig, sampleThrottleMs } = options.dbConfig
   const { span, reqId, tagClass, timestamp: start } = options.spanInfo
   const { kUid, queryUid, respRaw, trxId, timestamp: end } = options.ev
@@ -347,7 +353,6 @@ function caseQueryResp(options: ProcessOpts): void {
     input[TracerLog.queryCost] = cost
     input[TracerLog.queryCostThottleInSec] = sampleThrottleMs
 
-    const appLogger = loggers.getLogger('logger')
     const conn = knexConfig.connection as ConnectionConfig
     const logDetail = {
       ...input,
@@ -360,14 +365,18 @@ function caseQueryResp(options: ProcessOpts): void {
       [TracerTag.dbPort]: conn.port ?? '',
       [TracerTag.dbUser]: conn.user,
     }
-    appLogger.warn(JSON.stringify(logDetail))
+    logger.warn(logDetail)
+    span.log(logDetail)
+  }
+  else {
+    span.log(input)
   }
 
-  span.log(input)
   span.finish()
 }
 
 function caseQueryError(options: ProcessOpts): void {
+  const { logger } = options
   const { config: knexConfig, sampleThrottleMs } = options.dbConfig
   const { span, reqId, tagClass, timestamp: start } = options.spanInfo
   const {
@@ -386,7 +395,6 @@ function caseQueryError(options: ProcessOpts): void {
     [TracerLog.queryCostThottleInSec]: sampleThrottleMs * 0.001,
   }
 
-  const appLogger = loggers.getLogger('logger')
   const logDetail = {
     ...logInput,
     reqId,
@@ -398,7 +406,7 @@ function caseQueryError(options: ProcessOpts): void {
     [TracerTag.dbPort]: conn.port ?? '',
     [TracerTag.dbUser]: conn.user,
   }
-  appLogger.error(JSON.stringify(logDetail))
+  logger.error(logDetail)
 
   span.addTags({
     [Tags.ERROR]: true,
