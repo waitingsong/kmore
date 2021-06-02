@@ -60,7 +60,7 @@ export class DbManager <DbId extends string = any> {
   }
 
   private createKmore<T>(dbId: string, dbConfig: DbConfig<T>): Kmore<T> | undefined {
-    const { config } = dbConfig
+    const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
       this.logger.warn(`Param dbConfig has no element, identifier: "${dbId}"`)
@@ -71,7 +71,9 @@ export class DbManager <DbId extends string = any> {
       dbConfig,
       dbId,
     }
-    const km = kmoreComponentFactory<T>(opts, KmoreComponent)
+    const km = enableTracing
+      ? kmoreComponentFactory<T>(opts, TracedKmoreComponent)
+      : kmoreComponentFactory<T>(opts, KmoreComponent)
     return km
   }
 

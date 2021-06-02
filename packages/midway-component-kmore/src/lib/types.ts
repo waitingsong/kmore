@@ -16,6 +16,11 @@ export interface DbConfig <T = unknown> {
    * 负数不采样
    */
   sampleThrottleMs: number
+  /**
+   * Enable tracing via midway-component-jaeger
+   * @default false
+   */
+  enableTracing: boolean
 }
 
 export interface KmoreComponentFactoryOpts<D> {
