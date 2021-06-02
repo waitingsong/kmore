@@ -15,7 +15,8 @@ import { TracedKmoreComponent } from './traced-kmore'
 import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
 
 /** dbId: Kmore */
-type KmoreList = Map<string, KmoreComponent | TracedKmoreComponent>
+// type KmoreList = Map<string, KmoreComponent | TracedKmoreComponent>
+type DbHosts = Map<string, Knex>
 
 /**
  * Database 管理类
@@ -26,52 +27,66 @@ export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
-  private kmoreList: KmoreList = new Map()
+  // private kmoreList: KmoreList = new Map()
+  private dbHosts: DbHosts = new Map()
 
-  init(
+  connect(
+    componentConfig: KmoreComponentConfig,
+    forceConnect = false,
+  ): void {
+
+    Object.entries(componentConfig).forEach(([dbId, row]) => {
+      if (this.dbHosts.get(dbId)) {
+        return
+      }
+      else if (! row.autoConnect && ! forceConnect) {
+        return
+      }
+      const dbh = createDbh(row.config)
+      this.dbHosts.set(dbId, dbh)
+    })
+  }
+
+  create(
     componentConfig: KmoreComponentConfig,
     ctx?: Context,
     logger?: JLogger,
   ): void {
     Object.entries(componentConfig).forEach(([dbId, row]) => {
-      this.createInstance(dbId as DbId, row, ctx, logger)
+      this.createOne(dbId as DbId, row, ctx, logger)
     })
   }
 
-  createInstance<T = unknown>(
+  createOne<T = unknown>(
     dbId: DbId,
     dbConfig: DbConfig<T>,
     ctx?: Context,
     logger?: JLogger,
   ): Kmore<T> | undefined {
-    if (this.kmoreList.get(dbId)) {
-      this.logger.info(`Database already initialized, identifier: "${dbId}"`)
-      return
-    }
 
     if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
       return
     }
 
     const km = this.createKmore<T>(dbId, dbConfig, ctx, logger)
-    km && this.kmoreList.set(dbId, km)
+    // km && this.kmoreList.set(dbId, km)
     return km
   }
 
-  getAllInstances(): KmoreList {
-    return this.kmoreList
+  getAllDbHosts(): DbHosts {
+    return this.dbHosts
   }
 
-  getInstance<T = unknown>(dbId: DbId): Kmore<T> {
-    const km = this.kmoreList.get(dbId)
-    if (! km) {
-      throw new Error(`Kmore instance not exists with dbId: "${dbId}"`)
-    }
-    return km as Kmore<T>
+  getDbHost(dbId: DbId): Knex | undefined {
+    const dbh = this.dbHosts.get(dbId)
+    // if (! dbh) {
+    //   throw new Error(`dbhost instance not exists with dbId: "${dbId}"`)
+    // }
+    return dbh
   }
 
   private createKmore<T>(
-    dbId: string,
+    dbId: DbId,
     dbConfig: DbConfig<T>,
     ctx?: Context,
     logger?: JLogger,
@@ -83,8 +98,10 @@ export class DbManager <DbId extends string = any> {
       return
     }
 
+    const dbh = this.getDbHost(dbId)
     const opts: KmoreComponentFactoryOpts<T> = {
       dbConfig,
+      dbh,
       dbId,
       ctx,
       logger,
@@ -92,6 +109,9 @@ export class DbManager <DbId extends string = any> {
     const km = enableTracing
       ? kmoreComponentFactory<T>(opts, TracedKmoreComponent)
       : kmoreComponentFactory<T>(opts, KmoreComponent)
+    if (! dbh) {
+      this.dbHosts.set(dbId, km.dbh)
+    }
     return km
   }
 
@@ -102,7 +122,11 @@ export function kmoreComponentFactory<D>(
   options: KmoreComponentFactoryOpts<D>,
   component: typeof KmoreComponent | typeof TracedKmoreComponent,
 ): KmoreComponent<D> | TracedKmoreComponent<D> {
-  const dbh: Knex = options.dbh ? options.dbh : knex(options.dbConfig.config)
+  const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
   const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
   return km
+}
+
+function createDbh(knexConfig: DbConfig['config']): Knex {
+  return knex(knexConfig)
 }

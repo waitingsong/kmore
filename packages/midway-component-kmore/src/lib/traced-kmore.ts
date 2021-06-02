@@ -27,7 +27,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventRespAndExSubscription: Subscription | undefined
-  queryEventObb: Observable<KmoreEvent> | undefined
+  // queryEventObb: Observable<KmoreEvent> | undefined
   queryEventSubscription: Subscription | undefined
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
@@ -65,9 +65,6 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.subscribeQueryEvent()
   }
 
-  unSubscribeEvent(): void {
-    this.dbEventRespAndExSubscription?.unsubscribe()
-  }
 
   private registerDbObservable(
     tracerInstId: string | symbol,
@@ -117,32 +114,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     return flag
   }
 
-  private subscribeDbEventRespAndEx(): void {
-
-    if (! this.dbEventObb) {
-      throw new Error('BaseRepo.dbEventObb invalid')
-    }
-
-    const subspRespAndEx = this.dbEventObb.pipe(
-      filter((ev) => {
-        return ev.type === 'queryResponse' || ev.type === 'queryError'
-      }),
-    ).subscribe({
-      next: (ev) => {
-        processQueryRespAndExEventWithEventId({
-          dbConfig: this.dbConfig,
-          ev,
-          logger: this.logger,
-          queryUidSpanMap: this.queryUidSpanMap,
-        })
-      },
-    })
-
-    this.dbEventRespAndExSubscription = subspRespAndEx
-  }
-
   protected subscribeQueryEvent(): void {
-
     if (! this.dbEventObb) {
       throw new Error('dbEventObb invalid')
     }
@@ -175,12 +147,44 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     })
 
     this.queryEventSubscription = subsp
-    this.ctx.res && this.ctx.res.once('finish', () => this.unSubscribeQueryEvent())
+    this.ctx.res && this.ctx.res.once('finish', () => {
+      this.unSubscribeQueryEvent()
+      this.unSubscribeEvent()
+    })
   }
 
 
+
+  private subscribeDbEventRespAndEx(): void {
+
+    if (! this.dbEventObb) {
+      throw new Error('BaseRepo.dbEventObb invalid')
+    }
+
+    const subspRespAndEx = this.dbEventObb.pipe(
+      filter((ev) => {
+        return ev.type === 'queryResponse' || ev.type === 'queryError'
+      }),
+    ).subscribe({
+      next: (ev) => {
+        processQueryRespAndExEventWithEventId({
+          dbConfig: this.dbConfig,
+          ev,
+          logger: this.logger,
+          queryUidSpanMap: this.queryUidSpanMap,
+        })
+      },
+    })
+
+    this.dbEventRespAndExSubscription = subspRespAndEx
+  }
+
   protected unSubscribeQueryEvent(): void {
     this.queryEventSubscription?.unsubscribe()
+  }
+
+  protected unSubscribeEvent(): void {
+    this.dbEventRespAndExSubscription?.unsubscribe()
   }
 
 }

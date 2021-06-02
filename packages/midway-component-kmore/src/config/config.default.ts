@@ -5,11 +5,11 @@ import { KmoreComponentConfig } from '../lib/types'
 
 export const kmore: KmoreComponentConfig = {
   master: {
+    autoConnect: true,
     config: {},
     dict: {} as DbDict<unknown>,
-    isAutoConnect: true,
-    sampleThrottleMs: 300,
     enableTracing: false,
+    sampleThrottleMs: 300,
   },
 }
 

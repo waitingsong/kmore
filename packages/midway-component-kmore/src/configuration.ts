@@ -4,6 +4,7 @@ import { join } from 'path'
 
 import {
   App,
+  Config,
   Configuration,
   Inject,
   Logger,
@@ -15,7 +16,7 @@ import {
 } from '@midwayjs/web'
 
 import { DbManager } from './lib/db-man'
-import { TracedKmoreComponent } from './lib/traced-kmore'
+import { KmoreComponentConfig } from './lib/types'
 
 
 const namespace = 'kmore'
@@ -31,10 +32,10 @@ export class AutoConfiguration {
   @Inject() readonly ctx: IMidwayWebContext
   @Inject() readonly dbManager: DbManager
 
-  // @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
+  @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
 
   async onReady(): Promise<void> {
-    // this.dbManager.init(this.kmoreConfig)
+    this.dbManager.connect(this.kmoreConfig)
     // @ts-expect-error
     this.app.dbManager = this.dbManager
   }
@@ -42,13 +43,10 @@ export class AutoConfiguration {
   async onStop(): Promise<void> {
     const { dbManager } = this
     if (dbManager) {
-      const map = dbManager.getAllInstances()
-      for (const [id, inst] of map) {
+      const map = dbManager.getAllDbHosts()
+      for (const [id, dbh] of map) {
         try {
-          await inst.dbh.destroy()
-          if (inst instanceof TracedKmoreComponent) {
-            inst.unSubscribeEvent()
-          }
+          await dbh.destroy()
         }
         catch (ex) {
           this.logger.error(`destroy knex connection failed with identifier: "${id}"`)
