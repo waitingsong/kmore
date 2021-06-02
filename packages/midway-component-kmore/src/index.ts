@@ -11,18 +11,14 @@ export { KmoreComponent } from './lib/kmore'
 
 export {
   genDbDict, getCurrentTime,
+  Kmore, KmoreEvent, KnexConfig,
 } from 'kmore'
 
 
-declare module '@midwayjs/core' {
-  interface Context {
-    dbManager?: DbManager
-  }
-}
 declare module 'egg' {
-  interface Application {
-    dbManager: DbManager
-  }
+  // interface Application {
+  //   dbManager: DbManager
+  // }
   interface EggAppConfig {
     kmore: KmoreComponentConfig
   }

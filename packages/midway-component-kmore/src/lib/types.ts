@@ -1,7 +1,7 @@
 import { DbDict, KnexConfig } from 'kmore'
 
 
-export type KmoreComponentConfig <DbIds extends string = string> = Record<DbIds, DbConfig>
+export type KmoreComponentConfig <DbId extends string = string> = Record<DbId, DbConfig>
 export interface DbConfig <T = unknown> {
   config: KnexConfig
   dict: DbDict<T>

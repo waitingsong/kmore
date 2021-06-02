@@ -36,6 +36,7 @@ export class AutoConfiguration {
 
   async onReady(): Promise<void> {
     this.dbManager.init(this.kmoreConfig)
+    // @ts-expect-error
     this.app.dbManager = this.dbManager
   }
 

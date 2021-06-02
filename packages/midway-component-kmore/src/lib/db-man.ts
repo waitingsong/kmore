@@ -21,7 +21,7 @@ type KmoreList = Map<string, Kmore>
  */
 @Provide()
 @Scope(ScopeEnum.Singleton)
-export class DbManager {
+export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
@@ -29,11 +29,11 @@ export class DbManager {
 
   init(componentConfig: KmoreComponentConfig): void {
     Object.entries(componentConfig).forEach(([dbId, row]) => {
-      this.createInstance(dbId, row)
+      this.createInstance(dbId as DbId, row)
     })
   }
 
-  createInstance<T = unknown>(dbId: string, dbConfig: DbConfig<T>): Kmore<T> | undefined {
+  createInstance<T = unknown>(dbId: DbId, dbConfig: DbConfig<T>): Kmore<T> | undefined {
     if (this.kmoreList.get(dbId)) {
       this.logger.info(`Database already initialized, identifier: "${dbId}"`)
       return
@@ -52,7 +52,7 @@ export class DbManager {
     return this.kmoreList
   }
 
-  getInstance<T = unknown>(dbId: string): Kmore<T> {
+  getInstance<T = unknown>(dbId: DbId): Kmore<T> {
     const km = this.kmoreList.get(dbId)
     if (! km) {
       throw new Error(`Kmore instance not exists with dbId: "${dbId}"`)
