@@ -15,7 +15,7 @@ import { TracedKmoreComponent } from './traced-kmore'
 import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
 
 /** dbId: Kmore */
-type KmoreList = Map<string, Kmore>
+type KmoreList = Map<string, KmoreComponent | TracedKmoreComponent>
 
 /**
  * Database 管理类
@@ -26,7 +26,7 @@ export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
-  private kmoreList: KmoreList = new Map<string, Kmore>()
+  private kmoreList: KmoreList = new Map()
 
   init(
     componentConfig: KmoreComponentConfig,
@@ -75,7 +75,7 @@ export class DbManager <DbId extends string = any> {
     dbConfig: DbConfig<T>,
     ctx?: Context,
     logger?: JLogger,
-  ): Kmore<T> | undefined {
+  ): KmoreComponent<T> | TracedKmoreComponent<T> | undefined {
     const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
@@ -101,7 +101,7 @@ export class DbManager <DbId extends string = any> {
 export function kmoreComponentFactory<D>(
   options: KmoreComponentFactoryOpts<D>,
   component: typeof KmoreComponent | typeof TracedKmoreComponent,
-): KmoreComponent<D> {
+): KmoreComponent<D> | TracedKmoreComponent<D> {
   const dbh: Knex = options.dbh ? options.dbh : knex(options.dbConfig.config)
   const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
   return km

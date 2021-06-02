@@ -23,8 +23,8 @@ import { DbConfig } from './types'
 
 @Provide()
 export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
-  public ctx: Context
-  public logger: Logger
+  ctx: Context
+  logger: Logger
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventRespAndExSubscription: Subscription | undefined
@@ -66,6 +66,9 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.subscribeEvent()
   }
 
+  unSubscribeReqEvent(): void {
+    this.dbEventRespAndExSubscription?.unsubscribe()
+  }
 
   private registerDbObservable(
     tracerInstId: string | symbol,
@@ -136,9 +139,6 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     })
 
     this.dbEventRespAndExSubscription = subspRespAndEx
-    process.once('exit', () => {
-      this.dbEventRespAndExSubscription?.unsubscribe()
-    })
   }
 
   protected subscribeEvent(): void {
@@ -175,13 +175,14 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     })
 
     this.instEventSubscription = subsp
-    this.ctx.res.once('finish', () => this.unSubscribeEvent())
+    this.ctx.res && this.ctx.res.once('finish', () => this.unSubscribeEvent())
   }
 
 
   protected unSubscribeEvent(): void {
     this.instEventSubscription?.unsubscribe()
   }
+
 }
 
 

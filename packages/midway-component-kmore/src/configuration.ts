@@ -15,6 +15,7 @@ import {
 } from '@midwayjs/web'
 
 import { DbManager } from './lib/db-man'
+import { TracedKmoreComponent } from './lib/traced-kmore'
 
 
 const namespace = 'kmore'
@@ -45,9 +46,12 @@ export class AutoConfiguration {
       for (const [id, inst] of map) {
         try {
           await inst.dbh.destroy()
+          if (inst instanceof TracedKmoreComponent) {
+            inst.unSubscribeReqEvent()
+          }
         }
         catch (ex) {
-          this.logger.warn(`destroy knex connection failed with identifier: "${id}"`)
+          this.logger.error(`destroy knex connection failed with identifier: "${id}"`)
         }
       }
     }
