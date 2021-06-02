@@ -61,7 +61,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
       throw new TypeError('Parameter logger undefined')
     }
 
-    this.registerDbObservable(this.instanceId)
+    this.registerDbObservable()
     this.subscribeDbEventRespAndEx()
     this.subscribeEvent()
   }
@@ -70,26 +70,25 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.dbEventRespAndExSubscription?.unsubscribe()
   }
 
-  private registerDbObservable(
-    tracerInstId: string | symbol,
-  ): void {
+  private registerDbObservable(): void {
 
-    // const obb = this.db.register(ev => ev.identifier === this.repoInstanceId)
-    const obb = this.register<string | symbol, Span>(
-      (ev, id) => this.eventFilter(ev, id, this.instanceId),
-      tracerInstId,
-    )
+    const obb = this.register((ev) => {
+      return this.eventFilter(ev, this.instanceId)
+    })
+    // const obb = this.register<string | symbol, Span>(
+    //   (ev, id) => this.eventFilter(ev, id, this.instanceId),
+    //   tracerInstId,
+    // )
     this.dbEventObb = obb
   }
 
 
   private eventFilter(
     ev: KmoreEvent,
-    id: string | symbol | undefined,
     currId: string | symbol | undefined,
   ): boolean {
 
-    const { type, queryUid } = ev
+    const { identifier: id, type, queryUid } = ev
 
     // if (ev.identifier) {
     //   return false
