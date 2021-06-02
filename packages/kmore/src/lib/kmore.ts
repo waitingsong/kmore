@@ -87,6 +87,11 @@ export class Kmore<D = unknown> {
     return ret$
   }
 
+  unsubscribe(): void {
+    this.subject.unsubscribe()
+  }
+
+
   protected createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
     const rb = {} as DbQueryBuilder<D>
 

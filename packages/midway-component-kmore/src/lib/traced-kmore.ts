@@ -154,11 +154,12 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     })
 
     this.dbEventSubscription = subsp
-    this.ctx.res && this.ctx.res.once('finish', () => this.unSubscribeEvent())
+    this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
   }
 
-  protected unSubscribeEvent(): void {
+  protected unsubscribeEvent(): void {
     this.dbEventSubscription?.unsubscribe()
+    this.unsubscribe()
   }
 
 
@@ -190,14 +191,14 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
         })
       },
       error: () => {
-        this.unSubscribeQueryEvent()
+        this.unsubscribeQueryEvent()
       },
     })
 
     this.queryEventSubscription = subsp
     this.ctx.res && this.ctx.res.once('finish', () => {
-      this.unSubscribeQueryEvent()
-      this.unSubscribeRespAndExEvent()
+      this.unsubscribeQueryEvent()
+      this.unsubscribeRespAndExEvent()
     })
   }
 
@@ -225,11 +226,11 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.RespAndExEventSubscription = subspRespAndEx
   }
 
-  protected unSubscribeQueryEvent(): void {
+  protected unsubscribeQueryEvent(): void {
     this.queryEventSubscription?.unsubscribe()
   }
 
-  protected unSubscribeRespAndExEvent(): void {
+  protected unsubscribeRespAndExEvent(): void {
     this.RespAndExEventSubscription?.unsubscribe()
   }
 
