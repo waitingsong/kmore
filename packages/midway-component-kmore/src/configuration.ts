@@ -47,7 +47,7 @@ export class AutoConfiguration {
         try {
           await inst.dbh.destroy()
           if (inst instanceof TracedKmoreComponent) {
-            inst.unSubscribeReqEvent()
+            inst.unSubscribeEvent()
           }
         }
         catch (ex) {

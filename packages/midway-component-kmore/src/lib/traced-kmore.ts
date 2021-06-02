@@ -28,8 +28,8 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventRespAndExSubscription: Subscription | undefined
-  instEventObb: Observable<KmoreEvent> | undefined
-  instEventSubscription: Subscription | undefined
+  queryEventObb: Observable<KmoreEvent> | undefined
+  queryEventSubscription: Subscription | undefined
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
@@ -63,10 +63,10 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 
     this.registerDbObservable()
     this.subscribeDbEventRespAndEx()
-    this.subscribeEvent()
+    this.subscribeQueryEvent()
   }
 
-  unSubscribeReqEvent(): void {
+  unSubscribeEvent(): void {
     this.dbEventRespAndExSubscription?.unsubscribe()
   }
 
@@ -140,10 +140,10 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.dbEventRespAndExSubscription = subspRespAndEx
   }
 
-  protected subscribeEvent(): void {
+  protected subscribeQueryEvent(): void {
 
     if (! this.dbEventObb) {
-      throw new Error('BaseRepo.dbEventObb invalid')
+      throw new Error('dbEventObb invalid')
     }
 
     const subsp = this.dbEventObb.pipe(
@@ -169,17 +169,17 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
         })
       },
       error: () => {
-        this.unSubscribeEvent()
+        this.unSubscribeQueryEvent()
       },
     })
 
-    this.instEventSubscription = subsp
-    this.ctx.res && this.ctx.res.once('finish', () => this.unSubscribeEvent())
+    this.queryEventSubscription = subsp
+    this.ctx.res && this.ctx.res.once('finish', () => this.unSubscribeQueryEvent())
   }
 
 
-  protected unSubscribeEvent(): void {
-    this.instEventSubscription?.unsubscribe()
+  protected unSubscribeQueryEvent(): void {
+    this.queryEventSubscription?.unsubscribe()
   }
 
 }
