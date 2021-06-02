@@ -1,4 +1,5 @@
 import { DbDict, KnexConfig } from 'kmore'
+import { Knex } from 'knex'
 
 
 export type KmoreComponentConfig <DbId extends string = string> = Record<DbId, DbConfig>
@@ -16,3 +17,11 @@ export interface DbConfig <T = unknown> {
    */
   sampleThrottleMs: number
 }
+
+export interface KmoreComponentFactoryOpts<D> {
+  dbConfig: DbConfig<D>
+  dbId?: string
+  instanceId?: string | symbol
+  dbh?: Knex
+}
+

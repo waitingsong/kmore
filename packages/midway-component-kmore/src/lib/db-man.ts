@@ -5,13 +5,12 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import {
-  Kmore,
-  kmoreFactory,
-  KmoreFactoryOpts,
-} from 'kmore'
+import { Kmore } from 'kmore'
+import { Knex, knex } from 'knex'
 
-import { DbConfig, KmoreComponentConfig } from './types'
+import { KmoreComponent } from './kmore'
+import { TracedKmoreComponent } from './traced-kmore'
+import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
 
 /** dbId: Kmore */
 type KmoreList = Map<string, Kmore>
@@ -61,21 +60,29 @@ export class DbManager <DbId extends string = any> {
   }
 
   private createKmore<T>(dbId: string, dbConfig: DbConfig<T>): Kmore<T> | undefined {
-    const { config, dict } = dbConfig
+    const { config } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
       this.logger.warn(`Param dbConfig has no element, identifier: "${dbId}"`)
       return
     }
 
-    const opts: KmoreFactoryOpts<T> = {
-      config,
-      dict,
+    const opts: KmoreComponentFactoryOpts<T> = {
+      dbConfig,
       dbId,
     }
-    const km = kmoreFactory<T>(opts)
+    const km = kmoreComponentFactory<T>(opts, KmoreComponent)
     return km
   }
 
 }
 
+
+export function kmoreComponentFactory<D>(
+  options: KmoreComponentFactoryOpts<D>,
+  component: typeof KmoreComponent | typeof TracedKmoreComponent,
+): KmoreComponent<D> {
+  const dbh: Knex = options.dbh ? options.dbh : knex(options.dbConfig.config)
+  const km = new component<D>(options.dbConfig, dbh)
+  return km
+}
