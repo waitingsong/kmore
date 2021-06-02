@@ -2,9 +2,9 @@ import { DbDict, KnexConfig } from 'kmore'
 
 
 export type KmoreComponentConfig = Record<string, DbConfig>
-export interface DbConfig {
+export interface DbConfig <T = unknown> {
   config: KnexConfig
-  dict: DbDict<unknown>
+  dict: DbDict<T>
   /**
    * Auto connect when service onReady
    * @default true

@@ -33,7 +33,7 @@ export class DbManager {
     })
   }
 
-  createInstance(dbId: string, dbConfig: DbConfig): Kmore | undefined {
+  createInstance<T = unknown>(dbId: string, dbConfig: DbConfig<T>): Kmore<T> | undefined {
     if (this.kmoreList.get(dbId)) {
       this.logger.info(`Database already initialized, identifier: "${dbId}"`)
       return
@@ -43,7 +43,7 @@ export class DbManager {
       return
     }
 
-    const km = this.createKmore(dbId, dbConfig)
+    const km = this.createKmore<T>(dbId, dbConfig)
     km && this.kmoreList.set(dbId, km)
     return km
   }
@@ -52,11 +52,15 @@ export class DbManager {
     return this.kmoreList
   }
 
-  getInstance(dbId: string): Kmore | undefined {
-    return this.kmoreList.get(dbId)
+  getInstance<T = unknown>(dbId: string): Kmore<T> {
+    const km = this.kmoreList.get(dbId)
+    if (! km) {
+      throw new Error(`Kmore instance not exists with dbId: "${dbId}"`)
+    }
+    return km as Kmore<T>
   }
 
-  private createKmore(dbId: string, dbConfig: DbConfig): Kmore | undefined {
+  private createKmore<T>(dbId: string, dbConfig: DbConfig<T>): Kmore<T> | undefined {
     const { config, dict } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
@@ -64,12 +68,12 @@ export class DbManager {
       return
     }
 
-    const opts: KmoreFactoryOpts<unknown> = {
+    const opts: KmoreFactoryOpts<T> = {
       config,
       dict,
       dbId,
     }
-    const km = kmoreFactory(opts)
+    const km = kmoreFactory<T>(opts)
     return km
   }
 

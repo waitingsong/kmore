@@ -9,6 +9,10 @@ export { DbManager }
 export * from './lib/types'
 export { KmoreComponent } from './lib/kmore'
 
+export {
+  genDbDict, getCurrentTime,
+} from 'kmore'
+
 
 declare module '@midwayjs/core' {
   interface Context {
