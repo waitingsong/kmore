@@ -8,6 +8,7 @@ export { AutoConfiguration as Configuration } from './configuration'
 export { DbManager }
 export * from './lib/types'
 export { KmoreComponent } from './lib/kmore'
+export { TracedKmoreComponent } from './lib/traced-kmore'
 
 export {
   genDbDict, getCurrentTime,

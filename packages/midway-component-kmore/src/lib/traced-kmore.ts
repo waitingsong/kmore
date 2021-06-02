@@ -1,0 +1,425 @@
+/* eslint-disable import/no-extraneous-dependencies */
+import { Inject, Provide } from '@midwayjs/decorator'
+import { loggers, ILogger } from '@midwayjs/logger'
+import { IMidwayWebContext as Context } from '@midwayjs/web'
+import {
+  Kmore,
+  KmoreEvent,
+} from 'kmore'
+import { Knex } from 'knex'
+import {
+  SpanLogInput,
+  TracerManager,
+  TracerLog,
+  TracerTag,
+} from 'midway-component-jaeger'
+import { Span, Tags } from 'opentracing'
+import { Observable, Subscription } from 'rxjs'
+import { filter } from 'rxjs/operators'
+
+import { DbConfig } from './types'
+
+
+@Provide()
+export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
+  @Inject() readonly ctx: Context
+
+  dbEventObb: Observable<KmoreEvent> | undefined
+  dbEventRespAndExSubscription: Subscription | undefined
+  instEventObb: Observable<KmoreEvent> | undefined
+  instEventSubscription: Subscription | undefined
+
+  readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
+
+  constructor(
+    public readonly dbConfig: DbConfig<D>,
+    public dbh: Knex,
+  ) {
+
+    super(
+      dbConfig.config,
+      dbConfig.dict,
+      dbh,
+      Symbol(Date.now()),
+    )
+
+    this.registerDbObservable(this.instanceId)
+    this.subscribeDbEventRespAndEx()
+    this.subscribeEvent()
+  }
+
+
+  private registerDbObservable(
+    tracerInstId: string | symbol,
+  ): void {
+
+    // const obb = this.db.register(ev => ev.identifier === this.repoInstanceId)
+    const obb = this.register<string | symbol, Span>(
+      (ev, id) => this.eventFilter(ev, id, this.instanceId),
+      tracerInstId,
+    )
+    this.dbEventObb = obb
+  }
+
+
+  private eventFilter(
+    ev: KmoreEvent,
+    id: string | symbol | undefined,
+    currId: string | symbol | undefined,
+  ): boolean {
+
+    const { type, queryUid } = ev
+
+    // if (ev.identifier) {
+    //   return false
+    // }
+
+    if (this.queryUidSpanMap.size > 10000) {
+      throw new Error('BaseRepo.queryUidSpanMap.size exceed 10000')
+    }
+
+    if (type !== 'query' && type !== 'queryResponse' && type !== 'queryError') {
+      return false
+    }
+
+    if (! queryUid) {
+      return false
+    }
+
+    const span = this.queryUidSpanMap.get(queryUid)
+    if (span && type === 'query') {
+      return false
+    }
+
+    // const flag = id === BaseRepo.tracerInstId
+    const flag = !! (currId && id === currId)
+    return flag
+  }
+
+  private subscribeDbEventRespAndEx(): void {
+
+    if (! this.dbEventObb) {
+      throw new Error('BaseRepo.dbEventObb invalid')
+    }
+
+    const subspRespAndEx = this.dbEventObb.pipe(
+      filter((ev) => {
+        return ev.type === 'queryResponse' || ev.type === 'queryError'
+      }),
+    ).subscribe({
+      next: (ev) => {
+        processQueryRespAndExEventWithEventId({
+          dbConfig: this.dbConfig,
+          ev,
+          logger: loggers.getLogger('logger'),
+          queryUidSpanMap: this.queryUidSpanMap,
+        })
+      },
+    })
+
+    this.dbEventRespAndExSubscription = subspRespAndEx
+    process.once('exit', () => {
+      this.dbEventRespAndExSubscription?.unsubscribe()
+    })
+  }
+
+  protected subscribeEvent(): void {
+
+    if (! this.dbEventObb) {
+      throw new Error('BaseRepo.dbEventObb invalid')
+    }
+
+    const subsp = this.dbEventObb.pipe(
+      filter((ev) => {
+        if (ev.type === 'query') {
+          const flag = !! (ev.identifier && ev.identifier === this.instanceId)
+          return flag
+        }
+        // other db event handled by BaseRepo.dbEventRespAndExSubscription
+        return false
+      }),
+    ).subscribe({
+      next: (ev) => {
+        const { name: tagClass } = this.constructor
+        processQueryEventWithEventId({
+          dbConfig: this.dbConfig,
+          ev,
+          logger: this.ctx.logger,
+          queryUidSpanMap: this.queryUidSpanMap,
+          reqId: this.ctx.reqId,
+          tagClass,
+          tracerManager: this.ctx.tracerManager,
+        })
+      },
+      error: () => {
+        this.unSubscribeEvent()
+      },
+    })
+
+    this.instEventSubscription = subsp
+    this.ctx.res.once('finish', () => this.unSubscribeEvent())
+  }
+
+
+  protected unSubscribeEvent(): void {
+    this.instEventSubscription?.unsubscribe()
+  }
+}
+
+
+interface ProcessQueryEventWithIdOpts {
+  dbConfig: DbConfig
+  ev: KmoreEvent
+  logger: ILogger
+  queryUidSpanMap: Map<string, QuerySpanInfo>
+  reqId: string
+  tagClass: string
+  tracerManager: TracerManager
+}
+function processQueryEventWithEventId(options: ProcessQueryEventWithIdOpts): void {
+  const {
+    dbConfig,
+    ev,
+    queryUidSpanMap,
+    reqId,
+    tagClass,
+    tracerManager,
+  } = options
+
+  if (! ev.identifier) { return }
+
+  const currSpan = tracerManager.currentSpan()
+  if (! currSpan) {
+    options.logger.warn(`get current SPAN undefined. className: "${tagClass}", reqId: "${reqId}"`)
+    // this.unSubscribeEvent()
+    return
+  }
+
+  const span = tracerManager.genSpan(TracerTag.dbName, currSpan)
+
+  const opts: ProcessOpts = {
+    ev,
+    dbConfig,
+    queryUidSpanMap,
+    spanInfo: {
+      reqId,
+      span,
+      tagClass,
+      timestamp: ev.timestamp,
+    },
+  }
+  processSwitch(opts)
+}
+
+interface ProcessQueryRespAndExEventWithIdOpts {
+  dbConfig: DbConfig
+  ev: KmoreEvent
+  logger: ILogger
+  queryUidSpanMap: Map<string, QuerySpanInfo>
+}
+function processQueryRespAndExEventWithEventId(options: ProcessQueryRespAndExEventWithIdOpts): void {
+  const { dbConfig, ev, logger, queryUidSpanMap } = options
+
+  if (! ev.identifier) { return }
+
+  const { queryUid } = ev
+  const spanInfo = queryUidSpanMap.get(queryUid)
+
+  if (spanInfo) {
+    const { tagClass, reqId } = spanInfo
+
+    logger.debug(
+      `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
+    )
+    const opts: ProcessOpts = {
+      ev,
+      dbConfig,
+      queryUidSpanMap,
+      spanInfo,
+    }
+    processSwitch(opts)
+  }
+}
+
+interface ProcessOpts {
+  dbConfig: DbConfig
+  ev: KmoreEvent
+  spanInfo: QuerySpanInfo
+  queryUidSpanMap: Map<string, QuerySpanInfo>
+}
+function processSwitch(options: ProcessOpts): void {
+  const { ev, spanInfo, queryUidSpanMap } = options
+  const { type, queryUid } = ev
+
+  switch (type) {
+    case 'query': {
+      queryUidSpanMap.set(queryUid, spanInfo)
+      caseQuery(options)
+      break
+    }
+
+    case 'queryResponse': {
+      caseQueryResp(options)
+      cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
+      break
+    }
+
+    case 'queryError': {
+      caseQueryError(options)
+      cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
+      break
+    }
+
+    default: {
+      void 0
+      break
+    }
+  }
+}
+
+function caseQuery(options: ProcessOpts): void {
+  const { config: knexConfig } = options.dbConfig
+  const { span, reqId, tagClass } = options.spanInfo
+  const { kUid, queryUid, trxId, data } = options.ev
+  const conn = knexConfig.connection as ConnectionConfig
+
+  span.addTags({
+    [TracerTag.reqId]: reqId,
+    [TracerTag.callerClass]: tagClass,
+    [TracerTag.dbClient]: knexConfig.client,
+    [TracerTag.dbHost]: conn.host,
+    [TracerTag.dbDatabase]: conn.database,
+    [TracerTag.dbPort]: conn.port ?? '',
+    [TracerTag.dbUser]: conn.user,
+  })
+  span.log({
+    event: TracerLog.queryStart,
+    kUid,
+    queryUid,
+    trxId: trxId ?? '',
+    sql: data?.sql ?? '',
+    // bindings: data?.bindings,
+  })
+}
+
+
+function caseQueryResp(options: ProcessOpts): void {
+  const { config: knexConfig, sampleThrottleMs } = options.dbConfig
+  const { span, reqId, tagClass, timestamp: start } = options.spanInfo
+  const { kUid, queryUid, respRaw, trxId, timestamp: end } = options.ev
+
+  if (respRaw?.response.command) {
+    span.addTags({
+      [TracerTag.dbCommand]: respRaw.response.command,
+    })
+  }
+
+  const input: SpanLogInput = {
+    event: TracerLog.queryFinish,
+    queryUid,
+    trxId: trxId ?? '',
+    sql: respRaw?.sql ?? '',
+    bindings: respRaw?.bindings,
+    [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
+  }
+
+  const cost = end - start
+  if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
+    span.addTags({ [Tags.SAMPLING_PRIORITY]: 50 })
+    input[TracerLog.queryCost] = cost
+    input[TracerLog.queryCostThottleInSec] = sampleThrottleMs
+
+    const appLogger = loggers.getLogger('logger')
+    const conn = knexConfig.connection as ConnectionConfig
+    const logDetail = {
+      ...input,
+      reqId,
+      kUid,
+      tagClass,
+      [TracerTag.dbClient]: knexConfig.client,
+      [TracerTag.dbHost]: conn.host,
+      [TracerTag.dbDatabase]: conn.database,
+      [TracerTag.dbPort]: conn.port ?? '',
+      [TracerTag.dbUser]: conn.user,
+    }
+    appLogger.warn(JSON.stringify(logDetail))
+  }
+
+  span.log(input)
+  span.finish()
+}
+
+function caseQueryError(options: ProcessOpts): void {
+  const { config: knexConfig, sampleThrottleMs } = options.dbConfig
+  const { span, reqId, tagClass, timestamp: start } = options.spanInfo
+  const {
+    kUid, queryUid, trxId, exData, exError, timestamp: end,
+  } = options.ev
+  const conn = knexConfig.connection as ConnectionConfig
+
+  const cost = end - start
+  const logInput = {
+    event: TracerLog.queryError,
+    queryUid,
+    trxId,
+    exData,
+    exError,
+    [TracerLog.queryCost]: cost,
+    [TracerLog.queryCostThottleInSec]: sampleThrottleMs * 0.001,
+  }
+
+  const appLogger = loggers.getLogger('logger')
+  const logDetail = {
+    ...logInput,
+    reqId,
+    kUid,
+    tagClass,
+    [TracerTag.dbClient]: knexConfig.client,
+    [TracerTag.dbHost]: conn.host,
+    [TracerTag.dbDatabase]: conn.database,
+    [TracerTag.dbPort]: conn.port ?? '',
+    [TracerTag.dbUser]: conn.user,
+  }
+  appLogger.error(JSON.stringify(logDetail))
+
+  span.addTags({
+    [Tags.ERROR]: true,
+    [Tags.SAMPLING_PRIORITY]: 100,
+  })
+  span.log(logInput)
+  span.finish()
+}
+
+function cleanQueryUidSpanMap(
+  queryUidSpanMap: Map<string, QuerySpanInfo>,
+  queryUid: string,
+): void {
+  queryUidSpanMap.delete(queryUid)
+}
+
+
+interface ConnectionConfig {
+  host: string
+  port?: number
+  user: string
+  password: string
+  database: string
+  domain?: string
+  instanceName?: string
+  debug?: boolean
+  requestTimeout?: number
+}
+
+interface QuerySpanInfo {
+  reqId: string
+  span: Span
+  tagClass: string
+  timestamp: number
+}
+
+
+declare module '@midwayjs/core' {
+  interface Context {
+    reqId: string
+  }
+}
