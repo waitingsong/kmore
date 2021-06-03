@@ -244,6 +244,7 @@ function processQueryRespAndExEventWithEventId(options: ProcessQueryRespAndExEve
     // )
     logger.tracerLogger({
       level: 'debug',
+      time: genISO8601String(),
       msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
     }, span)
     const opts: ProcessOpts = {
