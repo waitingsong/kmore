@@ -159,7 +159,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 
   protected unsubscribeEvent(): void {
     this.dbEventSubscription?.unsubscribe()
-    this.unsubscribe()
+    // this.unsubscribe()
   }
 
 
@@ -402,7 +402,7 @@ function caseQueryResp(options: ProcessOpts): void {
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
     span.addTags({ [Tags.SAMPLING_PRIORITY]: 50 })
     input[TracerLog.queryCost] = cost
-    input[TracerLog.queryCostThottleInSec] = sampleThrottleMs
+    input[TracerLog.queryCostThottleInSec] = sampleThrottleMs * 0.001
 
     const conn = knexConfig.connection as ConnectionConfig
     const logDetail = {
