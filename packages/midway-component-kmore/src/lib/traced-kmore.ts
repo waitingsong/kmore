@@ -344,6 +344,7 @@ function caseQueryResp(options: ProcessOpts): void {
   const cost = end - start
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
     span.addTags({ [Tags.SAMPLING_PRIORITY]: 50 })
+    input.level = 'warn'
     input[TracerLog.queryCost] = cost
     input[TracerLog.queryCostThottleInMS] = sampleThrottleMs
 
@@ -357,8 +358,8 @@ function caseQueryResp(options: ProcessOpts): void {
     input[TracerTag.dbUser] = conn.user
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
 
-    span.log(input)
-    logger.warn(input)
+    // span.log(input)
+    logger.tracerLogger(input, span)
   }
   else {
     span.log(input)
@@ -379,6 +380,7 @@ function caseQueryError(options: ProcessOpts): void {
   const cost = end - start
   const logInput = {
     event: TracerLog.queryError,
+    level: 'error',
     time: genISO8601String(),
     reqId,
     kUid,
@@ -401,8 +403,8 @@ function caseQueryError(options: ProcessOpts): void {
     [Tags.ERROR]: true,
     [Tags.SAMPLING_PRIORITY]: 100,
   })
-  span.log(logInput)
-  logger.error(logInput)
+  // span.log(logInput)
+  logger.tracerLogger(logInput, span)
 
   span.finish()
 }

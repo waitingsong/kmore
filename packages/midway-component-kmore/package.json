@@ -33,7 +33,7 @@
     "@waiting/shared-types": "10",
     "kmore-types": "^5.0.0",
     "kmore": "^5.0.0",
-    "midway-component-jaeger": "^1.3.0",
+    "midway-component-jaeger": "^2.1.0",
     "opentracing": "^0.14.5",
     "rxjs": "7"
   },
