@@ -63,8 +63,10 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
-    void this.subscribeDbEventRespAndEx
-    void this.subscribeQueryEvent
+
+    // process.once('exit', () => {
+    //   this.unsubscribe()
+    // })
   }
 
 
@@ -140,6 +142,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
           })
         }
         else {
+          if (! ev.identifier) { return }
           processQueryRespAndExEventWithEventId({
             dbConfig: this.dbConfig,
             ev,
@@ -162,69 +165,6 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     // this.unsubscribe()
   }
 
-
-  protected subscribeQueryEvent(): void {
-    if (! this.dbEventObb) {
-      throw new Error('dbEventObb invalid')
-    }
-
-    const subsp = this.dbEventObb.pipe(
-      filter((ev) => {
-        if (ev.type === 'query') {
-          const flag = !! (ev.identifier && ev.identifier === this.instanceId)
-          return flag
-        }
-        // other db event handled by BaseRepo.dbEventRespAndExSubscription
-        return false
-      }),
-    ).subscribe({
-      next: (ev) => {
-        const { name: tagClass } = this.constructor
-        processQueryEventWithEventId({
-          dbConfig: this.dbConfig,
-          ev,
-          logger: this.logger,
-          queryUidSpanMap: this.queryUidSpanMap,
-          reqId: this.ctx.reqId,
-          tagClass,
-          tracerManager: this.ctx.tracerManager,
-        })
-      },
-      error: () => {
-        this.unsubscribeQueryEvent()
-      },
-    })
-
-    this.queryEventSubscription = subsp
-    this.ctx.res && this.ctx.res.once('finish', () => {
-      this.unsubscribeQueryEvent()
-      this.unsubscribeRespAndExEvent()
-    })
-  }
-
-
-  private subscribeDbEventRespAndEx(): void {
-    if (! this.dbEventObb) {
-      throw new Error('BaseRepo.dbEventObb invalid')
-    }
-
-    const subspRespAndEx = this.dbEventObb.pipe(
-      filter((ev) => {
-        return ev.type === 'queryResponse' || ev.type === 'queryError'
-      }),
-    ).subscribe({
-      next: (ev) => {
-        processQueryRespAndExEventWithEventId({
-          dbConfig: this.dbConfig,
-          ev,
-          logger: this.logger,
-          queryUidSpanMap: this.queryUidSpanMap,
-        })
-      },
-    })
-
-    this.RespAndExEventSubscription = subspRespAndEx
-  }
 
   protected unsubscribeQueryEvent(): void {
     this.queryEventSubscription?.unsubscribe()
