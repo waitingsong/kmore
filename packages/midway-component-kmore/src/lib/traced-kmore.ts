@@ -65,7 +65,6 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
     this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
-
     // process.once('exit', () => {
     //   this.unsubscribe()
     // })
@@ -238,11 +237,15 @@ function processQueryRespAndExEventWithEventId(options: ProcessQueryRespAndExEve
   const spanInfo = queryUidSpanMap.get(queryUid)
 
   if (spanInfo) {
-    const { tagClass, reqId } = spanInfo
+    const { tagClass, reqId, span } = spanInfo
 
-    logger.debug(
-      `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
-    )
+    // logger.debug(
+    //   `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
+    // )
+    logger.tracerLogger({
+      level: 'debug',
+      msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
+    }, span)
     const opts: ProcessOpts = {
       ev,
       dbConfig,
