@@ -344,7 +344,7 @@ function caseQueryResp(options: ProcessOpts): void {
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
     span.addTags({ [Tags.SAMPLING_PRIORITY]: 50 })
     input[TracerLog.queryCost] = cost
-    input[TracerLog.queryCostThottleInSec] = sampleThrottleMs * 0.001
+    input[TracerLog.queryCostThottleInMS] = sampleThrottleMs
 
     const conn = knexConfig.connection as ConnectionConfig
     const logDetail = {
@@ -387,7 +387,7 @@ function caseQueryError(options: ProcessOpts): void {
     exData,
     exError,
     [TracerLog.queryCost]: cost,
-    [TracerLog.queryCostThottleInSec]: sampleThrottleMs * 0.001,
+    [TracerLog.queryCostThottleInMS]: sampleThrottleMs,
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
 
