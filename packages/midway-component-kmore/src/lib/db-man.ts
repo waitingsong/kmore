@@ -47,6 +47,9 @@ export class DbManager <DbId extends string = any> {
     })
   }
 
+  /**
+   * Create kmore instances
+   */
   create(
     componentConfig: KmoreComponentConfig,
     ctx?: Context,
@@ -57,6 +60,9 @@ export class DbManager <DbId extends string = any> {
     })
   }
 
+  /**
+   * Create one kmore instance
+   */
   createOne<T = unknown>(
     dbId: DbId,
     dbConfig: DbConfig<T>,
