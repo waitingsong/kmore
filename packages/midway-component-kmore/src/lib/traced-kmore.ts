@@ -308,6 +308,7 @@ function caseQuery(options: ProcessOpts): void {
   })
   span.log({
     event: TracerLog.queryStart,
+    time: genISO8601String(),
     kUid,
     queryUid,
     trxId: trxId ?? '',
@@ -331,11 +332,11 @@ function caseQueryResp(options: ProcessOpts): void {
 
   const input: SpanLogInput = {
     event: TracerLog.queryFinish,
+    time: genISO8601String(),
     queryUid,
     trxId: trxId ?? '',
     sql: respRaw?.sql ?? '',
     bindings: respRaw?.bindings,
-    time: genISO8601String(),
     [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
   }
 
@@ -351,12 +352,12 @@ function caseQueryResp(options: ProcessOpts): void {
       reqId,
       kUid,
       tagClass,
-      [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
       [TracerTag.dbClient]: knexConfig.client,
       [TracerTag.dbHost]: conn.host,
       [TracerTag.dbDatabase]: conn.database,
       [TracerTag.dbPort]: conn.port ?? '',
       [TracerTag.dbUser]: conn.user,
+      [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
     }
     logger.warn(logDetail)
     span.log(logDetail)
@@ -380,14 +381,14 @@ function caseQueryError(options: ProcessOpts): void {
   const cost = end - start
   const logInput = {
     event: TracerLog.queryError,
+    time: genISO8601String(),
     queryUid,
     trxId,
     exData,
     exError,
-    time: genISO8601String(),
-    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
     [TracerLog.queryCost]: cost,
     [TracerLog.queryCostThottleInSec]: sampleThrottleMs * 0.001,
+    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
 
   const logDetail = {
