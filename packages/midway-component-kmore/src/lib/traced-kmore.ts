@@ -333,6 +333,7 @@ function caseQueryResp(options: ProcessOpts): void {
   const input: SpanLogInput = {
     event: TracerLog.queryFinish,
     time: genISO8601String(),
+    reqId,
     queryUid,
     trxId: trxId ?? '',
     sql: respRaw?.sql ?? '',
@@ -347,20 +348,17 @@ function caseQueryResp(options: ProcessOpts): void {
     input[TracerLog.queryCostThottleInMS] = sampleThrottleMs
 
     const conn = knexConfig.connection as ConnectionConfig
-    const logDetail = {
-      ...input,
-      reqId,
-      kUid,
-      tagClass,
-      [TracerTag.dbClient]: knexConfig.client,
-      [TracerTag.dbHost]: conn.host,
-      [TracerTag.dbDatabase]: conn.database,
-      [TracerTag.dbPort]: conn.port ?? '',
-      [TracerTag.dbUser]: conn.user,
-      [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
-    }
-    logger.warn(logDetail)
-    span.log(logDetail)
+    input.kUid = kUid
+    input.tagClass = tagClass
+    input[TracerTag.dbClient] = knexConfig.client
+    input[TracerTag.dbHost] = conn.host
+    input[TracerTag.dbDatabase] = conn.database
+    input[TracerTag.dbPort] = conn.port ?? ''
+    input[TracerTag.dbUser] = conn.user
+    input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
+
+    span.log(input)
+    logger.warn(input)
   }
   else {
     span.log(input)
@@ -382,33 +380,30 @@ function caseQueryError(options: ProcessOpts): void {
   const logInput = {
     event: TracerLog.queryError,
     time: genISO8601String(),
+    reqId,
+    kUid,
+    tagClass,
     queryUid,
     trxId,
     exData,
     exError,
-    [TracerLog.queryCost]: cost,
-    [TracerLog.queryCostThottleInMS]: sampleThrottleMs,
-    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
-  }
-
-  const logDetail = {
-    ...logInput,
-    reqId,
-    kUid,
-    tagClass,
     [TracerTag.dbClient]: knexConfig.client,
     [TracerTag.dbHost]: conn.host,
     [TracerTag.dbDatabase]: conn.database,
     [TracerTag.dbPort]: conn.port ?? '',
     [TracerTag.dbUser]: conn.user,
+    [TracerLog.queryCost]: cost,
+    [TracerLog.queryCostThottleInMS]: sampleThrottleMs,
+    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
-  logger.error(logDetail)
 
   span.addTags({
     [Tags.ERROR]: true,
     [Tags.SAMPLING_PRIORITY]: 100,
   })
   span.log(logInput)
+  logger.error(logInput)
+
   span.finish()
 }
 
