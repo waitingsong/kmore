@@ -15,7 +15,7 @@ import { TracedKmoreComponent } from './traced-kmore'
 import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
 
 /** dbId: Kmore */
-// type KmoreList = Map<string, KmoreComponent | TracedKmoreComponent>
+type KmoreList = Map<string, KmoreComponent | TracedKmoreComponent>
 type DbHosts = Map<string, Knex>
 
 /**
@@ -27,8 +27,8 @@ export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
-  // private kmoreList: KmoreList = new Map()
   private dbHosts: DbHosts = new Map()
+  private kmoreList: KmoreList = new Map()
 
   connect(
     componentConfig: KmoreComponentConfig,
@@ -75,7 +75,7 @@ export class DbManager <DbId extends string = any> {
     }
 
     const km = this.createKmore<T>(dbId, dbConfig, ctx, logger)
-    // km && this.kmoreList.set(dbId, km)
+    km && this.kmoreList.set(dbId, km)
     return km
   }
 
@@ -89,6 +89,15 @@ export class DbManager <DbId extends string = any> {
     //   throw new Error(`dbhost instance not exists with dbId: "${dbId}"`)
     // }
     return dbh
+  }
+
+  getAllInstances(): KmoreList | undefined {
+    return this.kmoreList
+  }
+
+  getInstance<T = unknown>(dbId: DbId): KmoreComponent<T> | TracedKmoreComponent<T> | undefined {
+    const ret = this.kmoreList.get(dbId)
+    return ret as KmoreComponent<T> | TracedKmoreComponent<T> | undefined
   }
 
   private createKmore<T>(

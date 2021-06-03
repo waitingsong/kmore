@@ -75,6 +75,13 @@ function processKnexOnEvent(
   input: Partial<KmoreEvent>,
 ): void {
 
+  if (! subject || typeof subject.next !== 'function') {
+    throw new TypeError('Subject invalid')
+  }
+  if (subject.closed) {
+    throw new Error('Subject already closed')
+  }
+
   const ev: KmoreEvent = {
     ...initKmoreEvent,
     ...input,
