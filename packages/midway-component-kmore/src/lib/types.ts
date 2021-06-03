@@ -2,6 +2,7 @@ import { IMidwayWebContext as Context } from '@midwayjs/web'
 import { DbDict, KnexConfig } from 'kmore'
 import { Knex } from 'knex'
 import { Logger } from 'midway-component-jaeger'
+import { Span } from 'opentracing'
 
 
 export type KmoreComponentConfig <DbId extends string = string> = Record<DbId, DbConfig>
@@ -34,3 +35,9 @@ export interface KmoreComponentFactoryOpts<D> {
   logger?: Logger
 }
 
+export interface QuerySpanInfo {
+  reqId: string
+  span: Span
+  tagClass: string
+  timestamp: number
+}
