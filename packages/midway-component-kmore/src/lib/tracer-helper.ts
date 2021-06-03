@@ -82,16 +82,12 @@ export function processQueryRespAndExEventWithEventId(
   const spanInfo = queryUidSpanMap.get(queryUid)
 
   if (spanInfo) {
-    const { tagClass, reqId, span } = spanInfo
-
-    // logger.debug(
-    //   `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
-    // )
-    logger.tracerLogger({
-      level: 'debug',
-      time: genISO8601String(),
-      msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
-    }, span)
+    // const { tagClass, reqId, span } = spanInfo
+    // logger.tracerLogger({
+    //   level: 'debug',
+    //   time: genISO8601String(),
+    //   msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
+    // }, span)
     const opts: ProcessOpts = {
       ev,
       dbConfig,
@@ -192,7 +188,10 @@ function caseQueryResp(options: ProcessOpts): void {
 
   const cost = end - start
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
-    span.addTags({ [Tags.SAMPLING_PRIORITY]: 50 })
+    span.addTags({
+      [Tags.SAMPLING_PRIORITY]: 50,
+      [TracerTag.logLevel]: 'warn',
+    })
     input.level = 'warn'
     input[TracerLog.queryCost] = cost
     input[TracerLog.queryCostThottleInMS] = sampleThrottleMs
@@ -251,6 +250,7 @@ function caseQueryError(options: ProcessOpts): void {
   span.addTags({
     [Tags.ERROR]: true,
     [Tags.SAMPLING_PRIORITY]: 100,
+    [TracerTag.logLevel]: 'error',
   })
   // span.log(logInput)
   logger.tracerLogger(logInput, span)
