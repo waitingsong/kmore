@@ -22,7 +22,7 @@ import { filter } from 'rxjs/operators'
 import { DbConfig } from './types'
 
 
-export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
+export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   ctx: Context
   logger: Logger
 

@@ -11,11 +11,11 @@ import { Knex, knex } from 'knex'
 import { Logger as JLogger } from 'midway-component-jaeger'
 
 import { KmoreComponent } from './kmore'
-import { TracedKmoreComponent } from './tracer-kmore'
+import { TracerKmoreComponent } from './tracer-kmore'
 import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
 
 /** dbId: Kmore */
-type KmoreList = Map<string, KmoreComponent | TracedKmoreComponent>
+type KmoreList = Map<string, KmoreComponent | TracerKmoreComponent>
 type DbHosts = Map<string, Knex>
 
 /**
@@ -95,9 +95,9 @@ export class DbManager <DbId extends string = any> {
     return this.kmoreList
   }
 
-  getInstance<T = unknown>(dbId: DbId): KmoreComponent<T> | TracedKmoreComponent<T> | undefined {
+  getInstance<T = unknown>(dbId: DbId): KmoreComponent<T> | TracerKmoreComponent<T> | undefined {
     const ret = this.kmoreList.get(dbId)
-    return ret as KmoreComponent<T> | TracedKmoreComponent<T> | undefined
+    return ret as KmoreComponent<T> | TracerKmoreComponent<T> | undefined
   }
 
   private createKmore<T>(
@@ -105,7 +105,7 @@ export class DbManager <DbId extends string = any> {
     dbConfig: DbConfig<T>,
     ctx?: Context,
     logger?: JLogger,
-  ): KmoreComponent<T> | TracedKmoreComponent<T> | undefined {
+  ): KmoreComponent<T> | TracerKmoreComponent<T> | undefined {
     const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
@@ -122,7 +122,7 @@ export class DbManager <DbId extends string = any> {
       logger,
     }
     const km = enableTracing
-      ? kmoreComponentFactory<T>(opts, TracedKmoreComponent)
+      ? kmoreComponentFactory<T>(opts, TracerKmoreComponent)
       : kmoreComponentFactory<T>(opts, KmoreComponent)
     if (! dbh) {
       this.dbHosts.set(dbId, km.dbh)
@@ -135,8 +135,8 @@ export class DbManager <DbId extends string = any> {
 
 export function kmoreComponentFactory<D>(
   options: KmoreComponentFactoryOpts<D>,
-  component: typeof KmoreComponent | typeof TracedKmoreComponent,
-): KmoreComponent<D> | TracedKmoreComponent<D> {
+  component: typeof KmoreComponent | typeof TracerKmoreComponent,
+): KmoreComponent<D> | TracerKmoreComponent<D> {
   const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
   const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
   return km
