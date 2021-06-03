@@ -2,6 +2,7 @@
 // import { Provide } from '@midwayjs/decorator'
 // import { loggers, ILogger } from '@midwayjs/logger'
 import { IMidwayWebContext as Context } from '@midwayjs/web'
+import { genISO8601String, humanMemoryUsage } from '@waiting/shared-core'
 import {
   Kmore,
   KmoreEvent,
@@ -334,6 +335,7 @@ function caseQueryResp(options: ProcessOpts): void {
     trxId: trxId ?? '',
     sql: respRaw?.sql ?? '',
     bindings: respRaw?.bindings,
+    time: genISO8601String(),
     [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
   }
 
@@ -349,6 +351,7 @@ function caseQueryResp(options: ProcessOpts): void {
       reqId,
       kUid,
       tagClass,
+      [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
       [TracerTag.dbClient]: knexConfig.client,
       [TracerTag.dbHost]: conn.host,
       [TracerTag.dbDatabase]: conn.database,
@@ -381,6 +384,8 @@ function caseQueryError(options: ProcessOpts): void {
     trxId,
     exData,
     exError,
+    time: genISO8601String(),
+    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
     [TracerLog.queryCost]: cost,
     [TracerLog.queryCostThottleInSec]: sampleThrottleMs * 0.001,
   }
