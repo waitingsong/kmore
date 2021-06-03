@@ -63,6 +63,7 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
 
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
+    this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
 
     // process.once('exit', () => {
     //   this.unsubscribe()
@@ -157,12 +158,10 @@ export class TracedKmoreComponent<D = unknown> extends Kmore<D> {
     })
 
     this.dbEventSubscription = subsp
-    this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
   }
 
   protected unsubscribeEvent(): void {
     this.dbEventSubscription?.unsubscribe()
-    // this.unsubscribe()
   }
 
 
