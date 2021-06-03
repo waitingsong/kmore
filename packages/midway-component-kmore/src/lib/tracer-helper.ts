@@ -83,7 +83,7 @@ export function processQueryRespAndExEventWithEventId(
 
   if (spanInfo) {
     // const { tagClass, reqId, span } = spanInfo
-    // logger.tracerLogger({
+    // logger.log({
     //   level: 'debug',
     //   time: genISO8601String(),
     //   msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
@@ -207,7 +207,7 @@ function caseQueryResp(options: ProcessOpts): void {
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
 
     // span.log(input)
-    logger.tracerLogger(input, span)
+    logger.log(input, span)
   }
   else {
     span.log(input)
@@ -253,7 +253,7 @@ function caseQueryError(options: ProcessOpts): void {
     [TracerTag.logLevel]: 'error',
   })
   // span.log(logInput)
-  logger.tracerLogger(logInput, span)
+  logger.log(logInput, span)
 
   span.finish()
 }
