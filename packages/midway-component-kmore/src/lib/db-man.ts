@@ -11,7 +11,7 @@ import { Knex, knex } from 'knex'
 import { Logger as JLogger } from 'midway-component-jaeger'
 
 import { KmoreComponent } from './kmore'
-import { TracedKmoreComponent } from './traced-kmore'
+import { TracedKmoreComponent } from './tracer-kmore'
 import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
 
 /** dbId: Kmore */
