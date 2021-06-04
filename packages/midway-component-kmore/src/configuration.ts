@@ -10,10 +10,7 @@ import {
   Logger,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import {
-  IMidwayWebApplication,
-  IMidwayWebContext,
-} from '@midwayjs/web'
+import { IMidwayWebApplication } from '@midwayjs/web'
 
 import { DbManager } from './lib/db-man'
 import { KmoreComponentConfig } from './lib/types'
@@ -27,9 +24,9 @@ const namespace = 'kmore'
 })
 export class AutoConfiguration {
   @App() readonly app: IMidwayWebApplication
+
   @Logger() private readonly logger: ILogger
 
-  @Inject() readonly ctx: IMidwayWebContext
   @Inject() readonly dbManager: DbManager
 
   @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
