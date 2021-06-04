@@ -161,11 +161,14 @@ describe(filename, () => {
       const subsp = km.register()
         .subscribe({
           next: (ev) => {
+
+            if (ev.identifier) { return }
+
             assert(ev.type === 'queryResponse' || ev.type === 'query')
 
             if (ev.type === 'query') {
               assert(ev.queryUid.length)
-              assert(queryUid === '')
+              assert(queryUid === '', ev.queryUid)
               queryUid = ev.queryUid
             }
             else if (ev.type === 'queryResponse') {
