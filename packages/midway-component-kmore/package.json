@@ -29,11 +29,11 @@
   "license": "MIT",
   "dependencies": {
     "@types/jaeger-client": "^3.18.0",
-    "@waiting/shared-core": "11",
-    "@waiting/shared-types": "11",
+    "@waiting/shared-core": "^11.1.0",
+    "@waiting/shared-types": "^11.1.0",
     "kmore": "^5.3.1",
     "kmore-types": "^5.3.1",
-    "midway-component-jaeger": "^3.2.0",
+    "midway-component-jaeger": "^3.4.0",
     "opentracing": "^0.14.5",
     "rxjs": "7"
   },
