@@ -1,7 +1,7 @@
 {
   "name": "midway-component-kmore",
   "author": "waiting",
-  "version": "5.6.0",
+  "version": "5.7.0",
   "description": "midway component for knex",
   "keywords": [
     "midway",
@@ -31,8 +31,8 @@
     "@types/jaeger-client": "^3.18.0",
     "@waiting/shared-core": "^11.1.0",
     "@waiting/shared-types": "^11.1.0",
-    "kmore": "^5.6.0",
-    "kmore-types": "^5.6.0",
+    "kmore": "^5.7.0",
+    "kmore-types": "^5.7.0",
     "midway-component-jaeger": "^3.4.0",
     "opentracing": "^0.14.5",
     "rxjs": "7"

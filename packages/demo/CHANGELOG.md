@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 5.7.0 (2021-06-08)
+
+
+### Features
+
+* **midway-component-kmore:** rename span name to DbComponent ([83fb9fa](https://github.com/waitingsong/npm-mono-base/commit/83fb9fa3757a2d4a1a7c4a6f9fb0a1aee959f1b9))
+
+
+
+
+
 # 5.6.0 (2021-06-08)
 
 
