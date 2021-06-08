@@ -47,7 +47,7 @@ export function processQueryEventWithEventId(
     return
   }
 
-  const span = tracerManager.genSpan('dbComponent', currSpan)
+  const span = tracerManager.genSpan('DbComponent', currSpan)
 
   const opts: ProcessOpts = {
     ev,
