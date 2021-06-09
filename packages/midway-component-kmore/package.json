@@ -29,8 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "@types/jaeger-client": "^3.18.0",
-    "@waiting/shared-core": "^11.1.0",
-    "@waiting/shared-types": "^11.1.0",
+    "@waiting/shared-core": "^12.0.0",
+    "@waiting/shared-types": "^12.0.0",
     "kmore": "^5.7.0",
     "kmore-types": "^5.7.0",
     "midway-component-jaeger": "^3.4.0",
