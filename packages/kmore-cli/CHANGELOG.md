@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.7.1 (2021-06-09)
+
+**Note:** Version bump only for package kmore-cli
+
+
+
+
+
 # 5.7.0 (2021-06-08)
 
 
