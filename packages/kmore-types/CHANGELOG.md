@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.7.2 (2021-06-10)
+
+**Note:** Version bump only for package kmore-types
+
+
+
+
+
 ## 5.7.1 (2021-06-09)
 
 **Note:** Version bump only for package kmore-types
