@@ -1,7 +1,4 @@
-import type { Context } from 'egg'
-
 import { DbManager } from './lib/db-man'
-import { KmoreComponentConfig } from './lib/types'
 
 
 export { AutoConfiguration as Configuration } from './configuration'
@@ -16,13 +13,9 @@ export {
 } from 'kmore'
 
 
-declare module 'egg' {
-  // interface Application {
-  //   dbManager: DbManager
-  // }
-  interface EggAppConfig {
-    kmore: KmoreComponentConfig
-  }
-}
-declare const dummy: Context
+// declare module 'egg' {
+//   interface Application {
+//     dbManager: DbManager
+//   }
+// }
 
