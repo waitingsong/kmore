@@ -12,10 +12,3 @@ export {
   Kmore, KmoreEvent, KnexConfig,
 } from 'kmore'
 
-
-// declare module 'egg' {
-//   interface Application {
-//     dbManager: DbManager
-//   }
-// }
-
