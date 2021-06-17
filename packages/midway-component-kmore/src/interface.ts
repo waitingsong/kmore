@@ -1,5 +1,5 @@
 
-export { TracerLog } from 'midway-component-jaeger'
+export { TracerLog } from '@mw-components/jaeger'
 export {
   JsonObject,
   JsonResp,

@@ -1,7 +1,7 @@
 import { IMidwayWebContext as Context } from '@midwayjs/web'
+import { Logger } from '@mw-components/jaeger'
 import { DbDict, KnexConfig } from 'kmore'
 import { Knex } from 'knex'
-import { Logger } from 'midway-component-jaeger'
 import { Span } from 'opentracing'
 
 
@@ -15,7 +15,7 @@ export interface DbConfig <T = unknown> {
   config: KnexConfig
   dict: DbDict<T>
   /**
-   * Enable tracing via midway-component-jaeger
+   * Enable tracing via @mw-components/jaeger
    * @default false
    */
   enableTracing: boolean

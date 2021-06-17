@@ -28,13 +28,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/jaeger-client": "^3.18.0",
+    "@mw-components/jaeger": "^6.13.1",
     "@waiting/shared-core": "^13.0.0",
     "@waiting/shared-types": "^13.0.0",
     "kmore": "^6.2.1",
     "kmore-types": "^6.2.1",
-    "midway-component-jaeger": "^6.13.0",
-    "opentracing": "^0.14.5",
     "rxjs": "7",
     "tsconfig-paths": "3"
   },

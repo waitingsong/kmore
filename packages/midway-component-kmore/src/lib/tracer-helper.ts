@@ -2,18 +2,18 @@
 // import { Provide } from '@midwayjs/decorator'
 // import { loggers, ILogger } from '@midwayjs/logger'
 import {
-  genISO8601String,
-  humanMemoryUsage,
-  retrieveProcInfo,
-} from '@waiting/shared-core'
-import { KmoreEvent } from 'kmore'
-import {
   Logger,
   SpanLogInput,
   TracerManager,
   TracerLog,
   TracerTag,
-} from 'midway-component-jaeger'
+} from '@mw-components/jaeger'
+import {
+  genISO8601String,
+  humanMemoryUsage,
+  retrieveProcInfo,
+} from '@waiting/shared-core'
+import { KmoreEvent } from 'kmore'
 import { Tags } from 'opentracing'
 
 import { DbConfig, QuerySpanInfo } from './types'

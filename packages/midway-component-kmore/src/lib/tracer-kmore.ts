@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // import { loggers, ILogger } from '@midwayjs/logger'
+import { Logger } from '@mw-components/jaeger'
 import {
   Kmore,
   KmoreEvent,
 } from 'kmore'
 import { Knex } from 'knex'
-import { Logger } from 'midway-component-jaeger'
 import { Span } from 'opentracing'
 import { Observable, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'

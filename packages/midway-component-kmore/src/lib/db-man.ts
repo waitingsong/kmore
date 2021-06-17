@@ -6,9 +6,9 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { IMidwayWebContext as Context } from '@midwayjs/web'
+import { Logger as JLogger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex, knex } from 'knex'
-import { Logger as JLogger } from 'midway-component-jaeger'
 
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'

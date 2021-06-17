@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { IMidwayWebContext as Context } from '@midwayjs/web'
+import { Logger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex } from 'knex'
-import { Logger } from 'midway-component-jaeger'
 
 import { DbConfig } from './types'
 
