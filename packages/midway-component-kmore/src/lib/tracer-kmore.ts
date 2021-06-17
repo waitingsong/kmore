@@ -1,7 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-// import { Provide } from '@midwayjs/decorator'
 // import { loggers, ILogger } from '@midwayjs/logger'
-import { IMidwayWebContext as Context } from '@midwayjs/web'
 import {
   Kmore,
   KmoreEvent,
@@ -17,6 +15,8 @@ import {
   processQueryRespAndExEventWithEventId,
 } from './tracer-helper'
 import { DbConfig, QuerySpanInfo } from './types'
+
+import { Context } from '~/interface'
 
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
@@ -129,6 +129,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         if (ev.type === 'query') {
           const { name: tagClass } = this.constructor
           processQueryEventWithEventId({
+            ctx: this.ctx,
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,
@@ -141,6 +142,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         else {
           if (! ev.identifier) { return }
           processQueryRespAndExEventWithEventId({
+            ctx: this.ctx,
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,

@@ -14,8 +14,11 @@ import { Tags } from 'opentracing'
 
 import { DbConfig, QuerySpanInfo } from './types'
 
+import { Context } from '~/interface'
+
 
 interface ProcessQueryEventWithIdOpts {
+  ctx: Context
   dbConfig: DbConfig
   ev: KmoreEvent
   logger: Logger
@@ -29,6 +32,7 @@ export function processQueryEventWithEventId(
 ): void {
 
   const {
+    ctx,
     dbConfig,
     ev,
     logger,
@@ -50,6 +54,7 @@ export function processQueryEventWithEventId(
   const span = tracerManager.genSpan('DbComponent', currSpan)
 
   const opts: ProcessOpts = {
+    ctx,
     ev,
     dbConfig,
     logger,
@@ -65,6 +70,7 @@ export function processQueryEventWithEventId(
 }
 
 interface ProcessQueryRespAndExEventWithIdOpts {
+  ctx: Context
   dbConfig: DbConfig
   ev: KmoreEvent
   logger: Logger
@@ -74,7 +80,7 @@ export function processQueryRespAndExEventWithEventId(
   options: ProcessQueryRespAndExEventWithIdOpts,
 ): void {
 
-  const { dbConfig, ev, logger, queryUidSpanMap } = options
+  const { ctx, dbConfig, ev, logger, queryUidSpanMap } = options
 
   if (! ev.identifier) { return }
 
@@ -89,6 +95,7 @@ export function processQueryRespAndExEventWithEventId(
     //   msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
     // }, span)
     const opts: ProcessOpts = {
+      ctx,
       ev,
       dbConfig,
       logger,
@@ -100,6 +107,7 @@ export function processQueryRespAndExEventWithEventId(
 }
 
 interface ProcessOpts {
+  ctx: Context
   dbConfig: DbConfig
   ev: KmoreEvent
   logger: Logger
@@ -137,7 +145,8 @@ function processSwitch(options: ProcessOpts): void {
 }
 
 function caseQuery(options: ProcessOpts): void {
-  const { config: knexConfig } = options.dbConfig
+  const { tracerManager } = options.ctx
+  const { config: knexConfig, sampleThrottleMs } = options.dbConfig
   const { span, reqId, tagClass } = options.spanInfo
   const { kUid, queryUid, trxId, data } = options.ev
   const conn = knexConfig.connection as ConnectionConfig
@@ -150,62 +159,55 @@ function caseQuery(options: ProcessOpts): void {
     [TracerTag.dbDatabase]: conn.database,
     [TracerTag.dbPort]: conn.port ?? '',
     [TracerTag.dbUser]: conn.user,
-  })
-  span.log({
-    event: TracerLog.queryStart,
-    time: genISO8601String(),
+    [TracerLog.queryCostThottleInMS]: sampleThrottleMs,
     kUid,
     queryUid,
     trxId: trxId ?? '',
     sql: data?.sql ?? '',
-    // bindings: data?.bindings,
+    bindings: data?.bindings,
   })
+
+  const input: SpanLogInput = {
+    kUid,
+    queryUid,
+    event: TracerLog.queryStart,
+    time: genISO8601String(),
+  }
+  span.log(input)
+  tracerManager.spanLog(input)
 }
 
 
 function caseQueryResp(options: ProcessOpts): void {
   const { logger } = options
-  const { config: knexConfig, sampleThrottleMs } = options.dbConfig
-  const { span, reqId, tagClass, timestamp: start } = options.spanInfo
-  const { kUid, queryUid, respRaw, trxId, timestamp: end } = options.ev
+  const { tracerManager } = options.ctx
+  const { sampleThrottleMs } = options.dbConfig
+  const { span, timestamp: start } = options.spanInfo
+  const { respRaw, timestamp: end } = options.ev
 
+  const cost = end - start
   if (respRaw?.response.command) {
     span.addTags({
       [TracerTag.dbCommand]: respRaw.response.command,
+      [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
+      [TracerLog.queryCost]: cost,
     })
   }
 
   const input: SpanLogInput = {
     event: TracerLog.queryFinish,
     time: genISO8601String(),
-    reqId,
-    queryUid,
-    trxId: trxId ?? '',
-    sql: respRaw?.sql ?? '',
-    bindings: respRaw?.bindings,
-    [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
+    [TracerLog.queryCost]: cost,
   }
 
-  const cost = end - start
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
     span.addTags({
       [Tags.SAMPLING_PRIORITY]: 50,
       [TracerTag.logLevel]: 'warn',
     })
+
     input.level = 'warn'
-    input[TracerLog.queryCost] = cost
-    input[TracerLog.queryCostThottleInMS] = sampleThrottleMs
-
-    const conn = knexConfig.connection as ConnectionConfig
-    input.kUid = kUid
-    input.tagClass = tagClass
-    input[TracerTag.dbClient] = knexConfig.client
-    input[TracerTag.dbHost] = conn.host
-    input[TracerTag.dbDatabase] = conn.database
-    input[TracerTag.dbPort] = conn.port ?? ''
-    input[TracerTag.dbUser] = conn.user
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
-
     // span.log(input)
     logger.log(input, span)
   }
@@ -213,20 +215,20 @@ function caseQueryResp(options: ProcessOpts): void {
     span.log(input)
   }
 
+  tracerManager.spanLog(input)
   span.finish()
 }
 
 function caseQueryError(options: ProcessOpts): void {
   const { logger } = options
-  const { config: knexConfig, sampleThrottleMs } = options.dbConfig
+  const { tracerManager } = options.ctx
   const { span, reqId, tagClass, timestamp: start } = options.spanInfo
   const {
     kUid, queryUid, trxId, exData, exError, timestamp: end,
   } = options.ev
-  const conn = knexConfig.connection as ConnectionConfig
 
   const cost = end - start
-  const logInput = {
+  const input = {
     event: TracerLog.queryError,
     level: 'error',
     time: genISO8601String(),
@@ -235,15 +237,7 @@ function caseQueryError(options: ProcessOpts): void {
     tagClass,
     queryUid,
     trxId,
-    exData,
-    exError,
-    [TracerTag.dbClient]: knexConfig.client,
-    [TracerTag.dbHost]: conn.host,
-    [TracerTag.dbDatabase]: conn.database,
-    [TracerTag.dbPort]: conn.port ?? '',
-    [TracerTag.dbUser]: conn.user,
     [TracerLog.queryCost]: cost,
-    [TracerLog.queryCostThottleInMS]: sampleThrottleMs,
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
 
@@ -251,10 +245,12 @@ function caseQueryError(options: ProcessOpts): void {
     [Tags.ERROR]: true,
     [Tags.SAMPLING_PRIORITY]: 100,
     [TracerTag.logLevel]: 'error',
+    exData,
+    exError,
   })
   // span.log(logInput)
-  logger.log(logInput, span)
-
+  logger.log(input, span)
+  tracerManager.spanLog(input)
   span.finish()
 }
 

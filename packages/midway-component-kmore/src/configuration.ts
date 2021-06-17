@@ -1,5 +1,7 @@
 /* eslint-disable node/no-extraneous-import */
 /* eslint-disable @typescript-eslint/no-extraneous-class */
+import 'tsconfig-paths/register'
+
 import { join } from 'path'
 
 import {

@@ -35,7 +35,8 @@
     "kmore-types": "^6.0.0",
     "midway-component-jaeger": ">=6.1.0",
     "opentracing": "^0.14.5",
-    "rxjs": "7"
+    "rxjs": "7",
+    "tsconfig-paths": "3"
   },
   "devDependencies": {
     "@midwayjs/core": "^2.10.18",
