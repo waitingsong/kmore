@@ -209,11 +209,10 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
       [Tags.SAMPLING_PRIORITY]: 50,
       [TracerTag.logLevel]: 'warn',
     })
-    const procInfo = await retrieveProcInfo()
-
     input.level = 'warn'
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
-    input.cpuinfo = procInfo.cpuinfo
+    const procInfo = await retrieveProcInfo()
+    input.procInfo = procInfo
     // span.log(input)
     logger.log(input, span)
   }
@@ -246,7 +245,7 @@ async function caseQueryError(options: ProcessOpts): Promise<void> {
     trxId,
     [TracerLog.queryCost]: cost,
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
-    ...procInfo,
+    procInfo,
   }
 
   span.addTags({
