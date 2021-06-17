@@ -55,7 +55,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       this.logger = logger
     }
     else {
-      throw new TypeError('Parameter logger undefined')
+      throw new TypeError('TracerKmoreComponent: Parameter logger undefined')
     }
 
     this.registerDbObservable(this.instanceId)
