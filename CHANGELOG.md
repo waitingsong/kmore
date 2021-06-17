@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 6.2.0 (2021-06-17)
+
+
+### Features
+
+* **midway-component-kmore:** logging ProcInfo when exception or slow query ([fb51caa](https://github.com/waitingsong/kmore/commit/fb51caa1bab6382efdce0cf215677743869482ec))
+
+
+
+
+
 # 6.1.0 (2021-06-17)
 
 
