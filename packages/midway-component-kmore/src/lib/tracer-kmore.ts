@@ -125,10 +125,10 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         return ev.type === 'query' || ev.type === 'queryResponse' || ev.type === 'queryError'
       }),
     ).subscribe({
-      next: (ev) => {
+      next: async (ev) => {
         if (ev.type === 'query') {
           const { name: tagClass } = this.constructor
-          processQueryEventWithEventId({
+          await processQueryEventWithEventId({
             ctx: this.ctx,
             dbConfig: this.dbConfig,
             ev,
@@ -141,7 +141,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         }
         else {
           if (! ev.identifier) { return }
-          processQueryRespAndExEventWithEventId({
+          await processQueryRespAndExEventWithEventId({
             ctx: this.ctx,
             dbConfig: this.dbConfig,
             ev,
