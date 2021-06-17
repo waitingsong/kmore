@@ -1,7 +1,7 @@
 {
   "name": "kmore",
   "author": "waiting",
-  "version": "5.7.4",
+  "version": "5.7.5",
   "description": "A SQL query builder based on knex with powerful TypeScript type support",
   "keywords": [
     "knex",
@@ -32,7 +32,7 @@
   "license": "MIT",
   "dependencies": {
     "@waiting/shared-types": "^13.0.0",
-    "kmore-types": "^5.7.4",
+    "kmore-types": "^5.7.5",
     "rxjs": "7"
   },
   "devDependencies": {
