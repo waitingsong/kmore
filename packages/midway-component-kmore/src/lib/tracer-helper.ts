@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // import { Provide } from '@midwayjs/decorator'
 // import { loggers, ILogger } from '@midwayjs/logger'
-import { genISO8601String, humanMemoryUsage } from '@waiting/shared-core'
+import { genISO8601String, humanMemoryUsage, retrieveProcInfo } from '@waiting/shared-core'
 import { KmoreEvent } from 'kmore'
 import {
   Logger,
@@ -205,9 +205,11 @@ function caseQueryResp(options: ProcessOpts): void {
       [Tags.SAMPLING_PRIORITY]: 50,
       [TracerTag.logLevel]: 'warn',
     })
+    const procInfo = await retrieveProcInfo()
 
     input.level = 'warn'
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
+    // input[procInfo.]
     // span.log(input)
     logger.log(input, span)
   }
@@ -228,6 +230,7 @@ function caseQueryError(options: ProcessOpts): void {
   } = options.ev
 
   const cost = end - start
+  const procInfo = retrieveProcInfo()
   const input = {
     event: TracerLog.queryError,
     level: 'error',
@@ -239,6 +242,7 @@ function caseQueryError(options: ProcessOpts): void {
     trxId,
     [TracerLog.queryCost]: cost,
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
+    ...procInfo,
   }
 
   span.addTags({
