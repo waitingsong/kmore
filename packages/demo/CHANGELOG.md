@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 6.1.0 (2021-06-17)
+
+
+### Features
+
+* **midway-component-kmore:** update sample ([4632c03](https://github.com/waitingsong/npm-mono-base/commit/4632c0341f58738d37065f8134bd3dc30be3f1a4))
+
+
+
+
+
 # 6.0.0 (2021-06-17)
 
 **Note:** Version bump only for package demo
