@@ -1,7 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // import { Provide } from '@midwayjs/decorator'
 // import { loggers, ILogger } from '@midwayjs/logger'
-import { genISO8601String, humanMemoryUsage } from '@waiting/shared-core'
+import {
+  genISO8601String,
+  humanMemoryUsage,
+  retrieveProcInfo,
+} from '@waiting/shared-core'
 import { KmoreEvent } from 'kmore'
 import {
   Logger,
@@ -27,9 +31,9 @@ interface ProcessQueryEventWithIdOpts {
   tagClass: string
   tracerManager: TracerManager
 }
-export function processQueryEventWithEventId(
+export async function processQueryEventWithEventId(
   options: ProcessQueryEventWithIdOpts,
-): void {
+): Promise<void> {
 
   const {
     ctx,
@@ -66,7 +70,7 @@ export function processQueryEventWithEventId(
       timestamp: ev.timestamp,
     },
   }
-  processSwitch(opts)
+  await processSwitch(opts)
 }
 
 interface ProcessQueryRespAndExEventWithIdOpts {
@@ -76,9 +80,9 @@ interface ProcessQueryRespAndExEventWithIdOpts {
   logger: Logger
   queryUidSpanMap: Map<string, QuerySpanInfo>
 }
-export function processQueryRespAndExEventWithEventId(
+export async function processQueryRespAndExEventWithEventId(
   options: ProcessQueryRespAndExEventWithIdOpts,
-): void {
+): Promise<void> {
 
   const { ctx, dbConfig, ev, logger, queryUidSpanMap } = options
 
@@ -102,7 +106,7 @@ export function processQueryRespAndExEventWithEventId(
       queryUidSpanMap,
       spanInfo,
     }
-    processSwitch(opts)
+    await processSwitch(opts)
   }
 }
 
@@ -114,7 +118,7 @@ interface ProcessOpts {
   spanInfo: QuerySpanInfo
   queryUidSpanMap: Map<string, QuerySpanInfo>
 }
-function processSwitch(options: ProcessOpts): void {
+async function processSwitch(options: ProcessOpts): Promise<void> {
   const { ev, spanInfo, queryUidSpanMap } = options
   const { type, queryUid } = ev
 
@@ -126,13 +130,13 @@ function processSwitch(options: ProcessOpts): void {
     }
 
     case 'queryResponse': {
-      caseQueryResp(options)
+      await caseQueryResp(options)
       cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
       break
     }
 
     case 'queryError': {
-      caseQueryError(options)
+      await caseQueryError(options)
       cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
       break
     }
@@ -178,7 +182,7 @@ function caseQuery(options: ProcessOpts): void {
 }
 
 
-function caseQueryResp(options: ProcessOpts): void {
+async function caseQueryResp(options: ProcessOpts): Promise<void> {
   const { logger } = options
   const { tracerManager } = options.ctx
   const { sampleThrottleMs } = options.dbConfig
@@ -205,9 +209,10 @@ function caseQueryResp(options: ProcessOpts): void {
       [Tags.SAMPLING_PRIORITY]: 50,
       [TracerTag.logLevel]: 'warn',
     })
-
     input.level = 'warn'
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
+    const procInfo = await retrieveProcInfo()
+    input.procInfo = procInfo
     // span.log(input)
     logger.log(input, span)
   }
@@ -219,7 +224,7 @@ function caseQueryResp(options: ProcessOpts): void {
   span.finish()
 }
 
-function caseQueryError(options: ProcessOpts): void {
+async function caseQueryError(options: ProcessOpts): Promise<void> {
   const { logger } = options
   const { tracerManager } = options.ctx
   const { span, reqId, tagClass, timestamp: start } = options.spanInfo
@@ -228,6 +233,7 @@ function caseQueryError(options: ProcessOpts): void {
   } = options.ev
 
   const cost = end - start
+  const procInfo = await retrieveProcInfo()
   const input = {
     event: TracerLog.queryError,
     level: 'error',
@@ -239,6 +245,7 @@ function caseQueryError(options: ProcessOpts): void {
     trxId,
     [TracerLog.queryCost]: cost,
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
+    procInfo,
   }
 
   span.addTags({
