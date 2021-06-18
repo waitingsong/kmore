@@ -14,9 +14,9 @@
   },
   "browser": "",
   "es2015": "",
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
@@ -29,7 +29,7 @@
   "dependencies": {
     "@waiting/shared-core": "^14.0.0",
     "@waiting/shared-types": "^14.0.0",
-    "@waiting/shared-types-dev": "2",
+    "@waiting/shared-types-dev": "^3.0.0",
     "kmore-types": "^7.0.0",
     "rxjs": "7",
     "rxwalker": "4",
