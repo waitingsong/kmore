@@ -11,16 +11,16 @@ import { Db } from '../test3.model'
 //   return ret as DbDict<D>
 // }
 
-export function alter<D>(): DbDict<D> {
-  const ret = computeCallExpressionToLiteralObj()
-  return ret as DbDict<D>
-}
-
-// export function fake<D>(): DbDict<D> {
-//   const needle = 'genDbDict'
-//   const ret = computeCallExpressionToLiteralObj(needle)
+// export function alter<D>(): DbDict<D> {
+//   const ret = computeCallExpressionToLiteralObj()
 //   return ret as DbDict<D>
 // }
+
+export function fake<D>(): DbDict<D> {
+  const needle = 'genDbDict'
+  const ret = computeCallExpressionToLiteralObj(needle)
+  return ret as DbDict<D>
+}
 
 export {
   Db,

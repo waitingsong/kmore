@@ -11,8 +11,8 @@ import { expectedDict } from '../demo-config'
 import {
   Db,
   // genDbDict,
-  alter,
-  // fake,
+  // alter,
+  fake,
 } from './demo6'
 
 // eslint-disable-next-line import/order
@@ -24,26 +24,26 @@ const filename = basename(__filename)
 describe(filename, () => {
 
   describe('Should computeCallExpressionToLiteralObj works', () => {
-    it('w/o needle', async () => {
-      const ret = alter<Db>()
-      assert.deepStrictEqual(ret, expectedDict)
-    })
+    // it('w/o needle', async () => {
+    //   const ret = alter<Db>()
+    //   assert.deepStrictEqual(ret, expectedDict)
+    // })
 
     // it('with needle', async () => {
     //   const ret = genDbDict<Db>()
     //   assert.deepStrictEqual(ret, expectedDict)
     // })
 
-    // it('fake', async () => {
-    //   try {
-    //     const ret = fake<Db>()
-    //     void ret
-    //   }
-    //   catch (ex) {
-    //     return
-    //   }
-    //   assert(false, 'Should throw error, but not')
-    // })
+    it('fake', async () => {
+      try {
+        const ret = fake<Db>()
+        void ret
+      }
+      catch (ex) {
+        return
+      }
+      assert(false, 'Should throw error, but not')
+    })
   })
 
 })
