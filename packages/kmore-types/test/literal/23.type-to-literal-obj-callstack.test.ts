@@ -10,8 +10,8 @@ import { expectedDict } from '../demo-config'
 
 import {
   Db,
-  genDbDict,
-  // alter,
+  // genDbDict,
+  alter,
   // fake,
 } from './demo6'
 
@@ -24,15 +24,15 @@ const filename = basename(__filename)
 describe(filename, () => {
 
   describe('Should computeCallExpressionToLiteralObj works', () => {
-    // it('w/o needle', async () => {
-    //   const ret = alter<Db>()
-    //   assert.deepStrictEqual(ret, expectedDict)
-    // })
-
-    it('with needle', async () => {
-      const ret = genDbDict<Db>()
+    it('w/o needle', async () => {
+      const ret = alter<Db>()
       assert.deepStrictEqual(ret, expectedDict)
     })
+
+    // it('with needle', async () => {
+    //   const ret = genDbDict<Db>()
+    //   assert.deepStrictEqual(ret, expectedDict)
+    // })
 
     // it('fake', async () => {
     //   try {
