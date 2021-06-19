@@ -33,5 +33,9 @@
     "test",
     "**/*.d.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  "ts-node": {
+    "files": true,
+    "transpileOnly": true
+  }
 }
