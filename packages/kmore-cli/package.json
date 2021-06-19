@@ -29,7 +29,7 @@
   "dependencies": {
     "@waiting/shared-core": "^14.0.0",
     "@waiting/shared-types": "^14.0.0",
-    "@waiting/shared-types-dev": "^3.0.0",
+    "@waiting/shared-types-dev": "^3.0.1",
     "kmore-types": "^7.1.0",
     "rxjs": "7",
     "rxwalker": "4",
