@@ -2,6 +2,7 @@
 bail: true
 full-trace: true
 require:
+  - tsconfig-paths/register
   - intelli-espower-loader
   - espower-typescript/guess
   - test/root.hooks.ts
