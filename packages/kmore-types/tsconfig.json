@@ -36,6 +36,7 @@
     "**/*.spec.ts"
   ],
   "ts-node": {
-    "files": true
+    "files": true,
+    "transpileOnly": true
   }
 }
