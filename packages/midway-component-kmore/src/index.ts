@@ -8,6 +8,7 @@ export type { KmoreComponent } from './lib/kmore'
 export type { TracerKmoreComponent } from './lib/tracer-kmore'
 
 export {
+  DbDict,
   genDbDict, getCurrentTime,
   Kmore, KmoreEvent, KnexConfig,
 } from 'kmore'
