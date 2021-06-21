@@ -13,3 +13,5 @@ export {
   Kmore, KmoreEvent, KnexConfig,
 } from 'kmore'
 
+export type { Knex } from 'knex'
+
