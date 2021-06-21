@@ -42,6 +42,12 @@ export class DbManager <DbId extends string = any> {
       else if (! row.autoConnect && ! forceConnect) {
         return
       }
+
+      if (! Object.keys(row.config).length && ! Object.keys(row.dict).length) {
+        console.info('config and dict of kmoreConfig element both empty, may default init config')
+        return
+      }
+
       const dbh = createDbh(row.config)
       this.dbHosts.set(dbId, dbh)
     })
