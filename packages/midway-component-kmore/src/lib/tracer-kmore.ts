@@ -58,6 +58,11 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       throw new TypeError('TracerKmoreComponent: Parameter logger undefined')
     }
 
+    if (! this.ctx.tracerManager) {
+      logger.warn('ctx.tracerManager undefined, may running at component when test case. kmove enent subscript skipped')
+      return
+    }
+
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
     this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())

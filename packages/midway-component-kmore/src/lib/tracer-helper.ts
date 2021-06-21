@@ -50,7 +50,7 @@ export async function processQueryEventWithEventId(
 
   const currSpan = tracerManager.currentSpan()
   if (! currSpan) {
-    options.logger.warn(`get current SPAN undefined. className: "${tagClass}", reqId: "${reqId}"`)
+    options.logger.warn(`Get current SPAN undefined. className: "${tagClass}", reqId: "${reqId}"`)
     // this.unSubscribeEvent()
     return
   }
