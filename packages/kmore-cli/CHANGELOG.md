@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 7.6.0 (2021-06-21)
+
+
+### Features
+
+* **midway-component-kmore:** skip trace if ctx.tracerManager undefined ([348612c](https://github.com/waitingsong/kmore/commit/348612c16cc38e1e43da130cd04d51a48700a61a))
+
+
+
+
+
 # 7.5.0 (2021-06-21)
 
 
