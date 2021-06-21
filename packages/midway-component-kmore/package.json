@@ -17,7 +17,7 @@
   ],
   "bin": {},
   "main": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
