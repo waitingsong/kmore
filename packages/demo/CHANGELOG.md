@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 7.4.0 (2021-06-21)
+
+
+### Features
+
+* **midway-component-kmore:** skip createDbh() if some property empty ([f881a95](https://github.com/waitingsong/npm-mono-base/commit/f881a958c80042c19cc7a67af2f92be31525bfb8))
+
+
+
+
+
 ## 7.3.1 (2021-06-21)
 
 
