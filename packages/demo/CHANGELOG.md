@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 7.5.0 (2021-06-21)
+
+
+### Features
+
+* **midway-component-kmore:** add deps knex ([899d419](https://github.com/waitingsong/npm-mono-base/commit/899d41952fa1808b636129efde383262b0aabb49))
+
+
+
+
+
 ## 7.4.1 (2021-06-21)
 
 **Note:** Version bump only for package demo
