@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 7.7.0 (2021-06-22)
+
+
+### Features
+
+* **kmore:** export functions ([72d0dbd](https://github.com/waitingsong/npm-mono-base/commit/72d0dbd8743c29c97b129eda04e468da80c54991))
+
+
+
+
+
 ## 7.6.1 (2021-06-22)
 
 
