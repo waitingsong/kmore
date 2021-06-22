@@ -1,7 +1,7 @@
 {
   "name": "kmore-types",
   "author": "waiting",
-  "version": "7.7.0",
+  "version": "7.7.1",
   "description": "Retrieve types info from ts file",
   "keywords": [
     "AST",
