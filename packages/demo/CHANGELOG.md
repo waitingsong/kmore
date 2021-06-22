@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 7.6.1 (2021-06-22)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** logger undefined ([b71bd56](https://github.com/waitingsong/npm-mono-base/commit/b71bd5648b72a46a0cf10b73929fff902c8cc40a))
+
+
+
+
+
 # 7.6.0 (2021-06-21)
 
 
