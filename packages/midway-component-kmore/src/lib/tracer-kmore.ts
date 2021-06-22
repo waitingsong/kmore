@@ -58,7 +58,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     }
 
     if (! this.ctx.tracerManager) {
-      console.warn('ctx.tracerManager undefined, may running at component when test case. kmove enent subscript skipped')
+      console.info('ctx.tracerManager undefined, may running at component when test case. kmore event subscription skipped')
     }
 
     this.registerDbObservable(this.instanceId)
