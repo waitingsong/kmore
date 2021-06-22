@@ -49,8 +49,8 @@ export async function processQueryEventWithEventId(
   if (! ev.identifier) { return }
 
   if (! tracerManager) {
-    console.info(`processQueryEventWithEventId(): ctx.tracerManager undefined,
-    may running at component test case. kmore event processing skipped`)
+    // console.info(`processQueryEventWithEventId(): ctx.tracerManager undefined,
+    // may running at component test case. kmore event processing skipped`)
     return
   }
 
