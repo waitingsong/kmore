@@ -48,6 +48,12 @@ export async function processQueryEventWithEventId(
 
   if (! ev.identifier) { return }
 
+  if (! tracerManager) {
+    console.info(`processQueryEventWithEventId(): ctx.tracerManager undefined,
+    may running at component when test case. kmove enent  skipped`)
+    return
+  }
+
   const currSpan = tracerManager.currentSpan()
   if (! currSpan) {
     options.logger.warn(`Get current SPAN undefined. className: "${tagClass}", reqId: "${reqId}"`)

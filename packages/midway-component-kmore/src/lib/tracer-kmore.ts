@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-// import { loggers, ILogger } from '@midwayjs/logger'
 import { Logger } from '@mw-components/jaeger'
 import {
   Kmore,
@@ -20,6 +18,7 @@ import { Context } from '~/interface'
 
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
+
   ctx: Context
   logger: Logger
 
@@ -59,8 +58,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     }
 
     if (! this.ctx.tracerManager) {
-      logger.warn('ctx.tracerManager undefined, may running at component when test case. kmove enent subscript skipped')
-      return
+      console.warn('ctx.tracerManager undefined, may running at component when test case. kmove enent subscript skipped')
     }
 
     this.registerDbObservable(this.instanceId)

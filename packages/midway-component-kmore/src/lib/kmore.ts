@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { ILogger } from '@midwayjs/logger'
 import { IMidwayWebContext as Context } from '@midwayjs/web'
-import { Logger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex } from 'knex'
 
@@ -13,7 +13,7 @@ export class KmoreComponent<D = unknown> extends Kmore<D> {
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
     public ctx?: Context,
-    public logger?: Logger,
+    public logger?: ILogger,
   ) {
     super(
       dbConfig.config,
