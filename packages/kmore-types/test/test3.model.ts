@@ -24,5 +24,6 @@ export class UserExt {
   uid: number
   age: number
   address: string
+  last_login_time: Date
 }
 

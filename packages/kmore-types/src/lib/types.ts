@@ -65,6 +65,9 @@ export type DictAlias<D> = {
   [TbName in keyof D]: AliasColumns<D[TbName], TbName & string>
 }
 
+export type DictCamelAlias<D> = {
+  [TbName in keyof D]: CamelAliasColumns<D[TbName], TbName & string>
+}
 
 export type Columns<T> = {
   [F in keyof T]: F
@@ -74,6 +77,9 @@ export type ScopedColumns<T, K extends string> = {
 }
 export type AliasColumns<T, K extends string> = {
   [F in keyof T]: Record<`${SnakeToCamel<K>}${SnakeToPascal<F & string>}`, `${K}.${F & string}`>
+}
+export type CamelAliasColumns<T, K extends string> = {
+  [F in keyof T]: Record<`${SnakeToCamel<F & string>}`, `${K}.${F & string}`>
 }
 
 
