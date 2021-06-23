@@ -19,6 +19,7 @@ export const expectedDict: DbDict<Db> = {
       uid: 'uid',
       age: 'age',
       address: 'address',
+      last_login_time: 'last_login_time',
     },
   },
 
@@ -32,6 +33,7 @@ export const expectedDict: DbDict<Db> = {
       uid: 'tb_user_ext.uid',
       age: 'tb_user_ext.age',
       address: 'tb_user_ext.address',
+      last_login_time: 'tb_user_ext.last_login_time',
     },
   },
 
@@ -45,6 +47,21 @@ export const expectedDict: DbDict<Db> = {
       uid: { tbUserExtUid: 'tb_user_ext.uid' },
       age: { tbUserExtAge: 'tb_user_ext.age' },
       address: { tbUserExtAddress: 'tb_user_ext.address' },
+      last_login_time: { tbUserExtLastLoginTime: 'tb_user_ext.last_login_time' },
+    },
+  },
+
+  camelAlias: {
+    tb_user: {
+      uid: { uid: 'tb_user.uid' },
+      name: { name: 'tb_user.name' },
+      ctime: { ctime: 'tb_user.ctime' },
+    },
+    tb_user_ext: {
+      uid: { uid: 'tb_user_ext.uid' },
+      age: { age: 'tb_user_ext.age' },
+      address: { address: 'tb_user_ext.address' },
+      last_login_time: { lastLoginTime: 'tb_user_ext.last_login_time' },
     },
   },
 }
@@ -67,6 +84,7 @@ export const expectedDict2: DbDict<Db2> = {
       uid: 'uid',
       age: 'age',
       address: 'address',
+      last_login_time: 'last_login_time',
     },
   },
 
@@ -81,6 +99,7 @@ export const expectedDict2: DbDict<Db2> = {
       uid: 'tb_user_ext.uid',
       age: 'tb_user_ext.age',
       address: 'tb_user_ext.address',
+      last_login_time: 'tb_user_ext.last_login_time',
     },
   },
 
@@ -95,6 +114,22 @@ export const expectedDict2: DbDict<Db2> = {
       uid: { tbUserExtUid: 'tb_user_ext.uid' },
       age: { tbUserExtAge: 'tb_user_ext.age' },
       address: { tbUserExtAddress: 'tb_user_ext.address' },
+      last_login_time: { tbUserExtLastLoginTime: 'tb_user_ext.last_login_time' },
+    },
+  },
+
+  camelAlias: {
+    tb_user: {
+      uid: { uid: 'tb_user.uid' },
+      name: { name: 'tb_user.name' },
+      ctime: { ctime: 'tb_user.ctime' },
+      pwd: { pwd: 'tb_user.pwd' },
+    },
+    tb_user_ext: {
+      uid: { uid: 'tb_user_ext.uid' },
+      age: { age: 'tb_user_ext.age' },
+      address: { address: 'tb_user_ext.address' },
+      last_login_time: { lastLoginTime: 'tb_user_ext.last_login_time' },
     },
   },
 }
@@ -116,11 +151,14 @@ export const expectedColsTypeDb: DbDictType<Db> = {
     uid: 1,
     age: 10,
     address: 'addr',
+    last_login_time: new Date(),
     tbUserExtUid: 1,
     tbUserExtAge: 11,
     tbUserExtAddress: 'address',
+    tbUserExtLastLoginTime: new Date(),
     'tb_user_ext.uid': 1,
     'tb_user_ext.age': 2,
     'tb_user_ext.address': 'foo',
+    'tb_user_ext.last_login_time': new Date(),
   },
 }

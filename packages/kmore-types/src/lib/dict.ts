@@ -7,6 +7,7 @@ import {
   DictColumns,
   DictAlias,
   DictScoped,
+  DictCamelAlias,
 } from './types'
 
 
@@ -64,6 +65,21 @@ export interface DbDict<D> {
    * ```
    */
   alias: DictAlias<D>
+
+  /**
+   * @returns
+   * ```ts
+   * type {
+   *   tb_user: {
+   *     uid: { uid: "tb_user.uid" }
+   *     name: { name: "tb_user.name" }
+   *     real_name: { realName: "tb_user.real_name" }
+   *   },
+   *   tb_user_ext: {},
+   * }
+   * ```
+   */
+  camelAlias: DictCamelAlias<D>
 }
 
 
