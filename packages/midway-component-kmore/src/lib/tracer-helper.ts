@@ -18,59 +18,52 @@ import { Tags } from 'opentracing'
 
 import { DbConfig, QuerySpanInfo } from './types'
 
-import { Context } from '~/interface'
-
 
 interface ProcessQueryEventWithIdOpts {
-  ctx: Context
   dbConfig: DbConfig
   ev: KmoreEvent
   logger: Logger
   queryUidSpanMap: Map<string, QuerySpanInfo>
-  reqId: string
   tagClass: string
-  tracerManager: TracerManager
+  trm: TracerManager
 }
 export async function processQueryEventWithEventId(
   options: ProcessQueryEventWithIdOpts,
 ): Promise<void> {
 
   const {
-    ctx,
     dbConfig,
     ev,
     logger,
     queryUidSpanMap,
-    reqId,
     tagClass,
-    tracerManager,
+    trm,
   } = options
 
   if (! ev.identifier) { return }
 
-  if (! tracerManager) {
+  if (! trm) {
     // console.info(`processQueryEventWithEventId(): ctx.tracerManager undefined,
     // may running at component test case. kmore event processing skipped`)
     return
   }
 
-  const currSpan = tracerManager.currentSpan()
+  const currSpan = trm.currentSpan()
   if (! currSpan) {
-    options.logger.warn(`Get current SPAN undefined. className: "${tagClass}", reqId: "${reqId}"`)
+    options.logger.warn(`Get current SPAN undefined. className: "${tagClass}"`)
     // this.unSubscribeEvent()
     return
   }
 
-  const span = tracerManager.genSpan('DbComponent', currSpan)
+  const span = trm.genSpan('DbComponent', currSpan)
 
   const opts: ProcessOpts = {
-    ctx,
+    trm,
     ev,
     dbConfig,
     logger,
     queryUidSpanMap,
     spanInfo: {
-      reqId,
       span,
       tagClass,
       timestamp: ev.timestamp,
@@ -80,7 +73,7 @@ export async function processQueryEventWithEventId(
 }
 
 interface ProcessQueryRespAndExEventWithIdOpts {
-  ctx: Context
+  trm: TracerManager
   dbConfig: DbConfig
   ev: KmoreEvent
   logger: Logger
@@ -90,7 +83,7 @@ export async function processQueryRespAndExEventWithEventId(
   options: ProcessQueryRespAndExEventWithIdOpts,
 ): Promise<void> {
 
-  const { ctx, dbConfig, ev, logger, queryUidSpanMap } = options
+  const { trm, dbConfig, ev, logger, queryUidSpanMap } = options
 
   if (! ev.identifier) { return }
 
@@ -98,14 +91,13 @@ export async function processQueryRespAndExEventWithEventId(
   const spanInfo = queryUidSpanMap.get(queryUid)
 
   if (spanInfo) {
-    // const { tagClass, reqId, span } = spanInfo
     // logger.log({
     //   level: 'debug',
     //   time: genISO8601String(),
-    //   msg: `queryUid: "${queryUid}" (className: "${tagClass}", reqId: "${reqId}") with SAPN related `,
+    //   msg: `queryUid: "${queryUid}" (className: "${tagClass}" ) with SAPN related `,
     // }, span)
     const opts: ProcessOpts = {
-      ctx,
+      trm,
       ev,
       dbConfig,
       logger,
@@ -117,7 +109,7 @@ export async function processQueryRespAndExEventWithEventId(
 }
 
 interface ProcessOpts {
-  ctx: Context
+  trm: TracerManager
   dbConfig: DbConfig
   ev: KmoreEvent
   logger: Logger
@@ -155,14 +147,13 @@ async function processSwitch(options: ProcessOpts): Promise<void> {
 }
 
 function caseQuery(options: ProcessOpts): void {
-  const { tracerManager } = options.ctx
+  const { trm } = options
   const { config: knexConfig, sampleThrottleMs } = options.dbConfig
-  const { span, reqId, tagClass } = options.spanInfo
+  const { span, tagClass } = options.spanInfo
   const { kUid, queryUid, trxId, data } = options.ev
   const conn = knexConfig.connection as ConnectionConfig
 
   span.addTags({
-    [TracerTag.reqId]: reqId,
     [TracerTag.callerClass]: tagClass,
     [TracerTag.dbClient]: knexConfig.client,
     [TracerTag.dbHost]: conn.host,
@@ -184,13 +175,12 @@ function caseQuery(options: ProcessOpts): void {
     time: genISO8601String(),
   }
   span.log(input)
-  tracerManager.spanLog(input)
+  trm.spanLog(input)
 }
 
 
 async function caseQueryResp(options: ProcessOpts): Promise<void> {
-  const { logger } = options
-  const { tracerManager } = options.ctx
+  const { logger, trm } = options
   const { sampleThrottleMs } = options.dbConfig
   const { span, timestamp: start } = options.spanInfo
   const { respRaw, timestamp: end } = options.ev
@@ -226,14 +216,13 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     span.log(input)
   }
 
-  tracerManager.spanLog(input)
+  trm.spanLog(input)
   span.finish()
 }
 
 async function caseQueryError(options: ProcessOpts): Promise<void> {
-  const { logger } = options
-  const { tracerManager } = options.ctx
-  const { span, reqId, tagClass, timestamp: start } = options.spanInfo
+  const { logger, trm } = options
+  const { span, tagClass, timestamp: start } = options.spanInfo
   const {
     kUid, queryUid, trxId, exData, exError, timestamp: end,
   } = options.ev
@@ -244,7 +233,6 @@ async function caseQueryError(options: ProcessOpts): Promise<void> {
     event: TracerLog.queryError,
     level: 'error',
     time: genISO8601String(),
-    reqId,
     kUid,
     tagClass,
     queryUid,
@@ -263,7 +251,7 @@ async function caseQueryError(options: ProcessOpts): Promise<void> {
   })
   // span.log(logInput)
   logger.log(input, span)
-  tracerManager.spanLog(input)
+  trm.spanLog(input)
   span.finish()
 }
 
@@ -288,8 +276,3 @@ interface ConnectionConfig {
 }
 
 
-declare module '@midwayjs/core' {
-  interface Context {
-    reqId: string
-  }
-}

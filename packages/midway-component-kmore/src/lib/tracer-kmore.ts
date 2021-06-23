@@ -1,4 +1,4 @@
-import { Logger } from '@mw-components/jaeger'
+import { Logger, TracerManager } from '@mw-components/jaeger'
 import {
   Kmore,
   KmoreEvent,
@@ -14,13 +14,11 @@ import {
 } from './tracer-helper'
 import { DbConfig, QuerySpanInfo } from './types'
 
-import { Context } from '~/interface'
-
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
-  ctx: Context
   logger: Logger
+  ctxTracerManager: TracerManager
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventSubscription: Subscription | undefined
@@ -32,7 +30,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
-    context?: Context,
+    ctxTracerManager?: TracerManager,
     logger?: Logger,
   ) {
 
@@ -43,12 +41,12 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       Symbol(Date.now()),
     )
 
-    if (context) {
-      this.ctx = context
-    }
-    else {
-      throw new TypeError('Parameter context undefined')
-    }
+    // if (context) {
+    //   this.ctx = context
+    // }
+    // else {
+    //   throw new TypeError('Parameter context undefined')
+    // }
 
     if (logger) {
       this.logger = logger
@@ -57,13 +55,16 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       throw new TypeError('TracerKmoreComponent: Parameter logger undefined')
     }
 
-    if (! this.ctx.tracerManager) {
-      console.info('ctx.tracerManager undefined, may running at component when test case. kmore event subscription skipped')
+    if (ctxTracerManager) {
+      this.ctxTracerManager = ctxTracerManager
+    }
+    else {
+      console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
     }
 
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
-    this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
+    // this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
     // process.once('exit', () => {
     //   this.unsubscribe()
     // })
@@ -132,20 +133,18 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         if (ev.type === 'query') {
           const { name: tagClass } = this.constructor
           await processQueryEventWithEventId({
-            ctx: this.ctx,
+            trm: this.ctxTracerManager,
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,
             queryUidSpanMap: this.queryUidSpanMap,
-            reqId: this.ctx.reqId,
             tagClass,
-            tracerManager: this.ctx.tracerManager,
           })
         }
         else {
           if (! ev.identifier) { return }
           await processQueryRespAndExEventWithEventId({
-            ctx: this.ctx,
+            trm: this.ctxTracerManager,
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,
