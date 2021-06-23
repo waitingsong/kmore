@@ -1,3 +1,5 @@
+import EventEmitter from 'events'
+
 import {
   Logger,
   Provide,
@@ -35,7 +37,13 @@ export class DbManager <DbId extends string = any> {
     forceConnect = false,
   ): void {
 
-    Object.entries(componentConfig).forEach(([dbId, row]) => {
+    const { database, defaultMaxListeners } = componentConfig
+
+    EventEmitter.defaultMaxListeners = defaultMaxListeners && defaultMaxListeners >= 0
+      ? defaultMaxListeners
+      : 100
+
+    Object.entries(database).forEach(([dbId, row]) => {
       if (this.dbHosts.get(dbId)) {
         return
       }
@@ -61,7 +69,10 @@ export class DbManager <DbId extends string = any> {
     ctx?: Context,
     logger?: JLogger,
   ): void {
-    Object.entries(componentConfig).forEach(([dbId, row]) => {
+
+    const { database } = componentConfig
+
+    Object.entries(database).forEach(([dbId, row]) => {
       this.createOne(dbId as DbId, row, ctx, logger)
     })
   }

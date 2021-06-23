@@ -4,12 +4,15 @@ import { KmoreComponentConfig } from '../lib/types'
 
 
 export const kmore: KmoreComponentConfig = {
-  master: {
-    autoConnect: true,
-    config: {},
-    dict: {} as DbDict<unknown>,
-    enableTracing: false,
-    sampleThrottleMs: 300,
+  defaultMaxListeners: 100,
+  database: {
+    master: {
+      autoConnect: true,
+      config: {},
+      dict: {} as DbDict<unknown>,
+      enableTracing: false,
+      sampleThrottleMs: 300,
+    },
   },
 }
 

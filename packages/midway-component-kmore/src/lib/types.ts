@@ -5,7 +5,16 @@ import { Knex } from 'knex'
 import { Span } from 'opentracing'
 
 
-export type KmoreComponentConfig <DbId extends string = string> = Record<DbId, DbConfig>
+export interface KmoreComponentConfig <DbId extends string = string> {
+  database: DbConfigs<DbId>
+  /**
+   * @default 100
+   * @see https://nodejs.org/dist/latest-v16.x/docs/api/events.html#events_emitter_getmaxlisteners
+   */
+  defaultMaxListeners?: number
+}
+
+export type DbConfigs <DbId extends string = string> = Record<DbId, DbConfig>
 export interface DbConfig <T = unknown> {
   /**
    * Auto connect when service onReady
