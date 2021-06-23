@@ -12,6 +12,7 @@ export const initialClientOptions: Readonly<ClientOptions> = {
     columns: {},
     scoped: {},
     alias: {},
+    camelAlias: {},
   },
   waitConnected: true,
 }
