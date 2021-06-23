@@ -28,7 +28,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mw-components/jaeger": "^6.13.1",
+    "@mw-components/jaeger": "^6.15.0",
     "@waiting/shared-core": "^14.2.0",
     "@waiting/shared-types": "^14.2.0",
     "kmore": "^9.0.0",
