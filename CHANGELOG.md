@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 9.0.0 (2021-06-23)
+
+
+### Features
+
+* **midway-component-kmore:** breaking change structure of KmoreComponentConfig 6215566
+
+
+
+
+
 # 8.0.0 (2021-06-23)
 
 
