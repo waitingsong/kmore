@@ -96,3 +96,4 @@ export function genSnakeKeysFrom<Target extends unknown = unknown, From extends 
   // @ts-expect-error
   return keysDto2DoSnake(input)
 }
+
