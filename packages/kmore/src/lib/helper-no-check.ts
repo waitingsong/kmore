@@ -3,7 +3,7 @@
 /**
  * @description only one level
  */
-export function mergeDoWithInitData<T>(initDoData: T, input?: Partial<T>): T {
+export function mergeDoWithInitData<T>(initDoData: T, input?: unknown): T {
   const ret = {
     ...initDoData,
   } as T
