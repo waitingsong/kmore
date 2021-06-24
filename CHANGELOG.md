@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 10.1.0 (2021-06-24)
+
+
+### Features
+
+* export mergeDoWithInitData() 6974b59
+
+
+
+
+
 # 10.0.0 (2021-06-23)
 
 **Note:** Version bump only for package kmore
