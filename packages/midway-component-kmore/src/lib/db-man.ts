@@ -146,6 +146,28 @@ export class DbManager <DbId extends string = any> {
     return km
   }
 
+  /**
+   * Disconnect all dbhosts
+   */
+  async destroy(): Promise<void> {
+    const pms: Promise<void>[] = []
+
+    const map = this.getAllDbHosts()
+    for (const [id, dbh] of map) {
+      const pm = dbh.destroy().catch((ex) => {
+        this.logger.error(`destroy knex connection failed with identifier: "${id}":\n${(ex as Error).message}`)
+      })
+      pms.push(pm)
+    }
+
+    const tt = 3000
+    const timeout$ = new Promise<undefined>(done => setTimeout(done, tt))
+    const t2$ = timeout$.then(() => {
+      this.logger.warn(`dbManager.destroy() timeout in ${tt}(ms)`)
+    })
+    pms.push(t2$)
+    return Promise.race(pms)
+  }
 }
 
 

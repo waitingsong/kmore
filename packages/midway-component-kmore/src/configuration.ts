@@ -9,9 +9,7 @@ import {
   Config,
   Configuration,
   Inject,
-  Logger,
 } from '@midwayjs/decorator'
-import { ILogger } from '@midwayjs/logger'
 import { IMidwayWebApplication } from '@midwayjs/web'
 
 import { DbManager } from './lib/db-man'
@@ -27,8 +25,6 @@ const namespace = 'kmore'
 export class AutoConfiguration {
   @App() readonly app: IMidwayWebApplication
 
-  @Logger() private readonly logger: ILogger
-
   @Inject() readonly dbManager: DbManager
 
   @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
@@ -40,15 +36,7 @@ export class AutoConfiguration {
   async onStop(): Promise<void> {
     const { dbManager } = this
     if (dbManager) {
-      const map = dbManager.getAllDbHosts()
-      for (const [id, dbh] of map) {
-        try {
-          await dbh.destroy()
-        }
-        catch (ex) {
-          this.logger.error(`destroy knex connection failed with identifier: "${id}"`)
-        }
-      }
+      await dbManager.destroy()
     }
   }
 }
