@@ -71,6 +71,10 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   }
 
 
+  unsubscribeEvent(): void {
+    this.dbEventSubscription?.unsubscribe()
+  }
+
   private registerDbObservable(
     tracerInstId: string | symbol,
   ): void {
@@ -160,9 +164,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     this.dbEventSubscription = subsp
   }
 
-  protected unsubscribeEvent(): void {
-    this.dbEventSubscription?.unsubscribe()
-  }
 
 
   protected unsubscribeQueryEvent(): void {
