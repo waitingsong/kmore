@@ -150,6 +150,8 @@ export class DbManager <DbId extends string = any> {
    * Disconnect all dbhosts
    */
   async destroy(): Promise<void> {
+    this.unsubscribeEventOfKmore()
+
     const pms: Promise<void>[] = []
 
     const map = this.getAllDbHosts()
@@ -167,6 +169,15 @@ export class DbManager <DbId extends string = any> {
     })
     pms.push(t2$)
     return Promise.race(pms)
+  }
+
+  unsubscribeEventOfKmore(): void {
+    this.kmoreList.forEach((kmoreComp) => {
+      if (kmoreComp instanceof TracerKmoreComponent) {
+        kmoreComp.unsubscribeEvent()
+      }
+      kmoreComp.unsubscribe()
+    })
   }
 }
 
