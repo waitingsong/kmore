@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 10.2.0 (2021-06-25)
+
+
+### Features
+
+* **midway-component-kmore:** set timeout (3s) for db host destroy f0de424
+
+
+
+
+
 ## 10.1.1 (2021-06-24)
 
 **Note:** Version bump only for package kmore
