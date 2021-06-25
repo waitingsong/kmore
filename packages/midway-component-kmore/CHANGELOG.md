@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 10.3.0 (2021-06-25)
+
+
+### Features
+
+* **midway-component-kmore:** unsubscribe event of instances during destroy ([ab74cb5](https://github.com/waitingsong/kmore/commit/ab74cb5a893a9767300379ce91589ab69bcbddba))
+
+
+
+
+
 # 10.2.0 (2021-06-25)
 
 
