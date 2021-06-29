@@ -5,7 +5,7 @@ import { Span } from 'opentracing'
 
 
 export interface KmoreComponentConfig <DbId extends string = string> {
-  database: DbConfigs<DbId>
+  dbConfigs: DbConfigs<DbId>
   /**
    * @default 100
    * @see https://nodejs.org/dist/latest-v16.x/docs/api/events.html#events_emitter_getmaxlisteners

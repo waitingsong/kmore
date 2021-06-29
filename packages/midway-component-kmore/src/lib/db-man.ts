@@ -37,7 +37,7 @@ export class DbManager <DbId extends string = any> {
     forceConnect = false,
   ): void {
 
-    const { database, defaultMaxListeners } = componentConfig
+    const { dbConfigs: database, defaultMaxListeners } = componentConfig
 
     EventEmitter.defaultMaxListeners = defaultMaxListeners && defaultMaxListeners >= 0
       ? defaultMaxListeners
@@ -72,7 +72,7 @@ export class DbManager <DbId extends string = any> {
     logger?: JLogger,
   ): void {
 
-    const { database } = componentConfig
+    const { dbConfigs: database } = componentConfig
 
     Object.entries(database).forEach(([dbId, row]) => {
       this.createOne(dbId as DbId, row, trm, logger)
