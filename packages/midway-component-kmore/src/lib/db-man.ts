@@ -30,6 +30,7 @@ export class DbManager <DbId extends string = any> {
 
   private dbHosts: DbHosts = new Map()
   private kmoreList: KmoreList = new Map()
+  private config: KmoreComponentConfig
 
   connect(
     componentConfig: KmoreComponentConfig,
@@ -58,6 +59,8 @@ export class DbManager <DbId extends string = any> {
       const dbh = createDbh(row.config)
       this.dbHosts.set(dbId, dbh)
     })
+
+    this.config = componentConfig
   }
 
   /**
@@ -162,7 +165,10 @@ export class DbManager <DbId extends string = any> {
       pms.push(pm)
     }
 
-    const tt = 3000
+    const { timeoutWhenDestroy } = this.config
+    const tt = timeoutWhenDestroy && timeoutWhenDestroy >= 0
+      ? timeoutWhenDestroy
+      : 3000
     const timeout$ = new Promise<undefined>(done => setTimeout(done, tt))
     const t2$ = timeout$.then(() => {
       this.logger.warn(`dbManager.destroy() timeout in ${tt}(ms)`)

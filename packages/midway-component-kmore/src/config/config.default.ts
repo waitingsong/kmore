@@ -14,5 +14,6 @@ export const kmore: KmoreComponentConfig = {
       sampleThrottleMs: 300,
     },
   },
+  timeoutWhenDestroy: 2000,
 }
 

@@ -11,6 +11,10 @@ export interface KmoreComponentConfig <DbId extends string = string> {
    * @see https://nodejs.org/dist/latest-v16.x/docs/api/events.html#events_emitter_getmaxlisteners
    */
   defaultMaxListeners?: number
+  /**
+   * @default 2000
+   */
+  timeoutWhenDestroy?: number
 }
 
 export type DbConfigs <DbId extends string = string> = Record<DbId, DbConfig>
