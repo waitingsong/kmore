@@ -8,12 +8,12 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
-import { Kmore } from 'kmore'
+import { Kmore, KmoreEvent } from 'kmore'
 import { Knex, knex } from 'knex'
 
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
-import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
+import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts, QuerySpanInfo } from './types'
 
 /** dbId: Kmore */
 type KmoreList = Map<string, KmoreComponent | TracerKmoreComponent>
@@ -27,6 +27,8 @@ type DbHosts = Map<string, Knex>
 export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
+
+  readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
   private dbHosts: DbHosts = new Map()
   private kmoreList: KmoreList = new Map()
@@ -184,6 +186,41 @@ export class DbManager <DbId extends string = any> {
       }
       kmoreComp.unsubscribe()
     })
+  }
+
+
+  eventFilter(
+    ev: KmoreEvent,
+    id: unknown,
+    currId: string | symbol | undefined,
+  ): boolean {
+
+    const { type, queryUid } = ev
+
+    // if (ev.identifier) {
+    //   return false
+    // }
+
+    if (this.queryUidSpanMap.size > 10000) {
+      throw new Error('BaseRepo.queryUidSpanMap.size exceed 10000')
+    }
+
+    if (type !== 'query' && type !== 'queryResponse' && type !== 'queryError') {
+      return false
+    }
+
+    if (! queryUid) {
+      return false
+    }
+
+    const span = this.queryUidSpanMap.get(queryUid)
+    if (span && type === 'query') {
+      return false
+    }
+
+    // const flag = id === BaseRepo.tracerInstId
+    const flag = !! (currId && id === currId)
+    return flag
   }
 }
 

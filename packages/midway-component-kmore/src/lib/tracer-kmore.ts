@@ -1,3 +1,4 @@
+import { App } from '@midwayjs/decorator'
 import { Logger, TracerManager } from '@mw-components/jaeger'
 import {
   Kmore,
@@ -8,15 +9,18 @@ import { Span } from 'opentracing'
 import { Observable, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
 
+
+import { DbManager } from './db-man'
 import {
   processQueryEventWithEventId,
   processQueryRespAndExEventWithEventId,
 } from './tracer-helper'
-import { DbConfig, QuerySpanInfo } from './types'
+import { DbConfig } from './types'
+
+import { Context } from '~/interface'
 
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
-
   logger: Logger
   ctxTracerManager: TracerManager
 
@@ -25,13 +29,11 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   queryEventSubscription: Subscription | undefined
   RespAndExEventSubscription: Subscription | undefined
 
-  readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
-
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
-    ctxTracerManager?: TracerManager,
-    logger?: Logger,
+    protected ctx: Context,
+    protected dbMan: DbManager,
   ) {
 
     super(
@@ -41,30 +43,24 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       Symbol(Date.now()),
     )
 
-    // if (context) {
-    //   this.ctx = context
+    if (! ctx) {
+      throw new TypeError('Parameter context undefined')
+    }
+
+    // if (logger) {
+    //   this.logger = logger
     // }
     // else {
-    //   throw new TypeError('Parameter context undefined')
+    //   throw new TypeError('TracerKmoreComponent: Parameter logger undefined')
     // }
-
-    if (logger) {
-      this.logger = logger
-    }
-    else {
-      throw new TypeError('TracerKmoreComponent: Parameter logger undefined')
-    }
-
-    if (ctxTracerManager) {
-      this.ctxTracerManager = ctxTracerManager
-    }
-    else {
+    // const ctxTracerManager = await this.ctx.requestContext.getAsync(TracerManager)
+    if (! this.ctx.tracerManager) {
       console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
     }
 
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
-    // this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
+    this.ctx.res && this.ctx.res.once('finish', () => this.unsubscribeEvent())
     // process.once('exit', () => {
     //   this.unsubscribe()
     // })
@@ -78,50 +74,14 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   private registerDbObservable(
     tracerInstId: string | symbol,
   ): void {
-    // const obb = this.register((ev) => {
-    //   return this.eventFilter(ev, this.instanceId)
-    // })
+
     const obb = this.register<string | symbol, Span>(
-      (ev, id) => this.eventFilter(ev, id, this.instanceId),
+      (ev, id) => this.dbMan.eventFilter(ev, id, this.instanceId),
       tracerInstId,
     )
     this.dbEventObb = obb
   }
 
-
-  private eventFilter(
-    ev: KmoreEvent,
-    id: unknown,
-    currId: string | symbol | undefined,
-  ): boolean {
-
-    const { type, queryUid } = ev
-
-    // if (ev.identifier) {
-    //   return false
-    // }
-
-    if (this.queryUidSpanMap.size > 10000) {
-      throw new Error('BaseRepo.queryUidSpanMap.size exceed 10000')
-    }
-
-    if (type !== 'query' && type !== 'queryResponse' && type !== 'queryError') {
-      return false
-    }
-
-    if (! queryUid) {
-      return false
-    }
-
-    const span = this.queryUidSpanMap.get(queryUid)
-    if (span && type === 'query') {
-      return false
-    }
-
-    // const flag = id === BaseRepo.tracerInstId
-    const flag = !! (currId && id === currId)
-    return flag
-  }
 
   protected subscribeEvent(): void {
     if (! this.dbEventObb) {
@@ -141,7 +101,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,
-            queryUidSpanMap: this.queryUidSpanMap,
+            queryUidSpanMap: this.dbMan.queryUidSpanMap,
             tagClass,
           })
         }
@@ -152,7 +112,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,
-            queryUidSpanMap: this.queryUidSpanMap,
+            queryUidSpanMap: this.dbMan.queryUidSpanMap,
           })
         }
       },
@@ -163,7 +123,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
     this.dbEventSubscription = subsp
   }
-
 
 
   protected unsubscribeQueryEvent(): void {
