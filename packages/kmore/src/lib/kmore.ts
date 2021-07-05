@@ -56,14 +56,14 @@ export class Kmore<D = unknown> {
   ) {
 
     const dbhBindEvent = dbh
-      .on('query', (data: OnQueryData) => bindOnQuery(this.subject, void 0, data))
+      .on('query', (data: OnQueryData) => bindOnQuery(this.subject, this.instanceId, data))
       .on(
         'query-response',
-        (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(this.subject, void 0, _, respRaw),
+        (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(this.subject, this.instanceId, _, respRaw),
       )
       .on(
         'query-error',
-        (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, void 0, err, data),
+        (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, this.instanceId, err, data),
       )
     this.dbh = dbhBindEvent
     this.refTables = this.createRefTables(dbh, 'ref_')
@@ -100,8 +100,7 @@ export class Kmore<D = unknown> {
       Object.defineProperty(rb, name, {
         ...defaultPropDescriptor,
         value: (identifier?: unknown) => {
-          const id = typeof identifier === 'undefined' ? this.instanceId : identifier
-          return this.extRefTableFnProperty(dbh, refName, id)
+          return this.extRefTableFnProperty(dbh, refName, identifier)
         }, // must dynamically!!
       })
 

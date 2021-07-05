@@ -10,6 +10,7 @@ import { ILogger } from '@midwayjs/logger'
 import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
 import { Kmore, KmoreEvent } from 'kmore'
 import { Knex, knex } from 'knex'
+import { Observable, Subscription } from 'rxjs'
 
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
@@ -33,6 +34,11 @@ export class DbManager <DbId extends string = any> {
   private dbHosts: DbHosts = new Map()
   private kmoreList: KmoreList = new Map()
   private config: KmoreComponentConfig
+
+  dbEventObb: Observable<KmoreEvent> | undefined
+  dbEventSubscription: Subscription | undefined
+  queryEventSubscription: Subscription | undefined
+  RespAndExEventSubscription: Subscription | undefined
 
   connect(
     componentConfig: KmoreComponentConfig,
@@ -221,6 +227,72 @@ export class DbManager <DbId extends string = any> {
     // const flag = id === BaseRepo.tracerInstId
     const flag = !! (currId && id === currId)
     return flag
+  }
+
+  unsubscribeEvent(): void {
+    this.dbEventSubscription?.unsubscribe()
+  }
+
+  registerDbObservable(
+    tracerInstId: string | symbol,
+  ): void {
+
+    const obb = this.register<string | symbol, Span>(
+      (ev, id) => this.dbMan.eventFilter(ev, id, this.instanceId),
+      tracerInstId,
+    )
+    this.dbEventObb = obb
+  }
+
+
+  protected subscribeEvent(): void {
+    if (! this.dbEventObb) {
+      throw new Error('dbEventObb invalid')
+    }
+
+    const subsp = this.dbEventObb.pipe(
+      filter((ev) => {
+        return ev.type === 'query' || ev.type === 'queryResponse' || ev.type === 'queryError'
+      }),
+    ).subscribe({
+      next: async (ev) => {
+        if (ev.type === 'query') {
+          const { name: tagClass } = this.constructor
+          await processQueryEventWithEventId({
+            trm: this.ctxTracerManager,
+            dbConfig: this.dbConfig,
+            ev,
+            logger: this.logger,
+            queryUidSpanMap: this.dbMan.queryUidSpanMap,
+            tagClass,
+          })
+        }
+        else {
+          if (! ev.identifier) { return }
+          await processQueryRespAndExEventWithEventId({
+            trm: this.ctxTracerManager,
+            dbConfig: this.dbConfig,
+            ev,
+            logger: this.logger,
+            queryUidSpanMap: this.dbMan.queryUidSpanMap,
+          })
+        }
+      },
+      error: (ex) => {
+        this.logger.error(ex)
+      },
+    })
+
+    this.dbEventSubscription = subsp
+  }
+
+
+  protected unsubscribeQueryEvent(): void {
+    this.queryEventSubscription?.unsubscribe()
+  }
+
+  protected unsubscribeRespAndExEvent(): void {
+    this.RespAndExEventSubscription?.unsubscribe()
   }
 }
 
