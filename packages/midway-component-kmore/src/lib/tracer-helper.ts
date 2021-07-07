@@ -183,7 +183,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
   const { logger, trm } = options
   const { sampleThrottleMs, tracingResponse } = options.dbConfig
   const { span, timestamp: start } = options.spanInfo
-  const { respRaw, timestamp: end } = options.ev
+  const { queryUid, respRaw, timestamp: end } = options.ev
 
   const cost = end - start
   if (respRaw?.response.command) {
@@ -202,6 +202,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     event: TracerLog.queryFinish,
     time: genISO8601String(),
     [TracerLog.queryCost]: cost,
+    queryUid,
   }
 
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
