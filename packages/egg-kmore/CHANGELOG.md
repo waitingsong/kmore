@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 13.0.0 (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** breaking change parameter of create ([f2c23ff](https://github.com/waitingsong/kmore/commit/f2c23ff3743c2626d7fa4cdd170e55025683a9b8))
+
+
+
+
+
 ## 12.0.1 (2021-07-06)
 
 **Note:** Version bump only for package egg-kmore
