@@ -11,6 +11,7 @@ export const kmore: KmoreComponentConfig = {
       config: {},
       dict: {} as DbDict<unknown>,
       enableTracing: false,
+      tracingResponse: true,
       sampleThrottleMs: 300,
     },
   },

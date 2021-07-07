@@ -181,17 +181,21 @@ function caseQuery(options: ProcessOpts): void {
 
 async function caseQueryResp(options: ProcessOpts): Promise<void> {
   const { logger, trm } = options
-  const { sampleThrottleMs } = options.dbConfig
+  const { sampleThrottleMs, tracingResponse } = options.dbConfig
   const { span, timestamp: start } = options.spanInfo
   const { respRaw, timestamp: end } = options.ev
 
   const cost = end - start
   if (respRaw?.response.command) {
-    span.addTags({
+    const tags: SpanLogInput = {
       [TracerTag.dbCommand]: respRaw.response.command,
       [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
       [TracerLog.queryCost]: cost,
-    })
+    }
+    if (tracingResponse) {
+      tags[TracerLog.queryResponse] = respRaw.response
+    }
+    span.addTags(tags)
   }
 
   const input: SpanLogInput = {
@@ -201,10 +205,14 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
   }
 
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
-    span.addTags({
+    const tags: SpanLogInput = {
       [Tags.SAMPLING_PRIORITY]: 50,
       [TracerTag.logLevel]: 'warn',
-    })
+    }
+    if (! tracingResponse && respRaw) {
+      tags[TracerLog.queryResponse] = respRaw.response
+    }
+    span.addTags(tags)
     input.level = 'warn'
     input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
     const procInfo = await retrieveProcInfo()
