@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [17.1.0](https://github.com/waitingsong/kmore/compare/v17.0.0...v17.1.0) (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** increase defaultMaxListeners to 200 ([d7820c1](https://github.com/waitingsong/kmore/commit/d7820c177ecbde8e823818cf6f14e922c57816bd))
+
+
+
+
+
 # [17.0.0](https://github.com/waitingsong/kmore/compare/v16.1.0...v17.0.0) (2021-07-07)
 
 
