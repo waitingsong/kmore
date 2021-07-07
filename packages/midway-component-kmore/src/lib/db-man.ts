@@ -7,7 +7,6 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { Logger as JLogger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex, knex } from 'knex'
 
@@ -71,13 +70,12 @@ export class DbManager <DbId extends string = any> {
   create(
     ctx: Context,
     componentConfig: KmoreComponentConfig,
-    logger?: JLogger,
   ): void {
 
     const { dbConfigs: database } = componentConfig
 
     Object.entries(database).forEach(([dbId, row]) => {
-      this.createOne(ctx, dbId as DbId, row, logger)
+      this.createOne(ctx, dbId as DbId, row)
     })
   }
 
@@ -88,14 +86,13 @@ export class DbManager <DbId extends string = any> {
     ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-    logger?: JLogger,
   ): Kmore<T> | undefined {
 
     if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
       return
     }
 
-    const km = this.createKmore<T>(ctx, dbId, dbConfig, logger)
+    const km = this.createKmore<T>(ctx, dbId, dbConfig)
     km && this.kmoreList.set(dbId, km)
     return km
   }
@@ -125,7 +122,6 @@ export class DbManager <DbId extends string = any> {
     ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-    logger?: JLogger,
   ): KmoreComponent<T> | TracerKmoreComponent<T> | undefined {
     const { config, enableTracing } = dbConfig
 
@@ -140,7 +136,6 @@ export class DbManager <DbId extends string = any> {
       dbConfig,
       dbh,
       dbId,
-      logger,
     }
     const km = enableTracing
       ? kmoreComponentFactory<T>(opts, TracerKmoreComponent)
@@ -195,7 +190,7 @@ export function kmoreComponentFactory<D>(
   component: typeof KmoreComponent | typeof TracerKmoreComponent,
 ): KmoreComponent<D> | TracerKmoreComponent<D> {
   const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
-  const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
+  const km = new component<D>(options.dbConfig, dbh, options.ctx)
   return km
 }
 

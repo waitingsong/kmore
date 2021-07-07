@@ -1,4 +1,3 @@
-import { Logger } from '@mw-components/jaeger'
 import { DbDict, KnexConfig } from 'kmore'
 import { Knex } from 'knex'
 import { Span } from 'opentracing'
@@ -46,7 +45,6 @@ export interface KmoreComponentFactoryOpts<D> {
   dbh?: Knex
   dbId?: string
   instanceId?: string | symbol
-  logger?: Logger
 }
 
 export interface QuerySpanInfo {

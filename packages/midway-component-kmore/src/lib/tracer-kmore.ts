@@ -1,3 +1,4 @@
+import { Inject } from '@midwayjs/decorator'
 import { Logger } from '@mw-components/jaeger'
 import {
   Kmore,
@@ -7,7 +8,6 @@ import { Knex } from 'knex'
 import { Span } from 'opentracing'
 import { Observable, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-
 
 import {
   processQueryEventWithEventId,
@@ -20,7 +20,7 @@ import { Context } from '~/interface'
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
-  logger: Logger
+  @Inject('jaeger:logger') protected readonly logger: Logger
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventSubscription: Subscription | undefined
@@ -32,8 +32,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
-    public ctx: Context,
-    logger?: Logger,
+    protected ctx: Context,
   ) {
 
     super(
@@ -46,15 +45,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     if (! this.ctx) {
       throw new TypeError('Parameter context undefined')
     }
-
-    if (logger) {
-      this.logger = logger
-    }
-    else {
-      throw new TypeError('TracerKmoreComponent: Parameter logger undefined')
-    }
-
-    if (! this.ctx.tracerManager) {
+    else if (! this.ctx.tracerManager) {
       console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
     }
 
@@ -159,7 +150,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
     this.dbEventSubscription = subsp
   }
-
 
 
   protected unsubscribeQueryEvent(): void {
