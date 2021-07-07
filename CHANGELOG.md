@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [17.0.0](/compare/v16.1.0...v17.0.0) (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** breaking change ReturnType to Promise of creation e8d7f2f
+
+
+
+
+
 # [16.1.0](/compare/v16.0.0...v16.1.0) (2021-07-07)
 
 

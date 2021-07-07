@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [17.0.0](https://github.com/waitingsong/kmore/compare/v16.1.0...v17.0.0) (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** breaking change ReturnType to Promise of creation ([e8d7f2f](https://github.com/waitingsong/kmore/commit/e8d7f2fc302fadf3ca75ad190da71eb04dea66d4))
+
+
+
+
+
 # [16.1.0](https://github.com/waitingsong/kmore/compare/v16.0.0...v16.1.0) (2021-07-07)
 
 
