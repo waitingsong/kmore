@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 14.0.0 (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** use injected logger instead of parameter of logger ([81ae38e](https://github.com/waitingsong/kmore/commit/81ae38eebf0296d2c49b2be92b04107fd08f1ba5))
+
+
+
+
+
 # 13.0.0 (2021-07-07)
 
 
