@@ -9,7 +9,7 @@ export type { TracerKmoreComponent } from './lib/tracer-kmore'
 
 export {
   DbDict,
-  genDbDict, getCurrentTime,
+  getCurrentTime,
   Kmore, KmoreEvent, KnexConfig,
   genCamelKeysFrom,
   genSnakeKeysFrom,
