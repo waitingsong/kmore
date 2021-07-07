@@ -1,6 +1,7 @@
 import { basename } from '@waiting/shared-core'
+import { DbDictType } from 'kmore-types'
 
-import { kmoreFactory, DbDictType } from '../../src/index'
+import { kmoreFactory } from '../../src/index'
 import { config, dbDict } from '../test.config'
 
 // eslint-disable-next-line import/order

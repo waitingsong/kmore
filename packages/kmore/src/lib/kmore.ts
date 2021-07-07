@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { DbDict } from 'kmore-types'
+import type { DbDict } from 'kmore-types'
 import { Knex, knex } from 'knex'
 import { Observable, Subject } from 'rxjs'
 import { filter } from 'rxjs/operators'

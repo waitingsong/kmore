@@ -1,4 +1,6 @@
-import { KnexConfig, genDbDict } from '../src/index'
+import { genDbDict } from 'kmore-types'
+
+import { KnexConfig } from '../src/index'
 
 import { Db } from './test.model'
 

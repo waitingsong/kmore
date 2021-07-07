@@ -8,7 +8,6 @@ export type { KmoreComponent } from './lib/kmore'
 export type { TracerKmoreComponent } from './lib/tracer-kmore'
 
 export {
-  DbDict,
   getCurrentTime,
   Kmore, KmoreEvent, KnexConfig,
   genCamelKeysFrom,

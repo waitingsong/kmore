@@ -1,4 +1,5 @@
-import { DbDict, KnexConfig } from 'kmore'
+import { KnexConfig } from 'kmore'
+import type { DbDict } from 'kmore-types'
 import { Knex } from 'knex'
 import { Span } from 'opentracing'
 

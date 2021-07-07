@@ -1,4 +1,4 @@
-import { DbDict } from 'kmore'
+import type { DbDict } from 'kmore-types'
 
 import { KmoreComponentConfig } from '../lib/types'
 

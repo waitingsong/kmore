@@ -1,15 +1,8 @@
 import { basename } from '@waiting/shared-core'
 import { JsonObject } from '@waiting/shared-types'
+import { genDbDict } from 'kmore-types'
 
-import {
-  kmoreFactory,
-  genDbDict,
-  OnQueryData,
-  OnQueryErrorData,
-  OnQueryErrorErr,
-  OnQueryRespRaw,
-  QueryResponse,
-} from '../src/index'
+import { kmoreFactory } from '../src/index'
 
 import { config } from './test.config'
 import { Db } from './test.model'

@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
-import * as knex from 'knex'
+import { DbDict } from 'kmore-types'
 
-import { kmoreFactory, Kmore, DbDict } from '../src/index'
+import { kmoreFactory, Kmore } from '../src/index'
 
 import { config, dbDict } from './test.config'
 import { Db, UserDo } from './test.model'

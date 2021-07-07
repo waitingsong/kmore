@@ -1,7 +1,8 @@
 /* eslint-disable node/no-unpublished-import */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Context } from 'egg'
-import { KnexConfig, DbDict } from 'kmore'
+import { KnexConfig } from 'kmore'
+import type { DbDict } from 'kmore-types'
 
 
 /** KnexConfig of egg-kmore */
