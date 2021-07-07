@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [16.0.0](https://github.com/waitingsong/kmore/compare/v15.0.0...v16.0.0) (2021-07-07)
+
+
+### Features
+
+* move kmore-types to devDependencies field of package.json ([8c4609c](https://github.com/waitingsong/kmore/commit/8c4609c7ccc6fca278e080c7b7b48c64d5375257))
+
+
+
+
+
 # 15.0.0 (2021-07-07)
 
 

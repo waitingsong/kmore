@@ -1,7 +1,7 @@
 {
   "name": "egg-kmore",
   "author": "waiting",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "description": "egg plugin of kmore",
   "eggPlugin": {
     "name": "kmore"
@@ -35,13 +35,13 @@
   "license": "MIT",
   "dependencies": {
     "@waiting/shared-types": "^14.4.1",
-    "kmore": "^15.0.0",
-    "kmore-cli": "^15.0.0"
+    "kmore": "^16.0.0",
+    "kmore-cli": "^16.0.0"
   },
   "devDependencies": {
     "cross-env": "7",
     "egg": "2",
-    "kmore-types": "^15.0.0",
+    "kmore-types": "^16.0.0",
     "knex": "^0.95.0",
     "pg": "^8.2.1"
   },

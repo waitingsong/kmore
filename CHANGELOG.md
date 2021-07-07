@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [16.0.0](/compare/v15.0.0...v16.0.0) (2021-07-07)
+
+
+### Features
+
+* move kmore-types to devDependencies field of package.json 8c4609c
+
+
+
+
+
 # 15.0.0 (2021-07-07)
 
 
