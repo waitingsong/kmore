@@ -1,7 +1,9 @@
-import { Logger, TracerManager } from '@mw-components/jaeger'
+import { Logger } from '@mw-components/jaeger'
 import { DbDict, KnexConfig } from 'kmore'
 import { Knex } from 'knex'
 import { Span } from 'opentracing'
+
+import { Context } from '~/interface'
 
 
 export interface KmoreComponentConfig <DbId extends string = string> {
@@ -39,12 +41,12 @@ export interface DbConfig <T = unknown> {
 }
 
 export interface KmoreComponentFactoryOpts<D> {
+  ctx: Context
   dbConfig: DbConfig<D>
   dbh?: Knex
   dbId?: string
   instanceId?: string | symbol
   logger?: Logger
-  trm?: TracerManager
 }
 
 export interface QuerySpanInfo {

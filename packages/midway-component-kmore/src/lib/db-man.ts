@@ -7,13 +7,15 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
+import { Logger as JLogger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex, knex } from 'knex'
 
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
 import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts } from './types'
+
+import { Context } from '~/interface'
 
 /** dbId: Kmore */
 type KmoreList = Map<string, KmoreComponent | TracerKmoreComponent>
@@ -67,15 +69,15 @@ export class DbManager <DbId extends string = any> {
    * Create kmore instances
    */
   create(
+    ctx: Context,
     componentConfig: KmoreComponentConfig,
-    trm?: TracerManager,
     logger?: JLogger,
   ): void {
 
     const { dbConfigs: database } = componentConfig
 
     Object.entries(database).forEach(([dbId, row]) => {
-      this.createOne(dbId as DbId, row, trm, logger)
+      this.createOne(ctx, dbId as DbId, row, logger)
     })
   }
 
@@ -83,9 +85,9 @@ export class DbManager <DbId extends string = any> {
    * Create one kmore instance
    */
   createOne<T = unknown>(
+    ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-    trm?: TracerManager,
     logger?: JLogger,
   ): Kmore<T> | undefined {
 
@@ -93,7 +95,7 @@ export class DbManager <DbId extends string = any> {
       return
     }
 
-    const km = this.createKmore<T>(dbId, dbConfig, trm, logger)
+    const km = this.createKmore<T>(ctx, dbId, dbConfig, logger)
     km && this.kmoreList.set(dbId, km)
     return km
   }
@@ -120,9 +122,9 @@ export class DbManager <DbId extends string = any> {
   }
 
   private createKmore<T>(
+    ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-    trm?: TracerManager,
     logger?: JLogger,
   ): KmoreComponent<T> | TracerKmoreComponent<T> | undefined {
     const { config, enableTracing } = dbConfig
@@ -134,10 +136,10 @@ export class DbManager <DbId extends string = any> {
 
     const dbh = this.getDbHost(dbId)
     const opts: KmoreComponentFactoryOpts<T> = {
+      ctx,
       dbConfig,
       dbh,
       dbId,
-      trm,
       logger,
     }
     const km = enableTracing
@@ -193,7 +195,7 @@ export function kmoreComponentFactory<D>(
   component: typeof KmoreComponent | typeof TracerKmoreComponent,
 ): KmoreComponent<D> | TracerKmoreComponent<D> {
   const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
-  const km = new component<D>(options.dbConfig, dbh, options.trm, options.logger)
+  const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
   return km
 }
 
