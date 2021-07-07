@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [16.1.0](https://github.com/waitingsong/kmore/compare/v16.0.0...v16.1.0) (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** log queryUid within caseQueryResp() ([fc27679](https://github.com/waitingsong/kmore/commit/fc27679b905db8f932e0747bb1e9f948e6a0c7bd))
+
+
+
+
+
 # [16.0.0](https://github.com/waitingsong/kmore/compare/v15.0.0...v16.0.0) (2021-07-07)
 
 
