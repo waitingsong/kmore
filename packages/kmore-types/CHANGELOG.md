@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 15.0.0 (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** tracing query response with DbConfig['tracingResponse'] ([e37582d](https://github.com/waitingsong/kmore/commit/e37582d633d02ae4c73a5a040cc3158eb8e9ca28))
+
+
+
+
+
 # 14.0.0 (2021-07-07)
 
 

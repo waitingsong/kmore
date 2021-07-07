@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 15.0.0 (2021-07-07)
+
+
+### Features
+
+* **midway-component-kmore:** tracing query response with DbConfig['tracingResponse'] e37582d
+
+
+
+
+
 # 14.0.0 (2021-07-07)
 
 
