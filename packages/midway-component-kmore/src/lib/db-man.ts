@@ -43,7 +43,7 @@ export class DbManager <DbId extends string = any> {
 
     EventEmitter.defaultMaxListeners = defaultMaxListeners && defaultMaxListeners >= 0
       ? defaultMaxListeners
-      : 100
+      : 200
 
     Object.entries(database).forEach(([dbId, row]) => {
       if (this.dbHosts.get(dbId)) {

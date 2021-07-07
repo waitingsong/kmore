@@ -4,7 +4,7 @@ import { KmoreComponentConfig } from '../lib/types'
 
 
 export const kmore: KmoreComponentConfig = {
-  defaultMaxListeners: 100,
+  defaultMaxListeners: 200,
   dbConfigs: {
     master: {
       autoConnect: true,

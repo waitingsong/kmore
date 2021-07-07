@@ -10,7 +10,7 @@ import { Context } from '~/interface'
 export interface KmoreComponentConfig <DbId extends string = string> {
   dbConfigs: DbConfigs<DbId>
   /**
-   * @default 100
+   * @default 200
    * @see https://nodejs.org/dist/latest-v16.x/docs/api/events.html#events_emitter_getmaxlisteners
    */
   defaultMaxListeners?: number
