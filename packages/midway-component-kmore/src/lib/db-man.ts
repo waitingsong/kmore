@@ -7,6 +7,7 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
+import { Logger as JLogger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex, knex } from 'knex'
 
@@ -33,10 +34,10 @@ export class DbManager <DbId extends string = any> {
   private kmoreList: KmoreList = new Map()
   private config: KmoreComponentConfig
 
-  connect(
+  async connect(
     componentConfig: KmoreComponentConfig,
     forceConnect = false,
-  ): void {
+  ): Promise<void> {
 
     const { dbConfigs: database, defaultMaxListeners } = componentConfig
 
@@ -67,32 +68,31 @@ export class DbManager <DbId extends string = any> {
   /**
    * Create kmore instances
    */
-  create(
+  async create(
     ctx: Context,
     componentConfig: KmoreComponentConfig,
-  ): void {
+  ): Promise<void> {
 
     const { dbConfigs: database } = componentConfig
-
-    Object.entries(database).forEach(([dbId, row]) => {
-      this.createOne(ctx, dbId as DbId, row)
-    })
+    for (const [dbId, row] of Object.entries(database)) {
+      await this.createOne(ctx, dbId as DbId, row)
+    }
   }
 
   /**
    * Create one kmore instance
    */
-  createOne<T = unknown>(
+  async createOne<T = unknown>(
     ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-  ): Kmore<T> | undefined {
+  ): Promise<Kmore<T> | undefined> {
 
     if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
       return
     }
 
-    const km = this.createKmore<T>(ctx, dbId, dbConfig)
+    const km = await this.createKmore<T>(ctx, dbId, dbConfig)
     km && this.kmoreList.set(dbId, km)
     return km
   }
@@ -118,11 +118,11 @@ export class DbManager <DbId extends string = any> {
     return ret as KmoreComponent<T> | TracerKmoreComponent<T> | undefined
   }
 
-  private createKmore<T>(
+  private async createKmore<T>(
     ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-  ): KmoreComponent<T> | TracerKmoreComponent<T> | undefined {
+  ): Promise<KmoreComponent<T> | TracerKmoreComponent<T> | undefined> {
     const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
@@ -130,12 +130,14 @@ export class DbManager <DbId extends string = any> {
       return
     }
 
+    const logger = await ctx.requestContext.getAsync(JLogger)
     const dbh = this.getDbHost(dbId)
     const opts: KmoreComponentFactoryOpts<T> = {
       ctx,
       dbConfig,
       dbh,
       dbId,
+      logger,
     }
     const km = enableTracing
       ? kmoreComponentFactory<T>(opts, TracerKmoreComponent)
@@ -190,7 +192,7 @@ export function kmoreComponentFactory<D>(
   component: typeof KmoreComponent | typeof TracerKmoreComponent,
 ): KmoreComponent<D> | TracerKmoreComponent<D> {
   const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
-  const km = new component<D>(options.dbConfig, dbh, options.ctx)
+  const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
   return km
 }
 

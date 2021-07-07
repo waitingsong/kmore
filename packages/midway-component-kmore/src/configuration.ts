@@ -30,7 +30,13 @@ export class AutoConfiguration {
   @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
 
   async onReady(): Promise<void> {
-    this.dbManager.connect(this.kmoreConfig)
+    try {
+      await this.dbManager.connect(this.kmoreConfig)
+    }
+    catch (ex) {
+      this.app.logger.error((ex as Error).message)
+      throw ex
+    }
   }
 
   async onStop(): Promise<void> {

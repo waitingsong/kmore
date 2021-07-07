@@ -1,4 +1,3 @@
-import { Inject } from '@midwayjs/decorator'
 import { Logger } from '@mw-components/jaeger'
 import {
   Kmore,
@@ -20,19 +19,19 @@ import { Context } from '~/interface'
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
-  @Inject('jaeger:logger') protected readonly logger: Logger
-
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventSubscription: Subscription | undefined
   queryEventSubscription: Subscription | undefined
   RespAndExEventSubscription: Subscription | undefined
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
+  protected logger: Logger
 
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
     protected ctx: Context,
+    jlogger?: Logger,
   ) {
 
     super(
@@ -48,6 +47,11 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     else if (! this.ctx.tracerManager) {
       console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
     }
+
+    if (! jlogger) {
+      throw new TypeError('Parameter jlogger undefined!')
+    }
+    this.logger = jlogger
 
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()

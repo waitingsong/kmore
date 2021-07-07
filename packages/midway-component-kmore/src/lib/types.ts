@@ -1,3 +1,4 @@
+import { Logger } from '@mw-components/jaeger'
 import { KnexConfig } from 'kmore'
 import type { DbDict } from 'kmore-types'
 import { Knex } from 'knex'
@@ -52,6 +53,7 @@ export interface KmoreComponentFactoryOpts<D> {
   dbh?: Knex
   dbId?: string
   instanceId?: string | symbol
+  logger?: Logger
 }
 
 export interface QuerySpanInfo {
