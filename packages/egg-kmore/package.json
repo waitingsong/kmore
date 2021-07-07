@@ -21,9 +21,9 @@
     "ts"
   ],
   "bin": {},
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.js",
-  "types": "./src/index.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "types": "src/index.ts",
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
@@ -34,7 +34,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types": "^14.2.0",
+    "@waiting/shared-types": "^14.4.1",
     "kmore": "^15.0.0",
     "kmore-cli": "^15.0.0"
   },
