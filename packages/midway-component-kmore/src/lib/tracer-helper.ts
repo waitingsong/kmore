@@ -147,7 +147,7 @@ async function processSwitch(options: ProcessOpts): Promise<void> {
 }
 
 function caseQuery(options: ProcessOpts): void {
-  const { trm } = options
+  const { trm, queryUidSpanMap } = options
   const { config: knexConfig, sampleThrottleMs } = options.dbConfig
   const { span, tagClass } = options.spanInfo
   const { kUid, queryUid, trxId, data } = options.ev
@@ -172,6 +172,7 @@ function caseQuery(options: ProcessOpts): void {
     kUid,
     queryUid,
     event: TracerLog.queryStart,
+    queryUidSpanMapSize: queryUidSpanMap.size,
     time: genISO8601String(),
   }
   span.log(input)
@@ -180,7 +181,7 @@ function caseQuery(options: ProcessOpts): void {
 
 
 async function caseQueryResp(options: ProcessOpts): Promise<void> {
-  const { logger, trm } = options
+  const { logger, trm, queryUidSpanMap } = options
   const { sampleThrottleMs, tracingResponse } = options.dbConfig
   const { span, timestamp: start } = options.spanInfo
   const { queryUid, respRaw, timestamp: end } = options.ev
@@ -203,6 +204,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     time: genISO8601String(),
     [TracerLog.queryCost]: cost,
     queryUid,
+    queryUidSpanMapSize: queryUidSpanMap.size,
   }
 
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
@@ -230,7 +232,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
 }
 
 async function caseQueryError(options: ProcessOpts): Promise<void> {
-  const { logger, trm } = options
+  const { logger, trm, queryUidSpanMap } = options
   const { span, tagClass, timestamp: start } = options.spanInfo
   const {
     kUid, queryUid, trxId, exData, exError, timestamp: end,
@@ -246,10 +248,15 @@ async function caseQueryError(options: ProcessOpts): Promise<void> {
     tagClass,
     queryUid,
     trxId,
+    queryUidSpanMapSize: queryUidSpanMap.size,
     [TracerLog.queryCost]: cost,
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
     procInfo,
   }
+
+  // span.log(logInput)
+  logger.log(input, span)
+  trm.spanLog(input)
 
   span.addTags({
     [Tags.ERROR]: true,
@@ -258,9 +265,6 @@ async function caseQueryError(options: ProcessOpts): Promise<void> {
     exData,
     exError,
   })
-  // span.log(logInput)
-  logger.log(input, span)
-  trm.spanLog(input)
   span.finish()
 }
 
