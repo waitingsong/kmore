@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.2.0](/compare/v18.1.0...v18.2.0) (2021-07-08)
+
+
+### Features
+
+* **midway-component-kmore:** export unsubscribeEventFuncOnResFinish() 6b3ef63
+
+
+
+
+
 # [18.1.0](/compare/v18.0.0...v18.1.0) (2021-07-08)
 
 
