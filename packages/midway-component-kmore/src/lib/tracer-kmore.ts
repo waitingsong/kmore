@@ -55,17 +55,14 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
     this.registerDbObservable(this.instanceId)
     this.subscribeEvent()
-    // this.ctx.res && this.ctx.res.once('finish', () => {
-    //   this.unsubscribeEvent()
-    //   this.unsubscribe()
-    // })
   }
 
   unsubscribeEvent(): void {
     if (this.dbEventSubscription && ! this.dbEventSubscription.closed) {
       this.dbEventSubscription.unsubscribe()
     }
-    this.unsubscribe()
+    this.dbEventObb = void 0
+    // do not run this.unsubscribe()
   }
 
   private registerDbObservable(

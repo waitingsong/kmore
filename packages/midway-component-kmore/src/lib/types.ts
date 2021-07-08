@@ -65,4 +65,8 @@ export interface QuerySpanInfo {
   timestamp: number
 }
 
-export type BindUnsubscribeEventFunc = (this: KmoreComponent | TracerKmoreComponent, ctx: Context) => void
+export type BindUnsubscribeEventFunc = (
+  ctx: Context,
+  kmoreInstance: KmoreComponent | TracerKmoreComponent,
+) => void
+

@@ -13,7 +13,12 @@ import { Knex, knex } from 'knex'
 
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
-import { DbConfig, KmoreComponentConfig, KmoreComponentFactoryOpts, BindUnsubscribeEventFunc } from './types'
+import {
+  DbConfig,
+  KmoreComponentConfig,
+  KmoreComponentFactoryOpts,
+  BindUnsubscribeEventFunc,
+} from './types'
 
 import { Context } from '~/interface'
 
@@ -71,12 +76,12 @@ export class DbManager <DbId extends string = any> {
   async create(
     ctx: Context,
     componentConfig: KmoreComponentConfig,
-    unsubscribeEventFunc: BindUnsubscribeEventFunc,
+    bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
   ): Promise<void> {
 
     const { dbConfigs: database } = componentConfig
     for (const [dbId, row] of Object.entries(database)) {
-      await this.createOne(ctx, dbId as DbId, row, unsubscribeEventFunc)
+      await this.createOne(ctx, dbId as DbId, row, bindUnsubscribeEventFunc)
     }
   }
 
@@ -87,7 +92,7 @@ export class DbManager <DbId extends string = any> {
     ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-    bindUnsubscribeEventFunc: BindUnsubscribeEventFunc,
+    bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
   ): Promise<Kmore<T> | undefined> {
 
     if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
@@ -124,8 +129,9 @@ export class DbManager <DbId extends string = any> {
     ctx: Context,
     dbId: DbId,
     dbConfig: DbConfig<T>,
-    bindUnsubscribeEventFunc: BindUnsubscribeEventFunc,
+    bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
   ): Promise<KmoreComponent<T> | TracerKmoreComponent<T> | undefined> {
+
     const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
@@ -179,7 +185,7 @@ export class DbManager <DbId extends string = any> {
     return Promise.race(pms)
   }
 
-  unsubscribeEventOfKmore(): void {
+  protected unsubscribeEventOfKmore(): void {
     this.kmoreList.forEach((kmoreComp) => {
       if (kmoreComp instanceof TracerKmoreComponent) {
         kmoreComp.unsubscribeEvent()
@@ -193,11 +199,15 @@ export class DbManager <DbId extends string = any> {
 export function kmoreComponentFactory<D>(
   options: KmoreComponentFactoryOpts<D>,
   component: typeof KmoreComponent | typeof TracerKmoreComponent,
-  bindUnsubscribeEventFunc: BindUnsubscribeEventFunc,
+  bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
 ): KmoreComponent<D> | TracerKmoreComponent<D> {
+
   const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
   const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
-  bindUnsubscribeEventFunc.bind(km)(options.ctx)
+
+  if (typeof bindUnsubscribeEventFunc === 'function') {
+    bindUnsubscribeEventFunc(options.ctx, km)
+  }
   return km
 }
 

@@ -22,4 +22,5 @@ export class KmoreComponent<D = unknown> extends Kmore<D> {
       Symbol(Date.now()),
     )
   }
+
 }
