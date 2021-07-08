@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.0.0](https://github.com/waitingsong/kmore/compare/v17.2.0...v18.0.0) (2021-07-08)
+
+
+### Features
+
+* **midway-component-kmore:** add param unsubscribeEventFunc for creation ([1cdcbf3](https://github.com/waitingsong/kmore/commit/1cdcbf31d0a50461e387d2eb1a6cf711a859dc97))
+* **midway-component-kmore:** creation parameter bindUnsubscribeEventFunc() ([6ffde85](https://github.com/waitingsong/kmore/commit/6ffde85d4e1bd948df79ea3109b70f1efe29bcc6))
+* **midway-component-kmore:** export class KmoreComponent, TracerKmoreComponent ([80aba2b](https://github.com/waitingsong/kmore/commit/80aba2b5a8e0de2931e576a25828776bf1417c8c))
+
+
+
+
+
 # [17.2.0](https://github.com/waitingsong/kmore/compare/v17.1.0...v17.2.0) (2021-07-08)
 
 

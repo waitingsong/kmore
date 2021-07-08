@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.0.0](https://github.com/waitingsong/kmore/compare/v17.2.0...v18.0.0) (2021-07-08)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 # [17.2.0](https://github.com/waitingsong/kmore/compare/v17.1.0...v17.2.0) (2021-07-08)
 
 

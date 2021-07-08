@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.0.0](/compare/v17.2.0...v18.0.0) (2021-07-08)
+
+
+### Features
+
+* **midway-component-kmore:** add param unsubscribeEventFunc for creation 1cdcbf3
+* **midway-component-kmore:** creation parameter bindUnsubscribeEventFunc() 6ffde85
+* **midway-component-kmore:** export class KmoreComponent, TracerKmoreComponent 80aba2b
+
+
+
+
+
 # [17.2.0](/compare/v17.1.0...v17.2.0) (2021-07-08)
 
 
