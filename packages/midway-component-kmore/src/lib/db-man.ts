@@ -8,7 +8,6 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { Logger as JLogger } from '@mw-components/jaeger'
-import { Kmore } from 'kmore'
 import { Knex, knex } from 'knex'
 
 import { KmoreComponent } from './kmore'
@@ -22,8 +21,7 @@ import {
 
 import { Context } from '~/interface'
 
-/** dbId: Kmore */
-type KmoreList = Map<string, KmoreComponent | TracerKmoreComponent>
+
 type DbHosts = Map<string, Knex>
 
 /**
@@ -36,7 +34,6 @@ export class DbManager <DbId extends string = any> {
   @Logger() private readonly logger: ILogger
 
   private dbHosts: DbHosts = new Map()
-  private kmoreList: KmoreList = new Map()
   private config: KmoreComponentConfig
 
   async connect(
@@ -77,12 +74,15 @@ export class DbManager <DbId extends string = any> {
     ctx: Context,
     componentConfig: KmoreComponentConfig,
     bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
-  ): Promise<void> {
+  ): Promise<CreateResutMap<keyof (typeof componentConfig)['dbConfigs']>> {
 
+    const ret = new Map() as CreateResutMap<keyof KmoreComponentConfig['dbConfigs']>
     const { dbConfigs: database } = componentConfig
     for (const [dbId, row] of Object.entries(database)) {
-      await this.createOne(ctx, dbId as DbId, row, bindUnsubscribeEventFunc)
+      const inst = await this.createOne(ctx, dbId as DbId, row, bindUnsubscribeEventFunc)
+      ret.set(dbId, inst)
     }
+    return ret
   }
 
   /**
@@ -93,14 +93,13 @@ export class DbManager <DbId extends string = any> {
     dbId: DbId,
     dbConfig: DbConfig<T>,
     bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
-  ): Promise<Kmore<T> | undefined> {
+  ): Promise<KmoreComponent<T> | TracerKmoreComponent<T> | undefined> {
 
     if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
       return
     }
 
     const km = await this.createKmore<T>(ctx, dbId, dbConfig, bindUnsubscribeEventFunc)
-    km && this.kmoreList.set(dbId, km)
     return km
   }
 
@@ -116,14 +115,6 @@ export class DbManager <DbId extends string = any> {
     return dbh
   }
 
-  getAllInstances(): KmoreList | undefined {
-    return this.kmoreList
-  }
-
-  getInstance<T = unknown>(dbId: DbId): KmoreComponent<T> | TracerKmoreComponent<T> | undefined {
-    const ret = this.kmoreList.get(dbId)
-    return ret as KmoreComponent<T> | TracerKmoreComponent<T> | undefined
-  }
 
   private async createKmore<T>(
     ctx: Context,
@@ -161,8 +152,6 @@ export class DbManager <DbId extends string = any> {
    * Disconnect all dbhosts
    */
   async destroy(): Promise<void> {
-    this.unsubscribeEventOfKmore()
-
     const pms: Promise<void>[] = []
 
     const map = this.getAllDbHosts()
@@ -185,14 +174,6 @@ export class DbManager <DbId extends string = any> {
     return Promise.race(pms)
   }
 
-  protected unsubscribeEventOfKmore(): void {
-    this.kmoreList.forEach((kmoreComp) => {
-      if (kmoreComp instanceof TracerKmoreComponent) {
-        kmoreComp.unsubscribeEvent()
-      }
-      kmoreComp.unsubscribe()
-    })
-  }
 }
 
 
@@ -214,3 +195,6 @@ export function kmoreComponentFactory<D>(
 function createDbh(knexConfig: DbConfig['config']): Knex {
   return knex(knexConfig)
 }
+
+export type CreateResutMap <Key extends PropertyKey> =
+  Map<Key, KmoreComponent<any> | TracerKmoreComponent<any> | undefined>
