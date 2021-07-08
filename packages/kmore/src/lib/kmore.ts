@@ -88,7 +88,7 @@ export class Kmore<D = unknown> {
   }
 
   unsubscribe(): void {
-    this.subject.unsubscribe()
+    this.subject.closed || this.subject.unsubscribe()
   }
 
 

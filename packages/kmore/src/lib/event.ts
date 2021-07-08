@@ -79,7 +79,12 @@ function processKnexOnEvent(
     throw new TypeError('Subject invalid')
   }
   if (subject.closed) {
-    throw new Error('Kmore:subject already closed')
+    // throw new Error('Kmore:subject already closed')
+    console.warn({
+      msg: 'Kmore event:subject already closed. skip tracing.',
+      input,
+    })
+    return
   }
 
   const ev: KmoreEvent = {
