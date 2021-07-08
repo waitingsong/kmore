@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [18.1.0](https://github.com/waitingsong/kmore/compare/v18.0.0...v18.1.0) (2021-07-08)
+
+
+### Features
+
+* **midway-component-kmore:** log size of queryUidSpanMap ([bfb5a2a](https://github.com/waitingsong/kmore/commit/bfb5a2a4a268bf534fc1611d59ce47598cd1f8a8))
+
+
+
+
+
 # [18.0.0](https://github.com/waitingsong/kmore/compare/v17.2.0...v18.0.0) (2021-07-08)
 
 
