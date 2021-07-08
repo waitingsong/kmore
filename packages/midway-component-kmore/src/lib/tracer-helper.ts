@@ -16,7 +16,8 @@ import {
 import { KmoreEvent } from 'kmore'
 import { Tags } from 'opentracing'
 
-import { DbConfig, QuerySpanInfo } from './types'
+import { TracerKmoreComponent } from './tracer-kmore'
+import { BindUnsubscribeEventFunc, DbConfig, QuerySpanInfo } from './types'
 
 
 interface ProcessQueryEventWithIdOpts {
@@ -288,4 +289,13 @@ interface ConnectionConfig {
   requestTimeout?: number
 }
 
+
+export const unsubscribeEventFuncOnResFinish: BindUnsubscribeEventFunc = (ctx, km) => {
+  ctx.res.once('finish', () => {
+    if (km instanceof TracerKmoreComponent) {
+      km.unsubscribeEvent()
+    }
+    km.unsubscribe()
+  })
+}
 
