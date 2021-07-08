@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [17.2.0](https://github.com/waitingsong/kmore/compare/v17.1.0...v17.2.0) (2021-07-08)
+
+
+### Features
+
+* **kmore:** warn log instead of throw error if subject.closed already ([303a31a](https://github.com/waitingsong/kmore/commit/303a31a52bbed1efd4d3595ce0239f2f67ff18a0))
+
+
+
+
+
 # [17.0.0](https://github.com/waitingsong/kmore/compare/v16.1.0...v17.0.0) (2021-07-07)
 
 **Note:** Version bump only for package kmore

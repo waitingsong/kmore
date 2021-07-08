@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [17.2.0](/compare/v17.1.0...v17.2.0) (2021-07-08)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** do not unsubscribe event on request finish 3ff997f
+
+
+### Features
+
+* **kmore:** warn log instead of throw error if subject.closed already 303a31a
+
+
+
+
+
 # [17.1.0](/compare/v17.0.0...v17.1.0) (2021-07-07)
 
 

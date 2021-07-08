@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [17.2.0](https://github.com/waitingsong/kmore/compare/v17.1.0...v17.2.0) (2021-07-08)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** do not unsubscribe event on request finish ([3ff997f](https://github.com/waitingsong/kmore/commit/3ff997fa8c42e800274be4b80ad056b1c1f24804))
+
+
+
+
+
 # [17.1.0](https://github.com/waitingsong/kmore/compare/v17.0.0...v17.1.0) (2021-07-07)
 
 
