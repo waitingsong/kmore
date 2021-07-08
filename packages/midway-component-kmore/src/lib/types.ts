@@ -4,6 +4,9 @@ import type { DbDict } from 'kmore-types'
 import { Knex } from 'knex'
 import { Span } from 'opentracing'
 
+import { KmoreComponent } from './kmore'
+import { TracerKmoreComponent } from './tracer-kmore'
+
 import { Context } from '~/interface'
 
 
@@ -61,3 +64,5 @@ export interface QuerySpanInfo {
   tagClass: string
   timestamp: number
 }
+
+export type BindUnsubscribeEventFunc = (this: KmoreComponent | TracerKmoreComponent, ctx: Context) => void
