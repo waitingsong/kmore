@@ -1,6 +1,5 @@
-import EventEmitter from 'events'
-
 import {
+  Config,
   Logger,
   Provide,
   Scope,
@@ -33,72 +32,47 @@ export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
-  private dbHosts: DbHosts = new Map()
-  private config: KmoreComponentConfig
+  @Config('kmoreComponent') private readonly kmoreComponentConfig: KmoreComponentConfig
 
-  async connect(
-    componentConfig: KmoreComponentConfig,
+  private dbHosts: DbHosts = new Map()
+  private dbConfigMap = new Map<string, DbConfig>()
+
+  async connect<T>(
+    dbId: string,
+    dbConfig: DbConfig<T>,
     forceConnect = false,
   ): Promise<void> {
 
-    const { dbConfigs: database, defaultMaxListeners } = componentConfig
-
-    EventEmitter.defaultMaxListeners = defaultMaxListeners && defaultMaxListeners >= 0
-      ? defaultMaxListeners
-      : 200
-
-    Object.entries(database).forEach(([dbId, row]) => {
-      if (this.dbHosts.get(dbId)) {
-        return
-      }
-      else if (! row.autoConnect && ! forceConnect) {
-        return
-      }
-
-      if (! Object.keys(row.config).length && ! Object.keys(row.dict).length) {
-        console.info('config and dict of kmoreConfig element both empty, may default init config')
-        return
-      }
-
-      const dbh = createDbh(row.config)
-      this.dbHosts.set(dbId, dbh)
-    })
-
-    this.config = componentConfig
-  }
-
-  /**
-   * Create kmore instances
-   */
-  async create(
-    ctx: Context,
-    componentConfig: KmoreComponentConfig,
-    bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
-  ): Promise<CreateResutMap<keyof (typeof componentConfig)['dbConfigs']>> {
-
-    const ret = new Map() as CreateResutMap<keyof KmoreComponentConfig['dbConfigs']>
-    const { dbConfigs: database } = componentConfig
-    for (const [dbId, row] of Object.entries(database)) {
-      const inst = await this.createOne(ctx, dbId as DbId, row, bindUnsubscribeEventFunc)
-      ret.set(dbId, inst)
+    if (this.dbHosts.get(dbId)) {
+      return
     }
-    return ret
+    else if (! dbConfig.autoConnect && ! forceConnect) {
+      return
+    }
+
+    if (! Object.keys(dbConfig.config).length && ! Object.keys(dbConfig.dict).length) {
+      console.info('config and dict of kmoreConfig element both empty, may default init config')
+      return
+    }
+
+    const dbh = createDbh(dbConfig.config)
+    this.dbHosts.set(dbId, dbh)
+    this.dbConfigMap.set(dbId, dbConfig)
   }
 
   /**
    * Create one kmore instance
    */
-  async createOne<T = unknown>(
+  async create<T>(
     ctx: Context,
     dbId: DbId,
-    dbConfig: DbConfig<T>,
     bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
-  ): Promise<KmoreComponent<T> | TracerKmoreComponent<T> | undefined> {
+  ): Promise<KmoreComponent<T> | TracerKmoreComponent<T>> {
 
-    if (['appWork', 'agent'].includes(dbId) && typeof dbConfig !== 'object') { // egg pluging
-      return
+    const dbConfig = this.dbConfigMap.get(dbId) as DbConfig<T> | undefined
+    if (! dbConfig) {
+      throw new TypeError(`dbConfig empty of dbConfigMap.get("${dbId}")`)
     }
-
     const km = await this.createKmore<T>(ctx, dbId, dbConfig, bindUnsubscribeEventFunc)
     return km
   }
@@ -121,13 +95,12 @@ export class DbManager <DbId extends string = any> {
     dbId: DbId,
     dbConfig: DbConfig<T>,
     bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
-  ): Promise<KmoreComponent<T> | TracerKmoreComponent<T> | undefined> {
+  ): Promise<KmoreComponent<T> | TracerKmoreComponent<T>> {
 
     const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
-      this.logger.warn(`Param dbConfig has no element, identifier: "${dbId}"`)
-      return
+      throw new TypeError(`Param dbConfig has no element, identifier: "${dbId}"`)
     }
 
     const logger = await ctx.requestContext.getAsync(JLogger)
@@ -162,7 +135,7 @@ export class DbManager <DbId extends string = any> {
       pms.push(pm)
     }
 
-    const { timeoutWhenDestroy } = this.config
+    const { timeoutWhenDestroy } = this.kmoreComponentConfig
     const tt = timeoutWhenDestroy && timeoutWhenDestroy >= 0
       ? timeoutWhenDestroy
       : 3000

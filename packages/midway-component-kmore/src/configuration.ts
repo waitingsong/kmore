@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import 'tsconfig-paths/register'
 
+import EventEmitter from 'events'
 import { join } from 'path'
 
 import {
@@ -27,16 +28,14 @@ export class AutoConfiguration {
 
   @Inject() readonly dbManager: DbManager
 
-  @Config('kmore') readonly kmoreConfig: KmoreComponentConfig
+  @Config('kmoreComponent') readonly kmoreComponentConfig: KmoreComponentConfig
 
   async onReady(): Promise<void> {
-    try {
-      await this.dbManager.connect(this.kmoreConfig)
-    }
-    catch (ex) {
-      this.app.logger.error((ex as Error).message)
-      throw ex
-    }
+    const { defaultMaxListeners } = this.kmoreComponentConfig
+
+    EventEmitter.defaultMaxListeners = defaultMaxListeners && defaultMaxListeners >= 0
+      ? defaultMaxListeners
+      : 200
   }
 
   async onStop(): Promise<void> {
