@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [20.0.1](https://github.com/waitingsong/kmore/compare/v20.0.0...v20.0.1) (2021-07-09)
+
+
+### Bug Fixes
+
+* **kmore:** event bind on this.dbh ([ed37e72](https://github.com/waitingsong/kmore/commit/ed37e723ea6319c6f1f6d161588b8e2c39caaa1c))
+
+
+
+
+
 # [20.0.0](https://github.com/waitingsong/kmore/compare/v19.0.0...v20.0.0) (2021-07-08)
 
 **Note:** Version bump only for package kmore
