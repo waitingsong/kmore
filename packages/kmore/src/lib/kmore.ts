@@ -66,7 +66,7 @@ export class Kmore<D = unknown> {
         (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, void 0, err, data),
       )
     this.dbh = dbhBindEvent
-    this.refTables = this.createRefTables(dbh, 'ref_')
+    this.refTables = this.createRefTables(this.dbh, 'ref_')
     this.subject = new Subject()
   }
 
