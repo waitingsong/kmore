@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 
 import { initKmoreEvent } from './config'
 import {
@@ -10,6 +10,9 @@ import {
   QueryResponse,
 } from './types'
 
+
+export const globalSubject: Subject<KmoreEvent> = new Subject()
+export const globalEvent: Observable<KmoreEvent> = globalSubject.asObservable()
 
 export function bindOnQuery(
   subject: Subject<KmoreEvent>,

@@ -2,9 +2,9 @@ import { Logger } from '@mw-components/jaeger'
 import {
   Kmore,
   KmoreEvent,
+  globalEvent,
 } from 'kmore'
 import { Knex } from 'knex'
-import { Span } from 'opentracing'
 import { Observable, Subscription } from 'rxjs'
 import { filter, finalize } from 'rxjs/operators'
 
@@ -70,12 +70,11 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   private registerDbObservable(
     tracerInstId: string | symbol,
   ): void {
-    // const obb = this.register((ev) => {
-    //   return this.eventFilter(ev, this.instanceId)
-    // })
-    const obb = this.register<string | symbol, Span>(
-      (ev, id) => this.eventFilter(ev, id, this.instanceId),
-      tracerInstId,
+
+    const obb = globalEvent.pipe(
+      filter((ev) => {
+        return this.eventFilter(ev, tracerInstId, this.instanceId)
+      }),
     )
     this.dbEventObb = obb
   }

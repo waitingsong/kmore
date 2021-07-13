@@ -1,11 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import type { DbDict } from 'kmore-types'
 import { Knex, knex } from 'knex'
-import { Observable, Subject } from 'rxjs'
-import { filter } from 'rxjs/operators'
+import { Subject } from 'rxjs'
 
 import { defaultPropDescriptor } from './config'
-import { bindOnQuery, bindOnQueryError, bindOnQueryResp } from './event'
+import {
+  bindOnQuery,
+  bindOnQueryError,
+  bindOnQueryResp,
+  globalSubject,
+} from './event'
 import {
   DbQueryBuilder,
   KmoreEvent,
@@ -20,8 +24,6 @@ import {
 
 export class Kmore<D = unknown> {
   readonly refTables: DbQueryBuilder<D, 'ref_'>
-
-  protected readonly subject: Subject<KmoreEvent>
 
   /**
   * Generics parameter, do NOT access as variable!
@@ -47,13 +49,17 @@ export class Kmore<D = unknown> {
   */
   readonly Dict: DbDict<D>
 
+  protected listenEvent = true
+  protected readonly subject: Subject<KmoreEvent>
+
   constructor(
     public readonly config: KnexConfig,
     public readonly dict: DbDict<D>,
     public dbh: Knex,
     public instanceId: string | symbol,
-    // private readonly eventCallback?: (event: KmoreEvent) => void,
   ) {
+
+    this.subject = globalSubject
 
     const dbhBindEvent = dbh
       .on('query', (data: OnQueryData) => bindOnQuery(this.subject, void 0, data))
@@ -67,28 +73,27 @@ export class Kmore<D = unknown> {
       )
     this.dbh = dbhBindEvent
     this.refTables = this.createRefTables(this.dbh, 'ref_')
-    this.subject = new Subject()
   }
 
-  register<K = unknown, T = unknown>(
-    eventFilterCallback?: (ev: KmoreEvent<T>, identifier?: K) => boolean,
-    identifier?: K,
-  ): Observable<KmoreEvent<T>> {
+  // register<K = unknown, T = unknown>(
+  //   eventFilterCallback?: (ev: KmoreEvent<T>, identifier?: K) => boolean,
+  //   identifier?: K,
+  // ): Observable<KmoreEvent<T>> {
 
-    const stream$ = this.subject.asObservable() as Observable<KmoreEvent<T>>
-    const ret$ = stream$.pipe(
-      filter((ev) => {
-        const flag = typeof eventFilterCallback === 'function'
-          ? eventFilterCallback(ev, identifier)
-          : true
-        return flag
-      }),
-    )
-    return ret$
-  }
+  //   const stream$ = this.subject.asObservable() as Observable<KmoreEvent<T>>
+  //   const ret$ = stream$.pipe(
+  //     filter((ev) => {
+  //       const flag = typeof eventFilterCallback === 'function'
+  //         ? eventFilterCallback(ev, identifier)
+  //         : true
+  //       return flag
+  //     }),
+  //   )
+  //   return ret$
+  // }
 
   unsubscribe(): void {
-    this.subject.closed || this.subject.unsubscribe()
+    this.listenEvent = false
   }
 
 
@@ -99,9 +104,8 @@ export class Kmore<D = unknown> {
       const name = `${prefix}${refName}`
       Object.defineProperty(rb, name, {
         ...defaultPropDescriptor,
-        value: (identifier?: unknown) => {
-          const id = typeof identifier === 'undefined' ? this.instanceId : identifier
-          return this.extRefTableFnProperty(dbh, refName, id)
+        value: () => {
+          return this.extRefTableFnProperty(dbh, refName)
         }, // must dynamically!!
       })
 
@@ -117,23 +121,9 @@ export class Kmore<D = unknown> {
   protected extRefTableFnProperty(
     dbh: Knex,
     refName: string,
-    identifier?: unknown,
   ): Knex.QueryBuilder {
 
-    let refTable = dbh(refName)
-    if (typeof identifier !== 'undefined') {
-      refTable = refTable
-        .on('query', (data: OnQueryData) => bindOnQuery(this.subject, identifier, data))
-        .on(
-          'query-response',
-          (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(this.subject, identifier, _, respRaw),
-        )
-        .on(
-          'query-error',
-          (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, identifier, err, data),
-        )
-    }
-
+    const refTable = dbh(refName)
     return refTable
   }
 

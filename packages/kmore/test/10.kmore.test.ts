@@ -2,7 +2,7 @@ import { basename } from '@waiting/shared-core'
 import { JsonObject } from '@waiting/shared-types'
 import { genDbDict } from 'kmore-types'
 
-import { kmoreFactory } from '../src/index'
+import { globalEvent, kmoreFactory } from '../src/index'
 
 import { config } from './test.config'
 import { Db } from './test.model'
@@ -65,93 +65,14 @@ describe(filename, () => {
       assert(ret.length === 1)
     })
 
-    it('subscription with id', (done) => {
-      const id = Symbol('subscription')
-      km.refTables.ref_tb_user(id)
-        .select('*')
-        .where('uid', 2)
-        // .on('query', (data: OnQueryData) => {
-        //   console.log(data)
-        // })
-        // .on('query-response', (resp: QueryResponse, raw: OnQueryRespRaw) => {
-        //   void raw
-        //   console.info(resp, raw)
-        // })
-        .catch(() => [])
-
-      const subsp = km.register(ev => ev.identifier === id)
-        .subscribe({
-          next: (ev) => {
-            assert(ev.identifier === id)
-
-            assert(ev.kUid)
-            assert(ev.queryUid)
-            // trxId should empty, but keep value of the latest transaction
-            // https://github.com/knex/knex/issues/4460
-            // assert(typeof ev.trxId === 'undefined')
-            assert(ev.method === 'select')
-
-            if (ev.type === 'query') {
-              assert(! ev.command)
-              assert(typeof ev.exData === 'undefined')
-              assert(typeof ev.exError === 'undefined')
-              assert(typeof ev.respRaw === 'undefined')
-            }
-            else if (ev.type === 'queryResponse') {
-              assert(ev.command === 'SELECT')
-              assert(ev.respRaw)
-
-              const ret = ev.respRaw ? ev.respRaw.response.rows : null
-              assert(ret && Array.isArray(ret))
-              assert(ret && ret.length === 1)
-
-              subsp.unsubscribe()
-              done()
-            }
-          },
-          error: done,
-        })
-      assert(typeof subsp.unsubscribe === 'function')
-    })
-
-    it('subscription ex with id', (done) => {
-      const id = Symbol('subscription')
-      km.refTables.ref_tb_user(id)
-        .select('*faaaaa')
-        .where('uid', 1)
-        .catch(() => [])
-
-      let queryUid = ''
-      const subsp = km.register(ev => ev.identifier === id)
-        .subscribe({
-          next: (ev) => {
-            assert(ev.type === 'queryError' || ev.type === 'query')
-
-            if (ev.type === 'query') {
-              assert(ev.queryUid.length)
-              assert(queryUid === '')
-              queryUid = ev.queryUid
-            }
-            else if (ev.type === 'queryError') {
-              assert(ev.queryUid && ev.queryUid === queryUid)
-
-              subsp.unsubscribe()
-              done()
-            }
-          },
-          error: done,
-        })
-      assert(typeof subsp.unsubscribe === 'function')
-    })
-
-    it('subscription w/o id', (done) => {
+    it('subscription', (done) => {
       km.refTables.ref_tb_user()
         .select('*')
         .where('uid', 1)
         .catch(() => [])
 
       let queryUid = ''
-      const subsp = km.register()
+      const subsp = globalEvent
         .subscribe({
           next: (ev) => {
 
@@ -171,70 +92,6 @@ describe(filename, () => {
               assert(ret && ret.length === 1)
               assert(ev.queryUid && ev.queryUid === queryUid)
 
-              subsp.unsubscribe()
-              done()
-            }
-          },
-          error: done,
-        })
-      assert(typeof subsp.unsubscribe === 'function')
-    })
-
-    it('register with id', (done) => {
-      const id = Symbol('subscription')
-      km.refTables.ref_tb_user(id)
-        .select('*')
-        .where('uid', 1)
-        .catch(() => [])
-
-      const subsp = km.register(
-        (ev, id2) => ev.identifier === id && id2 === id,
-        id,
-      )
-        .subscribe({
-          next: (ev) => {
-            assert(ev.kUid)
-            assert(ev.queryUid)
-            // trxId should empty, but keep value of the latest transaction
-            // https://github.com/knex/knex/issues/4460
-            // assert(typeof ev.trxId === 'undefined')
-
-            assert(ev.method === 'select')
-
-            if (ev.type === 'query') {
-              assert(! ev.command)
-            }
-            else if (ev.type === 'queryResponse') {
-              assert(ev.command === 'SELECT')
-              const ret = ev.respRaw ? ev.respRaw.response.rows : null
-              assert(ret && Array.isArray(ret))
-              assert(ret && ret.length === 1)
-
-              subsp.unsubscribe()
-              done()
-            }
-          },
-          error: done,
-        })
-      assert(typeof subsp.unsubscribe === 'function')
-    })
-
-    it('register w/o id', (done) => {
-      const id = Symbol('subscription')
-      km.refTables.ref_tb_user(id)
-        .select('*')
-        .where('uid', 1)
-        .catch(() => [])
-
-      const subsp = km.register(
-        (ev, id2) => ev.identifier === id && ! id2 && id2 !== id,
-      )
-        .subscribe({
-          next: (ev) => {
-            if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw ? ev.respRaw.response.rows : null
-              assert(ret && Array.isArray(ret))
-              assert(ret && ret.length === 1)
               subsp.unsubscribe()
               done()
             }

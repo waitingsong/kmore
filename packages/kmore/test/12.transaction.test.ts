@@ -1,7 +1,7 @@
 import { basename } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { kmoreFactory } from '../src/index'
+import { globalEvent, kmoreFactory } from '../src/index'
 
 import { config } from './test.config'
 import { Db } from './test.model'
@@ -59,14 +59,12 @@ describe(filename, () => {
 
     it('transaction subscription', (done) => {
       const { dbh } = km
-      const id = Symbol('trans-subscription')
 
       dbh.transaction()
         .then((trx) => {
-          const subsp = km.register(ev => ev.identifier === id)
+          const subsp = globalEvent
             .subscribe({
               next: (ev) => {
-                assert(ev.identifier === id)
                 assert(ev.kUid)
                 assert(ev.queryUid)
                 assert(typeof ev.trxId === 'string' && ev.trxId)
@@ -94,7 +92,7 @@ describe(filename, () => {
             })
           assert(typeof subsp.unsubscribe === 'function')
 
-          km.refTables.ref_tb_user(id)
+          km.refTables.ref_tb_user()
             .transacting(trx)
             .forUpdate()
             .select('*')

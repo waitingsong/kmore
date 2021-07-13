@@ -20,7 +20,7 @@ export type DbQueryBuilder<D, Prefix extends string = 'ref_'> = {
   [tb in keyof D as `${Prefix}${tb & string}`]: TbQueryBuilder<D[tb]>
 }
 
-export type TbQueryBuilder<TRecord> = (identifier?: unknown) => Knex.QueryBuilder<TRecord, TRecord[]>
+export type TbQueryBuilder<TRecord> = () => Knex.QueryBuilder<TRecord, TRecord[]>
 
 // export type QueryBuilderExt<TRecord, TResult = TRecord[]>
 //  = Knex.QueryBuilder<TRecord, TResult>
