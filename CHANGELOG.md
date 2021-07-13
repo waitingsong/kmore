@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.0.0](/compare/v21.1.0...v22.0.0) (2021-07-13)
+
+
+### Features
+
+* **kmore:** export globalEvent instead of subject on instance a11faa8
+
+
+
+
+
 # [21.1.0](/compare/v21.0.1...v21.1.0) (2021-07-13)
 
 

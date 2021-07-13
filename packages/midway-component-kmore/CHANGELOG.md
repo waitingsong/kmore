@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.0.0](https://github.com/waitingsong/kmore/compare/v21.1.0...v22.0.0) (2021-07-13)
+
+
+### Features
+
+* **kmore:** export globalEvent instead of subject on instance ([a11faa8](https://github.com/waitingsong/kmore/commit/a11faa8e922becc8f18030f1187ed98d54624448))
+
+
+
+
+
 # [21.1.0](https://github.com/waitingsong/kmore/compare/v21.0.1...v21.1.0) (2021-07-13)
 
 
