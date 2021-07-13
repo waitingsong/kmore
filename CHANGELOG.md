@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [21.1.0](/compare/v21.0.1...v21.1.0) (2021-07-13)
+
+
+### Features
+
+* **midway-component-kmore:** update subscribeEvent() 958c06e
+
+
+
+
+
 ## [21.0.1](/compare/v21.0.0...v21.0.1) (2021-07-13)
 
 
