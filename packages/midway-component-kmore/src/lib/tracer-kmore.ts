@@ -44,17 +44,19 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     if (! this.ctx) {
       throw new TypeError('Parameter context undefined')
     }
-    else if (! this.ctx.tracerManager) {
-      console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
-    }
 
     if (! jlogger) {
       throw new TypeError('Parameter jlogger undefined!')
     }
     this.logger = jlogger
 
-    this.registerDbObservable(this.instanceId)
-    this.subscribeEvent()
+    if (this.ctx.tracerManager) {
+      this.registerDbObservable(this.instanceId)
+      this.subscribeEvent()
+    }
+    else {
+      console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
+    }
   }
 
   unsubscribeEvent(): void {
