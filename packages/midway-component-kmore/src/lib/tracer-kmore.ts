@@ -6,7 +6,7 @@ import {
 import { Knex } from 'knex'
 import { Span } from 'opentracing'
 import { Observable, Subscription } from 'rxjs'
-import { filter } from 'rxjs/operators'
+import { filter, finalize } from 'rxjs/operators'
 
 import {
   processQueryEventWithEventId,
@@ -121,19 +121,26 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     }
 
     let isNewSpan = false
-    const currSpan = this.ctx.tracerManager.currentSpan()
-    if (! currSpan) {
-      // requext finished
-      this.ctx.tracerManager.startSpan('DbComponentOrphan')
-      isNewSpan = true
-    }
 
     const subsp = this.dbEventObb.pipe(
       filter((ev) => {
         return ev.type === 'query' || ev.type === 'queryResponse' || ev.type === 'queryError'
       }),
+      finalize(() => {
+        if (isNewSpan) {
+          this.ctx.tracerManager.finishSpan()
+        }
+      }),
     ).subscribe({
       next: async (ev) => {
+
+        const currSpan = this.ctx.tracerManager.currentSpan()
+        if (! currSpan) {
+          // requext finished
+          this.ctx.tracerManager.startSpan('DbComponentOrphan')
+          isNewSpan = true
+        }
+
         if (ev.type === 'query') {
           const { name: tagClass } = this.constructor
           await processQueryEventWithEventId({
@@ -158,14 +165,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       },
       error: (ex) => {
         this.logger.error(ex)
-        if (isNewSpan) {
-          this.ctx.tracerManager.finishSpan()
-        }
-      },
-      complete: () => {
-        if (isNewSpan) {
-          this.ctx.tracerManager.finishSpan()
-        }
       },
     })
 
