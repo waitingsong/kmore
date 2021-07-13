@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [21.0.1](https://github.com/waitingsong/kmore/compare/v21.0.0...v21.0.1) (2021-07-13)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** check this.ctx.tracerManager ([303a384](https://github.com/waitingsong/kmore/commit/303a384858b43ea4dfac435f2bbcec1101e8d673))
+
+
+
+
+
 # [21.0.0](https://github.com/waitingsong/kmore/compare/v20.0.1...v21.0.0) (2021-07-13)
 
 
