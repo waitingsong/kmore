@@ -100,6 +100,10 @@ export class Kmore<D = unknown> {
   protected createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
     const rb = {} as DbQueryBuilder<D>
 
+    if (! this.dict || ! this.dict.tables || ! Object.keys(this.dict.tables).length) {
+      return rb
+    }
+
     Object.keys(this.dict.tables).forEach((refName) => {
       const name = `${prefix}${refName}`
       Object.defineProperty(rb, name, {
