@@ -118,6 +118,14 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       throw new Error('dbEventObb invalid')
     }
 
+    let isNewSpan = false
+    const currSpan = this.ctx.tracerManager.currentSpan()
+    if (! currSpan) {
+      // requext finished
+      this.ctx.tracerManager.startSpan('DbComponentOrphan')
+      isNewSpan = true
+    }
+
     const subsp = this.dbEventObb.pipe(
       filter((ev) => {
         return ev.type === 'query' || ev.type === 'queryResponse' || ev.type === 'queryError'
@@ -148,6 +156,14 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       },
       error: (ex) => {
         this.logger.error(ex)
+        if (isNewSpan) {
+          this.ctx.tracerManager.finishSpan()
+        }
+      },
+      complete: () => {
+        if (isNewSpan) {
+          this.ctx.tracerManager.finishSpan()
+        }
       },
     })
 
