@@ -80,7 +80,8 @@ describe(filename, () => {
                   assert(ev.command === 'SELECT')
                   assert(ev.respRaw)
 
-                  const rows = ev.respRaw ? ev.respRaw.response.rows : null
+                  const rows = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
+
                   assert(rows && Array.isArray(rows))
                   assert(rows && rows.length === 1)
 

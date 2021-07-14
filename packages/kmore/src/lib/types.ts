@@ -83,7 +83,7 @@ export interface OnQueryRespRaw <T = unknown> {
   method?: string // 'select', 'raw'
   options?: Record<string, unknown>
   queryContext: unknown
-  response: QueryResponse<T>
+  response?: QueryResponse<T>
   returning?: string
   sql: string // 'select * from "tb_user" where "uid" = $1 for update'
   timeout?: boolean

@@ -86,7 +86,7 @@ describe(filename, () => {
               queryUid = ev.queryUid
             }
             else if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw ? ev.respRaw.response.rows : null
+              const ret = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
 
               assert(ret && Array.isArray(ret))
               assert(ret && ret.length === 1)

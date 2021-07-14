@@ -104,7 +104,7 @@ function processKnexOnEvent(
   else if (ev.type === 'queryResponse') {
     const data = input.respRaw as OnQueryRespRaw
     ev.method = data.method ? data.method : ''
-    ev.command = data.response.command
+    ev.command = data.response?.command
     ev.kUid = data.__knexUid
     ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
   }
