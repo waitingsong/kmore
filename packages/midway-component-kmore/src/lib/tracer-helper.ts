@@ -188,7 +188,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
   const { queryUid, respRaw, timestamp: end } = options.ev
 
   const cost = end - start
-  if (respRaw?.response.command) {
+  if (respRaw?.response?.command) {
     const tags: SpanLogInput = {
       [TracerTag.dbCommand]: respRaw.response.command,
       [TracerLog.queryRowCount]: respRaw?.response.rowCount ?? 0,
