@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [22.1.1](https://github.com/waitingsong/kmore/compare/v22.1.0...v22.1.1) (2021-07-14)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** may undefined ([b35d83f](https://github.com/waitingsong/kmore/commit/b35d83f86fccca350204858c1450f790cc36d6eb))
+
+
+
+
+
 # [22.1.0](https://github.com/waitingsong/kmore/compare/v22.0.2...v22.1.0) (2021-07-14)
 
 
