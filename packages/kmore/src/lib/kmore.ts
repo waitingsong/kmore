@@ -101,6 +101,7 @@ export class Kmore<D = unknown> {
     const rb = {} as DbQueryBuilder<D>
 
     if (! this.dict || ! this.dict.tables || ! Object.keys(this.dict.tables).length) {
+      console.info('Kmore:createRefTables() this.dict or this.dict.tables empty')
       return rb
     }
 
