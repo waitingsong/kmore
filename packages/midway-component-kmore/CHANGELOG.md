@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.1.0](https://github.com/waitingsong/kmore/compare/v22.0.2...v22.1.0) (2021-07-14)
+
+
+### Features
+
+* **midway-component-kmore:** increase EventEmitter.defaultMaxListeners for unit test ([589fdea](https://github.com/waitingsong/kmore/commit/589fdead3b820d96e2e08fdf8a8d7ccc6c8e9230))
+
+
+
+
+
 ## [22.0.2](https://github.com/waitingsong/kmore/compare/v22.0.1...v22.0.2) (2021-07-14)
 
 **Note:** Version bump only for package @mw-components/kmore
