@@ -33,9 +33,13 @@ export class AutoConfiguration {
   async onReady(): Promise<void> {
     const { defaultMaxListeners } = this.kmoreComponentConfig
 
-    EventEmitter.defaultMaxListeners = defaultMaxListeners && defaultMaxListeners >= 0
+    let maxListeners = defaultMaxListeners && defaultMaxListeners >= 0
       ? defaultMaxListeners
       : 200
+    if (process.env.CI || process.env.MIDWAY_SERVER_ENV === 'unittest' || process.env.NODE_ENV === 'unnittest') {
+      maxListeners += 200
+    }
+    EventEmitter.defaultMaxListeners = maxListeners
   }
 
   async onStop(): Promise<void> {
