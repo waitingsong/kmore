@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.2.0](https://github.com/waitingsong/kmore/compare/v22.1.1...v22.2.0) (2021-07-14)
+
+
+### Features
+
+* **kmore:** change OnQueryRespRaw['response'] to optional ([a38d637](https://github.com/waitingsong/kmore/commit/a38d63770585039d7d4863c115d964aa64d86357))
+
+
+
+
+
 ## [22.0.2](https://github.com/waitingsong/kmore/compare/v22.0.1...v22.0.2) (2021-07-14)
 
 **Note:** Version bump only for package kmore

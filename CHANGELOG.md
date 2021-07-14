@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.2.0](/compare/v22.1.1...v22.2.0) (2021-07-14)
+
+
+### Features
+
+* **kmore:** change OnQueryRespRaw['response'] to optional a38d637
+
+
+
+
+
 ## [22.1.1](/compare/v22.1.0...v22.1.1) (2021-07-14)
 
 
