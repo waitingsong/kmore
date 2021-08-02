@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [22.3.3](/compare/v22.3.2...v22.3.3) (2021-08-02)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** detect and remove duplicate queryUid from queryUidSpanMap 8ee3e08
+
+
+
+
+
 ## [22.3.2](/compare/v22.3.1...v22.3.2) (2021-08-02)
 
 **Note:** Version bump only for package kmore
