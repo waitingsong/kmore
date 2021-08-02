@@ -129,14 +129,14 @@ async function processSwitch(options: ProcessOpts): Promise<void> {
     }
 
     case 'queryResponse': {
-      await caseQueryResp(options)
       cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
+      await caseQueryResp(options)
       break
     }
 
     case 'queryError': {
-      await caseQueryError(options)
       cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
+      await caseQueryError(options)
       break
     }
 
