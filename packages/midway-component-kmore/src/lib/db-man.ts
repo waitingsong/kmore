@@ -7,7 +7,8 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { Logger as JLogger } from '@mw-components/jaeger'
-import { Knex, knex } from 'knex'
+import { createDbh } from 'kmore'
+import { Knex } from 'knex'
 
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
@@ -55,7 +56,7 @@ export class DbManager <DbId extends string = any> {
       return
     }
 
-    const dbh = createDbh(dbConfig.config)
+    const dbh = createDbh(dbConfig.config, dbConfig.enableTracing)
     this.dbHosts.set(dbId, dbh)
     this.dbConfigMap.set(dbId, dbConfig)
   }
@@ -156,7 +157,9 @@ export function kmoreComponentFactory<D>(
   bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
 ): KmoreComponent<D> | TracerKmoreComponent<D> {
 
-  const dbh: Knex = options.dbh ? options.dbh : createDbh(options.dbConfig.config)
+  const dbh: Knex = options.dbh
+    ? options.dbh
+    : createDbh(options.dbConfig.config, options.dbConfig.enableTracing)
   const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
 
   if (typeof bindUnsubscribeEventFunc === 'function') {
@@ -165,9 +168,6 @@ export function kmoreComponentFactory<D>(
   return km
 }
 
-function createDbh(knexConfig: DbConfig['config']): Knex {
-  return knex(knexConfig)
-}
 
 export type CreateResutMap <Key extends PropertyKey> =
   Map<Key, KmoreComponent<any> | TracerKmoreComponent<any> | undefined>

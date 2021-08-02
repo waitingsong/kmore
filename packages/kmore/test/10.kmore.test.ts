@@ -15,7 +15,7 @@ const filename = basename(__filename)
 
 describe(filename, () => {
   const dict = genDbDict<Db>()
-  const km = kmoreFactory({ config, dict })
+  const km = kmoreFactory({ config, dict }, true)
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)

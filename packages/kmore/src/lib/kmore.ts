@@ -10,16 +10,9 @@ import {
 } from '@waiting/shared-core'
 import type { DbDict } from 'kmore-types'
 import { Knex, knex } from 'knex'
-import { Subject } from 'rxjs'
-
 
 import { defaultPropDescriptor } from './config'
-import {
-  bindOnQuery,
-  bindOnQueryError,
-  bindOnQueryResp,
-  globalSubject,
-} from './event'
+import { bindOnQuery, bindOnQueryError, bindOnQueryResp, globalSubject } from './event'
 import {
   DbQueryBuilder,
   KmoreEvent,
@@ -63,7 +56,7 @@ export class Kmore<D = unknown> {
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
   protected listenEvent = true
-  protected readonly subject: Subject<KmoreEvent>
+  // protected readonly subject: Subject<KmoreEvent>
 
   constructor(
     public readonly config: KnexConfig,
@@ -72,22 +65,8 @@ export class Kmore<D = unknown> {
     public instanceId: string | symbol,
   ) {
 
-    this.subject = globalSubject
-
-    const dbhBindEvent = dbh
-      .on('query', (data: OnQueryData) => bindOnQuery(this.subject, void 0, data))
-      .on(
-        'query-response',
-        (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(this.subject, void 0, _, respRaw),
-      )
-      .on(
-        'query-error',
-        (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(this.subject, void 0, err, data),
-      )
-    this.dbh = dbhBindEvent
     this.refTables = this.createRefTables(this.dbh, 'ref_')
   }
-
 
   unsubscribe(): void {
     this.queryUidSpanMap.forEach((info) => {
@@ -162,9 +141,13 @@ export interface KmoreFactoryOpts<D> {
 }
 export type EventCallback = (event: KmoreEvent) => void
 
-export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
+export function kmoreFactory<D>(
+  options: KmoreFactoryOpts<D>,
+  enableTracing = false,
+): Kmore<D> {
+
   const dbId = options.dbId ? options.dbId : ''
-  const dbh: Knex = options.dbh ? options.dbh : knex(options.config)
+  const dbh: Knex = options.dbh ? options.dbh : createDbh(options.config, enableTracing)
   const instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
   const km = new Kmore<D>(
     options.config,
@@ -174,3 +157,27 @@ export function kmoreFactory<D>(options: KmoreFactoryOpts<D>): Kmore<D> {
   )
   return km
 }
+
+export function createDbh(
+  knexConfig: KnexConfig,
+  enableTracing = false,
+): Knex {
+
+  let inst = knex(knexConfig)
+  if (enableTracing) {
+    inst = inst
+      .on('query', (data: OnQueryData) => bindOnQuery(globalSubject, void 0, data))
+      .on(
+        'query-response',
+        (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(globalSubject, void 0, _, respRaw),
+      )
+      .on(
+        'query-error',
+        (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(globalSubject, void 0, err, data),
+      )
+  }
+
+  return inst
+}
+
+
