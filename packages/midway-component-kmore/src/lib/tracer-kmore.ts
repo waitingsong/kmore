@@ -155,7 +155,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
           })
         }
         else {
-          if (! ev.identifier) { return }
+          // if (! ev.identifier) { return }
           await processQueryRespAndExEventWithEventId({
             trm: this.ctx.tracerManager,
             dbConfig: this.dbConfig,
