@@ -5,6 +5,7 @@ import {
   globalEvent,
 } from 'kmore'
 import { Knex } from 'knex'
+// import { globalTracer } from 'opentracing'
 import { Observable, Subscription } from 'rxjs'
 import { filter, finalize } from 'rxjs/operators'
 
@@ -136,7 +137,9 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         const currSpan = this.ctx.tracerManager.currentSpan()
         if (! currSpan) {
           // requext finished
-          this.ctx.tracerManager.startSpan('DbComponentOrphan')
+          const name = 'DbComponentOrphan'
+          this.ctx.tracerManager.startSpan(name)
+          // const span = globalTracer().startSpan(name)
           isNewSpan = true
         }
 

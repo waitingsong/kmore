@@ -41,7 +41,7 @@ export async function processQueryEventWithEventId(
     trm,
   } = options
 
-  if (! ev.identifier) { return }
+  // if (! ev.identifier) { return }
 
   if (! trm) {
     // console.info(`processQueryEventWithEventId(): ctx.tracerManager undefined,
@@ -86,7 +86,7 @@ export async function processQueryRespAndExEventWithEventId(
 
   const { trm, dbConfig, ev, logger, queryUidSpanMap } = options
 
-  if (! ev.identifier) { return }
+  // if (! ev.identifier) { return }
 
   const { queryUid } = ev
   const spanInfo = queryUidSpanMap.get(queryUid)
