@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.3.0](/compare/v22.2.3...v22.3.0) (2021-08-02)
+
+
+### Features
+
+* **midway-component-kmore:** trace response only rows instead of all 643df67
+
+
+
+
+
 ## [22.2.3](/compare/v22.2.2...v22.2.3) (2021-08-02)
 
 
