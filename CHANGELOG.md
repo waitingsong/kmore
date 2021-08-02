@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [22.2.3](/compare/v22.2.2...v22.2.3) (2021-08-02)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** not check ev.identifier within subscribeEvent() 1eb1df6
+
+
+
+
+
 ## [22.2.2](/compare/v22.2.1...v22.2.2) (2021-08-02)
 
 
