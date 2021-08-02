@@ -175,6 +175,7 @@ function caseQuery(options: ProcessOpts): void {
     event: TracerLog.queryStart,
     queryUidSpanMapSize: queryUidSpanMap.size,
     time: genISO8601String(),
+    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
   span.log(input)
   trm.spanLog(input)
@@ -206,6 +207,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     [TracerLog.queryCost]: cost,
     queryUid,
     queryUidSpanMapSize: queryUidSpanMap.size,
+    [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
 
   if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
@@ -218,7 +220,6 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     }
     span.addTags(tags)
     input.level = 'warn'
-    input[TracerLog.svcMemoryUsage] = humanMemoryUsage()
     const procInfo = await retrieveProcInfo()
     input.procInfo = procInfo
     // span.log(input)
