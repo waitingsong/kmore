@@ -88,22 +88,6 @@ export class Kmore<D = unknown> {
     this.refTables = this.createRefTables(this.dbh, 'ref_')
   }
 
-  // register<K = unknown, T = unknown>(
-  //   eventFilterCallback?: (ev: KmoreEvent<T>, identifier?: K) => boolean,
-  //   identifier?: K,
-  // ): Observable<KmoreEvent<T>> {
-
-  //   const stream$ = this.subject.asObservable() as Observable<KmoreEvent<T>>
-  //   const ret$ = stream$.pipe(
-  //     filter((ev) => {
-  //       const flag = typeof eventFilterCallback === 'function'
-  //         ? eventFilterCallback(ev, identifier)
-  //         : true
-  //       return flag
-  //     }),
-  //   )
-  //   return ret$
-  // }
 
   unsubscribe(): void {
     this.queryUidSpanMap.forEach((info) => {
