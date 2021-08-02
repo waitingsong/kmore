@@ -49,6 +49,25 @@ export async function processQueryEventWithEventId(
     return
   }
 
+  const spanInfo = queryUidSpanMap.get(ev.queryUid)
+  if (spanInfo) {
+    const { kUid, queryUid } = ev
+
+    cleanQueryUidSpanMap(queryUidSpanMap, queryUid)
+    const input: SpanLogInput = {
+      [TracerTag.logLevel]: 'warn',
+      message: 'Duplicate queryUid into processQueryEventWithEventId()',
+      kUid,
+      queryUid,
+      event: TracerLog.queryStart,
+      queryUidSpanMapSize: queryUidSpanMap.size,
+      time: genISO8601String(),
+      [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
+    }
+    trm.spanLog(input)
+    return
+  }
+
   const currSpan = trm.currentSpan()
   if (! currSpan) {
     options.logger.warn(`Get current SPAN undefined. className: "${tagClass}"`)
