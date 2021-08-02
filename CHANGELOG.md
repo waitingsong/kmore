@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [22.2.2](/compare/v22.2.1...v22.2.2) (2021-08-02)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** not check ev.identifier deb5faf
+
+
+
+
+
 ## [22.2.1](/compare/v22.2.0...v22.2.1) (2021-07-19)
 
 **Note:** Version bump only for package kmore
