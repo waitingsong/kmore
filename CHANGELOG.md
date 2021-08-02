@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.4.0](/compare/v22.3.3...v22.4.0) (2021-08-02)
+
+
+### Features
+
+* **kmore:** move property queryUidSpanMap onto Kmore instead of TracerKmoreComponent 77b2456
+
+
+
+
+
 ## [22.3.3](/compare/v22.3.2...v22.3.3) (2021-08-02)
 
 

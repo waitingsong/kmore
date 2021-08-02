@@ -1,7 +1,7 @@
 {
   "name": "@mw-components/kmore",
   "author": "waiting",
-  "version": "22.3.3",
+  "version": "22.4.0",
   "description": "midway component for knex",
   "keywords": [
     "midway",
@@ -31,7 +31,7 @@
     "@mw-components/jaeger": "^7.0.0",
     "@waiting/shared-core": "^14.4.1",
     "@waiting/shared-types": "^14.4.1",
-    "kmore": "^22.2.0",
+    "kmore": "^22.4.0",
     "knex": "^0.95.0",
     "rxjs": "7",
     "tsconfig-paths": "3"
