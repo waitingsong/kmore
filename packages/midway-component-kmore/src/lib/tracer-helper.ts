@@ -195,7 +195,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
       [TracerLog.queryCost]: cost,
     }
     if (tracingResponse) {
-      tags[TracerLog.queryResponse] = respRaw.response
+      tags[TracerLog.queryResponse] = respRaw.response?.rows
     }
     span.addTags(tags)
   }
@@ -214,7 +214,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
       [TracerTag.logLevel]: 'warn',
     }
     if (! tracingResponse && respRaw) {
-      tags[TracerLog.queryResponse] = respRaw.response
+      tags[TracerLog.queryResponse] = respRaw?.response?.rows
     }
     span.addTags(tags)
     input.level = 'warn'
