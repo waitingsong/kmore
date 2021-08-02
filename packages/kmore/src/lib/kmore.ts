@@ -1,7 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import {
+  SpanLogInput,
+  TracerLog,
+  TracerTag,
+} from '@mw-components/jaeger'
+import {
+  genISO8601String,
+  humanMemoryUsage,
+} from '@waiting/shared-core'
 import type { DbDict } from 'kmore-types'
 import { Knex, knex } from 'knex'
 import { Subject } from 'rxjs'
+
 
 import { defaultPropDescriptor } from './config'
 import {
@@ -19,6 +29,7 @@ import {
   OnQueryErrorErr,
   OnQueryRespRaw,
   QueryResponse,
+  QuerySpanInfo,
 } from './types'
 
 
@@ -48,6 +59,8 @@ export class Kmore<D = unknown> {
   * ```
   */
   readonly Dict: DbDict<D>
+
+  readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
   protected listenEvent = true
   protected readonly subject: Subject<KmoreEvent>
@@ -93,6 +106,21 @@ export class Kmore<D = unknown> {
   // }
 
   unsubscribe(): void {
+    this.queryUidSpanMap.forEach((info) => {
+      const { span } = info
+      if (span) {
+        const input: SpanLogInput = {
+          [TracerTag.logLevel]: 'warn',
+          message: 'finish span on Kmore unsubscribe()',
+          event: 'Kmore:unsubscribe',
+          queryUidSpanMapSize: this.queryUidSpanMap.size,
+          time: genISO8601String(),
+          [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
+        }
+        span.log(input)
+        span.finish()
+      }
+    })
     this.listenEvent = false
   }
 

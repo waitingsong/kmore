@@ -13,7 +13,7 @@ import {
   processQueryEventWithEventId,
   processQueryRespAndExEventWithEventId,
 } from './tracer-helper'
-import { DbConfig, QuerySpanInfo } from './types'
+import { DbConfig } from './types'
 
 import { Context } from '~/interface'
 
@@ -25,7 +25,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   queryEventSubscription: Subscription | undefined
   RespAndExEventSubscription: Subscription | undefined
 
-  readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
   protected logger: Logger
 
   constructor(

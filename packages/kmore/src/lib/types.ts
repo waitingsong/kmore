@@ -2,6 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // import { FullTableModelFromDictAlias } from '@waiting/shared-types'
 import { Knex } from 'knex'
+import { Span } from 'opentracing'
 
 
 export type KnexConfig = Knex.Config
@@ -134,5 +135,12 @@ export interface OnQueryErrorErr {
   stack?: string
   table: unknown
   where: unknown
+}
+
+
+export interface QuerySpanInfo {
+  span: Span
+  tagClass: string
+  timestamp: number
 }
 
