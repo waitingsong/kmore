@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.5.0](https://github.com/waitingsong/kmore/compare/v22.4.0...v22.5.0) (2021-08-03)
+
+
+### Features
+
+* **kmore:** export createDbh() for event binding ([89f0ace](https://github.com/waitingsong/kmore/commit/89f0aceb26523884efafa2e7052cae533f79a7f9))
+
+
+
+
+
 # [22.4.0](https://github.com/waitingsong/kmore/compare/v22.3.3...v22.4.0) (2021-08-02)
 
 
