@@ -22,8 +22,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
   dbEventObb: Observable<KmoreEvent> | undefined
   dbEventSubscription: Subscription | undefined
-  queryEventSubscription: Subscription | undefined
-  RespAndExEventSubscription: Subscription | undefined
 
   protected logger: Logger
 
@@ -170,15 +168,6 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     })
 
     this.dbEventSubscription = subsp
-  }
-
-
-  protected unsubscribeQueryEvent(): void {
-    this.queryEventSubscription?.unsubscribe()
-  }
-
-  protected unsubscribeRespAndExEvent(): void {
-    this.RespAndExEventSubscription?.unsubscribe()
   }
 
 }
