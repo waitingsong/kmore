@@ -123,13 +123,19 @@ export class DbManager <DbId extends string = any> {
   }
 
   /**
-   * Disconnect all dbhosts
+   * Disconnect all dbhosts or specified
    */
-  async destroy(): Promise<void> {
+  async destroy(
+    dbId?: DbId,
+  ): Promise<void> {
     const pms: Promise<void>[] = []
 
     const map = this.getAllDbHosts()
     for (const [id, dbh] of map) {
+      if (dbId && dbId !== id) {
+        continue
+      }
+
       const pm = dbh.destroy().catch((ex) => {
         this.logger.error(`destroy knex connection failed with identifier: "${id}":\n${(ex as Error).message}`)
       })
