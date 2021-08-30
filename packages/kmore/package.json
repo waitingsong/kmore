@@ -34,7 +34,7 @@
     "@waiting/shared-core": "^14.4.1",
     "@waiting/shared-types": "^14.4.1",
     "camelcase-keys": "6.2.2",
-    "rxjs": "7",
+    "rxjs": "^7.3.0",
     "snakecase-keys": "4.0.2"
   },
   "devDependencies": {

@@ -33,7 +33,7 @@
     "@waiting/shared-types": "^14.4.1",
     "kmore": "^22.6.0",
     "knex": "^0.95.0",
-    "rxjs": "7",
+    "rxjs": "^7.3.0",
     "tsconfig-paths": "3"
   },
   "devDependencies": {
