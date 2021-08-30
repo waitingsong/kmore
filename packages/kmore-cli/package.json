@@ -31,7 +31,7 @@
     "@waiting/shared-types": "^14.4.1",
     "@waiting/shared-types-dev": "^4.1.0",
     "kmore-types": "^22.0.0",
-    "rxjs": "7",
+    "rxjs": "^7.3.0",
     "rxwalker": "4",
     "tsconfig-resolver": "^3.0.1",
     "yargs": "17"
