@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.6.0](https://github.com/waitingsong/kmore/compare/v22.5.0...v22.6.0) (2021-08-30)
+
+**Note:** Version bump only for package egg-kmore
+
+
+
+
+
 # [22.5.0](https://github.com/waitingsong/kmore/compare/v22.4.0...v22.5.0) (2021-08-03)
 
 **Note:** Version bump only for package egg-kmore

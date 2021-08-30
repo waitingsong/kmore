@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [22.6.0](https://github.com/waitingsong/kmore/compare/v22.5.0...v22.6.0) (2021-08-30)
+
+
+### Features
+
+* **midway-component-kmore:** DbManager:destroy() accept optional parameter dbId ([f004782](https://github.com/waitingsong/kmore/commit/f004782197a2c97eed6fd47a84b5723f5c4827aa))
+
+
+
+
+
 # [22.5.0](https://github.com/waitingsong/kmore/compare/v22.4.0...v22.5.0) (2021-08-03)
 
 
