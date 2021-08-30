@@ -11,6 +11,7 @@ import { CallerFuncNameSet } from 'kmore-types'
 import { from as ofrom, of, Observable, iif, concat, defer } from 'rxjs'
 import { map, mergeMap, filter, reduce, take, catchError } from 'rxjs/operators'
 import { walk, EntryType } from 'rxwalker'
+// eslint-disable-next-line import/named
 import { CacheStrategy, TsConfigResolverOptions, tsconfigResolver } from 'tsconfig-resolver'
 
 import { globalCallerFuncNameSet, initOptions } from './config'
