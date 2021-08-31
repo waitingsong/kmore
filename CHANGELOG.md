@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [22.6.1](/compare/v22.6.0...v22.6.1) (2021-08-31)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 # [22.6.0](/compare/v22.5.0...v22.6.0) (2021-08-30)
 
 
