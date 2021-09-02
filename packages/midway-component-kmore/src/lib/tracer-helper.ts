@@ -69,7 +69,7 @@ export async function processQueryEventWithEventId(
   }
 
   const currSpan = trm.currentSpan()
-  if (! currSpan) {
+  if (! currSpan && options.logger.warn) {
     options.logger.warn(`Get current SPAN undefined. className: "${tagClass}"`)
     // this.unSubscribeEvent()
     return
@@ -242,7 +242,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     const procInfo = await retrieveProcInfo()
     input.procInfo = procInfo
     // span.log(input)
-    logger.log(input, span)
+    logger.log && logger.log(input, span)
   }
   else {
     span.log(input)
@@ -276,7 +276,7 @@ async function caseQueryError(options: ProcessOpts): Promise<void> {
   }
 
   // span.log(logInput)
-  logger.log(input, span)
+  logger.log && logger.log(input, span)
   trm.spanLog(input)
 
   span.addTags({
