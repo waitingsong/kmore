@@ -3,6 +3,7 @@
   "compilerOptions": {
     "declaration": false,
     "module": "commonjs",
+    "noEmit": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
     "noUnusedLocals": false,
@@ -14,6 +15,7 @@
   ],
   "exclude": [
     "asset/",
+    "fixtures/",
     "node_modules*",
     "**/*.d.ts",
     "**/*.spec.ts"

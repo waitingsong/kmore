@@ -12,3 +12,9 @@ rules:
   lines-between-class-members: 0
   padded-blocks: 0
 
+
+settings:
+  import/ignore:
+    - node_modules  # included by default, but replaced if explicitly configured
+    - "@waiting/shared-types"
+

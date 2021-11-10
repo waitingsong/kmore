@@ -10,3 +10,8 @@ rules:
   '@typescript-eslint/no-unsafe-assignment': 0
   unicorn/filename-case: 0
 
+settings:
+  import/ignore:
+    - node_modules  # included by default, but replaced if explicitly configured
+    - "@waiting/shared-types"
+
