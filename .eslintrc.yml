@@ -17,8 +17,3 @@ rules:
   '@typescript-eslint/prefer-optional-chain': 0
   '@typescript-eslint/no-unnecessary-condition': 0
 
-settings:
-  import/ignore:
-    - node_modules  # included by default, but replaced if explicitly configured
-    - "@waiting/shared-types"
-
