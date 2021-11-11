@@ -33,15 +33,15 @@
   "dependencies": {
     "@waiting/shared-core": "^14.4.1",
     "@waiting/shared-types": "^14.4.1",
-    "camelcase-keys": "6.2.2",
+    "camelcase-keys": "7.0.1",
     "rxjs": "^7.4.0",
-    "snakecase-keys": "4.0.2"
+    "snakecase-keys": "5.1.0"
   },
   "devDependencies": {
     "cross-env": "7",
     "kmore-types": "^22.6.0",
-    "knex": "^0.95.0",
-    "pg": "^8.2.1",
+    "knex": "^0.95.14",
+    "pg": "^8.7.1",
     "typescript": ">=4.1"
   },
   "engines": {

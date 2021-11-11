@@ -18,13 +18,13 @@ export async function getCurrentTime(
 
     switch (clientType) {
       case EnumClient.pg:
-        return parseRespCommon(res)
+        return parseRespCommon(res as RespCommon)
 
       case EnumClient.mysql:
-        return parseRespCommon(res)
+        return parseRespCommon(res as RespCommon)
 
       case EnumClient.mysql2:
-        return parseRespMysql2(res)
+        return parseRespMysql2(res as RespMysql2)
 
       default:
         console.warn(`Unsupported client value: '${clientType}' for getCurrentTime().
@@ -83,14 +83,14 @@ export function wrapIdentifier(
   return origImpl(camelToSnakeCase(value))
 }
 
-export function genCamelKeysFrom<Target extends unknown = unknown, From extends unknown = unknown>(
+export function genCamelKeysFrom<Target = unknown, From = unknown>(
   input: From,
 ): unknown extends Target ? RecusiveCamelKeys<Target> : Target {
   // @ts-expect-error
   return keysDoToDtoCamel(input)
 }
 
-export function genSnakeKeysFrom<Target extends unknown = unknown, From extends unknown = unknown>(
+export function genSnakeKeysFrom<Target = unknown, From = unknown>(
   input: From,
 ): Target {
   // @ts-expect-error

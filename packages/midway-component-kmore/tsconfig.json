@@ -25,7 +25,7 @@
     "stripInternal": true,
     "target": "ES2020",
     "tsBuildInfoFile": ".vscode/.tsbuildinfo",
-    "types" : ["jest", "node"]
+    "types" : ["mocha", "node"]
   },
   "include": [
     "src/**/*.ts"

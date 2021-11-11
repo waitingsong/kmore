@@ -1,8 +1,6 @@
 import { computeCallExpressionToLiteralObj } from '@waiting/shared-types-dev'
 
 import { DbDict } from '../../src/lib/dict'
-import { Db } from '../test3.model'
-
 
 
 export function genDbDict<D>(): DbDict<D> {
@@ -22,8 +20,9 @@ export function fake<D>(): DbDict<D> {
   return ret as DbDict<D>
 }
 
-export {
-  Db,
-  DbDict,
-}
+// Do NOT export types inner this file
+// export {
+//   Db,
+//   DbDict,
+// }
 

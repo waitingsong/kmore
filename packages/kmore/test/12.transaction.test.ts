@@ -109,7 +109,7 @@ describe(filename, () => {
 
         })
         .catch((ex) => {
-          assert(false, ex)
+          assert(false, (ex as Error).message)
           done()
         })
     })

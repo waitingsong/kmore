@@ -77,7 +77,7 @@ describe(filename, () => {
         )
         .where(scoped.tb_user.uid, 1)
         .then((rows) => {
-          validateUserRows(rows)
+          validateUserRows(rows as Partial<UserDo>[])
           const [row] = rows
           assert(row && row.uid)
           assert(row && row.name)
