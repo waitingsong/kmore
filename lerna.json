@@ -8,7 +8,11 @@
     "publish": {
       "ignoreChanges": [
         "*.md",
-        "package-lock.json"
+        ".githooks",
+        ".scripts",
+        ".vscode",
+        "package-lock.json",
+        "packages/demo"
       ]
     },
     "bootstrap": {
