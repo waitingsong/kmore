@@ -1,6 +1,8 @@
-import { access, copyFile, rm } from 'fs/promises'
+import { accessSync, copyFileSync } from 'fs'
+import { rm } from 'fs/promises'
 
 import { basename, join, pathResolve } from '@waiting/shared-core'
+import { firstValueFrom } from 'rxjs'
 import { tap, finalize, delay, defaultIfEmpty } from 'rxjs/operators'
 import { run } from 'rxrunscript'
 
@@ -22,16 +24,16 @@ describe(filename, () => {
   const jsPaths: string[] = []
 
   beforeEach(async () => {
-    await run(`git restore ${paths}`).toPromise()
+    await firstValueFrom(run(`git restore ${paths}`))
   })
   after(async () => {
-    await run(`git restore ${paths}`).toPromise()
+    await firstValueFrom(run(`git restore ${paths}`))
     jsPaths.forEach((path) => {
       void rm(path)
     })
   })
 
-  describe('Should cmd gen works', () => {
+  describe('Should cmd gen work', () => {
     it('with --path test/demo', (done) => {
       const args: RunCmdArgs = {
         cmd: 'gen',
@@ -47,10 +49,10 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            async next(path) {
-              await copyFile(jsDemo1, targetJs)
-              await access(targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
+            next(path) {
+              copyFileSync(jsDemo1, targetJs)
+              accessSync(targetJs)
+              assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -77,9 +79,9 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            async next(path) {
-              await copyFile(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
+            next(path) {
+              copyFileSync(jsDemo1, targetJs)
+              assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -106,9 +108,9 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            async next(path) {
-              await copyFile(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
+            next(path) {
+              copyFileSync(jsDemo1, targetJs)
+              assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -136,9 +138,9 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            async next(path) {
-              await copyFile(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
+            next(path) {
+              copyFileSync(jsDemo1, targetJs)
+              assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -152,22 +154,38 @@ describe(filename, () => {
 })
 
 
-async function assertsDemo1(
+function assertsDemo1(
   path: string,
   tsPath: string,
   jsPath: string,
-): Promise<void> {
+): void {
 
   assert(path.includes('test/demo/'))
   assert(path.includes('.ts'))
   assert(! path.includes('d.ts'))
   assert(pathResolve(path) === tsPath)
-  await access(path)
-  await access(jsPath)
-  await access(tsPath)
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { dict1, dict2 } = require(jsPath)
+  accessSync(path)
+  accessSync(jsPath)
+  accessSync(tsPath)
+
+  let mods = {
+    dict1: null,
+    dict2: null,
+  }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    mods = require(jsPath)
+  }
+  catch (ex) {
+    assert(false, (ex as Error).message)
+    return
+  }
+  assert(mods)
+  assert(mods.dict1)
+  assert(mods.dict2)
+  const { dict1, dict2 } = mods
+
   assert.deepStrictEqual(dict1, expectedDict1)
   assert.deepStrictEqual(dict2, expectedDict2)
 }
