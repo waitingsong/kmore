@@ -36,9 +36,9 @@ if (args.cmd) {
     args.options = parseCliOpts(args.cmd, { ...yargs.argv, _: '' })
     args.debug && console.info(args)
 
-    runCmd(args).subscribe(
-      data => console.info(data),
-      (err: Error) => {
+    runCmd(args).subscribe({
+      next: data => console.info(data),
+      error: (err: Error) => {
         if (err.message) {
           console.info(err.message)
         }
@@ -50,7 +50,7 @@ if (args.cmd) {
           ? process.exit(0)
           : process.exit(1)
       },
-    )
+    })
 
   }
 }
