@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [24.0.0](/compare/v23.0.2...v24.0.0) (2021-11-23)
+
+
+### Bug Fixes
+
+* **kmore:** ReturnType of genCamelKeysFrom() d1f7707
+
+
+
+
+
 ## [23.0.2](/compare/v23.0.1...v23.0.2) (2021-11-15)
 
 **Note:** Version bump only for package kmore

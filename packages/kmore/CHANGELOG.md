@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [24.0.0](https://github.com/waitingsong/kmore/compare/v23.0.2...v24.0.0) (2021-11-23)
+
+
+### Bug Fixes
+
+* **kmore:** ReturnType of genCamelKeysFrom() ([d1f7707](https://github.com/waitingsong/kmore/commit/d1f770713f83df71db40fc403bfb806e418694b6))
+
+
+
+
+
 ## [23.0.2](https://github.com/waitingsong/kmore/compare/v23.0.1...v23.0.2) (2021-11-15)
 
 **Note:** Version bump only for package kmore
