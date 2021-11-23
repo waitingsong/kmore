@@ -31,8 +31,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^14.4.1",
-    "@waiting/shared-types": "^14.4.1",
+    "@waiting/shared-core": "^15.1.0",
+    "@waiting/shared-types": "^15.1.0",
     "camelcase-keys": "7.0.1",
     "rxjs": "^7.4.0",
     "snakecase-keys": "5.1.0"
@@ -42,10 +42,10 @@
     "kmore-types": "^23.0.2",
     "knex": "^0.95.14",
     "pg": "^8.7.1",
-    "typescript": ">=4.1"
+    "typescript": "^4.5.0"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=16.13.0"
   },
   "files": [
     "bin/*.js",

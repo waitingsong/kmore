@@ -29,8 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "@mw-components/jaeger": "^9.0.3",
-    "@waiting/shared-core": "^14.4.1",
-    "@waiting/shared-types": "^14.4.1",
+    "@waiting/shared-core": "^15.1.0",
+    "@waiting/shared-types": "^15.1.0"
     "kmore": "^23.0.2",
     "knex": "^0.95.14",
     "rxjs": "^7.4.0",
@@ -47,7 +47,7 @@
     "kmore-types": "^23.0.2"
   },
   "engines": {
-    "node": ">=14.16.0"
+    "node": ">=16.13.0"
   },
   "files": [
     "bin/*.js",
