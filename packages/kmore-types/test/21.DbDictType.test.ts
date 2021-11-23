@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { basename } from '@waiting/shared-core'
+import { relative } from 'path'
 
 import { DbDictType } from '../src/index'
 
@@ -10,7 +10,7 @@ import { Db } from './test3.model'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
 

@@ -2,10 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  basename,
-  join,
-} from '@waiting/shared-core'
+import { relative } from 'path'
+
+import { join } from '@waiting/shared-core'
 import { run } from 'rxrunscript'
 
 import {
@@ -20,7 +19,7 @@ import { expectedDict, expectedDict2 } from '../demo-config'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
   const path1 = join(__dirname, 'demo1.ts')

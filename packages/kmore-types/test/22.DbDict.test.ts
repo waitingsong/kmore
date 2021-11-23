@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 /* eslint-disable @typescript-eslint/indent */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { basename } from '@waiting/shared-core'
+import { relative } from 'path'
 
 import { DbDict } from '../src/index'
 
@@ -12,7 +12,7 @@ import { Db, Db2 } from './test3.model'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
 
