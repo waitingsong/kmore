@@ -1,7 +1,8 @@
 import { accessSync, copyFileSync } from 'fs'
 import { rm } from 'fs/promises'
+import { relative } from 'path'
 
-import { basename, join, pathResolve } from '@waiting/shared-core'
+import { join, pathResolve } from '@waiting/shared-core'
 import { firstValueFrom } from 'rxjs'
 import { tap, finalize, delay, defaultIfEmpty } from 'rxjs/operators'
 import { run } from 'rxrunscript'
@@ -14,7 +15,7 @@ import { expectedDict1, expectedDict2 } from './demo1.expect'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
   const tsConfigFilePath = join(__dirname, 'demo/tsconfig.json')
