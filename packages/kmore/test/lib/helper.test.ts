@@ -1,4 +1,4 @@
-import { basename } from '@waiting/shared-core'
+import { relative } from 'path'
 
 import { genCamelKeysFrom, genSnakeKeysFrom } from '../../src/index'
 
@@ -6,7 +6,7 @@ import { genCamelKeysFrom, genSnakeKeysFrom } from '../../src/index'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
 

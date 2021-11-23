@@ -1,4 +1,5 @@
-import { basename } from '@waiting/shared-core'
+import { relative } from 'path'
+
 import { genDbDict } from 'kmore-types'
 
 import { globalEvent, kmoreFactory } from '../src/index'
@@ -10,7 +11,7 @@ import { Db } from './test.model'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
   const dict = genDbDict<Db>()

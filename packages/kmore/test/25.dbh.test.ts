@@ -1,5 +1,4 @@
-import { basename } from '@waiting/shared-core'
-import { DbDict } from 'kmore-types'
+import { relative } from 'path'
 
 import { kmoreFactory, Kmore } from '../src/index'
 
@@ -10,7 +9,7 @@ import { Db, UserDo } from './test.model'
 import assert = require('power-assert')
 
 
-const filename = basename(__filename)
+const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
 describe(filename, () => {
   let km: Kmore<Db>
