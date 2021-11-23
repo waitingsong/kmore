@@ -1,5 +1,5 @@
 import { camelToSnakeCase } from '@waiting/shared-core'
-import { RecusiveCamelKeys } from '@waiting/shared-types'
+import { RecordCamelKeys } from '@waiting/shared-types'
 import keysDoToDtoCamel from 'camelcase-keys'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Knex } from 'knex'
@@ -85,7 +85,7 @@ export function wrapIdentifier(
 
 export function genCamelKeysFrom<Target = unknown, From = unknown>(
   input: From,
-): unknown extends Target ? RecusiveCamelKeys<Target> : Target {
+): unknown extends Target ? RecordCamelKeys<From> : Target {
   // @ts-expect-error
   return keysDoToDtoCamel(input)
 }
