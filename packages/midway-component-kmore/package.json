@@ -30,7 +30,7 @@
   "dependencies": {
     "@mw-components/jaeger": "^9.0.3",
     "@waiting/shared-core": "^15.1.0",
-    "@waiting/shared-types": "^15.1.0"
+    "@waiting/shared-types": "^15.1.0",
     "kmore": "^23.0.2",
     "knex": "^0.95.14",
     "rxjs": "^7.4.0",
@@ -43,7 +43,7 @@
     "@midwayjs/mock": "^2.13.0",
     "@midwayjs/web": "^2.13.0",
     "cross-env": "7",
-    "egg": "^2.31.0",
+    "egg": "^2.32.0",
     "kmore-types": "^23.0.2"
   },
   "engines": {
