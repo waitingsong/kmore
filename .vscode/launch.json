@@ -13,7 +13,8 @@
         "/base/": "${workspaceRoot}/"
       },
       "port": 9333,
-      "request": "attach"
+      "request": "attach",
+      "runtimeArgs": []
     },
     {
       "name": "Mocha Tests",
@@ -28,7 +29,7 @@
         // "${workspaceFolder}/test/**/**.test.ts"
       ],
       "env": {
-        "NODE_ENV": "local",
+        "NODE_ENV": "unittest",
         "TS_NODE_PROJECT": "test/tsconfig.json",
         "POSTGRES_HOST": "",
         "POSTGRES_PORT": 5432,
@@ -39,6 +40,7 @@
       "internalConsoleOptions": "openOnSessionStart",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "request": "launch",
+      "runtimeArgs": ["--preserve-symlinks"],
       "skipFiles": [
         "${workspaceFolder}/../../node_modules/rxjs/**/*.js",
         "${workspaceFolder}/node_modules/rxjs/**/*.js",
