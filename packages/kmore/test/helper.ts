@@ -1,12 +1,10 @@
+import assert from 'assert/strict'
 import { Knex } from 'knex'
 
 import { kmoreFactory, Kmore, getCurrentTime, EnumClient } from '../src/index'
 
 import { config, dbDict } from './test.config'
 import { Db, UserDo, UserExtDo } from './test.model'
-
-// eslint-disable-next-line import/order
-import assert = require('power-assert')
 
 
 type TableName = string

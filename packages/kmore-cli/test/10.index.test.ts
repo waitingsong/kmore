@@ -1,3 +1,4 @@
+import assert from 'assert/strict'
 import { accessSync, copyFileSync } from 'fs'
 import { rm } from 'fs/promises'
 import { relative } from 'path'
@@ -10,9 +11,6 @@ import { run } from 'rxrunscript'
 import { runCmd, RunCmdArgs } from '../src/index'
 
 import { expectedDict1, expectedDict2 } from './demo1.expect'
-
-// eslint-disable-next-line import/order
-import assert = require('power-assert')
 
 
 const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')

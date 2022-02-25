@@ -1,3 +1,4 @@
+import assert from 'assert/strict'
 import { relative } from 'path'
 
 import { kmoreFactory, Kmore } from '../src/index'
@@ -5,9 +6,6 @@ import { kmoreFactory, Kmore } from '../src/index'
 import { validateUserExtRows } from './helper'
 import { config, dbDict } from './test.config'
 import { Db } from './test.model'
-
-// eslint-disable-next-line import/order
-import assert = require('power-assert')
 
 
 const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
