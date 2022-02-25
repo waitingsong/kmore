@@ -32,7 +32,7 @@
     "@waiting/shared-core": "^15.2.0",
     "@waiting/shared-types": "^15.2.0",
     "kmore": "^24.0.2",
-    "knex": "^0.95.14",
+    "knex": "^1.0.0",
     "rxjs": "^7.4.0",
     "tsconfig-paths": "3"
   },
