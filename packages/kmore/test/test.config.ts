@@ -1,4 +1,5 @@
 import assert from 'assert/strict'
+
 import { genDbDict } from 'kmore-types'
 
 import { KnexConfig } from '../src/index'

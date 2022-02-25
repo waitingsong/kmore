@@ -54,7 +54,9 @@ describe(filename, () => {
         .where('uid', uid2)
         .returning('uid')
         .then((uids) => {
-          assert(uids && uids.length === 1 && uids[0] === uid2, uids.toString())
+          assert(uids, uids.toString())
+          assert(uids.length === 1, uids.toString())
+          assert(uids[0] === uid2)
         })
 
       await trx.rollback()

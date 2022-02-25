@@ -1,4 +1,5 @@
 import assert from 'assert/strict'
+
 import { Knex } from 'knex'
 
 import { kmoreFactory, Kmore, getCurrentTime, EnumClient } from '../src/index'
