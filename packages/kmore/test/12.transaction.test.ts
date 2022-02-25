@@ -47,16 +47,19 @@ describe(filename, () => {
       const trx = await dbh.transaction()
       const tbUser = km.refTables.ref_tb_user()
       const uid2 = 2
-      const ret = await tbUser
+      const uid99 = 99
+      await tbUser
         .transacting(trx)
         .forUpdate()
-        .update('uid', 99)
+        .update('uid', uid99)
         .where('uid', uid2)
         .returning('uid')
         .then((uids) => {
           assert(uids, uids.toString())
           assert(uids.length === 1, uids.toString())
-          assert(uids[0] === uid2)
+          const row = uids[0] as unknown as {uid: number}
+          assert(row)
+          assert(row.uid === uid99)
         })
 
       await trx.rollback()
