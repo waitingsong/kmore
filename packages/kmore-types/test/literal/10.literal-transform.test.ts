@@ -5,13 +5,12 @@ import assert from 'assert/strict'
 import { relative } from 'path'
 
 import { join } from '@waiting/shared-core'
-import { run } from 'rxrunscript'
-
 import {
   createSourceFile,
   transformCallExpressionToLiteralType,
   TransFormOptions,
 } from '@waiting/shared-types-dev'
+import { run } from 'rxrunscript'
 
 import { expectedDict, expectedDict2 } from '../demo-config'
 
