@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "incremental": false,
-    "module": "ES6",
+    "module": "ESNext",
     "moduleResolution": "node",
     "newLine": "lf",
     "noFallthroughCasesInSwitch": true,
@@ -18,6 +18,7 @@
     "sourceMap": false,
     "strict": true,
     "strictPropertyInitialization": false,
+    "stripInternal": true,
     "target": "ES2021",
     "types" : ["mocha", "node"]
   },
