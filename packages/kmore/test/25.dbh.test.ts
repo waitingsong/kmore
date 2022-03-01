@@ -26,49 +26,54 @@ describe(filename, () => {
       const { dbh, dict } = km
 
       const trx = await dbh.transaction()
+      assert(trx)
+      let uidTxt = 'n/a'
+      let uid: number | undefined = 0
+
+      try {
+        uid = await dbh<UserDo>(dict.tables.tb_user)
+          .transacting(trx)
+          .forUpdate()
+          .insert([ { name: 'user3', ctime: new Date() } ])
+          .returning('uid')
+          .then((uids) => {
+            assert(uids && uids.length === 1, uids.toString())
+            const row = uids[0] as unknown as {uid: number}
+            return row.uid
+          })
+        assert(typeof uid === 'number' && uid > 0, uid?.toString())
+      }
+      catch (ex) {
+        await trx.rollback()
+        assert(false, (ex as Error).message)
+      }
+
+      uidTxt = uid ? uid.toString() : 'n/a'
 
       await dbh<UserDo>(dict.tables.tb_user)
+      // .transacting(trx)
+        .where('uid', uid)
+        .then((rows) => {
+          assert(rows.length === 0, `uid: '${uidTxt}' should not exists out of the transaction`)
+        })
+      await dbh<UserDo>(dict.tables.tb_user)
+        .transacting(trx) // !! same transaction
+        .where('uid', uid)
+        .then(([row]) => {
+          assert(row && row.uid === uid, `uid: '${uidTxt}' should exists in the transaction`)
+        })
+      await dbh<UserDo>(dict.tables.tb_user)
+        .transacting(trx) // !! same transaction
+        .where('uid', uid)
+        .del()
+      await dbh<UserDo>(dict.tables.tb_user)
         .transacting(trx)
-        .forUpdate()
-        .insert([ { name: 'user3', ctime: new Date() } ])
-        .returning('uid')
-        .then((uids) => {
-          assert(uids && uids.length === 1, uids.toString())
-          return uids[0]
-        })
-        .then(async (uid) => {
-          const uidTxt = uid ? uid.toString() : 'n/a'
-
-          await dbh<UserDo>(dict.tables.tb_user)
-            // .transacting(trx)
-            .where('uid', uid)
-            .then((rows) => {
-              assert(rows.length === 0, `uid: '${uidTxt}' should not exists out of the transaction`)
-            })
-          await dbh<UserDo>(dict.tables.tb_user)
-            .transacting(trx) // !! same transaction
-            .where('uid', uid)
-            .then(([row]) => {
-              assert(row && row.uid === uid, `uid: '${uidTxt}' should exists in the transaction`)
-            })
-          await dbh<UserDo>(dict.tables.tb_user)
-            .transacting(trx) // !! same transaction
-            .where('uid', uid)
-            .del()
-          await dbh<UserDo>(dict.tables.tb_user)
-            .transacting(trx)
-            .where('uid', uid)
-            .then((rows) => {
-              assert(rows.length === 0, `uid: '${uidTxt}' should be deleted in the transaction`)
-            })
-        })
-        .then(async () => await trx.commit())
-        .catch((err: Error) => {
-          void trx.rollback()
-          assert(false, err.message)
+        .where('uid', uid)
+        .then((rows) => {
+          assert(rows.length === 0, `uid: '${uidTxt}' should be deleted in the transaction`)
         })
 
-      return
+      await trx.rollback()
     })
   })
 

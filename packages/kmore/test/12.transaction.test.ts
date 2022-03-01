@@ -29,6 +29,7 @@ describe(filename, () => {
     it('transaction', async () => {
       const { dbh } = km
       const trx = await dbh.transaction()
+      assert(trx)
       const tbUser = km.refTables.ref_tb_user()
       const ret = await tbUser
         .transacting(trx)
@@ -44,8 +45,18 @@ describe(filename, () => {
 
     it('transaction rollback', async () => {
       const { dbh } = km
-      const trx = await dbh.transaction()
-      const tbUser = km.refTables.ref_tb_user()
+
+
+      let trx = await dbh.transaction()
+      assert(trx)
+      let tbUser = km.refTables.ref_tb_user()
+
+      const uidsAll = await tbUser
+        .select('*')
+        .then()
+      assert(uidsAll)
+      assert(uidsAll.length === 2)
+
       const uid2 = 2
       const uid99 = 99
       await tbUser
@@ -61,9 +72,24 @@ describe(filename, () => {
           assert(row)
           assert(row.uid === uid99)
         })
-
+      const uidsAll2 = await tbUser
+        .select('*')
+        .then()
+      assert(uidsAll2)
+      assert(uidsAll2.length === 0)
       await trx.rollback()
 
+      tbUser = km.refTables.ref_tb_user()
+      const uidsAll3 = await tbUser
+        .select('*')
+        .then()
+      assert(uidsAll3)
+      assert(uidsAll3)
+      assert(uidsAll3.length === 2)
+
+      tbUser = km.refTables.ref_tb_user()
+      trx = await dbh.transaction()
+      assert(trx)
       const ret2 = await tbUser
         .transacting(trx)
         .forUpdate()
@@ -81,6 +107,8 @@ describe(filename, () => {
         .then()
       assert(ret3 && Array.isArray(ret3))
       assert(ret3.length === 0)
+
+      await trx.rollback()
     })
 
     it('transaction subscription', (done) => {
@@ -124,12 +152,12 @@ describe(filename, () => {
             .forUpdate()
             .select('*')
             .where('uid', 1)
-            .then((rows) => {
-              void trx.commit()
+            .then(async (rows) => {
+              await trx.commit()
               return rows
             })
-            .catch(() => {
-              void trx.rollback()
+            .catch(async () => {
+              await trx.rollback()
               return []
             })
 

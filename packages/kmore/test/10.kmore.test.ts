@@ -52,13 +52,13 @@ describe(filename, () => {
         .select('*')
         .where('uid', 1)
         .then((rows) => {
-          void trx.commit()
           return rows
         })
-        .catch(() => {
-          void trx.rollback()
+        .catch((ex) => {
+          console.error(ex)
           return []
         })
+      await trx.rollback()
       assert(ret && Array.isArray(ret))
       assert(ret.length === 1)
     })
