@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [25.0.0](https://github.com/waitingsong/kmore/compare/v24.0.3...v25.0.0) (2022-03-01)
+
+
+### Features
+
+* break change bump deps knex version to v1.0.0 ([dc86041](https://github.com/waitingsong/kmore/commit/dc860418d991cc11b2f4108e0dd203d037cbf848))
+
+
+
+
+
 ## [24.0.2](https://github.com/waitingsong/kmore/compare/v24.0.1...v24.0.2) (2021-11-25)
 
 **Note:** Version bump only for package kmore
