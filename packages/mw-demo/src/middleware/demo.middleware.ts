@@ -1,7 +1,7 @@
 import { Middleware } from '@midwayjs/decorator'
 
+import { ConfigKey, getConfigFromApp } from '~/index'
 import { Context, IMiddleware, NextFunction } from '~/interface'
-import { ConfigKey, getConfigFromApp } from '~/lib/index'
 import { matchFunc } from '~/util/common'
 
 
@@ -12,7 +12,7 @@ export class DemoMiddleware implements IMiddleware<Context, NextFunction> {
   }
 
   static getName(): string {
-    const name = ConfigKey.namespace + 'Middleware'
+    const name = ConfigKey.middlewareName
     return name
   }
 
