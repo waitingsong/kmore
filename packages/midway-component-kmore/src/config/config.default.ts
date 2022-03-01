@@ -1,8 +1,8 @@
-import { KmoreComponentConfig } from '../lib/types'
+import { initialConfig } from '../lib/config'
+import { Config } from '../lib/types'
 
 
-export const kmoreComponent: KmoreComponentConfig = {
-  defaultMaxListeners: 200,
-  timeoutWhenDestroy: 2000,
+export const kmoreConfig: Config = {
+  ...initialConfig,
 }
 

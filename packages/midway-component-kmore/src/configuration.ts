@@ -1,34 +1,33 @@
-/* eslint-disable node/no-extraneous-import */
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import 'tsconfig-paths/register'
-
 import EventEmitter from 'events'
-import { join } from 'path'
 
-import {
-  App,
-  Config,
-  Configuration,
-  Inject,
-} from '@midwayjs/decorator'
-import { IMidwayWebApplication } from '@midwayjs/web'
+import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
 
+import * as DefaultConfig from './config/config.default'
+import { ConfigKey } from './lib/config'
 import { DbManager } from './lib/db-man'
-import { KmoreComponentConfig } from './lib/types'
+import { Config as KmoreComponentConfig } from './lib/types'
 
+import { Application } from '~/interface'
 
-const namespace = 'kmore'
 
 @Configuration({
-  namespace,
-  importConfigs: [join(__dirname, 'config')],
+  namespace: ConfigKey.namespace,
+  importConfigs: [
+    {
+      default: DefaultConfig,
+      // local: LocalConfig,
+      // unittest: TestConfig,
+    },
+  ],
 })
 export class AutoConfiguration {
-  @App() readonly app: IMidwayWebApplication
+  @App() readonly app: Application
 
   @Inject() readonly dbManager: DbManager
 
-  @Config('kmoreComponent') readonly kmoreComponentConfig: KmoreComponentConfig
+  @Config(ConfigKey.config) readonly kmoreComponentConfig: KmoreComponentConfig
 
   async onReady(): Promise<void> {
     const { defaultMaxListeners } = this.kmoreComponentConfig

@@ -10,14 +10,16 @@ import { Logger as JLogger } from '@mw-components/jaeger'
 import { createDbh } from 'kmore'
 import { Knex } from 'knex'
 
+import { ConfigKey } from './config'
 import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
 import {
   DbConfig,
-  KmoreComponentConfig,
+  Config as KmoreComponentConfig,
   KmoreComponentFactoryOpts,
   BindUnsubscribeEventFunc,
 } from './types'
+
 
 import { Context } from '~/interface'
 
@@ -33,7 +35,7 @@ export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
-  @Config('kmoreComponent') private readonly kmoreComponentConfig: KmoreComponentConfig
+  @Config(ConfigKey.config) private readonly kmoreComponentConfig: KmoreComponentConfig
 
   private dbHosts: DbHosts = new Map()
   private dbConfigMap = new Map<string, DbConfig>()

@@ -10,8 +10,10 @@ import { TracerKmoreComponent } from './tracer-kmore'
 import { Context } from '~/interface'
 
 
-export interface KmoreComponentConfig {
-  // dbConfigs: DbConfigs<DbId>
+/**
+ * KmoreComponentConfig
+ */
+export interface Config {
   /**
    * @default 200
    * @see https://nodejs.org/dist/latest-v16.x/docs/api/events.html#events_emitter_getmaxlisteners
