@@ -140,7 +140,7 @@ export class DbManager <DbId extends string = any> {
         continue
       }
 
-      const pm = dbh.destroy().catch((ex) => {
+      const pm = dbh.destroy().catch((ex: Error) => {
         this.logger.error(`destroy knex connection failed with identifier: "${id}":\n${(ex as Error).message}`)
       })
       pms.push(pm)

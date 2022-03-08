@@ -129,6 +129,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         }
       }),
     ).subscribe({
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       next: async (ev) => {
 
         const currSpan = this.ctx.tracerManager.currentSpan()
