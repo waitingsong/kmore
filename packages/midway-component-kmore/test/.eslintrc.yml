@@ -5,7 +5,6 @@ parserOptions:
 rules:
   "@typescript-eslint/no-unused-vars": 0
   "unicorn/filename-case": 0
-  "@typescript-eslint/no-misused-promises": 0
 
 ignorePatterns:
   - fixtures

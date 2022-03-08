@@ -5,4 +5,4 @@ parserOptions:
 rules:
   "@typescript-eslint/no-unused-vars": 0
   "import/no-extraneous-dependencies": 0
-  "@typescript-eslint/no-misused-promises": 0
+
