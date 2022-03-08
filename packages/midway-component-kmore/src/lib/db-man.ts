@@ -170,7 +170,9 @@ export function kmoreComponentFactory<D>(
     : createDbh(options.dbConfig.config, options.dbConfig.enableTracing)
   const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
 
-  if (typeof bindUnsubscribeEventFunc === 'function') {
+  if (typeof bindUnsubscribeEventFunc === 'function'
+    && options.ctx
+    && Object.keys(options.ctx).length) {
     bindUnsubscribeEventFunc(options.ctx, km)
   }
   return km
