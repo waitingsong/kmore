@@ -106,7 +106,9 @@ export class DbManager <DbId extends string = any> {
       throw new TypeError(`Param dbConfig has no element, identifier: "${dbId}"`)
     }
 
-    const logger = await ctx.requestContext.getAsync(JLogger)
+    const logger = ctx && ctx.requestContext && ctx.requestContext.getAsync
+      ? await ctx.requestContext.getAsync(JLogger)
+      : void 0
     const dbh = this.getDbHost(dbId)
     const opts: KmoreComponentFactoryOpts<T> = {
       ctx,
