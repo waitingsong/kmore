@@ -106,7 +106,7 @@ export class DbManager <DbId extends string = any> {
       throw new TypeError(`Param dbConfig has no element, identifier: "${dbId}"`)
     }
 
-    const logger = ctx && ctx.requestContext && ctx.requestContext.getAsync
+    const logger = enableTracing && ctx && ctx.requestContext && ctx.requestContext.getAsync
       ? await ctx.requestContext.getAsync(JLogger)
       : void 0
     const dbh = this.getDbHost(dbId)
