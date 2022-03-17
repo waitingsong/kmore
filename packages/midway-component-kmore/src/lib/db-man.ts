@@ -1,5 +1,5 @@
 import {
-  Config,
+  Config as _Config,
   Logger,
   Provide,
   Scope,
@@ -15,11 +15,10 @@ import { KmoreComponent } from './kmore'
 import { TracerKmoreComponent } from './tracer-kmore'
 import {
   DbConfig,
-  Config as KmoreComponentConfig,
+  Config,
   KmoreComponentFactoryOpts,
   BindUnsubscribeEventFunc,
 } from './types'
-
 
 import { Context } from '~/interface'
 
@@ -35,7 +34,7 @@ export class DbManager <DbId extends string = any> {
 
   @Logger() private readonly logger: ILogger
 
-  @Config(ConfigKey.config) private readonly kmoreComponentConfig: KmoreComponentConfig
+  @_Config(ConfigKey.config) private readonly config: Config
 
   private dbHosts: DbHosts = new Map()
   private dbConfigMap = new Map<string, DbConfig>()
@@ -146,7 +145,7 @@ export class DbManager <DbId extends string = any> {
       pms.push(pm)
     }
 
-    const { timeoutWhenDestroy } = this.kmoreComponentConfig
+    const { timeoutWhenDestroy } = this.config
     const tt = timeoutWhenDestroy && timeoutWhenDestroy >= 0
       ? timeoutWhenDestroy
       : 3000
