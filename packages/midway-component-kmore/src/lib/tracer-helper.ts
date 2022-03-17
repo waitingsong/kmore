@@ -311,6 +311,10 @@ interface ConnectionConfig {
 
 
 export const unsubscribeEventFuncOnResFinish: BindUnsubscribeEventFunc = (ctx, km) => {
+  if (! ctx) {
+    console.warn('ctx undefined')
+    return
+  }
   ctx.res.once('finish', () => {
     if (km instanceof TracerKmoreComponent) {
       km.unsubscribeEvent()
