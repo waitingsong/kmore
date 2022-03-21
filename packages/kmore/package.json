@@ -31,17 +31,17 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^15.2.0",
-    "@waiting/shared-types": "^15.2.0",
-    "camelcase-keys": "7.0.1",
+    "@waiting/shared-core": "^16.0.0",
+    "@waiting/shared-types": "^16.0.0",
+    "camelcase-keys": "7.0.2",
     "rxjs": "^7.4.0",
-    "snakecase-keys": "5.1.0"
+    "snakecase-keys": "5.1.2"
   },
   "devDependencies": {
     "cross-env": "7",
     "kmore-types": "^25.0.1",
-    "knex": "^1.0.0",
-    "pg": "^8.7.1"
+    "knex": "^1.0.4",
+    "pg": "^8.7.3"
   },
   "engines": {
     "node": ">=16.13.0"
