@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [25.1.0](https://github.com/waitingsong/kmore/compare/v25.0.4...v25.1.0) (2022-03-21)
+
+
+### Features
+
+* **midway-component-kmore:** update KmoreComponentFactoryOpts and TracerKmoreComponent ([69b57dc](https://github.com/waitingsong/kmore/commit/69b57dc1381a2bb6caccf5919ae973118b91a231))
+
+
+
+
+
 ## [25.0.4](https://github.com/waitingsong/kmore/compare/v25.0.3...v25.0.4) (2022-03-18)
 
 **Note:** Version bump only for package @mw-components/kmore

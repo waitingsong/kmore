@@ -1,7 +1,7 @@
 {
   "name": "kmore-cli",
   "author": "waiting",
-  "version": "25.0.1",
+  "version": "25.1.0",
   "description": "Command line to generate dicts from ts source files for kmore",
   "keywords": [
     "kmore",
@@ -30,7 +30,7 @@
     "@waiting/shared-core": "^16.0.0",
     "@waiting/shared-types": "^16.0.0",
     "@waiting/shared-types-dev": "^9.0.1",
-    "kmore-types": "^25.0.1",
+    "kmore-types": "^25.1.0",
     "rxjs": "^7.4.0",
     "rxwalker": "^5.0.2",
     "tsconfig-resolver": "^3.0.1",

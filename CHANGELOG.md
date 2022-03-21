@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [25.1.0](/compare/v25.0.4...v25.1.0) (2022-03-21)
+
+
+### Bug Fixes
+
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* **midway-component-kmore:** update KmoreComponentFactoryOpts and TracerKmoreComponent 69b57dc
+
+
+
+
+
 ## [25.0.4](/compare/v25.0.3...v25.0.4) (2022-03-18)
 
 **Note:** Version bump only for package kmore
