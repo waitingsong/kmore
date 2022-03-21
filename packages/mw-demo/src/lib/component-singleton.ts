@@ -1,14 +1,19 @@
+import assert from 'assert/strict'
+
 import {
   App,
+  Config as _Config,
   Init,
   Provide,
   Scope,
   ScopeEnum,
 } from '@midwayjs/decorator'
 
-import { Config } from './types'
+import {
+  Config,
+  ConfigKey,
+} from './index'
 
-import { getConfigFromApp } from '~/index'
 import { Application } from '~/interface'
 
 
@@ -16,14 +21,14 @@ import { Application } from '~/interface'
 @Scope(ScopeEnum.Singleton)
 export class DemoComponent {
 
-  @App() private readonly app: Application
+  @_Config(ConfigKey.config) protected readonly config: Config
 
-  protected config: Config
+  @App() readonly app: Application
 
   @Init()
   async init(): Promise<void> {
-    const config = getConfigFromApp(this.app)
-    this.config = config
+    assert(this.config)
+    assert(this.app)
   }
 
 }
