@@ -1,4 +1,3 @@
-import { Logger } from '@mw-components/jaeger'
 import { Kmore } from 'kmore'
 import { Knex } from 'knex'
 
@@ -13,7 +12,6 @@ export class KmoreComponent<D = unknown> extends Kmore<D> {
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
     protected ctx: Context,
-    protected readonly logger?: Logger,
   ) {
     super(
       dbConfig.config,

@@ -6,7 +6,7 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { Logger as JLogger } from '@mw-components/jaeger'
+import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
 import { createDbh } from 'kmore'
 import { Knex } from 'knex'
 
@@ -105,9 +105,14 @@ export class DbManager <DbId extends string = any> {
       throw new TypeError(`Param dbConfig has no element, identifier: "${dbId}"`)
     }
 
-    const logger = enableTracing && ctx && ctx.requestContext && ctx.requestContext.getAsync
-      ? await ctx.requestContext.getAsync(JLogger)
-      : void 0
+    let logger: JLogger | undefined = void 0
+    let tracerManager: TracerManager | undefined = void 0
+
+    if (enableTracing && ctx && ctx.requestContext && ctx.requestContext.getAsync) {
+      logger = await ctx.requestContext.getAsync(JLogger)
+      tracerManager = await ctx.requestContext.getAsync(TracerManager)
+    }
+
     const dbh = this.getDbHost(dbId)
     const opts: KmoreComponentFactoryOpts<T> = {
       ctx,
@@ -115,6 +120,7 @@ export class DbManager <DbId extends string = any> {
       dbh,
       dbId,
       logger,
+      tracerManager,
     }
     const km = enableTracing
       ? kmoreComponentFactory<T>(opts, TracerKmoreComponent, bindUnsubscribeEventFunc)
@@ -169,7 +175,13 @@ export function kmoreComponentFactory<D>(
   const dbh: Knex = options.dbh
     ? options.dbh
     : createDbh(options.dbConfig.config, options.dbConfig.enableTracing)
-  const km = new component<D>(options.dbConfig, dbh, options.ctx, options.logger)
+  const km = new component<D>(
+    options.dbConfig,
+    dbh,
+    options.ctx,
+    options.logger,
+    options.tracerManager,
+  )
 
   if (typeof bindUnsubscribeEventFunc === 'function'
     && options.ctx

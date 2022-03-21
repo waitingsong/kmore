@@ -1,4 +1,4 @@
-import { Logger } from '@mw-components/jaeger'
+import { Logger, TracerManager } from '@mw-components/jaeger'
 import {
   Kmore,
   KmoreEvent,
@@ -24,12 +24,14 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
   dbEventSubscription: Subscription | undefined
 
   protected logger: Logger
+  protected tracerManager: TracerManager
 
   constructor(
     public readonly dbConfig: DbConfig<D>,
     public dbh: Knex,
     protected ctx: Context,
     jlogger?: Logger,
+    protected trm?: TracerManager,
   ) {
 
     super(
@@ -48,13 +50,13 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
     }
     this.logger = jlogger
 
-    if (this.ctx.tracerManager) {
-      this.registerDbObservable(this.instanceId)
-      this.subscribeEvent()
-    }
-    else {
+    if (! trm) {
       console.info('context tracerManager undefined, may running at component when test case. kmore event subscription skipped')
+      throw new TypeError('Parameter tracerManager undefined!')
     }
+    this.tracerManager = trm
+    this.registerDbObservable(this.instanceId)
+    this.subscribeEvent()
   }
 
   unsubscribeEvent(): void {
@@ -125,18 +127,18 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
       }),
       finalize(() => {
         if (isNewSpan) {
-          this.ctx.tracerManager.finishSpan()
+          this.tracerManager.finishSpan()
         }
       }),
     ).subscribe({
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       next: async (ev) => {
 
-        const currSpan = this.ctx.tracerManager.currentSpan()
+        const currSpan = this.tracerManager.currentSpan()
         if (! currSpan) {
           // requext finished
           const name = 'DbComponentOrphan'
-          this.ctx.tracerManager.startSpan(name)
+          this.tracerManager.startSpan(name)
           // const span = globalTracer().startSpan(name)
           isNewSpan = true
         }
@@ -144,7 +146,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         if (ev.type === 'query') {
           const { name: tagClass } = this.constructor
           await processQueryEventWithEventId({
-            trm: this.ctx.tracerManager,
+            trm: this.tracerManager,
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,
@@ -155,7 +157,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
         else {
           // if (! ev.identifier) { return }
           await processQueryRespAndExEventWithEventId({
-            trm: this.ctx.tracerManager,
+            trm: this.tracerManager,
             dbConfig: this.dbConfig,
             ev,
             logger: this.logger,

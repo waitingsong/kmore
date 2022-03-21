@@ -1,4 +1,4 @@
-import { Logger as JLogger } from '@mw-components/jaeger'
+import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
 import { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
 import { KnexConfig } from 'kmore'
 import type { DbDict } from 'kmore-types'
@@ -65,6 +65,7 @@ export interface KmoreComponentFactoryOpts<D> {
   dbId?: string
   instanceId?: string | symbol
   logger?: JLogger
+  tracerManager?: TracerManager
 }
 
 export interface QuerySpanInfo {
