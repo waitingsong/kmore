@@ -1,4 +1,5 @@
 import { Logger as JLogger } from '@mw-components/jaeger'
+import { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
 import { KnexConfig } from 'kmore'
 import type { DbDict } from 'kmore-types'
 import { Knex } from 'knex'
@@ -24,6 +25,11 @@ export interface Config {
    */
   timeoutWhenDestroy?: number
 }
+
+export interface MiddlewareOptions {
+  debug: boolean
+}
+export type MiddlewareConfig = MWConfig<MiddlewareOptions>
 
 export type DbConfigs <DbId extends string = string> = Record<DbId, DbConfig>
 export interface DbConfig <T = unknown> {

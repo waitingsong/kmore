@@ -1,5 +1,21 @@
-import { Config } from './types'
+import {
+  Config,
+  MiddlewareConfig,
+  MiddlewareOptions,
+} from './types'
 
+
+export const initialConfig: Readonly<Config> = {
+  defaultMaxListeners: 200,
+  timeoutWhenDestroy: 2000,
+}
+
+export const initMiddlewareOptions: MiddlewareOptions = {
+  debug: false,
+}
+export const initialMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'ignore' | 'match' | 'options'>> = {
+  enableMiddleware: true,
+}
 
 export const enum ConfigKey {
   config = 'kmoreConfig',
@@ -7,10 +23,5 @@ export const enum ConfigKey {
   namespace = 'kmore',
   componentName = 'kmoreComponent',
   middlewareName = 'kmoreMiddleware'
-}
-
-export const initialConfig: Readonly<Config> = {
-  defaultMaxListeners: 200,
-  timeoutWhenDestroy: 2000,
 }
 
