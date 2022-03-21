@@ -1,5 +1,4 @@
 import {
-  Config,
   initialMiddlewareConfig,
   initMiddlewareOptions,
   MiddlewareConfig,
@@ -8,8 +7,8 @@ import {
 
 
 export {
-  demoConfig as config,
-  demoMiddlewareConfig as mwConfig,
+  kmoreConfig as config,
+  kmoreMiddlewareConfig as mwConfig,
 } from '~/config/config.unittest'
 
 export const mwOptions: MiddlewareOptions = {
