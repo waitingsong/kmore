@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import 'tsconfig-paths/register'
 import EventEmitter from 'events'
+import { join } from 'path'
 
 import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
 
-import * as DefaultConfig from './config/config.default'
 import { ConfigKey } from './lib/config'
 import { DbManager } from './lib/db-man'
 import { Config as KmoreComponentConfig } from './lib/types'
@@ -14,13 +14,7 @@ import { Application } from '~/interface'
 
 @Configuration({
   namespace: ConfigKey.namespace,
-  importConfigs: [
-    {
-      default: DefaultConfig,
-      // local: LocalConfig,
-      // unittest: TestConfig,
-    },
-  ],
+  importConfigs: [join(__dirname, 'config')],
 })
 export class AutoConfiguration {
   @App() readonly app: Application
