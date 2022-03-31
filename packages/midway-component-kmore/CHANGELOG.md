@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [25.1.2](https://github.com/waitingsong/kmore/compare/v25.1.1...v25.1.2) (2022-03-31)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** ConfigKey define ([4857e75](https://github.com/waitingsong/kmore/commit/4857e75992677c85ef116a572553acc9478d23eb))
+
+
+
+
+
 ## [25.1.1](https://github.com/waitingsong/kmore/compare/v25.1.0...v25.1.1) (2022-03-24)
 
 **Note:** Version bump only for package @mw-components/kmore
