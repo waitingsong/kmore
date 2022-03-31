@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [25.1.3](https://github.com/waitingsong/kmore/compare/v25.1.2...v25.1.3) (2022-03-31)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** circular dependency ([1a36e79](https://github.com/waitingsong/kmore/commit/1a36e79188040dc4d538416801f1606f1e69de49))
+* **midway-component-kmore:** cycle dependency ([dc2b8d5](https://github.com/waitingsong/kmore/commit/dc2b8d5c886caa2a333932fcfa6305f12d986b1a))
+
+
+
+
+
 ## [25.1.2](https://github.com/waitingsong/kmore/compare/v25.1.1...v25.1.2) (2022-03-31)
 
 

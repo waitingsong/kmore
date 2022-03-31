@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [25.1.3](/compare/v25.1.2...v25.1.3) (2022-03-31)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+* **midway-component-kmore:** circular dependency 1a36e79
+* **midway-component-kmore:** cycle dependency dc2b8d5
+
+
+
+
+
 ## [25.1.2](/compare/v25.1.1...v25.1.2) (2022-03-31)
 
 
