@@ -15,7 +15,7 @@ import {
 } from './tracer-helper'
 import { DbConfig } from './types'
 
-import { Context } from '~/interface'
+import type { Context, BindUnsubscribeEventFunc } from '~/interface'
 
 
 export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
@@ -175,3 +175,16 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
 }
 
+
+export const unsubscribeEventFuncOnResFinish: BindUnsubscribeEventFunc = (ctx, km) => {
+  if (! ctx || ! ctx.res) {
+    console.warn('ctx or ctx.res undefined')
+    return
+  }
+  ctx.res.once && ctx.res.once('finish', () => {
+    if (km instanceof TracerKmoreComponent) {
+      km.unsubscribeEvent()
+    }
+    km.unsubscribe()
+  })
+}

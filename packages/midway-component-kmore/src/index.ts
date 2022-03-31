@@ -1,16 +1,9 @@
-import { Context } from './interface'
-import { KmoreComponent, TracerKmoreComponent } from './lib/index'
-
 
 export { AutoConfiguration as Configuration } from './configuration'
 export * from './lib/index'
+export { BindUnsubscribeEventFunc } from './interface'
 export { getConfigFromApp } from './util/common'
 
-
-export type BindUnsubscribeEventFunc = (
-  ctx: Context,
-  kmoreInstance: KmoreComponent | TracerKmoreComponent,
-) => void
 
 export {
   getCurrentTime,

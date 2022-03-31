@@ -11,16 +11,16 @@ import { createDbh } from 'kmore'
 import { Knex } from 'knex'
 
 import { ConfigKey } from './config'
-import { KmoreComponent } from './kmore'
+import { KmoreComponent } from './kmore.component'
 import { TracerKmoreComponent } from './tracer-kmore'
 import {
   DbConfig,
   Config,
   KmoreComponentFactoryOpts,
-  BindUnsubscribeEventFunc,
 } from './types'
 
-import { Context } from '~/interface'
+
+import type { Context, BindUnsubscribeEventFunc } from '~/interface'
 
 
 type DbHosts = Map<string, Knex>
