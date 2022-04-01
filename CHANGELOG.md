@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [25.1.4](/compare/v25.1.3...v25.1.4) (2022-04-01)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** export unsubscribeEventFuncOnResFinish() b5745da
+
+
+
+
+
 ## [25.1.3](/compare/v25.1.2...v25.1.3) (2022-03-31)
 
 

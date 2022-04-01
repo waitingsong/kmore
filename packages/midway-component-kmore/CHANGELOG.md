@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [25.1.4](https://github.com/waitingsong/kmore/compare/v25.1.3...v25.1.4) (2022-04-01)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** export unsubscribeEventFuncOnResFinish() ([b5745da](https://github.com/waitingsong/kmore/commit/b5745dac96020fdf7481b3b85699b9e71364c4c5))
+
+
+
+
+
 ## [25.1.3](https://github.com/waitingsong/kmore/compare/v25.1.2...v25.1.3) (2022-03-31)
 
 
