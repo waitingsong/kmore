@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [25.1.6](https://github.com/waitingsong/kmore/compare/v25.1.5...v25.1.6) (2022-04-28)
+
+**Note:** Version bump only for package @mw-components/kmore
+
+
+
+
+
 ## [25.1.5](https://github.com/waitingsong/kmore/compare/v25.1.4...v25.1.5) (2022-04-02)
 
 **Note:** Version bump only for package @mw-components/kmore
