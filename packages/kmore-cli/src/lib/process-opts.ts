@@ -1,13 +1,11 @@
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import yargs from 'yargs'
+import type { ParsedArgs } from 'minimist'
 
-import { cmdSet, initialCliArgs } from './config'
-import { helpDefault } from './helper'
-import { CliArgs, CmdType, InputOptions, Options } from './types'
+import { cmdSet, initialCliArgs } from './config.js'
+import { helpDefault } from './helper.js'
+import { CliArgs, CmdType, InputOptions, Options } from './types.js'
 
 
-export function parseCliArgs(argv: typeof yargs.argv): CliArgs {
+export function parseCliArgs(argv: ParsedArgs): CliArgs {
   const args: CliArgs = { ...initialCliArgs }
   const cmdArr: string[] = argv._.map(value => value.toString())
 

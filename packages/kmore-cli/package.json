@@ -31,10 +31,10 @@
     "@waiting/shared-types": "^18.0.0",
     "@waiting/shared-types-dev": "^10.0.0",
     "kmore-types": "^26.0.0",
+    "minimist": "^1.2.6",
     "rxjs": "^7.5.0",
     "rxwalker": "^6.0.0",
-    "tsconfig-resolver": "^3.0.1",
-    "yargs": "17"
+    "tsconfig-resolver": "^3.0.1"
   },
   "devDependencies": {
     "cross-env": "7"

@@ -1,22 +1,21 @@
-// @ts-nocheck
 /* eslint-disable node/no-process-exit */
 /**
  * kmore-cli
  * command: gen  case insensitive
  */
-import yargs from 'yargs'
+import minimist from 'minimist'
 
 import { genCmdHelp, helpDefault } from '../lib/helper'
 import { runCmd } from '../lib/index'
 import { parseCliArgs, parseCliOpts } from '../lib/process-opts'
-import { CliArgs } from '../lib/types'
+import { CliArgs, InputOptions } from '../lib/types'
 // log(yargs.argv)
 
 let args!: CliArgs
-
+const argv = minimist<InputOptions>(process.argv.slice(2))
 
 try {
-  args = parseCliArgs(yargs.argv)
+  args = parseCliArgs(argv)
 }
 catch (ex) {
   console.info((ex as Error).message)
@@ -31,9 +30,8 @@ if (args.cmd) {
     process.exit(0)
   }
   else {
-    // eslint-disable-next-line id-length
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    args.options = parseCliOpts(args.cmd, { ...yargs.argv, _: '' })
+    const ps = { ...argv, _: '' } as unknown as InputOptions
+    args.options = parseCliOpts(args.cmd, ps)
     args.debug && console.info(args)
 
     runCmd(args).subscribe({
