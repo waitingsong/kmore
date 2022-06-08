@@ -1,5 +1,5 @@
 import { camelToSnakeCase } from '@waiting/shared-core'
-import { RecordCamelKeys } from '@waiting/shared-types'
+import { RecordCamelKeys, RecusiveSnakeKeys } from '@waiting/shared-types'
 import keysDoToDtoCamel from 'camelcase-keys'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Knex } from 'knex'
@@ -59,10 +59,10 @@ function parseRespMysql2(res: RespMysql2): string {
 /**
  * Convert keys of result to camelcase
  */
-export function postProcessResponse(
-  result: unknown,
+export function postProcessResponseToCamel<T = unknown>(
+  result: T,
   _queryContext: unknown,
-): unknown {
+): RecordCamelKeys<T, '_'>[] | RecordCamelKeys<T, '_'> {
 
   if (Array.isArray(result)) {
     return result.map(row => genCamelKeysFrom(row))
@@ -85,14 +85,14 @@ export function wrapIdentifier(
 
 export function genCamelKeysFrom<Target = unknown, From = unknown>(
   input: From,
-): unknown extends Target ? RecordCamelKeys<From> : Target {
+): unknown extends Target ? RecordCamelKeys<From, '_'> : Target {
   // @ts-expect-error
   return keysDoToDtoCamel(input)
 }
 
 export function genSnakeKeysFrom<Target = unknown, From = unknown>(
   input: From,
-): Target {
+): unknown extends Target ? RecusiveSnakeKeys<From> : Target {
   // @ts-expect-error
   return keysDto2DoSnake(input)
 }

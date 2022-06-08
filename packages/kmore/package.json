@@ -40,7 +40,7 @@
   "devDependencies": {
     "cross-env": "7",
     "kmore-types": "^26.0.0",
-    "knex": "^2.0.0",
+    "knex": "^2.1.0",
     "pg": "^8.7.3"
   },
   "engines": {

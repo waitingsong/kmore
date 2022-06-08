@@ -21,7 +21,7 @@
   "homepage": "https://waitingsong.github.io/kmore/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/waitingsong/kmore.git"
+    "url": "https://github.com/waitingsong/kmore"
   },
   "license": "MIT",
   "dependencies": {

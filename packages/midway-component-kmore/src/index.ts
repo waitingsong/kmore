@@ -7,11 +7,13 @@ export { getConfigFromApp } from './util/common'
 
 export {
   getCurrentTime,
-  Kmore, KmoreEvent, KnexConfig,
+  Kmore,
+  KmoreEvent,
+  KnexConfig,
   genCamelKeysFrom,
   genSnakeKeysFrom,
   mergeDoWithInitData,
-  postProcessResponse,
+  postProcessResponseToCamel,
   wrapIdentifier,
 } from 'kmore'
 
