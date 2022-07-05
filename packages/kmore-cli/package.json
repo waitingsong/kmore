@@ -27,8 +27,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^18.0.0",
-    "@waiting/shared-types": "^18.0.0",
+    "@waiting/shared-core": "^19.0.0",
+    "@waiting/shared-types": "^19.0.0",
     "@waiting/shared-types-dev": "^10.0.0",
     "kmore-types": "^27.0.0",
     "minimist": "^1.2.6",
@@ -43,6 +43,7 @@
     "node": ">=16.13.0"
   },
   "files": [
+    "tsconfig.json",
     "src/**/*.ts",
     "bin/*.js",
     "dist"
@@ -61,7 +62,7 @@
     "prepublishOnly": "sh ../../.scripts/change-pkg-types-dist.sh",
     "postpublish": "sh ../../.scripts/change-pkg-types-src.sh",
     "purge": "npm run clean && rm node_modules -rf",
-    "rp": "rollup -c rollup.config.js",
+    "rp": "rollup -c rollup.config.js --context this",
     "rp:w": "npm run tsc:w | rollup -wc rollup.config.js",
     "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha",
     "test:browser": "cd .config && npm run browser && cd ..",

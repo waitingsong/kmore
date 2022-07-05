@@ -29,8 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "@mw-components/jaeger": "^12.0.0",
-    "@waiting/shared-core": "^18.0.0",
-    "@waiting/shared-types": "^18.0.0",
+    "@waiting/shared-core": "^19.0.0",
+    "@waiting/shared-types": "^19.0.0",
     "kmore": "^27.0.0",
     "knex": "^2.1.0",
     "rxjs": "^7.5.0",
@@ -42,7 +42,7 @@
   },
   "peerDependencies": {
     "@midwayjs/core": ">=3",
-    "@midwayjs/decorator": "*"
+    "@midwayjs/decorator": ">=3"
   },
   "engines": {
     "node": ">=16.13.0"
