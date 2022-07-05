@@ -7,7 +7,7 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    container: node:16-bullseye
+    container: node:18-bullseye
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
 
     strategy:
@@ -16,14 +16,14 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
 
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: cache-lerna
         env:
           cache-name: cache-lerna
@@ -56,6 +56,7 @@ jobs:
           sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
           locale-gen
           locale -a
+          chmod a+w -R .
 
       - name: Verify
         run: |
@@ -73,17 +74,25 @@ jobs:
           POSTGRES_PASSWORD: postgres
           PGPASSWORD: postgres
 
+      - name: Inatall Dependencies
+        run: |
+          chmod a+w -R .
+          # DO NOT execute: npm config set unsafe-perm=true
+          export cwd=`pwd`
+          # .github/workflows/fix.sh
+          npm i -g c8 lerna rollup zx
+          npm run bootstrap
+        env:
+          CI: true
+
       - name: Build
         run: |
+          chmod a+w -R .
           whoami
           export cwd=`pwd`
           . .scripts/ci/ci-env.sh
           .scripts/ci/ci-prepare.sh
-          .github/workflows/fix.sh
-          npm i -g c8 lerna rollup zx
-          .github/workflows/fix.sh
-          npm run bootstrap
-          .github/workflows/fix.sh
+          # .github/workflows/fix.sh
           npm run build --if-present
         env:
           CI: true
