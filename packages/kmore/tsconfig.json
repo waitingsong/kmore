@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Node",
     "newLine": "lf",
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,

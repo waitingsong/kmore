@@ -1,3 +1,5 @@
+import assert from 'assert'
+
 import {
   Config as _Config,
   Logger,
@@ -99,6 +101,7 @@ export class DbManager <DbId extends string = any> {
     bindUnsubscribeEventFunc: BindUnsubscribeEventFunc | false,
   ): Promise<KmoreComponent<T> | TracerKmoreComponent<T>> {
 
+    assert(dbId, 'dbId is required')
     const { config, enableTracing } = dbConfig
 
     if (! config || ! Object.keys(config).length) {
@@ -117,10 +120,12 @@ export class DbManager <DbId extends string = any> {
     const opts: KmoreComponentFactoryOpts<T> = {
       ctx,
       dbConfig,
-      dbh,
       dbId,
       logger,
       tracerManager,
+    }
+    if (dbh) {
+      opts.dbh = dbh
     }
     const km = enableTracing
       ? kmoreComponentFactory<T>(opts, TracerKmoreComponent, bindUnsubscribeEventFunc)

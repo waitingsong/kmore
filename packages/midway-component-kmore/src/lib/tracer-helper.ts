@@ -238,9 +238,9 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
       tags[TracerLog.queryResponse] = respRaw?.response?.rows
     }
     span.addTags(tags)
-    input.level = 'warn'
+    input['level'] = 'warn'
     const procInfo = await retrieveProcInfo()
-    input.procInfo = procInfo
+    input['procInfo'] = procInfo
     // span.log(input)
     logger.log && logger.log(input, span)
   }

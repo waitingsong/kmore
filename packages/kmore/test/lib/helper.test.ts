@@ -29,11 +29,11 @@ describe(filename, () => {
       const ret = genCamelKeysFrom(input)
       assert(ret.fooBarz.first_name === 'name')
       assert(ret.fooBarz.lastName === 'foo')
-      // assert(ret.fooBarz.firstName === 'name')
       assert.deepStrictEqual(ret, expected)
     })
 
   })
+
   describe('Should genSnakeKeysFrom() work', () => {
     it('tb_user', async () => {
       const input = {
@@ -46,14 +46,15 @@ describe(filename, () => {
       }
       const expected = {
         foo_bar: 1,
-        foo2: 2,
+        foo_2: 2,
         foo_barz: {
           first_name: 'name',
-          sec_name: 'secName',
+          secName: 'secName',
         },
       } as const
       const ret = genSnakeKeysFrom(input)
-      assert(ret.foo_barz.sec_name === 'secName')
+      assert(ret.foo_2 === 2)
+      assert(ret.foo_barz.secName === 'secName')
       assert.deepStrictEqual(ret, expected)
     })
 

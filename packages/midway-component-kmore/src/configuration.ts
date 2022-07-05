@@ -29,7 +29,7 @@ export class AutoConfiguration {
     let maxListeners = defaultMaxListeners && defaultMaxListeners >= 0
       ? defaultMaxListeners
       : 200
-    if (process.env.CI || process.env.MIDWAY_SERVER_ENV === 'unittest' || process.env.NODE_ENV === 'unnittest') {
+    if (process.env['CI'] || process.env['MIDWAY_SERVER_ENV'] === 'unittest' || process.env['NODE_ENV'] === 'unnittest') {
       maxListeners += 200
     }
     EventEmitter.defaultMaxListeners = maxListeners

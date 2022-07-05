@@ -10,9 +10,7 @@
     "ts"
   ],
   "bin": {},
-  "browser": "",
-  "es2015": "",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "src/index.ts",
   "bugs": {
@@ -25,14 +23,14 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^19.0.0",
-    "@waiting/shared-types": "^19.0.0"
+    "@waiting/shared-core": "^19.1.0",
+    "@waiting/shared-types": "^19.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13",
-    "@waiting/shared-types-dev": "^10.0.0",
+    "@waiting/shared-types-dev": "^10.0.2",
     "cross-env": "7",
-    "rollup-plugin-typescript2": "^0.31.0"
+    "rollup-plugin-typescript2": "^0.32.0"
   },
   "engines": {
     "node": ">=16.13.0"

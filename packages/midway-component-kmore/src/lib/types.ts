@@ -61,8 +61,8 @@ export interface KmoreComponentFactoryOpts<D> {
   dbh?: Knex
   dbId?: string
   instanceId?: string | symbol
-  logger?: JLogger
-  tracerManager?: TracerManager
+  logger?: JLogger | undefined
+  tracerManager?: TracerManager | undefined
 }
 
 export interface QuerySpanInfo {

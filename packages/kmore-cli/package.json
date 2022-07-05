@@ -14,7 +14,7 @@
   },
   "browser": "",
   "es2015": "",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "bugs": {
@@ -27,9 +27,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^19.0.0",
-    "@waiting/shared-types": "^19.0.0",
-    "@waiting/shared-types-dev": "^10.0.0",
+    "@waiting/shared-core": "^19.1.0",
+    "@waiting/shared-types": "^19.0.1",
+    "@waiting/shared-types-dev": "^10.0.2",
     "kmore-types": "^27.0.0",
     "minimist": "^1.2.6",
     "rxjs": "^7.5.0",
@@ -37,7 +37,8 @@
     "tsconfig-resolver": "^3.0.1"
   },
   "devDependencies": {
-    "cross-env": "7"
+    "cross-env": "7",
+    "rxrunscript": "^11.0.1"
   },
   "engines": {
     "node": ">=16.13.0"

@@ -28,7 +28,7 @@ export class TracerKmoreComponent<D = unknown> extends Kmore<D> {
 
   constructor(
     public readonly dbConfig: DbConfig<D>,
-    public dbh: Knex,
+    public override dbh: Knex,
     protected ctx: Context,
     jlogger?: Logger,
     protected trm?: TracerManager,

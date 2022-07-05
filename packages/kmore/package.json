@@ -18,7 +18,7 @@
   "bin": {},
   "browser": "",
   "es2015": "",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "bugs": {
@@ -31,11 +31,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^19.0.0",
-    "@waiting/shared-types": "^19.0.0",
-    "camelcase-keys": "7.0.2",
-    "rxjs": "^7.5.0",
-    "snakecase-keys": "5.4.0"
+    "@waiting/shared-core": "^19.1.0",
+    "@waiting/shared-types": "^19.0.1",
+    "rxjs": "^7.5.0"
   },
   "devDependencies": {
     "cross-env": "7",

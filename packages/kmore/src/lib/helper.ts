@@ -1,9 +1,13 @@
-import { camelToSnakeCase } from '@waiting/shared-core'
-import { RecordCamelKeys, RecusiveSnakeKeys } from '@waiting/shared-types'
-import keysDoToDtoCamel from 'camelcase-keys'
+import {
+  camelToSnake,
+  camelKeys,
+  snakeKeys,
+} from '@waiting/shared-core'
+import { RecordCamelKeys, RecordSnakeKeys } from '@waiting/shared-types'
+// import keysDoToDtoCamel from 'camelcase-keys'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Knex } from 'knex'
-import keysDto2DoSnake from 'snakecase-keys'
+// import keysDto2DoSnake from 'snakecase-keys'
 
 import { EnumClient, KnexConfig } from './types'
 
@@ -80,20 +84,22 @@ export function wrapIdentifier(
   origImpl: (input: string) => string,
   _queryContext: unknown,
 ): string {
-  return origImpl(camelToSnakeCase(value))
+  return origImpl(camelToSnake(value))
 }
 
-export function genCamelKeysFrom<Target = unknown, From = unknown>(
+export function genCamelKeysFrom<From>(
   input: From,
-): unknown extends Target ? RecordCamelKeys<From, '_'> : Target {
-  // @ts-expect-error
-  return keysDoToDtoCamel(input)
+): RecordCamelKeys<From, '_'> {
+
+  // return keysDoToDtoCamel(input)
+  return camelKeys(input)
 }
 
-export function genSnakeKeysFrom<Target = unknown, From = unknown>(
+export function genSnakeKeysFrom<From>(
   input: From,
-): unknown extends Target ? RecusiveSnakeKeys<From> : Target {
-  // @ts-expect-error
-  return keysDto2DoSnake(input)
+): RecordSnakeKeys<From, '_'> {
+
+  // return keysDto2DoSnake(input)
+  return snakeKeys(input)
 }
 
