@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [28.0.0](https://github.com/waitingsong/kmore/compare/v27.0.0...v28.0.0) (2022-07-05)
+
+
+### Features
+
+* breaking change case conversion of genCamelKeysFrom() ([794352b](https://github.com/waitingsong/kmore/commit/794352bb940a5580d42f828cfe87d8ec1494b5d3))
+
+
+
+
+
 # [27.0.0](https://github.com/waitingsong/kmore/compare/v26.0.1...v27.0.0) (2022-06-08)
 
 **Note:** Version bump only for package kmore

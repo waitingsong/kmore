@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [28.0.0](/compare/v27.0.0...v28.0.0) (2022-07-05)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* breaking change case conversion of genCamelKeysFrom() 794352b
+
+
+
+
+
 # [27.0.0](/compare/v26.0.1...v27.0.0) (2022-06-08)
 
 **Note:** Version bump only for package kmore
