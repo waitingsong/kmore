@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![](https://img.shields.io/badge/lang-TypeScript-blue.svg)
 [![ci](https://github.com/waitingsong/kmore/workflows/ci/badge.svg)](https://github.com/waitingsong/kmore/actions)
-[![Build Status](https://travis-ci.org/waitingsong/kmore.svg?branch=master)](https://travis-ci.org/waitingsong/kmore)
+[![codecov](https://codecov.io/gh/waitingsong/kmore/branch/main/graph/badge.svg?token=wNYqpmseCn)](https://codecov.io/gh/waitingsong/kmore)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
@@ -32,14 +32,6 @@ npm install sqlite3
 ## 基础应用
 
 ### Build configuration:
-Ensure `sourceMap` or `inlineSourceMap` is true in the `tsconfig.json`
-```json
-{
-  "compilerOptions": {
-    "sourceMap": true
-  },
-}
-```
 
 Edit the `package.json`
 ```json
@@ -51,7 +43,7 @@ Edit the `package.json`
 ```
 ### 创建数据库连接
 ```ts
-import { KnexConfig, DbModel } from 'kmore'
+import { KnexConfig, kmoreFactory, genDbDict } from 'kmore'
 
 // connection config
 export const config: KnexConfig = {
@@ -65,26 +57,24 @@ export const config: KnexConfig = {
 }
 
 // Define database model
-export interface Db extends DbModel {
-  tb_user: User
-  tb_user_detail: UserDetail
+export interface Db {
+  tb_user: UserDo
+  tb_user_ext: UserExtDo
 }
 
-export interface User {
+export interface UserDo {
   uid: number
   name: string
-  ctime: string
+  ctime: Date
 }
-export interface UserDetail {
+export interface UserExtDo {
   uid: number
   age: number
   address: string
 }  
 
-export const km = kmore<Db>({ config })
-// or
-const dict = genDbDictFromType<Db>()
-export const km = kmore<Db>({ config }, dict)
+const dict = genDbDict<Db>()
+export const km = kmoreFactory({ config, dict })
 ```
 
 ### 建表
@@ -95,7 +85,7 @@ await km.dbh.schema
     tb.string('name', 30)
     tb.timestamp('ctime', { useTz: false })
   })
-  .createTable('tb_user_detail', (tb) => {
+  .createTable('tb_user_ext', (tb) => {
     tb.integer('uid')
     tb.foreign('uid')
       .references('tb_user.uid')
@@ -112,16 +102,16 @@ await km.dbh.schema
 ### 插入数据
 ```ts
 // auto generated accessort tb_user() and tb_user_detail() on km.rb
-const { tb_user, tb_user_detail } = km.rb
+const { ref_tb_user, ref_tb_user_detail } = km.refTables
 
-await tb_user()
+await ref_tb_user()
   .insert([
     { name: 'user1', ctime: new Date() }, // ms
     { name: 'user2', ctime: 'now()' }, // μs
   ])
   .then()
 
-await tb_user_detail()
+const affectedRows = await ref_tb_user_detail()
   .insert([
     { uid: 1, age: 10, address: 'address1' },
     { uid: 2, age: 10, address: 'address1' },
@@ -132,24 +122,56 @@ await tb_user_detail()
 
 ### 连表
 ```ts
-const { tables: t, scopedColumns: sc, rb } = km
+const { refTables } = km
+const { tables, scoped } = km.dict
 
-await rb.tb_user<UserDetail>()
-  .select()
-  .innerJoin(
-    t.tb_user_detail,
-    sc.tb_user.uid,
-    sc.tb_user_detail.uid,
-  )
-  .where(sc.tb_user.uid, 1)
-  .then((rows) => {
-    const [row] = rows
-    assert(row && row.uid)
-    assert(row && row.name)
-    assert(row && row.age)
-    return rows
-  })
+const ret = await refTables.ref_tb_user()
+  .innerJoin<UserExtDo>(
+  tables.tb_user_ext,
+  scoped.tb_user.uid,
+  scoped.tb_user_ext.uid,
+)
+  .select('*')
+  .where(scoped.tb_user.uid, 1)
+
+const cols = [
+  alias.tb_user.uid, // { tbUser: 'tb_user.uid' }
+  alias.tb_user_ext.uid, // { tbUserExt: 'tb_user_ext.uid' }
+]
+
+// --------------
+
+type CT = DbDictType<Db>
+type CT_USER = CT['tb_user']
+type CT_USER_EXT = CT['tb_user_ext']
+
+const ret = await refTables.ref_tb_user()
+  .innerJoin<CT_USER & CT_USER_EXT>(
+  tables.tb_user_ext,
+  scoped.tb_user.uid,
+  scoped.tb_user_ext.uid,
+)
+  .columns(cols)
+  .then(rows => rows[0])
+
+
+const cols = {
+  uid: scoped.tb_user.uid,
+  foo: scoped.tb_user_ext.uid,
+}
+
+const ret = await refTables.ref_tb_user()
+  .innerJoin<CT_USER & CT_USER_EXT>(
+  tables.tb_user_ext,
+  scoped.tb_user.uid,
+  scoped.tb_user_ext.uid,
+)
+  .columns(cols)
+  .then(rows => rows[0])
 ```
+
+More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/master/packages/kmore/test/join-table/71.advanced.test.ts)
+
 
 ### 使用 knex
 ```ts
@@ -159,69 +181,6 @@ await km.dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
 // disconnect
 await km.dbh.destroy()
 ```
-
-
-## 高级应用
-
-### Build DictType
-```sh
-npm run db:gen
-```
-
-### Create connection
-```ts
-// this file contains type of the dbDict, created after `npm run db:gen`
-import { DbDict } from './.kmore'
-
-// pass `DbDict` as 2nd generics parameter
-export const km = kmore<Db, DbDict>({ config })
-```
-
-### Join tables
-```ts
-type Db = typeof km.DbModel
-type DblAlias = typeof km.DbModelAlias
-
-type User = Db['tb_user']
-type UserAlias = DbAlias['tb_user']
-type UserDetailAlias = DbAlias['tb_user_detail']
-
-const {
-  rb,
-  tables: t,
-  aliasColumns: ac,
-  scopedColumns: sc,
-} = km
-
-const cols = [
-  ac.tb_user.uid,
-  ac.tb_user_detail.uid,
-]
-
-const ret = await rb.tb_user()
-  .select('name')
-  .innerJoin<UserDetailAlias & UserAlias>(
-    t.tb_user_detail,
-    sc.tb_user.uid,
-    sc.tb_user_detail.uid,
-  )
-  .columns(cols)
-  .then(rows => rows[0])
-
-assert(Object.keys(ret).length === 3)
-assert(typeof ret.name === 'string')
-assert(typeof ret.tbUserUid === 'number')
-assert(typeof ret.tbUserDetailUid === 'number')
-
-// typeof the result equals to the following type:
-interface RetType {
-  name: User['name']
-  tbUserUid: UserAlias['tbUserUid']
-  tbUserDetailUid: UserDetailAlias['tbUserDetailUid']
-}
-```
-
-More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/master/packages/kmore/test/join-table/70.advanced.test.ts)
 
 
 ## Demo
@@ -256,21 +215,21 @@ This repository contains all these packages. Below you will find a summary of ea
 [`kmore-cli`]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-cli
 [`egg-kmore`]: https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore
 
-[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=86400
+[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=7200
 [kmore-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore/CHANGELOG.md
 [kmore-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
 [kmore-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
 [kmore-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore
 [kmore-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore#info=devDependencies
 
-[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=86400
+[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=7200
 [types-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-types/CHANGELOG.md
 [types-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
 [types-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
 [types-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-types
 [types-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-types#info=devDependencies
 
-[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=86400
+[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=7200
 [cli-ch]: https://github.com/waitingsong/kmore/tree/master/packages/kmore-clie/CHANGELOG.md
 [cli-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
 [cli-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
@@ -278,7 +237,7 @@ This repository contains all these packages. Below you will find a summary of ea
 [cli-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-cli#info=devDependencies
 
 
-[egg-svg]: https://img.shields.io/npm/v/egg-kmore.svg?maxAge=86400
+[egg-svg]: https://img.shields.io/npm/v/egg-kmore.svg?maxAge=7200
 [egg-ch]: https://github.com/waitingsong/kmore/tree/master/packages/egg-kmore/CHANGELOG.md
 [egg-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore
 [egg-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/egg-kmore
