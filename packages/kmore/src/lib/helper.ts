@@ -103,3 +103,37 @@ export function genSnakeKeysFrom<From>(
   return snakeKeys(input)
 }
 
+
+/**
+ * @description only one level
+ */
+export function mergeDoWithInitData<T extends Record<string, unknown>>(
+  initDoData: T,
+  input?: Record<string, unknown>,
+): T {
+
+  if (typeof initDoData !== 'object' || Array.isArray(initDoData)) {
+    throw new TypeError('initData not object')
+  }
+
+  const ret: T = {
+    ...initDoData,
+  }
+
+  if (! input || typeof input !== 'object' || ! Object.keys(input).length) {
+    return ret
+  }
+
+
+  Object.keys(ret).forEach((key) => {
+    if (Object.hasOwn(input, key) && typeof input[key] !== 'undefined') {
+      Object.defineProperty(ret, key, {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: input[key],
+      })
+    }
+  })
+  return ret
+}
