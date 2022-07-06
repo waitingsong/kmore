@@ -192,12 +192,11 @@ await km.dbh.destroy()
 kmore is comprised of many specialized packages.
 This repository contains all these packages. Below you will find a summary of each package.
 
-| Package         | Version                  | Dependencies                   | DevDependencies                  |
-| --------------- | ------------------------ | ------------------------------ | -------------------------------- |
-| [`kmore`]       | [![kmore-svg]][kmore-ch] | [![kmore-d-svg]][kmore-d-link] | [![kmore-dd-svg]][kmore-dd-link] |
-| [`kmore-types`] | [![types-svg]][types-ch] | [![types-d-svg]][types-d-link] | [![types-dd-svg]][types-dd-link] |
-| [`kmore-cli`]   | [![cli-svg]][cli-ch]     | [![cli-d-svg]][cli-d-link]     | [![cli-dd-svg]][cli-dd-link]     |
-| [`egg-kmore`]   | [![egg-svg]][egg-ch]     | [![egg-d-svg]][egg-d-link]     | [![egg-dd-svg]][egg-dd-link]     |
+| Package         | Version                  |
+| --------------- | ------------------------ |
+| [`kmore`]       | [![kmore-svg]][kmore-ch] |
+| [`kmore-types`] | [![types-svg]][types-ch] |
+| [`kmore-cli`]   | [![cli-svg]][cli-ch]     |
 
 
 
