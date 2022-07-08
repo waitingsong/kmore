@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [28.1.0](https://github.com/waitingsong/kmore/compare/v28.0.2...v28.1.0) (2022-07-08)
+
+
+### Features
+
+* **kmore:** update mergeDoWithInitData() generic types ([1821d85](https://github.com/waitingsong/kmore/commit/1821d85e2372d0afd2808100585796429d6fec81))
+
+
+
+
+
 ## [28.0.2](https://github.com/waitingsong/kmore/compare/v28.0.1...v28.0.2) (2022-07-08)
 
 **Note:** Version bump only for package kmore

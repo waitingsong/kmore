@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [28.1.0](https://github.com/waitingsong/kmore/compare/v28.0.2...v28.1.0) (2022-07-08)
+
+**Note:** Version bump only for package @mw-components/kmore
+
+
+
+
+
 ## [28.0.2](https://github.com/waitingsong/kmore/compare/v28.0.1...v28.0.2) (2022-07-08)
 
 **Note:** Version bump only for package @mw-components/kmore
