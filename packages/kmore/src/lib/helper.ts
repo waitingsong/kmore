@@ -124,13 +124,14 @@ export function mergeDoWithInitData<T extends Record<string, unknown> | object>(
     return ret
   }
 
-
   Object.keys(ret).forEach((key) => {
+    // @ts-ignore
     if (Object.hasOwn(input, key) && typeof input[key] !== 'undefined') {
       Object.defineProperty(ret, key, {
         configurable: true,
         enumerable: true,
         writable: true,
+        // @ts-ignore
         value: input[key],
       })
     }
