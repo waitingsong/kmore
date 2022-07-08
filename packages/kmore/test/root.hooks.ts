@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { initDb } from './helper'
 
 
@@ -20,12 +17,12 @@ export const mochaHooks = async () => {
   }
 
   return {
-    async beforeAll() {
-      void 0
+    beforeAll: async () => {
+      return
     },
 
-    async afterAll() {
-      void 0
+    afterAll: async () => {
+      return
     },
   }
 

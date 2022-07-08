@@ -11,7 +11,6 @@
     "noPropertyAccessFromIndexSignature": false,
     "noUnusedLocals": false,
     "sourceMap": false,
-    "strictPropertyInitialization": false,
     "target": "ESNEXT"
   },
   "include": [

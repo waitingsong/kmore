@@ -29,8 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "@mw-components/jaeger": "^12.0.4",
-    "@waiting/shared-core": "^19.1.0",
-    "@waiting/shared-types": "^19.0.1",
+    "@waiting/shared-core": "^20.1.0",
+    "@waiting/shared-types": "^20.1.0",
     "kmore": "^28.0.1",
     "knex": "^2.1.0",
     "rxjs": "^7.5.0",
@@ -67,6 +67,6 @@
     "purge": "npm run clean && rm node_modules -rf && rm package-lock.json -f",
     "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false",
     "test:local": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --parallel=false",
-    "tsc": "tsc -p tsconfig.json"
+    "tsc": "tsc -b"
   }
 }

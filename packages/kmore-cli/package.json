@@ -27,9 +27,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^19.1.0",
-    "@waiting/shared-types": "^19.0.1",
-    "@waiting/shared-types-dev": "^10.0.2",
+    "@waiting/shared-core": "^20.1.0",
+    "@waiting/shared-types": "^20.1.0",
+    "@waiting/shared-types-dev": "^10.0.3",
     "kmore-types": "^28.0.0",
     "minimist": "^1.2.6",
     "rxjs": "^7.5.0",
@@ -45,6 +45,7 @@
   },
   "files": [
     "tsconfig.json",
+    "Dockerfile",
     "src/**/*.ts",
     "bin/*.js",
     "dist"
@@ -60,15 +61,11 @@
     "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json c8 mocha --parallel=false",
     "lint": "eslint --fix --cache {src,test}/**/*.ts",
     "lint:nofix": "eslint --cache {src,test}/**/*.ts",
-    "prepublishOnly": "sh ../../.scripts/change-pkg-types-dist.sh",
-    "postpublish": "sh ../../.scripts/change-pkg-types-src.sh",
     "purge": "npm run clean && rm node_modules -rf",
     "rp": "rollup -c rollup.config.js --context this",
-    "rp:w": "npm run tsc:w | rollup -wc rollup.config.js",
     "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha",
-    "test:browser": "cd .config && npm run browser && cd ..",
     "test:local": "cross-env TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --parallel=false",
-    "tsc": "tsc -p tsconfig.json",
+    "tsc": "tsc -b ",
     "tsc:w": "tsc -p tsconfig.json -w"
   }
 }

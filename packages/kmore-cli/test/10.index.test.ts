@@ -1,9 +1,9 @@
 import assert from 'assert/strict'
 import { accessSync, copyFileSync } from 'fs'
 import { rm } from 'fs/promises'
-import { relative } from 'path'
+import { join, relative } from 'path'
 
-import { join, pathResolve } from '@waiting/shared-core'
+import { pathResolve } from '@waiting/shared-core'
 import { firstValueFrom } from 'rxjs'
 import { tap, finalize, delay, defaultIfEmpty } from 'rxjs/operators'
 import { run } from 'rxrunscript'

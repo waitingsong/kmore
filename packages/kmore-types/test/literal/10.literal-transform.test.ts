@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
+import { join, relative } from 'node:path'
 
-import { join } from '@waiting/shared-core'
 import {
   createSourceFile,
   transformCallExpressionToLiteralType,
