@@ -107,9 +107,9 @@ export function genSnakeKeysFrom<From>(
 /**
  * @description only one level
  */
-export function mergeDoWithInitData<T extends Record<string, unknown>>(
+export function mergeDoWithInitData<T extends Record<string, unknown> | object>(
   initDoData: T,
-  input?: Record<string, unknown>,
+  input?: Record<string, unknown> | object,
 ): T {
 
   if (typeof initDoData !== 'object' || Array.isArray(initDoData)) {
