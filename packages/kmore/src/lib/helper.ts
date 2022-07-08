@@ -59,21 +59,51 @@ function parseRespMysql2(res: RespMysql2): string {
     : ''
 }
 
+export type PostProcessPlain = number | string | undefined | null | boolean
+export type PostProcessRecord = Record<string, PostProcessPlain> | object
+export type PostProcessArray = PostProcessPlain[]
+export type PostProcessInput = PostProcessPlain | PostProcessRecord | PostProcessArray
+export type PostProcessRespRet<T extends PostProcessInput> = T extends PostProcessPlain
+  ? T
+  : T extends PostProcessArray // before PostProcessRecord
+    ? PostProcessArray
+    : T extends PostProcessRecord
+      ? RecordCamelKeys<T>
+      : never
 
 /**
- * Convert keys of result to camelcase
+ * Convert keys of result to camelcase, if input is object
  */
-export function postProcessResponseToCamel<T = unknown>(
+export function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
   result: T,
-  _queryContext: unknown,
-): RecordCamelKeys<T, '_'>[] | RecordCamelKeys<T, '_'> {
+  _queryContext?: unknown,
+): PostProcessRespRet<T> {
 
   if (Array.isArray(result)) {
-    return result.map(row => genCamelKeysFrom(row))
+    const ret = result.map(row => postProcessResponseToCamel(row))
+    return ret as PostProcessRespRet<T>
   }
-  else {
-    return genCamelKeysFrom(result)
+  else if (typeof result === 'object' && result) {
+    const ret = genCamelKeysFrom(result)
+    return ret as PostProcessRespRet<T>
   }
+
+  return result as PostProcessRespRet<T>
+}
+
+export function genCamelKeysFrom<From extends PostProcessRecord>(
+  input: From,
+): RecordCamelKeys<From, '_'> {
+
+  return camelKeys(input)
+}
+
+export function genSnakeKeysFrom<From>(
+  input: From,
+): RecordSnakeKeys<From, '_'> {
+
+  // return keysDto2DoSnake(input)
+  return snakeKeys(input)
 }
 
 /**
@@ -85,22 +115,6 @@ export function wrapIdentifier(
   _queryContext: unknown,
 ): string {
   return origImpl(camelToSnake(value))
-}
-
-export function genCamelKeysFrom<From>(
-  input: From,
-): RecordCamelKeys<From, '_'> {
-
-  // return keysDoToDtoCamel(input)
-  return camelKeys(input)
-}
-
-export function genSnakeKeysFrom<From>(
-  input: From,
-): RecordSnakeKeys<From, '_'> {
-
-  // return keysDto2DoSnake(input)
-  return snakeKeys(input)
 }
 
 
