@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [28.2.0](https://github.com/waitingsong/kmore/compare/v28.1.0...v28.2.0) (2022-07-08)
+
+
+### Features
+
+* **kmore:** change generic type of postProcessResponseToCamel() ([f5e9568](https://github.com/waitingsong/kmore/commit/f5e956845420ddf642ce83008d66f0398a3668a2))
+
+
+
+
+
 # [28.1.0](https://github.com/waitingsong/kmore/compare/v28.0.2...v28.1.0) (2022-07-08)
 
 
