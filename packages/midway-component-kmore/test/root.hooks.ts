@@ -1,13 +1,12 @@
 import 'tsconfig-paths/register'
-import assert from 'assert/strict'
-import { join } from 'path'
+import assert from 'node:assert/strict'
+import { join } from 'node:path'
 
 import * as WEB from '@midwayjs/koa'
 import { createApp, close, createHttpRequest } from '@midwayjs/mock'
 
-import { config, mwConfig } from './config.unittest'
-import { testConfig } from './root.config'
-
+import { config, mwConfig } from '@/config.unittest'
+import { testConfig } from '@/root.config'
 import { ConfigKey } from '~/index'
 import { Application } from '~/interface'
 
@@ -22,8 +21,8 @@ import { Application } from '~/interface'
  */
 export const mochaHooks = async () => {
   // avoid run multi times
-  if (! process.env.mochaRootHookFlag) {
-    process.env.mochaRootHookFlag = 'true'
+  if (! process.env['mochaRootHookFlag']) {
+    process.env['mochaRootHookFlag'] = 'true'
   }
 
   return {

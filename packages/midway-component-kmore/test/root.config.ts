@@ -1,29 +1,34 @@
-import { IncomingHttpHeaders } from 'http'
+import { IncomingHttpHeaders } from 'node:http'
 
 import supertest, { SuperTest } from 'supertest'
 
-import { config } from './config.unittest'
-
+import { config } from '@/config.unittest'
 import { Application } from '~/interface'
-import { Config, MiddlewareConfig } from '~/lib/types'
+import {
+  Config,
+  MiddlewareConfig,
+} from '~/lib/types'
 
 
+const CI = !! process.env.CI
 export type TestResponse = supertest.Response
 export interface TestRespBody {
+  header: IncomingHttpHeaders
+  url: string
   config: Config
   mwConfig: MiddlewareConfig
   cookies: unknown
-  header: IncomingHttpHeaders
-  url: string
 }
 
 export interface TestConfig {
-  config: Config
+  CI: boolean
   app: Application
-  httpRequest: SuperTest<supertest.Test>
+  config: Config
   host: string
+  httpRequest: SuperTest<supertest.Test>
 }
 export const testConfig = {
+  CI,
   config,
   host: '',
 } as TestConfig
