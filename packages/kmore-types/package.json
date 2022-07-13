@@ -23,8 +23,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^20.1.0",
-    "@waiting/shared-types": "^20.1.0"
+    "@waiting/shared-core": "^20.3.0",
+    "@waiting/shared-types": "^20.2.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13",
