@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [29.0.0](/compare/v28.2.1...v29.0.0) (2022-07-13)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* breaking change default demo pkg.type to "module" 6deb45e
+
+
+
+
+
 ## [28.2.1](/compare/v28.2.0...v28.2.1) (2022-07-13)
 
 

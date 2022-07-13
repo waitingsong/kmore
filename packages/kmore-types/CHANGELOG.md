@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [29.0.0](https://github.com/waitingsong/kmore/compare/v28.2.1...v29.0.0) (2022-07-13)
+
+
+### Features
+
+* breaking change default demo pkg.type to "module" ([6deb45e](https://github.com/waitingsong/kmore/commit/6deb45e28b6ed7b3433feb51671f1e1ce6276e86))
+
+
+
+
+
 ## [28.2.1](https://github.com/waitingsong/kmore/compare/v28.2.0...v28.2.1) (2022-07-13)
 
 **Note:** Version bump only for package kmore-types
