@@ -1,15 +1,13 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
+import { fileShortPath } from '@waiting/shared-core'
 import { DbDictType } from 'kmore-types'
 
-import { kmoreFactory } from '../../src/index'
-import { config, dbDict } from '../test.config'
+import { kmoreFactory } from '../../src/index.js'
+import { config, dbDict } from '../test.config.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   const km = kmoreFactory({ config, dict: dbDict })
   type Db = typeof km.DbModel
   type UserDo = Db['tb_user']

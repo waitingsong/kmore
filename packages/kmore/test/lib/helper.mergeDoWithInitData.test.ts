@@ -1,12 +1,11 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
-import { mergeDoWithInitData } from '../../src/index'
+import { fileShortPath } from '@waiting/shared-core'
+
+import { mergeDoWithInitData } from '../../src/index.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should work', () => {
     it('nomral', async () => {

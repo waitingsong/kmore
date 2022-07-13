@@ -1,16 +1,15 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
-import { kmoreFactory, Kmore } from '../src/index'
+import { fileShortPath } from '@waiting/shared-core'
 
-import { validateUserExtRows } from './helper'
-import { config, dbDict } from './test.config'
-import { Db } from './test.model'
+import { kmoreFactory, Kmore } from '../src/index.js'
+
+import { validateUserExtRows } from './helper.js'
+import { config, dbDict } from './test.config.js'
+import { Db } from './test.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   let km: Kmore<Db>
 
   before(() => {
@@ -42,7 +41,7 @@ describe(filename, () => {
       // validate insert result
       const countRes = await refTables.ref_tb_user_ext().count()
       assert(
-        countRes && countRes[0] && countRes[0].count === '2',
+        countRes && countRes[0] && countRes[0]['count'] === '2',
         'Should count be "2"',
       )
 

@@ -1,11 +1,11 @@
 import assert from 'assert/strict'
 
-import { Knex } from 'knex'
+import type { Knex } from 'knex'
 
-import { kmoreFactory, Kmore, getCurrentTime, EnumClient } from '../src/index'
+import { kmoreFactory, Kmore, getCurrentTime, EnumClient } from '../src/index.js'
 
-import { config, dbDict } from './test.config'
-import { Db, UserDo, UserExtDo } from './test.model'
+import { config, dbDict } from './test.config.js'
+import { Db, UserDo, UserExtDo } from './test.model.js'
 
 
 type TableName = string
@@ -133,7 +133,7 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
 
   const countRes = await km.refTables.ref_tb_user_ext().count()
   assert(
-    countRes && countRes[0] && countRes[0].count === '2',
+    countRes && countRes[0] && countRes[0]['count'] === '2',
     'Should count be "2"',
   )
 

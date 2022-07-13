@@ -11,9 +11,8 @@ This is a sub package of [kmore](https://waitingsong.github.io/kmore/).
 
 ## Installation
 ```sh
+npm i -g ts-node
 npm i kmore-cli
-// or
-npm i -g kmore-cli
 ```
 
 ## Usage
@@ -23,7 +22,8 @@ Eit your project `package.json`
 ```json
 {
   "script": {
-    "db:gen": "kmore gen --path src/ test/"
+    "db:gen": "kmore gen --path src/ test/",
+    "db:gen-cjs": "kmore gen --format cjs --path src/ test/"
   },
 }
 ```
@@ -32,10 +32,7 @@ Eit your project `package.json`
 
 ```sh
 npm run db:gen
+npm run db:gen-cjs
 ```
-Files will be created:
-- `{src-file-name}.__built-dict.ts`  
-  contains variables of database model necessary for running production. 
-- `.kmore.ts`  
-  contains types of database model for auto-complete help in IDE during code development. 
+
 

@@ -1,4 +1,4 @@
-import { KmoreEvent } from './types'
+import { KmoreEvent } from './types.js'
 
 
 export const defaultPropDescriptor: PropertyDescriptor = {

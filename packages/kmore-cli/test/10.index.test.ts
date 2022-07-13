@@ -1,22 +1,27 @@
-import assert from 'assert/strict'
-import { accessSync, copyFileSync } from 'fs'
-import { rm } from 'fs/promises'
-import { join, relative } from 'path'
+import assert from 'node:assert/strict'
+import { accessSync, copyFileSync } from 'node:fs'
+import { rm } from 'node:fs/promises'
+import { join } from 'node:path'
 
-import { pathResolve } from '@waiting/shared-core'
+import {
+  fileShortPath,
+  genCurrentDirname,
+  pathResolve,
+} from '@waiting/shared-core'
 import { firstValueFrom } from 'rxjs'
 import { tap, finalize, delay, defaultIfEmpty } from 'rxjs/operators'
 import { run } from 'rxrunscript'
 
-import { runCmd, RunCmdArgs } from '../src/index'
+import { runCmd, RunCmdArgs } from '../src/index.js'
 
-import { expectedDict1, expectedDict2 } from './demo1.expect'
+import { expectedDict1, expectedDict2 } from './demo1.expect.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
+const __dirname = genCurrentDirname(import.meta.url)
 
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   const tsConfigFilePath = join(__dirname, 'demo/tsconfig.json')
+  const tsConfigFilePathCjs = join(__dirname, 'demo/tsconfig.cjs.json')
   const tsDemo1 = join(__dirname, 'demo/demo1.ts')
   const jsDemo1 = join(__dirname, 'demo/demo1.js')
   const paths = `"${jsDemo1}"`
@@ -48,10 +53,10 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            next(path) {
+            async next(path) {
               copyFileSync(jsDemo1, targetJs)
               accessSync(targetJs)
-              assertsDemo1(path, tsDemo1, targetJs)
+              await assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -78,9 +83,9 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            next(path) {
+            async next(path) {
               copyFileSync(jsDemo1, targetJs)
-              assertsDemo1(path, tsDemo1, targetJs)
+              await assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -91,7 +96,7 @@ describe(filename, () => {
       return
     })
 
-    it('with --path test/demo --project <tsConfigFilePath>', (done) => {
+    it('ESM with --path test/demo --project <tsConfigFilePath>', (done) => {
       const args: RunCmdArgs = {
         cmd: 'gen',
         debug: false,
@@ -107,9 +112,39 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            next(path) {
+            async next(path) {
               copyFileSync(jsDemo1, targetJs)
-              assertsDemo1(path, tsDemo1, targetJs)
+              await assertsDemo1(path, tsDemo1, targetJs)
+            },
+          }),
+          delay(200),
+          finalize(done),
+        )
+        .subscribe()
+
+      return
+    })
+
+    it('CJS with --path test/demo --project <tsConfigFilePath>', (done) => {
+      const args: RunCmdArgs = {
+        cmd: 'gen',
+        debug: false,
+        options: {
+          project: tsConfigFilePathCjs,
+          format: 'cjs',
+          path: 'test/demo',
+        },
+      }
+      const targetJs = `${jsDemo1}.${Math.random()}.cjs`
+      jsPaths.push(targetJs)
+
+      runCmd(args)
+        .pipe(
+          defaultIfEmpty(''),
+          tap({
+            async next(path) {
+              copyFileSync(jsDemo1, targetJs)
+              await assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -137,9 +172,9 @@ describe(filename, () => {
         .pipe(
           defaultIfEmpty(''),
           tap({
-            next(path) {
+            async next(path) {
               copyFileSync(jsDemo1, targetJs)
-              assertsDemo1(path, tsDemo1, targetJs)
+              await assertsDemo1(path, tsDemo1, targetJs)
             },
           }),
           delay(200),
@@ -153,11 +188,13 @@ describe(filename, () => {
 })
 
 
-function assertsDemo1(
+async function assertsDemo1(
   path: string,
   tsPath: string,
   jsPath: string,
-): void {
+): Promise<void> {
+
+  console.log({ path, jsPath, tsPath })
 
   assert(path.includes('test/demo/'))
   assert(path.includes('.ts'))
@@ -174,7 +211,7 @@ function assertsDemo1(
   }
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    mods = require(jsPath)
+    mods = await import(jsPath)
   }
   catch (ex) {
     assert(false, (ex as Error).message)

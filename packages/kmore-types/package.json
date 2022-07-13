@@ -9,10 +9,17 @@
     "typescript",
     "ts"
   ],
+  "type": "module",
   "bin": {},
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "bugs": {
     "url": "https://github.com/waitingsong/kmore/issues"
   },
@@ -23,12 +30,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^20.3.0",
-    "@waiting/shared-types": "^20.2.0"
+    "@waiting/shared-types-dev": "^11.2.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13",
-    "@waiting/shared-types-dev": "^10.0.3",
+    "@waiting/shared-core": "^20.3.0",
+    "@waiting/shared-types": "^20.2.0",
     "cross-env": "7",
     "rollup-plugin-typescript2": "^0.32.0"
   },
@@ -50,13 +57,13 @@
     "clean": "npm run clean:lock & npm run clean:cache & rm -rf dist/* -rf",
     "clean:cache": "rm -rf .eslintcache .vscode/.tsbuildinfo .vscode/.tsbuildinfo.*",
     "clean:lock": "rm package-lock.json -f",
-    "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json c8 mocha --parallel=false",
+    "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json c8 mocha --loader=ts-node/esm --parallel=false",
     "lint": "eslint --fix --cache {src,test}/**/*.ts",
     "lint:nofix": "eslint --cache {src,test}/**/*.ts",
     "purge": "npm run clean && rm node_modules -rf",
     "rp": "rollup -c rollup.config.js --context this",
-    "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha",
-    "test:local": "cross-env TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --parallel=false",
+    "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha --loader=ts-node/esm",
+    "test:local": "cross-env TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --loader=ts-node/esm --parallel=false",
     "tsc": "tsc -b ",
     "tsc:w": "tsc -p tsconfig.json -w"
   }

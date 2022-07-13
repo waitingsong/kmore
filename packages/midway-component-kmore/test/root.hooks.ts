@@ -43,6 +43,8 @@ export const mochaHooks = async () => {
       const { url } = testConfig.httpRequest.get('/')
       testConfig.host = url
 
+      testConfig.container = app.getApplicationContext()
+      // const svc = await testConfig.container.getAsync(TaskQueueService)
       // https://midwayjs.org/docs/testing
     },
 

@@ -1,9 +1,9 @@
 
-export * from './helper'
-export * from './kmore'
-export * from './types'
+export * from './helper.js'
+export * from './kmore.js'
+export * from './types.js'
 export {
   globalEvent,
   globalSubject,
-} from './event'
+} from './event.js'
 

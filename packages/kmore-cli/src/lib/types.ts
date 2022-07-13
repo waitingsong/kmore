@@ -26,6 +26,10 @@ export interface Options {
    * find under Options['path'] or parents dir, if empty
    */
   project?: FilePath
+  /**
+   * @default esm
+   */
+  format?: 'esm' | 'cjs' | undefined
   /** Default: 5 */
   concurrent?: number
   /** String key to skip build under path. Default: node_modules */

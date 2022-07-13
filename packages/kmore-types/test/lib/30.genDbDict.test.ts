@@ -1,14 +1,13 @@
 import assert from 'assert/strict'
-import { relative } from 'path'
 
-import { genDbDict, DbDict } from '../../src/index'
-import { expectedDict } from '../demo-config'
-import { Db } from '../test3.model'
+import { fileShortPath } from '@waiting/shared-core'
+
+import { genDbDict, DbDict } from '../../src/index.js'
+import { expectedDict } from '../demo-config.js'
+import { Db } from '../test3.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should works', () => {
     it('normal', () => {

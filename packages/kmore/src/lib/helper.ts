@@ -6,10 +6,10 @@ import {
 import { RecordCamelKeys, RecordSnakeKeys } from '@waiting/shared-types'
 // import keysDoToDtoCamel from 'camelcase-keys'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Knex } from 'knex'
+import type { Knex } from 'knex'
 // import keysDto2DoSnake from 'snakecase-keys'
 
-import { EnumClient, KnexConfig } from './types'
+import { EnumClient, KnexConfig } from './types.js'
 
 
 export async function getCurrentTime(

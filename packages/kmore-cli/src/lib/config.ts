@@ -1,7 +1,7 @@
 /* eslint-disable id-length */
 import { CallerFuncNameSet } from 'kmore-types'
 
-import { CliArgs, Options } from './types'
+import { CliArgs, Options } from './types.js'
 
 
 export const cmdSet = new Set(['gen'])
@@ -15,6 +15,7 @@ export const initialCliArgs: CliArgs = {
   options: {
     project: '',
     path: '',
+    format: 'esm',
   },
   needHelp: false,
   debug: false,
@@ -25,6 +26,7 @@ export const globalCallerFuncNameSet: CallerFuncNameSet = new Set(['genDbDict'])
 export const initOptions: Required<Options> = {
   /** tsConfigFilePath */
   project: '',
+  format: 'esm',
   callerFuncNames: globalCallerFuncNameSet,
   path: [],
   concurrent: 5,

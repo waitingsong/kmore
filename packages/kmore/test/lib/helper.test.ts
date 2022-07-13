@@ -1,12 +1,11 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
-import { genCamelKeysFrom, genSnakeKeysFrom } from '../../src/index'
+import { fileShortPath } from '@waiting/shared-core'
+
+import { genCamelKeysFrom, genSnakeKeysFrom } from '../../src/index.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should genCamelKeysFrom() work', () => {
     it('tb_user', async () => {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 // import { FullTableModelFromDictAlias } from '@waiting/shared-types'
-import { Knex } from 'knex'
+import type { Knex } from 'knex'
 import { Span } from 'opentracing'
 
 

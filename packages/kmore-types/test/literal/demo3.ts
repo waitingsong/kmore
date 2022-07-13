@@ -1,5 +1,5 @@
-import { genDbDict, DbDict } from '../../src/lib/dict'
-import { Db, Db2 } from '../test3.model'
+import { genDbDict, DbDict } from '../../src/lib/dict.js'
+import { Db, Db2 } from '../test3.model.js'
 
 
 

@@ -1,15 +1,14 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
-import { DbDictType } from '../src/index'
+import { fileShortPath } from '@waiting/shared-core'
 
-import { expectedColsTypeDb } from './demo-config'
-import { Db } from './test3.model'
+import { DbDictType } from '../src/index.js'
+
+import { expectedColsTypeDb } from './demo-config.js'
+import { Db } from './test3.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should DictColumnsType works', () => {
     it('normal', () => {

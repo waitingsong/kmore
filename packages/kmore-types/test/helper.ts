@@ -1,6 +1,6 @@
-import * as Knex from 'knex'
+import { Knex } from 'knex'
 
-import { TableName } from '../src/index'
+import { TableName } from '../src/index.js'
 
 
 export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<void> {

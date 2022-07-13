@@ -1,0 +1,181 @@
+export declare const dict1: {
+    readonly tables: {
+        readonly tb_user: "tb_user";
+        readonly tb_user_ext: "tb_user_ext";
+    };
+    readonly columns: {
+        readonly tb_user: {
+            readonly uid: "uid";
+            readonly name: "name";
+            readonly ctime: "ctime";
+        };
+        readonly tb_user_ext: {
+            readonly uid: "uid";
+            readonly age: "age";
+            readonly address: "address";
+        };
+    };
+    readonly scoped: {
+        readonly tb_user: {
+            readonly uid: "tb_user.uid";
+            readonly name: "tb_user.name";
+            readonly ctime: "tb_user.ctime";
+        };
+        readonly tb_user_ext: {
+            readonly uid: "tb_user_ext.uid";
+            readonly age: "tb_user_ext.age";
+            readonly address: "tb_user_ext.address";
+        };
+    };
+    readonly alias: {
+        readonly tb_user: {
+            readonly uid: {
+                readonly tbUserUid: "tb_user.uid";
+            };
+            readonly name: {
+                readonly tbUserName: "tb_user.name";
+            };
+            readonly ctime: {
+                readonly tbUserCtime: "tb_user.ctime";
+            };
+        };
+        readonly tb_user_ext: {
+            readonly uid: {
+                readonly tbUserExtUid: "tb_user_ext.uid";
+            };
+            readonly age: {
+                readonly tbUserExtAge: "tb_user_ext.age";
+            };
+            readonly address: {
+                readonly tbUserExtAddress: "tb_user_ext.address";
+            };
+        };
+    };
+    readonly camelAlias: {
+        readonly tb_user: {
+            readonly uid: {
+                readonly uid: "tb_user.uid";
+            };
+            readonly name: {
+                readonly name: "tb_user.name";
+            };
+            readonly ctime: {
+                readonly ctime: "tb_user.ctime";
+            };
+        };
+        readonly tb_user_ext: {
+            readonly uid: {
+                readonly uid: "tb_user_ext.uid";
+            };
+            readonly age: {
+                readonly age: "tb_user_ext.age";
+            };
+            readonly address: {
+                readonly address: "tb_user_ext.address";
+            };
+        };
+    };
+};
+export declare const dict2: {
+    readonly tables: {
+        readonly tb_user: "tb_user";
+        readonly tb_user_ext: "tb_user_ext";
+        readonly tb_order: "tb_order";
+    };
+    readonly columns: {
+        readonly tb_user: {
+            readonly uid: "uid";
+            readonly name: "name";
+            readonly ctime: "ctime";
+        };
+        readonly tb_user_ext: {
+            readonly uid: "uid";
+            readonly age: "age";
+            readonly address: "address";
+        };
+        readonly tb_order: {
+            readonly order_id: "order_id";
+            readonly order_name: "order_name";
+        };
+    };
+    readonly scoped: {
+        readonly tb_user: {
+            readonly uid: "tb_user.uid";
+            readonly name: "tb_user.name";
+            readonly ctime: "tb_user.ctime";
+        };
+        readonly tb_user_ext: {
+            readonly uid: "tb_user_ext.uid";
+            readonly age: "tb_user_ext.age";
+            readonly address: "tb_user_ext.address";
+        };
+        readonly tb_order: {
+            readonly order_id: "tb_order.order_id";
+            readonly order_name: "tb_order.order_name";
+        };
+    };
+    readonly alias: {
+        readonly tb_user: {
+            readonly uid: {
+                readonly tbUserUid: "tb_user.uid";
+            };
+            readonly name: {
+                readonly tbUserName: "tb_user.name";
+            };
+            readonly ctime: {
+                readonly tbUserCtime: "tb_user.ctime";
+            };
+        };
+        readonly tb_user_ext: {
+            readonly uid: {
+                readonly tbUserExtUid: "tb_user_ext.uid";
+            };
+            readonly age: {
+                readonly tbUserExtAge: "tb_user_ext.age";
+            };
+            readonly address: {
+                readonly tbUserExtAddress: "tb_user_ext.address";
+            };
+        };
+        readonly tb_order: {
+            readonly order_id: {
+                readonly tbOrderOrderId: "tb_order.order_id";
+            };
+            readonly order_name: {
+                readonly tbOrderOrderName: "tb_order.order_name";
+            };
+        };
+    };
+    readonly camelAlias: {
+        readonly tb_user: {
+            readonly uid: {
+                readonly uid: "tb_user.uid";
+            };
+            readonly name: {
+                readonly name: "tb_user.name";
+            };
+            readonly ctime: {
+                readonly ctime: "tb_user.ctime";
+            };
+        };
+        readonly tb_user_ext: {
+            readonly uid: {
+                readonly uid: "tb_user_ext.uid";
+            };
+            readonly age: {
+                readonly age: "tb_user_ext.age";
+            };
+            readonly address: {
+                readonly address: "tb_user_ext.address";
+            };
+        };
+        readonly tb_order: {
+            readonly order_id: {
+                readonly orderId: "tb_order.order_id";
+            };
+            readonly order_name: {
+                readonly orderName: "tb_order.order_name";
+            };
+        };
+    };
+};

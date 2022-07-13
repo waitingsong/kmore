@@ -9,10 +9,12 @@ import {
   humanMemoryUsage,
 } from '@waiting/shared-core'
 import type { DbDict } from 'kmore-types'
-import { Knex, knex } from 'knex'
+import type { Knex } from 'knex'
+// eslint-disable-next-line no-duplicate-imports, import/no-named-default
+import { default as _knex } from 'knex'
 
-import { defaultPropDescriptor } from './config'
-import { bindOnQuery, bindOnQueryError, bindOnQueryResp, globalSubject } from './event'
+import { defaultPropDescriptor } from './config.js'
+import { bindOnQuery, bindOnQueryError, bindOnQueryResp, globalSubject } from './event.js'
 import {
   DbQueryBuilder,
   KmoreEvent,
@@ -23,7 +25,7 @@ import {
   OnQueryRespRaw,
   QueryResponse,
   QuerySpanInfo,
-} from './types'
+} from './types.js'
 
 
 export class Kmore<D = unknown> {
@@ -163,7 +165,7 @@ export function createDbh(
   enableTracing = false,
 ): Knex {
 
-  let inst = knex(knexConfig)
+  let inst = _knex(knexConfig)
   if (enableTracing) {
     inst = inst
       .on('query', (data: OnQueryData) => bindOnQuery(globalSubject, void 0, data))

@@ -5,10 +5,10 @@
  */
 import minimist from 'minimist'
 
-import { genCmdHelp, helpDefault } from '../lib/helper'
-import { runCmd } from '../lib/index'
-import { parseCliArgs, parseCliOpts } from '../lib/process-opts'
-import { CliArgs, InputOptions } from '../lib/types'
+import { genCmdHelp, helpDefault } from '../lib/helper.js'
+import { runCmd } from '../lib/index.js'
+import { parseCliArgs, parseCliOpts } from '../lib/process-opts.js'
+import { CliArgs, InputOptions } from '../lib/types.js'
 // log(yargs.argv)
 
 let args!: CliArgs

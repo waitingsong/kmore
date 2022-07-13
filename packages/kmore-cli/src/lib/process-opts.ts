@@ -10,8 +10,8 @@ export function parseCliArgs(argv: ParsedArgs): CliArgs {
   const cmdArr: string[] = argv._.map(value => value.toString())
 
   args.cmd = parseCmd(cmdArr)
-  args.needHelp = !! argv.h
-  args.debug = !! argv.d
+  args.needHelp = !! argv['h']
+  args.debug = !! argv['d']
 
   return args
 }

@@ -1,15 +1,14 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert'
 
-import { DbDict } from '../src/index'
+import { fileShortPath } from '@waiting/shared-core'
 
-import { expectedDict } from './demo-config'
-import { Db, Db2 } from './test3.model'
+import { DbDict } from '../src/index.js'
+
+import { expectedDict } from './demo-config.js'
+import { Db, Db2 } from './test3.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should DbDict works', () => {
     it('normal', () => {

@@ -8,7 +8,7 @@ import {
   DictAlias,
   DictScoped,
   DictCamelAlias,
-} from './types'
+} from './types.js'
 
 
 export interface DbDict<D> {
@@ -53,6 +53,7 @@ export interface DbDict<D> {
   scoped: DictScoped<D>
 
   /**
+   * Keyof of Record prefix with table name as
    * @returns
    * ```ts
    * type {
@@ -67,6 +68,7 @@ export interface DbDict<D> {
   alias: DictAlias<D>
 
   /**
+   * Keyof of Record prefix without table name as
    * @returns
    * ```ts
    * type {

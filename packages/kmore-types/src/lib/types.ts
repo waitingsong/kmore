@@ -1,4 +1,4 @@
-import { SnakeToCamel, SnakeToPascal } from '@waiting/shared-types'
+import type { SnakeToCamel, SnakeToPascal } from '@waiting/shared-types'
 
 
 /**
@@ -72,12 +72,36 @@ export type DictCamelAlias<D> = {
 export type Columns<T> = {
   [F in keyof T]: F
 }
+/**
+ * ```ts
+ * {
+ *  uid: 'tb_user.uid'
+ *  user_name: 'tb_user.user_name'
+ * }
+ * ```
+ */
 export type ScopedColumns<T, K extends string> = {
   [F in keyof T]: `${K}.${F & string}`
 }
+/**
+ * ```ts
+ * {
+ *  uid: { tbUserUid: 'tb_user.uid' }
+ *  user_name: { tbUserUserName: 'tb_user.user_name' }
+ * }
+ * ```
+ */
 export type AliasColumns<T, K extends string> = {
   [F in keyof T]: Record<`${SnakeToCamel<K>}${SnakeToPascal<F & string>}`, `${K}.${F & string}`>
 }
+/**
+ * ```ts
+ * {
+ *  uid: { uid: 'tb_user.uid' }
+ *  user_name: { userName: 'tb_user.user_name' }
+ * }
+ * ```
+ */
 export type CamelAliasColumns<T, K extends string> = {
   [F in keyof T]: Record<`${SnakeToCamel<F & string>}`, `${K}.${F & string}`>
 }

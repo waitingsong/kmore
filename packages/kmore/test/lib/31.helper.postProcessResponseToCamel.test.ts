@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict'
-import { relative } from 'node:path'
 
-import { postProcessResponseToCamel } from '../../src/index'
+import { fileShortPath } from '@waiting/shared-core'
+
+import { postProcessResponseToCamel } from '../../src/index.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should postProcessResponseToCamel() work', () => {
     it('tb_user', async () => {

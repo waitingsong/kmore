@@ -1,3 +1,5 @@
+import assert from 'node:assert'
+
 import {
   pathResolve,
   readFileLineRx,
@@ -14,8 +16,8 @@ import { walk, EntryType } from 'rxwalker'
 // eslint-disable-next-line import/named
 import { CacheStrategy, TsConfigResolverOptions, tsconfigResolver } from 'tsconfig-resolver'
 
-import { globalCallerFuncNameSet, initOptions } from './config'
-import { FilePath, Options } from './types'
+import { globalCallerFuncNameSet, initOptions } from './config.js'
+import { FilePath, Options } from './types.js'
 
 
 /**
@@ -65,7 +67,12 @@ export function buildSource(options: Options): Observable<FilePath> {
     mergeMap(walkDir),
   )
   const build$ = walk$.pipe(
-    mergeMap(path => buildFile(path, opts.project, opts.callerFuncNames), opts.concurrent),
+    mergeMap(path => buildFile(
+      path,
+      opts.project,
+      options.format,
+      opts.callerFuncNames,
+    ), opts.concurrent),
     // defaultIfEmpty(''),
   )
 
@@ -147,10 +154,37 @@ export function walkDir(options: Options): Observable<FilePath> {
 export async function buildFile(
   path: string,
   tsConfigFilePath: string,
+  format: Options['format'],
   callerFuncNames: NonNullable<Options['callerFuncNames']>,
 ): Promise<FilePath> {
 
-  const file = createSourceFile(path, { tsConfigFilePath })
+  assert(path, 'path is required')
+  assert(tsConfigFilePath, 'tsConfigFilePath is required')
+  assert(callerFuncNames, 'callerFuncNames is required')
+
+  // module:
+  // ESNext = 99,
+  // NodeNext = 199
+  const module = ! format || format === 'esm' ? 99 : 1
+
+  // moduleResolution: 99,
+  // NodeJs = 2,
+  // NodeNext = 99
+
+  const file = createSourceFile(path, {
+    tsConfigFilePath,
+    compilerOptions: {
+      module,
+      // moduleResolution: 99,
+      // declaration: true,
+      // inlineSourceMap: false,
+      skipLibCheck: true,
+      strictPropertyInitialization: false,
+      // sourceMap: false,
+    },
+  })
+  // const file = createSourceFile(path, { tsConfigFilePath })
+
   const opts: TransFormOptions = {
     // needle: 'genDbDict',
     needle: '',

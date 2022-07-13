@@ -1,4 +1,4 @@
 
-export * from './dict'
-export * from './types'
+export * from './dict.js'
+export * from './types.js'
 

@@ -1,18 +1,17 @@
 import assert from 'assert/strict'
-import { relative } from 'path'
+
+import { fileShortPath } from '@waiting/shared-core'
 
 import {
   DictColumns,
   DictTables,
-} from '../src/lib/types'
+} from '../src/lib/types.js'
 
-import { expectedDict } from './demo-config'
-import { Db, Db2 } from './test3.model'
+import { expectedDict } from './demo-config.js'
+import { Db, Db2 } from './test3.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should DbTableNames works', () => {
     it('normal', () => {

@@ -1,17 +1,15 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
+import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { globalEvent, kmoreFactory } from '../src/index'
+import { globalEvent, kmoreFactory } from '../src/index.js'
 
-import { config } from './test.config'
-import { Db } from './test.model'
+import { config } from './test.config.js'
+import { Db } from './test.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   const dict = genDbDict<Db>()
   const km = kmoreFactory({ config, dict }, true)
 

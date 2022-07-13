@@ -1,5 +1,5 @@
-import { cmdSet, tw2 } from './config'
-import { CmdType } from './types'
+import { cmdSet, tw2 } from './config.js'
+import { CmdType } from './types.js'
 
 
 export function genCmdHelp(command: CmdType | ''): string {

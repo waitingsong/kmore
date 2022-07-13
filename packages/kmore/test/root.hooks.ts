@@ -1,4 +1,4 @@
-import { initDb } from './helper'
+import { initDb } from './helper.js'
 
 
 /**
@@ -11,8 +11,8 @@ import { initDb } from './helper'
  */
 export const mochaHooks = async () => {
   // avoid run multi times
-  if (! process.env.mochaRootHookFlag) {
-    process.env.mochaRootHookFlag = 'true'
+  if (! process.env['mochaRootHookFlag']) {
+    process.env['mochaRootHookFlag'] = 'true'
     await initDb()
   }
 

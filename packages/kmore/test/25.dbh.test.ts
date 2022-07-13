@@ -1,15 +1,14 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
 
-import { kmoreFactory, Kmore } from '../src/index'
+import { fileShortPath } from '@waiting/shared-core'
 
-import { config, dbDict } from './test.config'
-import { Db, UserDo } from './test.model'
+import { kmoreFactory, Kmore } from '../src/index.js'
+
+import { config, dbDict } from './test.config.js'
+import { Db, UserDo } from './test.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   let km: Kmore<Db>
 
   before(() => {

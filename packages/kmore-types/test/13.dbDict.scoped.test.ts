@@ -1,16 +1,12 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
-
+import { fileShortPath } from '@waiting/shared-core'
 import { Equals } from '@waiting/shared-types'
 
-import { DbDict } from '../src/index'
+import { DbDict } from '../src/index.js'
 
-import { Db, Db2 } from './test3.model'
+import { Db, Db2 } from './test3.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   describe('Should DbDict works', () => {
     type K1 = DbDict<Db>

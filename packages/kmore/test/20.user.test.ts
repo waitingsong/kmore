@@ -1,17 +1,15 @@
-import assert from 'assert/strict'
-import { relative } from 'path'
+import assert from 'node:assert/strict'
+
+import { fileShortPath } from '@waiting/shared-core'
+
+import { kmoreFactory, Kmore } from '../src/index.js'
+
+import { validateUserRows } from './helper.js'
+import { config, dbDict } from './test.config.js'
+import { Db, UserDo } from './test.model.js'
 
 
-import { kmoreFactory, Kmore } from '../src/index'
-
-import { validateUserRows } from './helper'
-import { config, dbDict } from './test.config'
-import { Db, UserDo } from './test.model'
-
-
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   let km: Kmore<Db>
 
   before(() => {
@@ -36,19 +34,19 @@ describe(filename, () => {
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
       assert(
-        countRes[0] && countRes[0].count === '2',
+        countRes[0] && countRes[0]['count'] === '2',
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
       const countRes2 = await refTables.ref_tb_user().count()
       assert(
-        countRes2[0] && countRes2[0].count === '2',
+        countRes2[0] && countRes2[0]['count'] === '2',
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 
       const countRes3 = await ref_tb_user().count()
       assert(
-        countRes3[0] && countRes3[0].count === '2',
+        countRes3[0] && countRes3[0]['count'] === '2',
         `Should count be "2", but got ${JSON.stringify(ret)}`,
       )
 

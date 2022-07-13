@@ -1,9 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'node:assert/strict'
-import { join, relative } from 'node:path'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
+import {
+  fileShortPath,
+  genAbsolutePath,
+  genCurrentDirname,
+} from '@waiting/shared-core'
 import {
   createSourceFile,
   transformCallExpressionToLiteralType,
@@ -11,12 +14,12 @@ import {
 } from '@waiting/shared-types-dev'
 import { run } from 'rxrunscript'
 
-import { expectedDict, expectedDict2 } from '../demo-config'
+import { expectedDict, expectedDict2 } from '../demo-config.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
+const __dirname = genCurrentDirname(import.meta.url)
 
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
   const path1 = join(__dirname, 'demo1.ts')
   const path3 = join(__dirname, 'demo3.ts')
   const tsConfigFilePath = join(__dirname, '../../tsconfig.json')
@@ -35,7 +38,7 @@ describe(filename, () => {
   })
 
   describe('Should transform works', () => {
-    it('demo1', () => {
+    it('demo1', async () => {
       const path = path1
       const file = createSourceFile(path, { tsConfigFilePath })
       const opts: TransFormOptions = {
@@ -46,7 +49,8 @@ describe(filename, () => {
       transformCallExpressionToLiteralType(opts)
       file.saveSync()
 
-      const dict = require(path).dict
+      const path2 = genAbsolutePath(path, true)
+      const dict = (await import(path2)).dict
       assert.deepStrictEqual(dict, expectedDict)
     })
     it('demo1 result', () => {
@@ -73,7 +77,7 @@ describe(filename, () => {
     })
 
 
-    it('demo3', () => {
+    it('demo3', async () => {
       const path = path3
       const file = createSourceFile(path)
       const opts: TransFormOptions = {
@@ -84,7 +88,7 @@ describe(filename, () => {
       transformCallExpressionToLiteralType(opts)
       file.saveSync()
 
-      const { dict1, dict2 } = require(path)
+      const { dict1, dict2 } = await import(genAbsolutePath(path, true))
       assert.deepStrictEqual(dict1, expectedDict)
       assert.deepStrictEqual(dict2, expectedDict2)
     })

@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs'
 
-import { buildSource } from './transformer'
-import { RunCmdArgs, Options, FilePath } from './types'
+import { buildSource } from './transformer.js'
+import { RunCmdArgs, Options, FilePath } from './types.js'
 
 
 export function runCmd(args: RunCmdArgs): Observable<FilePath> {
