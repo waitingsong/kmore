@@ -1,9 +1,9 @@
 import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
-import { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
-import { KnexConfig } from 'kmore'
+import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
+import type { KnexConfig } from 'kmore'
 import type { DbDict } from 'kmore-types'
-import { Knex } from 'knex'
-import { Span } from 'opentracing'
+import type { Knex } from 'knex'
+import type { Span } from 'opentracing'
 
 import type { Context } from '~/interface'
 
