@@ -25,7 +25,7 @@ describe(fileShortPath(import.meta.url), () => {
   const tsDemo1 = join(__dirname, 'demo/demo1.ts')
   const jsDemo1 = join(__dirname, 'demo/demo1.js')
   const paths = `"${jsDemo1}"`
-  const jsPaths: string[] = []
+  const jsPaths: string[] = ['demo1.d.ts']
 
   beforeEach(async () => {
     await firstValueFrom(run(`git restore ${paths}`))
