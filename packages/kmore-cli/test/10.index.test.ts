@@ -24,7 +24,7 @@ describe(fileShortPath(import.meta.url), () => {
   const tsConfigFilePathCjs = join(__dirname, 'demo/tsconfig.cjs.json')
   const tsDemo1 = join(__dirname, 'demo/demo1.ts')
   const jsDemo1 = join(__dirname, 'demo/demo1.js')
-  const demoPath = `"${__dirname}/demo"`
+  const demoPath = `${__dirname}/demo`
   const jsPaths: string[] = ['demo1.d.ts']
 
   beforeEach(async () => {
