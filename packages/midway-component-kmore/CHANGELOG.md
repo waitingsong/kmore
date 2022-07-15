@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [30.0.0](https://github.com/waitingsong/kmore/compare/v29.0.2...v30.0.0) (2022-07-15)
+
+
+### Features
+
+* **midway-component-kmore:** export const initialKnexConfig ([9aea8b0](https://github.com/waitingsong/kmore/commit/9aea8b0132093d611c2f69f4b20544769d0727a8))
+
+
+
+
+
 ## [29.0.2](https://github.com/waitingsong/kmore/compare/v29.0.1...v29.0.2) (2022-07-15)
 
 **Note:** Version bump only for package @mw-components/kmore

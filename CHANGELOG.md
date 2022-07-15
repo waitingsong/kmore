@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [30.0.0](/compare/v29.0.2...v30.0.0) (2022-07-15)
+
+
+### Features
+
+* **kmore:** auto case conversion via Kmore.{camelTables | snakeTables} 17b993a
+* **midway-component-kmore:** export const initialKnexConfig 9aea8b0
+
+
+
+
+
 ## [29.0.2](/compare/v29.0.1...v29.0.2) (2022-07-15)
 
 **Note:** Version bump only for package kmore
