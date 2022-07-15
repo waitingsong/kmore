@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
-// import { FullTableModelFromDictAlias } from '@waiting/shared-types'
+import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 import { Span } from 'opentracing'
 
@@ -16,12 +16,45 @@ export enum EnumClient {
   oracledb = 'oracledb',
 }
 
-export type DbQueryBuilder<D, Prefix extends string = 'ref_'> = {
+export enum CaseType {
+  camel = 'camel',
+  pascal = 'pascal',
+  snake = 'snake',
+  none = 'none'
+}
+
+export type DbQueryBuilder<
+  D,
+  Prefix extends string,
+  CaseConvert extends CaseType
+> = {
   /** ref_tb_name: () => knex('tb_name') */
-  [tb in keyof D as `${Prefix}${tb & string}`]: TbQueryBuilder<D[tb]>
+  // [tb in keyof D as `${Prefix}${tb & string}`]: TbQueryBuilder<D[tb]>
+  [tb in keyof D as `${Prefix}${tb & string}`]: CaseConvert extends CaseType.camel
+    ? TbQueryBuilder<RecordCamelKeys<D[tb]>>
+    : CaseConvert extends CaseType.snake
+      ? TbQueryBuilder<RecordSnakeKeys<D[tb]>>
+      : CaseConvert extends CaseType.pascal
+        ? TbQueryBuilder<RecordPascalKeys<D[tb]>>
+        : TbQueryBuilder<D[tb]>
+}
+
+export interface BuilderInput {
+  ctx?: unknown
+  caseConvert?: CaseType | undefined
 }
 
 export type TbQueryBuilder<TRecord> = () => Knex.QueryBuilder<TRecord, TRecord[]>
+// export type TbQueryBuilder<TRecord>
+//   = <CaseConvert extends CaseType = CaseType.none>(caseConvert?: CaseConvert)
+//   => CaseConvert extends CaseType.camel
+//     ? Knex.QueryBuilder<RecordCamelKeys<TRecord>, TRecord[]>
+//     : CaseConvert extends CaseType.snake
+//       ? Knex.QueryBuilder<RecordSnakeKeys<TRecord>, TRecord[]>
+//       : CaseConvert extends CaseType.pascal
+//         ? Knex.QueryBuilder<RecordPascalKeys<TRecord>, TRecord[]>
+//         : Knex.QueryBuilder<TRecord, TRecord[]>
+
 
 // export type QueryBuilderExt<TRecord, TResult = TRecord[]>
 //  = Knex.QueryBuilder<TRecord, TResult>
@@ -55,6 +88,10 @@ export interface KmoreEvent <T = unknown> {
   exData: OnQueryErrorData | undefined
   exError: OnQueryErrorErr | undefined
   timestamp: number
+}
+
+export interface QueryContext {
+  caseConvert?: CaseType
 }
 
 export interface OnQueryData {

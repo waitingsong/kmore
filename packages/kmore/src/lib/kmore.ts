@@ -1,4 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import assert from 'assert'
+
 import {
   SpanLogInput,
   TracerLog,
@@ -16,6 +18,7 @@ import { default as _knex } from 'knex'
 import { defaultPropDescriptor } from './config.js'
 import { bindOnQuery, bindOnQueryError, bindOnQueryResp, globalSubject } from './event.js'
 import {
+  CaseType,
   DbQueryBuilder,
   KmoreEvent,
   KnexConfig,
@@ -23,13 +26,18 @@ import {
   OnQueryErrorData,
   OnQueryErrorErr,
   OnQueryRespRaw,
+  QueryContext,
   QueryResponse,
   QuerySpanInfo,
 } from './types.js'
 
 
 export class Kmore<D = unknown> {
-  readonly refTables: DbQueryBuilder<D, 'ref_'>
+
+  readonly refTables: DbQueryBuilder<D, 'ref_', CaseType.none>
+  readonly camelTables: DbQueryBuilder<D, 'ref_', CaseType.camel>
+  // readonly pascalTables: DbQueryBuilder<D, 'ref_', CaseType.pascal>
+  readonly snakeTables: DbQueryBuilder<D, 'ref_', CaseType.snake>
 
   /**
   * Generics parameter, do NOT access as variable!
@@ -67,7 +75,10 @@ export class Kmore<D = unknown> {
     public instanceId: string | symbol,
   ) {
 
-    this.refTables = this.createRefTables(this.dbh, 'ref_')
+    this.refTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.none)
+    this.camelTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.camel)
+    // this.pascalTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.pascal)
+    this.snakeTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.snake)
   }
 
   unsubscribe(): void {
@@ -90,8 +101,13 @@ export class Kmore<D = unknown> {
   }
 
 
-  protected createRefTables(dbh: Knex, prefix: string): DbQueryBuilder<D> {
-    const rb = {} as DbQueryBuilder<D>
+  protected createRefTables<P extends string>(
+    dbh: Knex,
+    prefix: P,
+    caseConvert: CaseType,
+  ): DbQueryBuilder<D, P, CaseType> {
+
+    const rb = {} as DbQueryBuilder<D, P, CaseType>
 
     if (! this.dict || ! this.dict.tables || ! Object.keys(this.dict.tables).length) {
       console.info('Kmore:createRefTables() this.dict or this.dict.tables empty')
@@ -103,7 +119,7 @@ export class Kmore<D = unknown> {
       Object.defineProperty(rb, name, {
         ...defaultPropDescriptor,
         value: () => {
-          return this.extRefTableFnProperty(dbh, refName)
+          return this.extRefTableFnProperty(dbh, refName, caseConvert)
         }, // must dynamically!!
       })
 
@@ -111,6 +127,7 @@ export class Kmore<D = unknown> {
         ...defaultPropDescriptor,
         value: name,
       })
+
     })
 
     return rb
@@ -119,9 +136,15 @@ export class Kmore<D = unknown> {
   protected extRefTableFnProperty(
     dbh: Knex,
     refName: string,
+    caseConvert: CaseType,
   ): Knex.QueryBuilder {
 
-    const refTable = dbh(refName)
+    assert(caseConvert, 'caseConvert must be defined')
+
+    const opts: QueryContext = {
+      caseConvert,
+    }
+    const refTable = dbh(refName).queryContext(opts)
     return refTable
   }
 
@@ -143,7 +166,7 @@ export interface KmoreFactoryOpts<D> {
 }
 export type EventCallback = (event: KmoreEvent) => void
 
-export function kmoreFactory<D>(
+export function kmoreFactory<D extends object>(
   options: KmoreFactoryOpts<D>,
   enableTracing = false,
 ): Kmore<D> {
@@ -166,6 +189,7 @@ export function createDbh(
 ): Knex {
 
   let inst = _knex(knexConfig)
+
   if (enableTracing) {
     inst = inst
       .on('query', (data: OnQueryData) => bindOnQuery(globalSubject, void 0, data))

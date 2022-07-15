@@ -44,7 +44,6 @@ describe(fileShortPath(import.meta.url), () => {
     it('transaction rollback', async () => {
       const { dbh } = km
 
-
       let trx = await dbh.transaction()
       assert(trx)
       let tbUser = km.refTables.ref_tb_user()
@@ -53,7 +52,7 @@ describe(fileShortPath(import.meta.url), () => {
         .select('*')
         .then()
       assert(uidsAll)
-      assert(uidsAll.length === 2)
+      assert(uidsAll.length === 3)
 
       const uid2 = 2
       const uid99 = 99
@@ -83,7 +82,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then()
       assert(uidsAll3)
       assert(uidsAll3)
-      assert(uidsAll3.length === 2)
+      assert(uidsAll3.length === 3)
 
       tbUser = km.refTables.ref_tb_user()
       trx = await dbh.transaction()

@@ -1,3 +1,5 @@
+import { RecordCamelKeys } from '@waiting/shared-types'
+
 
 export class Db {
   tb_user: UserDo
@@ -10,6 +12,7 @@ export class Db {
 export class UserDo {
   uid: number
   name: string
+  real_name: string
   ctime: Date | 'now()'
 }
 
@@ -18,4 +21,7 @@ export class UserExtDo {
   age: number
   address: string | number
 }
+
+
+export type UserDTO = RecordCamelKeys<UserDo>
 

@@ -4,9 +4,9 @@ import { fileShortPath } from '@waiting/shared-core'
 
 import { kmoreFactory, Kmore } from '../src/index.js'
 
-import { validateUserRows } from './helper.js'
+import { validateUserRowsDTO } from './helper.js'
 import { config, dbDict } from './test.config.js'
-import { Db, UserDo } from './test.model.js'
+import { Db } from './test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -23,12 +23,12 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should read table with tables param in object works', () => {
     it('tb_user', async () => {
-      const { refTables } = km
-      const { ref_tb_user } = km.refTables
+      const { camelTables } = km
+      const { ref_tb_user } = km.camelTables
 
       // validate insert result
-      const countRes = await km.refTables.ref_tb_user().count()
-      const ret = await km.refTables.ref_tb_user().select('*')
+      const countRes = await km.camelTables.ref_tb_user().count()
+      const ret = await km.camelTables.ref_tb_user().select('*')
       assert(
         ret.length === 3,
         `Should count be "3", but got ${JSON.stringify(ret)}`,
@@ -38,7 +38,7 @@ describe(fileShortPath(import.meta.url), () => {
         `Should count be "3", but got ${JSON.stringify(ret)}`,
       )
 
-      const countRes2 = await refTables.ref_tb_user().count()
+      const countRes2 = await camelTables.ref_tb_user().count()
       assert(
         countRes2[0] && countRes2[0]['count'] === '3',
         `Should count be "3", but got ${JSON.stringify(ret)}`,
@@ -52,7 +52,7 @@ describe(fileShortPath(import.meta.url), () => {
 
       await ref_tb_user().select('*')
         .then((rows) => {
-          validateUserRows(rows)
+          validateUserRowsDTO(rows)
           return rows
         })
         .catch((err: Error) => {

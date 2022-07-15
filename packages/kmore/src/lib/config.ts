@@ -1,4 +1,5 @@
-import { KmoreEvent } from './types.js'
+import { postProcessResponse, wrapIdentifier } from './helper.js'
+import type { KmoreEvent, KnexConfig } from './types.js'
 
 
 export const defaultPropDescriptor: PropertyDescriptor = {
@@ -21,5 +22,13 @@ export const initKmoreEvent: KmoreEvent = {
   exData: void 0,
   exError: void 0,
   timestamp: Date.now(),
+}
+
+export const initialConfig: Omit<KnexConfig, 'client' | 'connection'> = {
+  acquireConnectionTimeout: 60000,
+  debug: false,
+  pool: { min: 0, max: 30 },
+  postProcessResponse,
+  wrapIdentifier,
 }
 

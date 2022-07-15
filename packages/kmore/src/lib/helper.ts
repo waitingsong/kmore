@@ -1,15 +1,16 @@
 import {
   camelToSnake,
   camelKeys,
+  // pascalCase,
   snakeKeys,
 } from '@waiting/shared-core'
-import { RecordCamelKeys, RecordSnakeKeys } from '@waiting/shared-types'
+import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
 // import keysDoToDtoCamel from 'camelcase-keys'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Knex } from 'knex'
 // import keysDto2DoSnake from 'snakecase-keys'
 
-import { EnumClient, KnexConfig } from './types.js'
+import { CaseType, EnumClient, KnexConfig, QueryContext } from './types.js'
 
 
 export async function getCurrentTime(
@@ -59,50 +60,131 @@ function parseRespMysql2(res: RespMysql2): string {
     : ''
 }
 
+
+export function postProcessResponse<T extends PostProcessInput = PostProcessInput>(
+  result: T,
+  queryContext?: QueryContext,
+): T | PostProcessRespRet<T, QueryContext['caseConvert']> {
+
+  if (! queryContext) {
+    return result
+  }
+
+  const { caseConvert } = queryContext
+  if (! caseConvert) {
+    return result
+  }
+
+  switch (caseConvert) {
+    case CaseType.camel:
+      return postProcessResponseToCamel(result, queryContext)
+    case CaseType.pascal:
+      throw Error('Not implemented yet for pascal case conversion')
+      // return postProcessResponseToPascal(result, queryContext)
+    case CaseType.snake:
+      return postProcessResponseToSnake(result, queryContext)
+    default:
+      return result
+  }
+}
+
 export type PostProcessPlain = number | string | undefined | null | boolean
 export type PostProcessRecord = Record<string, PostProcessPlain> | object
 export type PostProcessArray = PostProcessPlain[]
 export type PostProcessInput = PostProcessPlain | PostProcessRecord | PostProcessArray
-export type PostProcessRespRet<T extends PostProcessInput> = T extends PostProcessPlain
-  ? T
-  : T extends PostProcessArray // before PostProcessRecord
-    ? PostProcessArray
-    : T extends PostProcessRecord
-      ? RecordCamelKeys<T>
-      : never
+export type PostProcessRespRet<T extends PostProcessInput, CaseConvert extends CaseType | undefined>
+  = T extends PostProcessPlain
+    ? T
+    : T extends PostProcessArray // condition before PostProcessRecord
+      ? PostProcessArray
+      : T extends PostProcessRecord // condition after PostProcessArray
+        ? PostProcessRecordCaseConvert<T, CaseConvert>
+        : never
+type PostProcessRecordCaseConvert<T extends PostProcessRecord, CaseConvert extends CaseType | undefined>
+  = CaseConvert extends CaseType.camel
+    ? RecordCamelKeys<T>
+    : CaseConvert extends CaseType.pascal
+      ? RecordPascalKeys<T>
+      : CaseConvert extends CaseType.snake
+        ? RecordSnakeKeys<T>
+        : T
 
 /**
  * Convert keys of result to camelcase, if input is object
  */
 export function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
   result: T,
-  _queryContext?: unknown,
-): PostProcessRespRet<T> {
+  _queryContext?: QueryContext,
+): PostProcessRespRet<T, CaseType.camel> {
 
   if (Array.isArray(result)) {
-    const ret = result.map(row => postProcessResponseToCamel(row))
-    return ret as PostProcessRespRet<T>
+    const ret = result.map(row => postProcessResponseToCamel(row, _queryContext))
+    return ret as PostProcessRespRet<T, CaseType.camel>
   }
   else if (typeof result === 'object' && result) {
     const ret = genCamelKeysFrom(result)
-    return ret as PostProcessRespRet<T>
+    return ret as PostProcessRespRet<T, CaseType.camel>
   }
 
-  return result as PostProcessRespRet<T>
+  return result as PostProcessRespRet<T, CaseType.camel>
 }
+
+/**
+ * Convert keys of result to PascalCase, if input is object
+ */
+// export function postProcessResponseToPascal<T extends PostProcessInput = PostProcessInput>(
+//   result: T,
+//   _queryContext?: QueryContext,
+// ): PostProcessRespRet<T, CaseType.pascal> {
+
+//   if (Array.isArray(result)) {
+//     const ret = result.map(row => postProcessResponseToCamel(row, _queryContext))
+//     return ret as PostProcessRespRet<T, CaseType.pascal>
+//   }
+//   else if (typeof result === 'object' && result) {
+//     const ret = genPascalKeysFrom(result)
+//     return ret as PostProcessRespRet<T, CaseType.pascal>
+//   }
+
+//   return result as PostProcessRespRet<T, CaseType.pascal>
+// }
+
+/**
+ * Convert keys of result to snake_case, if input is object
+ */
+export function postProcessResponseToSnake<T extends PostProcessInput = PostProcessInput>(
+  result: T,
+  _queryContext?: QueryContext,
+): PostProcessRespRet<T, CaseType.snake> {
+
+  if (Array.isArray(result)) {
+    const ret = result.map(row => postProcessResponseToCamel(row, _queryContext))
+    return ret as PostProcessRespRet<T, CaseType.snake>
+  }
+  else if (typeof result === 'object' && result) {
+    const ret = genSnakeKeysFrom(result)
+    return ret as PostProcessRespRet<T, CaseType.snake>
+  }
+
+  return result as PostProcessRespRet<T, CaseType.snake>
+}
+
 
 export function genCamelKeysFrom<From extends PostProcessRecord>(
   input: From,
 ): RecordCamelKeys<From, '_'> {
-
   return camelKeys(input)
 }
 
-export function genSnakeKeysFrom<From>(
+// function genPascalKeysFrom<From extends PostProcessRecord>(
+//   input: From,
+// ): RecordPascalKeys<From, '_'> {
+//   return pascalCase(input)
+// }
+
+export function genSnakeKeysFrom<From extends PostProcessRecord>(
   input: From,
 ): RecordSnakeKeys<From, '_'> {
-
-  // return keysDto2DoSnake(input)
   return snakeKeys(input)
 }
 
@@ -112,9 +194,17 @@ export function genSnakeKeysFrom<From>(
 export function wrapIdentifier(
   value: string,
   origImpl: (input: string) => string,
-  _queryContext: unknown,
+  queryContext?: QueryContext,
 ): string {
-  return origImpl(camelToSnake(value))
+
+  if (! queryContext
+    || ! queryContext.caseConvert
+    || queryContext.caseConvert === CaseType.none) {
+    return origImpl(value)
+  }
+
+  const ret = origImpl(camelToSnake(value))
+  return ret
 }
 
 

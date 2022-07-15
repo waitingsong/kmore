@@ -43,10 +43,13 @@ describe(fileShortPath(import.meta.url), () => {
         .columns(cols)
         .then(rows => rows[0])
 
-      assert(ret && Object.keys(ret).length === 2)
-      assert(ret && typeof ret.tbUserUid === 'number')
-      assert(ret && typeof ret.tbUserExtUid === 'number')
-      assert(ret && ret.tbUserUid === ret.tbUserExtUid)
+      console.log({ ret })
+      assert(ret)
+      const len = Object.keys(ret).length
+      assert(len === 2, `len: ${len}`)
+      assert(typeof ret.tbUserUid === 'number', typeof ret.tbUserUid)
+      assert(typeof ret.tbUserExtUid === 'number')
+      assert(ret.tbUserUid === ret.tbUserExtUid)
     })
 
     it('custom name by scoped', async () => {

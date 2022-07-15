@@ -1,11 +1,12 @@
 import assert from 'assert/strict'
 
+import { RecordCamelKeys, ValuesOf } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import { kmoreFactory, Kmore, getCurrentTime, EnumClient } from '../src/index.js'
+import { kmoreFactory, Kmore, getCurrentTime, EnumClient, CaseType, KmoreFactoryOpts } from '../src/index.js'
 
 import { config, dbDict } from './test.config.js'
-import { Db, UserDo, UserExtDo } from './test.model.js'
+import { Db, UserDo, UserDTO, UserExtDo } from './test.model.js'
 
 
 type TableName = string
@@ -18,7 +19,11 @@ export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<
 }
 
 export async function initDb(): Promise<void> {
-  const km = kmoreFactory({ config, dict: dbDict })
+  const opts: KmoreFactoryOpts<Db> = {
+    config,
+    dict: dbDict,
+  }
+  const km = kmoreFactory(opts)
   await dropTables(km.dbh, Object.values(km.dict.tables))
 
   const iso = await getTransactionIsolation(km.dbh)
@@ -27,6 +32,7 @@ export async function initDb(): Promise<void> {
 
   await initTable(km)
   await initUser(km)
+  await initUserCamel(km)
   await initUserExt(km)
   await km.dbh.destroy()
 }
@@ -46,6 +52,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
     .createTable(tables.tb_user, (tb) => {
       tb.increments(tb_user.uid).primary()
       tb.string(tb_user.name, 30)
+      tb.string(tb_user.real_name, 30)
       tb.timestamp(tb_user.ctime, { useTz: false })
     })
     .createTable(tables.tb_user_ext, (tb) => {
@@ -73,10 +80,10 @@ async function initUser(km: Kmore<Db>): Promise<void> {
   // insert
   await ref_tb_user()
     .insert([
-      { name: 'user1', ctime: new Date() }, // ms
-      // { name: 'user2', ctime: 'now()' }, // μs
+      { name: 'user1', real_name: 'rn1', ctime: new Date() }, // ms
       {
         [tb_user.name]: 'user2',
+        [tb_user.real_name]: 'rn2',
         [tb_user.ctime]: 'now()', // us
       },
     ])
@@ -101,9 +108,70 @@ export function validateUserRows(rows: Partial<UserDo>[]): void {
     switch (row.uid) {
       case 1:
         assert(row.name === 'user1', JSON.stringify(row))
+        assert(row.real_name === 'rn1', JSON.stringify(row))
         break
       case 2:
         assert(row.name === 'user2', JSON.stringify(row))
+        assert(row.real_name === 'rn2', JSON.stringify(row))
+        break
+      case 3:
+        assert(row.name === 'user3', JSON.stringify(row))
+        assert(row.real_name === 'rn3', JSON.stringify(row))
+        break
+      default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
+        break
+    }
+  })
+}
+
+async function initUserCamel(km: Kmore<Db>): Promise<void> {
+  const { ref_tb_user } = km.camelTables
+
+  // insert
+  await ref_tb_user()
+    .insert([
+      {
+        name: 'user3',
+        realName: 'rn3',
+        ctime: new Date(),
+      }, // ms
+    ])
+    .catch((err: Error) => {
+      assert(false, err.message)
+    })
+
+  await ref_tb_user()
+    .select('*')
+    .then((rows) => {
+      validateUserRowsDTO(rows)
+      return rows
+    })
+    .catch((err: Error) => {
+      assert(false, err.message)
+    })
+
+}
+export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
+  assert(Array.isArray(rows) && rows.length > 0)
+
+  rows.forEach((row) => {
+    assert(row && row.uid)
+    assert(typeof row.ctime === 'object')
+
+    switch (row.uid) {
+      case 1:
+        assert(row.name === 'user1', JSON.stringify(row))
+        assert(row.realName === 'rn1', JSON.stringify(row))
+        break
+      case 2:
+        assert(row.name === 'user2', JSON.stringify(row))
+        assert(row.realName === 'rn2', JSON.stringify(row))
+        break
+      case 3:
+        assert(row.name === 'user3', JSON.stringify(row))
+        assert(row.realName === 'rn3', JSON.stringify(row))
         break
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -171,14 +239,14 @@ export function validateUserExtRows(rows: Partial<UserExtDo>[]): void {
 }
 
 
-async function getTransactionIsolation(dbh: Kmore['dbh']): Promise<string> {
+async function getTransactionIsolation(dbh: Knex): Promise<string> {
   return await dbh.raw('SHOW TRANSACTION ISOLATION LEVEL')
     .then((rows) => {
       return rows.rows[0] ? rows.rows[0].transaction_isolation : 'N/A'
     })
 }
 
-async function setTimeZone(dbh: Kmore['dbh'], zone: string): Promise<string> {
+async function setTimeZone(dbh: Knex, zone: string): Promise<string> {
   // available select  pg_timezone_names()
   await dbh.raw(`SET TIME ZONE '${zone}'`)
     .then((rows) => {

@@ -29,7 +29,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tbUser.select('*')
 
       assert(ret && Array.isArray(ret))
-      assert(ret.length === 2)
+      assert(ret.length === 3)
     })
 
     it('where', async () => {

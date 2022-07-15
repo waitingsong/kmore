@@ -1,13 +1,14 @@
-import assert from 'assert/strict'
+import assert from 'node:assert/strict'
 
 import { genDbDict } from 'kmore-types'
 
-import { KnexConfig } from '../src/index.js'
+import { KnexConfig, initialConfig } from '../src/index.js'
 
 import { Db } from './test.model.js'
 
 
 export const config: KnexConfig = {
+  ...initialConfig,
   client: 'pg',
   connection: {
     host: process.env['POSTGRES_HOST'] ? process.env['POSTGRES_HOST'] : 'localhost',
@@ -18,9 +19,7 @@ export const config: KnexConfig = {
     requestTimeout: 3000,
   },
   acquireConnectionTimeout: 5000,
-  asyncStackTraces: false,
   debug: false,
-  pool: { min: 0, max: 10 },
 }
 
 export const dbDict = genDbDict<Db>()
