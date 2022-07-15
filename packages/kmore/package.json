@@ -12,6 +12,7 @@
     "postgresql",
     "oracle",
     "AST",
+    "ESM",
     "typescript",
     "ts"
   ],
