@@ -5,6 +5,8 @@ import {
 } from './types'
 
 
+export { initialConfig as initialKnexConfig } from 'kmore'
+
 export const initialConfig: Readonly<Config> = {
   defaultMaxListeners: 200,
   timeoutWhenDestroy: 2000,
