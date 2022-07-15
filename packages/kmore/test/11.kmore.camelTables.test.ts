@@ -40,6 +40,25 @@ describe(fileShortPath(import.meta.url), () => {
       assert(ret.length === 1)
     })
 
+    it('camel', async () => {
+      const tbUser = km.camelTables.ref_tb_user()
+      const ret = await tbUser.select('realName')
+        .where('uid', 1)
+        .then(rows => rows[0])
+
+      assert(ret)
+      assert(ret.realName === 'rn1')
+    })
+
+    it('camel when', async () => {
+      const tbUser = km.camelTables.ref_tb_user()
+      const ret = await tbUser.select('realName')
+        .where('uid', 1)
+        .where('realName', Math.random().toString())
+        .then(rows => rows[0])
+
+      assert(! ret)
+    })
   })
 
 })
