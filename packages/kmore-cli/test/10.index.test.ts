@@ -24,17 +24,15 @@ describe(fileShortPath(import.meta.url), () => {
   const tsConfigFilePathCjs = join(__dirname, 'demo/tsconfig.cjs.json')
   const tsDemo1 = join(__dirname, 'demo/demo1.ts')
   const jsDemo1 = join(__dirname, 'demo/demo1.js')
-  const paths = `"${jsDemo1}"`
+  const demoPath = `"${__dirname}/demo"`
   const jsPaths: string[] = ['demo1.d.ts']
 
   beforeEach(async () => {
-    await firstValueFrom(run(`git restore ${paths}`))
+    await firstValueFrom(run(`git restore ${demoPath}`))
   })
   after(async () => {
-    await firstValueFrom(run(`git restore ${paths}`))
-    jsPaths.forEach((path) => {
-      void rm(path)
-    })
+    await rm(demoPath, { recursive: true })
+    await firstValueFrom(run(`git restore ${demoPath}`))
   })
 
   describe('Should cmd gen work', () => {
