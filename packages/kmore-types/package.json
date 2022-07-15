@@ -4,6 +4,7 @@
   "version": "29.0.1",
   "description": "Retrieve types info from ts file",
   "keywords": [
+    "kmore",
     "AST",
     "compiler",
     "typescript",

@@ -10,6 +10,7 @@
     "query",
     "database",
     "postgresql",
+    "pg",
     "oracle",
     "AST",
     "ESM",

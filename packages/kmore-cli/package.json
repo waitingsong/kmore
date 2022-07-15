@@ -6,6 +6,7 @@
   "keywords": [
     "kmore",
     "knex",
+    "orm",
     "ESM",
     "typescript",
     "ts"
