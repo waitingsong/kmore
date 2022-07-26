@@ -23,7 +23,7 @@ describe(fileShortPath(import.meta.url), () => {
     }
   })
 
-  describe('Should read table with tables param in object works', () => {
+  describe('Should read table with tables param in object work', () => {
     it('tb_user', async () => {
       const tbUser = km.refTables.ref_tb_user()
       const ret = await tbUser.select('*')

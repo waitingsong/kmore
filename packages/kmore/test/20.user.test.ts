@@ -21,7 +21,7 @@ describe(fileShortPath(import.meta.url), () => {
     await km.dbh.destroy() // !
   })
 
-  describe('Should read table with tables param in object works', () => {
+  describe('Should read table with tables param in object work', () => {
     it('tb_user', async () => {
       const { refTables } = km
       const { ref_tb_user } = km.refTables

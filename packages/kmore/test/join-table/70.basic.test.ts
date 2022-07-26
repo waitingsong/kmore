@@ -38,7 +38,7 @@ describe(fileShortPath(import.meta.url), () => {
     await km.dbh.destroy() // !
   })
 
-  describe('Should inner join table works', () => {
+  describe('Should inner join table work', () => {
     it('tb_user join tb_user_ext', async () => {
       const { refTables } = km
       const { tables, scoped } = km.dict

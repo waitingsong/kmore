@@ -25,3 +25,8 @@ export class UserExtDo {
 
 export type UserDTO = RecordCamelKeys<UserDo>
 
+export interface Context {
+  uid: number
+  ver: string
+}
+

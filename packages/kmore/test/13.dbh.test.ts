@@ -20,7 +20,7 @@ describe(fileShortPath(import.meta.url), () => {
     await km.dbh.destroy() // !
   })
 
-  describe('Should insert table with dbh works', () => {
+  describe('Should insert table with dbh work', () => {
     it(dbDict.tables.tb_user, async () => {
       const { dbh, dict } = km
 

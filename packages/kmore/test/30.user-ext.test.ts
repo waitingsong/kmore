@@ -21,9 +21,9 @@ describe(fileShortPath(import.meta.url), () => {
     await km.dbh.destroy() // !
   })
 
-  describe('Should read table with tables param in array works', () => {
+  describe('Should read table with tables param in array work', () => {
 
-    it('Should constraint violation works', async () => {
+    it('Should constraint violation work', async () => {
       const { refTables } = km
       const { ref_tb_user_ext } = km.refTables
 

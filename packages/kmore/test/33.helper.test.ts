@@ -24,7 +24,7 @@ describe(fileShortPath(import.meta.url), () => {
     await km.dbh.destroy() // !
   })
 
-  describe('Should getCurrentTime() works', () => {
+  describe('Should getCurrentTime() work', () => {
     it('with pg', async () => {
       const time = await getCurrentTime(km.dbh, EnumClient.pg)
       assert(time)
