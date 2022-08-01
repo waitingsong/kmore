@@ -10,6 +10,7 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 
 
 export const initKmoreEvent: KmoreEvent = {
+  dbId: '',
   type: 'unknown',
   identifier: void 0,
   kUid: '',
@@ -21,6 +22,7 @@ export const initKmoreEvent: KmoreEvent = {
   respRaw: void 0,
   exData: void 0,
   exError: void 0,
+  queryBuilder: void 0,
   timestamp: Date.now(),
 }
 

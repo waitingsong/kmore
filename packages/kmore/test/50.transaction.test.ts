@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { globalEvent, kmoreFactory } from '../src/index.js'
+import { KmoreFactory } from '../src/index.js'
 
 import { config } from './test.config.js'
 import { Db } from './test.model.js'
@@ -11,7 +11,7 @@ import { Db } from './test.model.js'
 
 describe(fileShortPath(import.meta.url), () => {
   const dict = genDbDict<Db>()
-  const km = kmoreFactory({ config, dict }, true)
+  const km = KmoreFactory({ config, dict })
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
@@ -108,62 +108,62 @@ describe(fileShortPath(import.meta.url), () => {
       await trx.rollback()
     })
 
-    it('transaction subscription', (done) => {
-      const { dbh } = km
+    // it('transaction subscription', (done) => {
+    //   const { dbh } = km
 
-      dbh.transaction()
-        .then((trx) => {
-          const subsp = globalEvent
-            .subscribe({
-              next: (ev) => {
-                assert(ev.kUid)
-                assert(ev.queryUid)
-                assert(typeof ev.trxId === 'string' && ev.trxId)
-                assert(ev.method === 'select')
+    //   dbh.transaction()
+    //     .then((trx) => {
+    //       const subsp = globalEvent
+    //         .subscribe({
+    //           next: (ev) => {
+    //             assert(ev.kUid)
+    //             assert(ev.queryUid)
+    //             assert(typeof ev.trxId === 'string' && ev.trxId)
+    //             assert(ev.method === 'select')
 
-                if (ev.type === 'query') {
-                  assert(! ev.command)
-                  assert(typeof ev.exData === 'undefined')
-                  assert(typeof ev.exError === 'undefined')
-                  assert(typeof ev.respRaw === 'undefined')
-                }
-                else if (ev.type === 'queryResponse') {
-                  assert(ev.command === 'SELECT')
-                  assert(ev.respRaw)
+    //             if (ev.type === 'query') {
+    //               assert(! ev.command)
+    //               assert(typeof ev.exData === 'undefined')
+    //               assert(typeof ev.exError === 'undefined')
+    //               assert(typeof ev.respRaw === 'undefined')
+    //             }
+    //             else if (ev.type === 'queryResponse') {
+    //               assert(ev.command === 'SELECT')
+    //               assert(ev.respRaw)
 
-                  const rows = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
+    //               const rows = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
 
-                  assert(rows && Array.isArray(rows))
-                  assert(rows && rows.length === 1)
+    //               assert(rows && Array.isArray(rows))
+    //               assert(rows && rows.length === 1)
 
-                  subsp.unsubscribe()
-                  done()
-                }
-              },
-              error: done,
-            })
-          assert(typeof subsp.unsubscribe === 'function')
+    //               subsp.unsubscribe()
+    //               done()
+    //             }
+    //           },
+    //           error: done,
+    //         })
+    //       assert(typeof subsp.unsubscribe === 'function')
 
-          km.refTables.ref_tb_user()
-            .transacting(trx)
-            .forUpdate()
-            .select('*')
-            .where('uid', 1)
-            .then(async (rows) => {
-              await trx.commit()
-              return rows
-            })
-            .catch(async () => {
-              await trx.rollback()
-              return []
-            })
+    //       km.refTables.ref_tb_user()
+    //         .transacting(trx)
+    //         .forUpdate()
+    //         .select('*')
+    //         .where('uid', 1)
+    //         .then(async (rows) => {
+    //           await trx.commit()
+    //           return rows
+    //         })
+    //         .catch(async () => {
+    //           await trx.rollback()
+    //           return []
+    //         })
 
-        })
-        .catch((ex) => {
-          assert(false, (ex as Error).message)
-          done()
-        })
-    })
+    //     })
+    //     .catch((ex) => {
+    //       assert(false, (ex as Error).message)
+    //       done()
+    //     })
+    // })
   })
 
 })

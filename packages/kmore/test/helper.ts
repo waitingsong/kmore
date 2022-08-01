@@ -1,9 +1,8 @@
 import assert from 'assert/strict'
 
-import { RecordCamelKeys, ValuesOf } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import { kmoreFactory, Kmore, getCurrentTime, EnumClient, CaseType, KmoreFactoryOpts } from '../src/index.js'
+import { KmoreFactory, Kmore, getCurrentTime, EnumClient, KmoreFactoryOpts } from '../src/index.js'
 
 import { config, dbDict } from './test.config.js'
 import { Db, UserDo, UserDTO, UserExtDo } from './test.model.js'
@@ -23,7 +22,7 @@ export async function initDb(): Promise<void> {
     config,
     dict: dbDict,
   }
-  const km = kmoreFactory(opts)
+  const km = KmoreFactory(opts)
   await dropTables(km.dbh, Object.values(km.dict.tables))
 
   const iso = await getTransactionIsolation(km.dbh)

@@ -2,12 +2,12 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { kmoreFactory } from '../../src/index.js'
+import { KmoreFactory } from '../../src/index.js'
 import { config, dbDict } from '../test.config.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
-  const km = kmoreFactory({ config, dict: dbDict })
+  const km = KmoreFactory({ config, dict: dbDict })
   type Db = typeof km.DbModel
   type UserDo = Db['tb_user']
   type UserExtDo = Db['tb_user_ext']

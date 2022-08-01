@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { kmoreFactory, Kmore } from '../src/index.js'
+import { KmoreFactory, Kmore } from '../src/index.js'
 
 import { validateUserExtRows } from './helper.js'
 import { config, dbDict } from './test.config.js'
@@ -13,7 +13,7 @@ describe(fileShortPath(import.meta.url), () => {
   let km: Kmore<Db>
 
   before(() => {
-    km = kmoreFactory({ config, dict: dbDict })
+    km = KmoreFactory({ config, dict: dbDict })
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
   })
 

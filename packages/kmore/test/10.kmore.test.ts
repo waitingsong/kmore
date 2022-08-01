@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { globalEvent, kmoreFactory } from '../src/index.js'
+import { KmoreFactory } from '../src/index.js'
 
 import { config } from './test.config.js'
 import { Db } from './test.model.js'
@@ -11,7 +11,7 @@ import { Db } from './test.model.js'
 
 describe(fileShortPath(import.meta.url), () => {
   const dict = genDbDict<Db>()
-  const km = kmoreFactory({ config, dict }, true)
+  const km = KmoreFactory({ config, dict })
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
@@ -61,41 +61,41 @@ describe(fileShortPath(import.meta.url), () => {
       assert(ret.length === 1)
     })
 
-    it('subscription', (done) => {
-      km.refTables.ref_tb_user()
-        .select('*')
-        .where('uid', 1)
-        .catch(() => [])
+    // it('subscription', (done) => {
+    //   km.refTables.ref_tb_user()
+    //     .select('*')
+    //     .where('uid', 1)
+    //     .catch(() => [])
 
-      let queryUid = ''
-      const subsp = globalEvent
-        .subscribe({
-          next: (ev) => {
+    //   let queryUid = ''
+    //   const subsp = globalEvent
+    //     .subscribe({
+    //       next: (ev) => {
 
-            if (ev.identifier) { return }
+    //         if (ev.identifier) { return }
 
-            assert(ev.type === 'queryResponse' || ev.type === 'query')
+    //         assert(ev.type === 'queryResponse' || ev.type === 'query')
 
-            if (ev.type === 'query') {
-              assert(ev.queryUid.length)
-              assert(queryUid === '', ev.queryUid)
-              queryUid = ev.queryUid
-            }
-            else if (ev.type === 'queryResponse') {
-              const ret = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
+    //         if (ev.type === 'query') {
+    //           assert(ev.queryUid.length)
+    //           assert(queryUid === '', ev.queryUid)
+    //           queryUid = ev.queryUid
+    //         }
+    //         else if (ev.type === 'queryResponse') {
+    //           const ret = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
 
-              assert(ret && Array.isArray(ret))
-              assert(ret && ret.length === 1)
-              assert(ev.queryUid && ev.queryUid === queryUid)
+    //           assert(ret && Array.isArray(ret))
+    //           assert(ret && ret.length === 1)
+    //           assert(ev.queryUid && ev.queryUid === queryUid)
 
-              subsp.unsubscribe()
-              done()
-            }
-          },
-          error: done,
-        })
-      assert(typeof subsp.unsubscribe === 'function')
-    })
+    //           subsp.unsubscribe()
+    //           done()
+    //         }
+    //       },
+    //       error: done,
+    //     })
+    //   assert(typeof subsp.unsubscribe === 'function')
+    // })
 
   })
 

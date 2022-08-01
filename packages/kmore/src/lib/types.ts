@@ -24,6 +24,7 @@ export enum CaseType {
 }
 
 export type DbQueryBuilder<
+  Context,
   D,
   Prefix extends string,
   CaseConvert extends CaseType
@@ -31,12 +32,12 @@ export type DbQueryBuilder<
   /** ref_tb_name: () => knex('tb_name') */
   // [tb in keyof D as `${Prefix}${tb & string}`]: TbQueryBuilder<D[tb]>
   [tb in keyof D as `${Prefix}${tb & string}`]: CaseConvert extends CaseType.camel
-    ? TbQueryBuilder<RecordCamelKeys<D[tb]>>
+    ? TbQueryBuilder<RecordCamelKeys<D[tb]>, Context>
     : CaseConvert extends CaseType.snake
-      ? TbQueryBuilder<RecordSnakeKeys<D[tb]>>
+      ? TbQueryBuilder<RecordSnakeKeys<D[tb]>, Context>
       : CaseConvert extends CaseType.pascal
-        ? TbQueryBuilder<RecordPascalKeys<D[tb]>>
-        : TbQueryBuilder<D[tb]>
+        ? TbQueryBuilder<RecordPascalKeys<D[tb]>, Context>
+        : TbQueryBuilder<D[tb], Context>
 }
 
 export interface BuilderInput {
@@ -44,7 +45,7 @@ export interface BuilderInput {
   caseConvert?: CaseType | undefined
 }
 
-export type TbQueryBuilder<TRecord> = () => Knex.QueryBuilder<TRecord, TRecord[]>
+export type TbQueryBuilder<TRecord, Context> = (ctx?: Context) => Knex.QueryBuilder<TRecord, TRecord[]>
 // export type TbQueryBuilder<TRecord>
 //   = <CaseConvert extends CaseType = CaseType.none>(caseConvert?: CaseConvert)
 //   => CaseConvert extends CaseType.camel
@@ -64,8 +65,11 @@ export type TbQueryBuilder<TRecord> = () => Knex.QueryBuilder<TRecord, TRecord[]
 //     ? QueryBuilderExt<TRecord>
 //     : QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
 
+export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'unknown'
+
 export interface KmoreEvent <T = unknown> {
-  type: 'query' | 'queryError' | 'queryResponse' | 'unknown'
+  dbId: string
+  type: EventType
   /** passed from external */
   identifier: unknown
   /** __knexUid */
@@ -87,6 +91,7 @@ export interface KmoreEvent <T = unknown> {
   respRaw: OnQueryRespRaw<T> | undefined
   exData: OnQueryErrorData | undefined
   exError: OnQueryErrorErr | undefined
+  queryBuilder: Knex.QueryBuilder | undefined // when event is 'start
   timestamp: number
 }
 
@@ -180,4 +185,21 @@ export interface QuerySpanInfo {
   tagClass: string
   timestamp: number
 }
+
+export interface EventCallbackOptions<Ctx = unknown, R = unknown> {
+  ctx: Ctx
+  event?: KmoreEvent<R>
+}
+/**
+ * @docs https://knexjs.org/guide/interfaces.html#query-response
+ */
+export type EventCallback<Ctx = any> = (event: KmoreEvent, ctx?: Ctx) => Promise<void>
+/**
+ * @docs https://knexjs.org/guide/interfaces.html#query-response
+ */
+export type EventCallbackType = Exclude<EventType, 'unknown'>
+/**
+ * @docs https://knexjs.org/guide/interfaces.html#query-response
+ */
+export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
 

@@ -1,26 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'assert'
 
-import {
-  SpanLogInput,
-  TracerLog,
-  TracerTag,
-} from '@mw-components/jaeger'
-import {
-  genISO8601String,
-  humanMemoryUsage,
-} from '@waiting/shared-core'
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
 
 import { defaultPropDescriptor } from './config.js'
-import { bindOnQuery, bindOnQueryError, bindOnQueryResp, globalSubject } from './event.js'
+import { callCbOnQuery, callCbOnQueryError, callCbOnQueryResp, callCbOnStart } from './event.js'
 import {
   CaseType,
   DbQueryBuilder,
-  KmoreEvent,
+  EventCallbacks,
   KnexConfig,
   OnQueryData,
   OnQueryErrorData,
@@ -32,12 +24,12 @@ import {
 } from './types.js'
 
 
-export class Kmore<D = unknown> {
+export class Kmore<D = any, Context = any> {
 
-  readonly refTables: DbQueryBuilder<D, 'ref_', CaseType.none>
-  readonly camelTables: DbQueryBuilder<D, 'ref_', CaseType.camel>
+  readonly refTables: DbQueryBuilder<Context, D, 'ref_', CaseType.none>
+  readonly camelTables: DbQueryBuilder<Context, D, 'ref_', CaseType.camel>
   // readonly pascalTables: DbQueryBuilder<D, 'ref_', CaseType.pascal>
-  readonly snakeTables: DbQueryBuilder<D, 'ref_', CaseType.snake>
+  readonly snakeTables: DbQueryBuilder<Context, D, 'ref_', CaseType.snake>
 
   /**
   * Generics parameter, do NOT access as variable!
@@ -68,46 +60,40 @@ export class Kmore<D = unknown> {
   protected listenEvent = true
   // protected readonly subject: Subject<KmoreEvent>
 
+  public readonly config: KnexConfig
+  public readonly dict: DbDict<D>
+  public readonly dbId: string
+  public readonly dbh: Knex
+  public readonly instanceId: string | symbol
+  public readonly eventCallbacks: EventCallbacks<Context> | undefined
+
+
   constructor(
-    public readonly config: KnexConfig,
-    public readonly dict: DbDict<D>,
-    public dbh: Knex,
-    public instanceId: string | symbol,
+    options: KmoreFactoryOpts<D, Context>,
   ) {
 
-    this.refTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.none)
-    this.camelTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.camel)
-    // this.pascalTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.pascal)
-    this.snakeTables = this.createRefTables<'ref_'>(this.dbh, 'ref_', CaseType.snake)
-  }
+    const dbId = options.dbId ? options.dbId : Date.now().toString()
+    this.dbId = dbId
+    this.dbh = options.dbh ? options.dbh : createDbh(options.config)
+    this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
+    this.eventCallbacks = options.eventCallbacks
 
-  unsubscribe(): void {
-    this.queryUidSpanMap.forEach((info) => {
-      const { span } = info
-      if (span) {
-        const input: SpanLogInput = {
-          [TracerTag.logLevel]: 'warn',
-          message: 'finish span on Kmore unsubscribe()',
-          event: 'Kmore:unsubscribe',
-          queryUidSpanMapSize: this.queryUidSpanMap.size,
-          time: genISO8601String(),
-          [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
-        }
-        span.log(input)
-        span.finish()
-      }
-    })
-    this.listenEvent = false
+    this.config = options.config
+    this.dict = options.dict
+
+    this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
+    this.camelTables = this.createRefTables<'ref_'>('ref_', CaseType.camel)
+    // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
+    this.snakeTables = this.createRefTables<'ref_'>('ref_', CaseType.snake)
   }
 
 
   protected createRefTables<P extends string>(
-    dbh: Knex,
     prefix: P,
     caseConvert: CaseType,
-  ): DbQueryBuilder<D, P, CaseType> {
+  ): DbQueryBuilder<Context, D, P, CaseType> {
 
-    const rb = {} as DbQueryBuilder<D, P, CaseType>
+    const rb = {} as DbQueryBuilder<Context, D, P, CaseType>
 
     if (! this.dict || ! this.dict.tables || ! Object.keys(this.dict.tables).length) {
       console.info('Kmore:createRefTables() this.dict or this.dict.tables empty')
@@ -118,8 +104,8 @@ export class Kmore<D = unknown> {
       const name = `${prefix}${refName}`
       Object.defineProperty(rb, name, {
         ...defaultPropDescriptor,
-        value: () => {
-          return this.extRefTableFnProperty(dbh, refName, caseConvert)
+        value: (ctx?: Context) => {
+          return this.extRefTableFnProperty(refName, caseConvert, ctx)
         }, // must dynamically!!
       })
 
@@ -134,9 +120,9 @@ export class Kmore<D = unknown> {
   }
 
   protected extRefTableFnProperty(
-    dbh: Knex,
     refName: string,
     caseConvert: CaseType,
+    ctx: Context | undefined,
   ): Knex.QueryBuilder {
 
     assert(caseConvert, 'caseConvert must be defined')
@@ -144,66 +130,71 @@ export class Kmore<D = unknown> {
     const opts: QueryContext = {
       caseConvert,
     }
-    const refTable = dbh(refName).queryContext(opts)
+    const refTable = this.dbh(refName)
+      .queryContext(opts)
+      .on('start', async (builder: Knex.QueryBuilder) => callCbOnStart<Context>(
+        ctx,
+        this.dbId,
+        this.eventCallbacks,
+        this.instanceId,
+        builder,
+      ))
+      .on('query', async (data: OnQueryData) => callCbOnQuery<Context>(
+        ctx,
+        this.dbId,
+        this.eventCallbacks,
+        this.instanceId,
+        data,
+      ))
+      .on(
+        'query-response',
+        async (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp<Context>(
+          ctx,
+          this.dbId,
+          this.eventCallbacks,
+          this.instanceId,
+          resp,
+          respRaw,
+        ),
+      )
+      .on(
+        'query-error',
+        async (err: OnQueryErrorErr, data: OnQueryErrorData) => callCbOnQueryError<Context>(
+          ctx,
+          this.dbId,
+          this.eventCallbacks,
+          this.instanceId,
+          err,
+          data,
+        ),
+      )
     return refTable
   }
 
-  // private triggerEvent(event: KmoreEvent): void {
-  //   if (this.eventCallback) {
-  //     this.eventCallback(event)
-  //   }
-  //   void 0
-  // }
-
 }
 
-export interface KmoreFactoryOpts<D> {
+export interface KmoreFactoryOpts<D, Ctx = unknown> {
   config: KnexConfig
   dict: DbDict<D>
   instanceId?: string | symbol
   dbh?: Knex
   dbId?: string
+  eventCallbacks?: EventCallbacks<Ctx> | undefined
 }
-export type EventCallback = (event: KmoreEvent) => void
 
-export function kmoreFactory<D extends object>(
-  options: KmoreFactoryOpts<D>,
-  enableTracing = false,
-): Kmore<D> {
+export function KmoreFactory<D, Ctx = unknown>(
+  options: KmoreFactoryOpts<D, Ctx>,
+): Kmore<D, Ctx> {
 
-  const dbId = options.dbId ? options.dbId : ''
-  const dbh: Knex = options.dbh ? options.dbh : createDbh(options.config, enableTracing)
-  const instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
-  const km = new Kmore<D>(
-    options.config,
-    options.dict,
-    dbh,
-    instanceId,
-  )
+  const km = new Kmore<D, Ctx>(options)
   return km
 }
 
 export function createDbh(
   knexConfig: KnexConfig,
-  enableTracing = false,
 ): Knex {
 
-  let inst = _knex(knexConfig)
-
-  if (enableTracing) {
-    inst = inst
-      .on('query', (data: OnQueryData) => bindOnQuery(globalSubject, void 0, data))
-      .on(
-        'query-response',
-        (_: QueryResponse, respRaw: OnQueryRespRaw) => bindOnQueryResp(globalSubject, void 0, _, respRaw),
-      )
-      .on(
-        'query-error',
-        (err: OnQueryErrorErr, data: OnQueryErrorData) => bindOnQueryError(globalSubject, void 0, err, data),
-      )
-  }
-
+  const inst = _knex(knexConfig)
   return inst
 }
-
 

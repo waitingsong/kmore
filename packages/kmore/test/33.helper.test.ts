@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { fileShortPath } from '@waiting/shared-core'
 
 import {
-  kmoreFactory,
+  KmoreFactory,
   Kmore,
   getCurrentTime,
   EnumClient,
@@ -17,7 +17,7 @@ describe(fileShortPath(import.meta.url), () => {
   let km: Kmore<Db>
 
   before(() => {
-    km = kmoreFactory<Db>({ config, dict: dbDict })
+    km = KmoreFactory<Db>({ config, dict: dbDict })
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
   })
   after(async () => {

@@ -1,14 +1,11 @@
 import {
   camelToSnake,
   camelKeys,
-  // pascalCase,
   snakeKeys,
 } from '@waiting/shared-core'
 import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
-// import keysDoToDtoCamel from 'camelcase-keys'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Knex } from 'knex'
-// import keysDto2DoSnake from 'snakecase-keys'
 
 import { CaseType, EnumClient, KnexConfig, QueryContext } from './types.js'
 
