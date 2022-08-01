@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.0.0](https://github.com/waitingsong/kmore/compare/v30.0.0...v31.0.0) (2022-08-01)
+
+
+### Features
+
+* **midway-component-kmore:** breaking change structure suits for DataSource of midway ([6d2ee17](https://github.com/waitingsong/kmore/commit/6d2ee17c669b401c6c1bf9f5513cb37aae581b74))
+
+
+
+
+
 # [30.0.0](https://github.com/waitingsong/kmore/compare/v29.0.2...v30.0.0) (2022-07-15)
 
 

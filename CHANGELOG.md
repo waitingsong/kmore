@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.0.0](/compare/v30.0.0...v31.0.0) (2022-08-01)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* **kmore:** breaking change structure 7d3eb05
+* **midway-component-kmore:** breaking change structure suits for DataSource of midway 6d2ee17
+
+
+
+
+
 # [30.0.0](/compare/v29.0.2...v30.0.0) (2022-07-15)
 
 
