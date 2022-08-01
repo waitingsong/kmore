@@ -1,11 +1,15 @@
-import 'tsconfig-paths/register'
 import assert from 'node:assert/strict'
+import 'tsconfig-paths/register'
 import { join } from 'node:path'
 
 import * as WEB from '@midwayjs/koa'
 import { createApp, close, createHttpRequest } from '@midwayjs/mock'
+import { ConfigKey as JConfigKey } from '@mw-components/jaeger'
 
-import { config, mwConfig } from '@/config.unittest'
+import { tracerConfig, tracerMiddlewareConfig } from './config.jaeger'
+import { initDb } from './helper'
+
+import { config, kmoreDataSourceConfig, mwConfig } from '@/config.unittest'
 import { testConfig } from '@/root.config'
 import { ConfigKey } from '~/index'
 import { Application } from '~/interface'
@@ -23,6 +27,7 @@ export const mochaHooks = async () => {
   // avoid run multi times
   if (! process.env['mochaRootHookFlag']) {
     process.env['mochaRootHookFlag'] = 'true'
+    await initDb()
   }
 
   return {
@@ -31,6 +36,9 @@ export const mochaHooks = async () => {
         keys: Math.random().toString(),
         [ConfigKey.config]: config,
         [ConfigKey.middlewareConfig]: mwConfig,
+        [ConfigKey.dataSourceConfig]: kmoreDataSourceConfig,
+        [JConfigKey.config]: tracerConfig,
+        [JConfigKey.middlewareConfig]: tracerMiddlewareConfig,
       }
       const opts = {
         imports: [WEB],

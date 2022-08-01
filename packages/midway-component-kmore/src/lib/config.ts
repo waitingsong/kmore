@@ -8,8 +8,7 @@ import {
 export { initialConfig as initialKnexConfig } from 'kmore'
 
 export const initialConfig: Readonly<Config> = {
-  defaultMaxListeners: 200,
-  timeoutWhenDestroy: 2000,
+  timeoutWhenDestroy: 10000,
 }
 
 export const initMiddlewareOptions: MiddlewareOptions = {
@@ -22,6 +21,7 @@ export const initialMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'ignore' |
 export enum ConfigKey {
   config = 'kmoreConfig',
   middlewareConfig = 'kmoreMiddlewareConfig',
+  dataSourceConfig = 'kmoreDataSourceConfig',
   namespace = 'kmore',
   componentName = 'kmoreComponent',
   middlewareName = 'kmoreMiddleware'

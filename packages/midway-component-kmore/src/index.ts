@@ -1,7 +1,6 @@
 
 export { AutoConfiguration as Configuration } from './configuration'
 export * from './lib/index'
-export { BindUnsubscribeEventFunc } from './interface'
 export { getConfigFromApp } from './util/common'
 
 

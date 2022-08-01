@@ -1,11 +1,23 @@
+import assert from 'node:assert/strict'
+
+import { EventCallbacks } from 'kmore'
+import { genDbDict } from 'kmore-types'
+
+import { Db } from './test.model'
+
 import {
   Config,
+  initialConfig,
+  initialKnexConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
   MiddlewareConfig,
   MiddlewareOptions,
-  initialConfig,
+  DbConfig,
+  DataSourceConfig,
+  KmoreEvent,
 } from '~/index'
+import { Context } from '~/interface'
 
 
 export const config: Config = {
@@ -27,3 +39,65 @@ export const mwConfigNoOpts: Omit<MiddlewareConfig, 'match' | 'ignore' | 'option
   ...initialMiddlewareConfig,
 }
 
+
+export const dbDict = genDbDict<Db>()
+
+
+const eventCbs: EventCallbacks = {
+  start: cbOnStart,
+  query: cbOnQuery,
+  queryResponse: cbOnResp,
+}
+
+export const knexConfig = {
+  ...initialKnexConfig,
+  client: 'pg',
+  connection: {
+    host: process.env['POSTGRES_HOST'] ? process.env['POSTGRES_HOST'] : 'localhost',
+    port: process.env['POSTGRES_PORT'] ? +process.env['POSTGRES_PORT'] : 5432,
+    database: process.env['POSTGRES_DB'] ? process.env['POSTGRES_DB'] : 'db_ci_mw',
+    // database: process.env['POSTGRES_DB'] ? process.env['POSTGRES_DB'] : 'db_ci_test',
+    user: process.env['POSTGRES_USER'] ? process.env['POSTGRES_USER'] : 'postgres',
+    password: process.env['POSTGRES_PASSWORD'] ? process.env['POSTGRES_PASSWORD'] : 'postgres',
+  },
+  acquireConnectionTimeout: 30000,
+}
+
+export const master: DbConfig<Db> = {
+  config: knexConfig,
+  dict: dbDict,
+  sampleThrottleMs: 300,
+  enableTracing: true,
+  tracingResponse: true,
+  eventCallbacks: eventCbs,
+}
+export const kmoreDataSourceConfig: DataSourceConfig<'master'> = {
+  dataSource: {
+    master,
+  },
+}
+
+async function cbOnStart(event: KmoreEvent, ctx?: Context): Promise<void> {
+  assert(ctx)
+  assert(event.type === 'start', event.type)
+  assert(event.queryBuilder)
+  assert(! event.data)
+  assert(! event.respRaw)
+}
+
+async function cbOnQuery(event: KmoreEvent, ctx?: Context): Promise<void> {
+  assert(ctx)
+  assert(event.type === 'query', event.type)
+  assert(! event.queryBuilder)
+  assert(event.data)
+  assert(! event.respRaw)
+}
+
+
+async function cbOnResp(event: KmoreEvent, ctx?: Context): Promise<void> {
+  assert(ctx)
+  assert(event.type === 'queryResponse', event.type)
+  assert(! event.queryBuilder)
+  assert(! event.data)
+  assert(event.respRaw)
+}

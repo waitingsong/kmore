@@ -1,11 +1,7 @@
-import { Logger as JLogger, TracerManager } from '@mw-components/jaeger'
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
-import type { KnexConfig } from 'kmore'
+import type { EventCallbacks, KnexConfig } from 'kmore'
 import type { DbDict } from 'kmore-types'
-import type { Knex } from 'knex'
 import type { Span } from 'opentracing'
-
-import type { Context } from '~/interface'
 
 
 /**
@@ -13,12 +9,7 @@ import type { Context } from '~/interface'
  */
 export interface Config {
   /**
-   * @default 200
-   * @see https://nodejs.org/dist/latest-v16.x/docs/api/events.html#events_emitter_getmaxlisteners
-   */
-  defaultMaxListeners?: number
-  /**
-   * @default 2000
+   * @default 10_000
    */
   timeoutWhenDestroy?: number
 }
@@ -28,13 +19,12 @@ export interface MiddlewareOptions {
 }
 export type MiddlewareConfig = MWConfig<MiddlewareOptions>
 
-export type DbConfigs <DbId extends string = string> = Record<DbId, DbConfig>
-export interface DbConfig <T = unknown> {
-  /**
-   * Auto connect when service onReady
-   * @default true
-   */
-  autoConnect: boolean
+/** midway DataSource */
+export interface DataSourceConfig<SourceName extends string = string> {
+  dataSource: DataSource<SourceName>
+}
+export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
+export interface DbConfig<T = unknown, Ctx = unknown> {
   config: KnexConfig
   dict: DbDict<T>
   /**
@@ -53,22 +43,28 @@ export interface DbConfig <T = unknown> {
    * 负数不采样
    */
   sampleThrottleMs: number
+  /**
+   * @docs https://knexjs.org/guide/interfaces.html#start
+   * @docs https://knexjs.org/guide/interfaces.html#query
+   * @docs https://knexjs.org/guide/interfaces.html#query-response
+   */
+  eventCallbacks?: EventCallbacks<Ctx>
 }
 
-export interface KmoreComponentFactoryOpts<D> {
-  ctx: Context
-  dbConfig: DbConfig<D>
-  dbh?: Knex
-  dbId?: string
-  instanceId?: string | symbol
-  logger?: JLogger | undefined
-  tracerManager?: TracerManager | undefined
-}
+// export interface KmoreComponentFactoryOpts<D> {
+//   ctx: Context
+//   dbConfig: DbConfig<D>
+//   dbh?: Knex
+//   dbId?: string
+//   instanceId?: string | symbol
+//   // logger?: JLogger | undefined
+//   // tracerManager?: TracerManager | undefined
+// }
+
 
 export interface QuerySpanInfo {
   span: Span
   tagClass: string
   timestamp: number
 }
-
 
