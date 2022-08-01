@@ -179,6 +179,11 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
   instanceId?: string | symbol
   dbh?: Knex
   dbId?: string
+  /**
+   * @docs https://knexjs.org/guide/interfaces.html#start
+   * @docs https://knexjs.org/guide/interfaces.html#query
+   * @docs https://knexjs.org/guide/interfaces.html#query-response
+   */
   eventCallbacks?: EventCallbacks<Ctx> | undefined
 }
 
