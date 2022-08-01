@@ -45,9 +45,6 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Inject() baseDir: string
 
-  // protected callbackMap = new Map<SourceName, EventCallbacks<Ctx>>()
-  // protected configMap = new Map<SourceName, DbConfig<D, Ctx>>()
-
   public queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
   declare dataSource: Map<SourceName, Kmore<D, Ctx>>
