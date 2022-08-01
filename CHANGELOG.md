@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.3.0](/compare/v31.2.0...v31.3.0) (2022-08-01)
+
+
+### Features
+
+* **kmore:** change KmoreFactoryOpts.dict optional, but will validation defined a112969
+
+
+
+
+
 # [31.2.0](/compare/v31.1.1...v31.2.0) (2022-08-01)
 
 

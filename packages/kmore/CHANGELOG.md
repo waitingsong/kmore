@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.3.0](https://github.com/waitingsong/kmore/compare/v31.2.0...v31.3.0) (2022-08-01)
+
+
+### Features
+
+* **kmore:** change KmoreFactoryOpts.dict optional, but will validation defined ([a112969](https://github.com/waitingsong/kmore/commit/a112969b2ab1f731d5031eb63c8c5b8169f6022d))
+
+
+
+
+
 # [31.0.0](https://github.com/waitingsong/kmore/compare/v30.0.0...v31.0.0) (2022-08-01)
 
 
