@@ -1,6 +1,5 @@
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
-import type { EventCallbacks, KnexConfig } from 'kmore'
-import type { DbDict } from 'kmore-types'
+import type { KmoreFactoryOpts } from 'kmore'
 import type { Span } from 'opentracing'
 
 
@@ -24,9 +23,7 @@ export interface DataSourceConfig<SourceName extends string = string> {
   dataSource: DataSource<SourceName>
 }
 export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
-export interface DbConfig<T = unknown, Ctx = unknown> {
-  config: KnexConfig
-  dict: DbDict<T>
+export interface DbConfig<T = unknown, Ctx = unknown> extends KmoreFactoryOpts<T, Ctx> {
   /**
    * Enable tracing via @mw-components/jaeger
    * @default false
@@ -43,24 +40,7 @@ export interface DbConfig<T = unknown, Ctx = unknown> {
    * 负数不采样
    */
   sampleThrottleMs: number
-  /**
-   * @docs https://knexjs.org/guide/interfaces.html#start
-   * @docs https://knexjs.org/guide/interfaces.html#query
-   * @docs https://knexjs.org/guide/interfaces.html#query-response
-   */
-  eventCallbacks?: EventCallbacks<Ctx>
 }
-
-// export interface KmoreComponentFactoryOpts<D> {
-//   ctx: Context
-//   dbConfig: DbConfig<D>
-//   dbh?: Knex
-//   dbId?: string
-//   instanceId?: string | symbol
-//   // logger?: JLogger | undefined
-//   // tracerManager?: TracerManager | undefined
-// }
-
 
 export interface QuerySpanInfo {
   span: Span

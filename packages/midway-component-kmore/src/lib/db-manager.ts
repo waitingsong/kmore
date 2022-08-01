@@ -48,8 +48,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   public queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
   declare dataSource: Map<SourceName, Kmore<D, Ctx>>
+
   declare getDataSource: <Db = D>(dataSourceName: SourceName)
   => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
+
+  declare createInstance: <Db = D>(config: DbConfig<D, Ctx>, clientName: SourceName)
+  => Promise<Kmore<Db, Ctx> | void>
 
   @Init()
   async init(): Promise<void> {
@@ -65,7 +69,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   /** 创建单个实例 */
   protected async createDataSource<Db>(
-    options: KmoreFactoryOpts<Db, Ctx>,
+    options: DbConfig<Db, Ctx>,
     dataSourceName: SourceName,
   ): Promise<Kmore<Db, Ctx>> {
 
