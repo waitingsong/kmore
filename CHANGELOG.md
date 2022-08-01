@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.2.0](/compare/v31.1.1...v31.2.0) (2022-08-01)
+
+
+### Features
+
+* **midway-component-kmore:** change generics of DbConfig to any ce43558
+
+
+
+
+
 ## [31.1.1](/compare/v31.1.0...v31.1.1) (2022-08-01)
 
 **Note:** Version bump only for package kmore

@@ -1,7 +1,7 @@
 {
   "name": "@mw-components/kmore",
   "author": "waiting",
-  "version": "31.1.1",
+  "version": "31.2.0",
   "description": "midway component for knex",
   "keywords": [
     "midway",

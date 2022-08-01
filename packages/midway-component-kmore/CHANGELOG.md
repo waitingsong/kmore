@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.2.0](https://github.com/waitingsong/kmore/compare/v31.1.1...v31.2.0) (2022-08-01)
+
+
+### Features
+
+* **midway-component-kmore:** change generics of DbConfig to any ([ce43558](https://github.com/waitingsong/kmore/commit/ce43558a92655de972d8c09ebec51b02e5645169))
+
+
+
+
+
 ## [31.1.1](https://github.com/waitingsong/kmore/compare/v31.1.0...v31.1.1) (2022-08-01)
 
 **Note:** Version bump only for package @mw-components/kmore
