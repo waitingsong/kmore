@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.1.0](https://github.com/waitingsong/kmore/compare/v31.0.0...v31.1.0) (2022-08-01)
+
+
+### Features
+
+* **midway-component-kmore:** validate dataSourceconfig when init() ([89d709b](https://github.com/waitingsong/kmore/commit/89d709b46822c3c12c16408b2df9f10286dd74a7))
+
+
+
+
+
 # [31.0.0](https://github.com/waitingsong/kmore/compare/v30.0.0...v31.0.0) (2022-08-01)
 
 

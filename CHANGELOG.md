@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [31.1.0](/compare/v31.0.0...v31.1.0) (2022-08-01)
+
+
+### Features
+
+* **midway-component-kmore:** validate dataSourceconfig when init() 89d709b
+
+
+
+
+
 # [31.0.0](/compare/v30.0.0...v31.0.0) (2022-08-01)
 
 
