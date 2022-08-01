@@ -56,6 +56,11 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Init()
   async init(): Promise<void> {
+    if (! this.dataSourceconfig) {
+      this.logger.warn('dataSourceConfig is not defined')
+      return
+    }
+    assert(this.dataSourceconfig.dataSource, 'dataSourceconfig must contains dataSource property')
     // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
     await this.initDataSource(this.dataSourceconfig, this.baseDir)
   }
