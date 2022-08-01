@@ -79,6 +79,7 @@ export class Kmore<D = any, Context = any> {
     this.eventCallbacks = options.eventCallbacks
 
     this.config = options.config
+    assert(options.dict, 'options.dict must be defined')
     this.dict = options.dict
 
     this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
@@ -175,7 +176,7 @@ export class Kmore<D = any, Context = any> {
 
 export interface KmoreFactoryOpts<D, Ctx = unknown> {
   config: KnexConfig
-  dict: DbDict<D>
+  dict?: DbDict<D>
   instanceId?: string | symbol
   dbh?: Knex
   dbId?: string
