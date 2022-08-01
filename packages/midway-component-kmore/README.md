@@ -20,7 +20,7 @@ A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScrip
 
 ## Installation
 ```sh
-npm install kmore kmore-cli knex
+npm install kmore kmore-cli
 
 # Then add one of the following:
 npm install pg
@@ -103,21 +103,45 @@ await km.dbh.schema
 ```
 
 ### Inert rows via auto generated table accessor
+
+#### Snake style
 ```ts
-// auto generated accessort tb_user() and tb_user_detail() on km.rb
+// auto generated accessort tb_user() and tb_user_detail()
 const { ref_tb_user, ref_tb_user_detail } = km.refTables
 
 await ref_tb_user()
   .insert([
-    { name: 'user1', ctime: new Date() }, // ms
-    { name: 'user2', ctime: 'now()' }, // μs
+    { user_name: 'user1', ctime: new Date() }, // ms
+    { user_name: 'user2', ctime: 'now()' }, // μs
   ])
   .then()
 
 const affectedRows = await ref_tb_user_detail()
   .insert([
-    { uid: 1, age: 10, address: 'address1' },
-    { uid: 2, age: 10, address: 'address1' },
+    { uid: 1, age: 10, user_address: 'address1' },
+    { uid: 2, age: 10, user_address: 'address1' },
+  ])
+  .returning('*')
+  .then()
+```
+
+#### Camel style
+```ts
+import { RecordCamelKeys } from '@waiting/shared-types'
+
+// auto generated accessort tb_user() and tb_user_detail() 
+const { ref_tb_user, ref_tb_user_detail } = km.camelTables
+
+interface UserDO {
+  user_name: string
+  ctime: date | string
+}
+type UserDTO = RecordCamelKeys<UserDO>
+
+const users: UserDTO[] = await ref_tb_user()
+  .insert([
+    { userName: 'user1', ctime: new Date() }, // ms
+    { userName: 'user2', ctime: 'now()' }, // μs
   ])
   .returning('*')
   .then()
@@ -183,6 +207,28 @@ await km.dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
 
 // disconnect
 await km.dbh.destroy()
+```
+
+## Midway.js component
+
+```ts
+
+@Provide()
+export class UserRepo {
+  @Inject() readonly ctx: Context
+  @Inject() dbManager: DbSourceManager<'master' | 'slave', Db>
+
+  async getUser(uid: number): Promise<UserDTO[]> {
+    const db = this.dbManager.getDataSource('master')
+    assert(db)
+
+    const { ref_tb_user } = db.camelTables
+    const user = await ref_tb_user(this.ctx)
+      .select('*')
+      .where({ uid })
+    return user
+  }
+}
 ```
 
 
