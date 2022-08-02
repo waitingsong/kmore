@@ -155,7 +155,7 @@ export function postProcessResponseToSnake<T extends PostProcessInput = PostProc
 ): PostProcessRespRet<T, CaseType.snake> {
 
   if (Array.isArray(result)) {
-    const ret = result.map(row => postProcessResponseToCamel(row, _queryContext))
+    const ret = result.map(row => postProcessResponseToSnake(row, _queryContext))
     return ret as PostProcessRespRet<T, CaseType.snake>
   }
   else if (typeof result === 'object' && result) {
