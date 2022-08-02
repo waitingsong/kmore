@@ -57,9 +57,6 @@ export class Kmore<D = any, Context = any> {
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
 
-  protected listenEvent = true
-  // protected readonly subject: Subject<KmoreEvent>
-
   public readonly config: KnexConfig
   public readonly dict: DbDict<D>
   public readonly dbId: string
