@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.0.0](https://github.com/waitingsong/kmore/compare/v32.0.1...v33.0.0) (2022-08-02)
+
+
+### Features
+
+* breaking change remove exports functions ([57495d6](https://github.com/waitingsong/kmore/commit/57495d63abf5d2b40e4b398aa126255b92d32271))
+* **kmore:** breaking change restrict exports from ./lib/helper.ts ([410c383](https://github.com/waitingsong/kmore/commit/410c383310df106b4d55b5dd9b0e2edd942b4fe1))
+* **midway-component-kmore:** breaking change remove export initialKnexConfig ([c050dbb](https://github.com/waitingsong/kmore/commit/c050dbb44c7dfaeba601ac68179f5ba448ea6f19))
+
+
+
+
+
 ## [32.0.1](https://github.com/waitingsong/kmore/compare/v32.0.0...v32.0.1) (2022-08-02)
 
 **Note:** Version bump only for package @mw-components/kmore

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.0.0](/compare/v32.0.1...v33.0.0) (2022-08-02)
+
+
+### Features
+
+* breaking change remove exports functions 57495d6
+* **kmore:** add properties of KmoreFactoryOpts 404abd9
+* **kmore:** breaking change remove exports from ./lib/config.ts f0027ca
+* **kmore:** breaking change restrict exports from ./lib/helper.ts 410c383
+* **kmore:** run inner postProcessResponse() always after custom config.postProcessResponse adc5150
+* **midway-component-kmore:** breaking change remove export initialKnexConfig c050dbb
+
+
+
+
+
 ## [32.0.1](/compare/v32.0.0...v32.0.1) (2022-08-02)
 
 

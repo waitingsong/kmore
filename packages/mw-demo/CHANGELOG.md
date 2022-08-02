@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.0.0](https://github.com/waitingsong/npm-mono-base/compare/v32.0.1...v33.0.0) (2022-08-02)
+
+**Note:** Version bump only for package @mw-components/demo
+
+
+
+
+
 # [32.0.0](https://github.com/waitingsong/npm-mono-base/compare/v31.3.0...v32.0.0) (2022-08-02)
 
 **Note:** Version bump only for package @mw-components/demo

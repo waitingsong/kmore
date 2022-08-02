@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.0.0](https://github.com/waitingsong/kmore/compare/v32.0.1...v33.0.0) (2022-08-02)
+
+
+### Features
+
+* breaking change remove exports functions ([57495d6](https://github.com/waitingsong/kmore/commit/57495d63abf5d2b40e4b398aa126255b92d32271))
+* **kmore:** add properties of KmoreFactoryOpts ([404abd9](https://github.com/waitingsong/kmore/commit/404abd9f0c4950a1ab88d3990007dc817cc9787e))
+* **kmore:** breaking change remove exports from ./lib/config.ts ([f0027ca](https://github.com/waitingsong/kmore/commit/f0027ca7257006e05bd44c768fef8843644daa07))
+* **kmore:** breaking change restrict exports from ./lib/helper.ts ([410c383](https://github.com/waitingsong/kmore/commit/410c383310df106b4d55b5dd9b0e2edd942b4fe1))
+* **kmore:** run inner postProcessResponse() always after custom config.postProcessResponse ([adc5150](https://github.com/waitingsong/kmore/commit/adc51503ce41d66194c794f681b97b5b2e304fbb))
+
+
+
+
+
 ## [32.0.1](https://github.com/waitingsong/kmore/compare/v32.0.0...v32.0.1) (2022-08-02)
 
 
