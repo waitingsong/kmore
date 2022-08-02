@@ -96,7 +96,8 @@ export interface KmoreEvent <T = unknown> {
 }
 
 export interface QueryContext {
-  caseConvert?: CaseType
+  wrapIdentifierCaseConvert: CaseType
+  postProcessResponseCaseConvert: CaseType
 }
 
 export interface OnQueryData {

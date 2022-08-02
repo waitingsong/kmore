@@ -2,6 +2,7 @@ import {
   camelToSnake,
   camelKeys,
   snakeKeys,
+  snakeToCamel,
 } from '@waiting/shared-core'
 import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -61,16 +62,12 @@ function parseRespMysql2(res: RespMysql2): string {
 export function postProcessResponse<T extends PostProcessInput = PostProcessInput>(
   result: T,
   queryContext?: QueryContext,
-): T | PostProcessRespRet<T, QueryContext['caseConvert']> {
+): T | PostProcessRespRet<T, QueryContext['postProcessResponseCaseConvert']> {
 
-  if (! queryContext) {
-    return result
-  }
+  if (! queryContext) { return result }
 
-  const { caseConvert } = queryContext
-  if (! caseConvert) {
-    return result
-  }
+  const caseConvert = queryContext.postProcessResponseCaseConvert
+  if (! caseConvert) { return result }
 
   switch (caseConvert) {
     case CaseType.camel:
@@ -194,14 +191,28 @@ export function wrapIdentifier(
   queryContext?: QueryContext,
 ): string {
 
-  if (! queryContext
-    || ! queryContext.caseConvert
-    || queryContext.caseConvert === CaseType.none) {
-    return origImpl(value)
-  }
+  if (! queryContext) { return origImpl(value) }
 
-  const ret = origImpl(camelToSnake(value))
-  return ret
+  switch (queryContext.wrapIdentifierCaseConvert) {
+    case CaseType.camel: {
+      const ret = origImpl(snakeToCamel(value))
+      return ret
+      break
+    }
+
+    case CaseType.snake: {
+      const ret = origImpl(camelToSnake(value))
+      return ret
+      break
+    }
+
+    case CaseType.pascal: {
+      throw new TypeError('CaseType.pascal for wrapIdentifierCaseConvert not implemented yet')
+    }
+
+    default:
+      return origImpl(value)
+  }
 }
 
 

@@ -26,7 +26,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should inner join table work', () => {
     it('pre-build name by alias', async () => {
-      const { refTables } = km
+      const { camelTables } = km
       const { tables, scoped, alias } = km.dict
 
       const cols = [
@@ -34,7 +34,7 @@ describe(fileShortPath(import.meta.url), () => {
         alias.tb_user_ext.uid, // { tbUserExt: 'tb_user_ext.uid' }
       ]
 
-      const ret = await refTables.ref_tb_user()
+      const ret = await camelTables.ref_tb_user()
         .innerJoin<CT['tb_user'] & CT['tb_user_ext']>(
         tables.tb_user_ext,
         scoped.tb_user.uid,
@@ -53,7 +53,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('custom name by scoped', async () => {
-      const { refTables } = km
+      const { camelTables } = km
       const { tables, scoped } = km.dict
 
       const cols = {
@@ -61,7 +61,7 @@ describe(fileShortPath(import.meta.url), () => {
         foo: scoped.tb_user_ext.uid,
       }
 
-      const ret = await refTables.ref_tb_user()
+      const ret = await camelTables.ref_tb_user()
         .innerJoin<CT['tb_user'] & CT['tb_user_ext']>(
         tables.tb_user_ext,
         scoped.tb_user.uid,

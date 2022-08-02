@@ -9,6 +9,7 @@ import { default as _knex } from 'knex'
 
 import { defaultPropDescriptor } from './config.js'
 import { callCbOnQuery, callCbOnQueryError, callCbOnQueryResp, callCbOnStart } from './event.js'
+import { postProcessResponse, wrapIdentifier } from './helper.js'
 import {
   CaseType,
   DbQueryBuilder,
@@ -26,9 +27,21 @@ import {
 
 export class Kmore<D = any, Context = any> {
 
+  /**
+   * Original table names, without case convertion.
+   */
   readonly refTables: DbQueryBuilder<Context, D, 'ref_', CaseType.none>
+
+  /**
+   * Create a table reference function property with camel case convertion.
+   */
   readonly camelTables: DbQueryBuilder<Context, D, 'ref_', CaseType.camel>
+
   // readonly pascalTables: DbQueryBuilder<D, 'ref_', CaseType.pascal>
+
+  /**
+   * Create a table reference function property with snake case convertion.
+   */
   readonly snakeTables: DbQueryBuilder<Context, D, 'ref_', CaseType.snake>
 
   /**
@@ -63,6 +76,7 @@ export class Kmore<D = any, Context = any> {
   public readonly dbh: Knex
   public readonly instanceId: string | symbol
   public readonly eventCallbacks: EventCallbacks<Context> | undefined
+  public readonly wrapIdentifierCaseConvert: CaseType
 
 
   constructor(
@@ -78,6 +92,21 @@ export class Kmore<D = any, Context = any> {
     this.config = options.config
     assert(options.dict, 'options.dict must be defined')
     this.dict = options.dict
+
+    /**
+     * Table identifier case convertion,
+     * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
+     */
+    this.wrapIdentifierCaseConvert = options.wrapIdentifierCaseConvert ?? CaseType.snake
+    // /**
+
+    if (this.wrapIdentifierCaseConvert !== CaseType.none
+      && this.config.wrapIdentifier !== wrapIdentifier) {
+      this.config.wrapIdentifier = wrapIdentifier
+    }
+    if (! this.config.postProcessResponse) {
+      this.config.postProcessResponse = postProcessResponse
+    }
 
     this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
     this.camelTables = this.createRefTables<'ref_'>('ref_', CaseType.camel)
@@ -127,7 +156,8 @@ export class Kmore<D = any, Context = any> {
     assert(caseConvert, 'caseConvert must be defined')
 
     const opts: QueryContext = {
-      caseConvert,
+      wrapIdentifierCaseConvert: this.wrapIdentifierCaseConvert,
+      postProcessResponseCaseConvert: caseConvert,
     }
     const refTable = this.dbh(refName)
       .queryContext(opts)
@@ -184,6 +214,13 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    * @docs https://knexjs.org/guide/interfaces.html#query-response
    */
   eventCallbacks?: EventCallbacks<Ctx> | undefined
+  /**
+   * Table identifier case convertion,
+   * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
+   * @default CaseType.snake
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  wrapIdentifierCaseConvert?: CaseType | undefined
 }
 
 export function KmoreFactory<D, Ctx = unknown>(

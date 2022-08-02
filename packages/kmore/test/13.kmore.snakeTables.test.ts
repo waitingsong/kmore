@@ -25,7 +25,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should read table with tables param in object work', () => {
     it('tb_user', async () => {
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.snakeTables.ref_tb_user()
       const ret = await tbUser.select('*')
 
       assert(ret && Array.isArray(ret))
@@ -33,7 +33,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('where', async () => {
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.snakeTables.ref_tb_user()
       const ret = await tbUser.select('*')
         .where('uid', 1)
       assert(ret && Array.isArray(ret))
@@ -41,20 +41,20 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('case select', async () => {
-      const tbUser = km.camelTables.ref_tb_user()
-      const ret = await tbUser.select('realName')
+      const tbUser = km.snakeTables.ref_tb_user()
+      const ret = await tbUser.select('real_name')
         .where('uid', 1)
         .then(rows => rows[0])
 
       assert(ret)
-      assert(ret.realName === 'rn1')
+      assert(ret.real_name === 'rn1')
     })
 
     it('case where', async () => {
-      const tbUser = km.camelTables.ref_tb_user()
-      const ret = await tbUser.select('realName')
+      const tbUser = km.snakeTables.ref_tb_user()
+      const ret = await tbUser.select('real_name')
         .where('uid', 1)
-        .where('realName', Math.random().toString())
+        .where('real_name', Math.random().toString())
         .then(rows => rows[0])
 
       assert(! ret)
