@@ -8,7 +8,6 @@ import { Db } from './test.model'
 import {
   Config,
   initialConfig,
-  initialKnexConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
   MiddlewareConfig,
@@ -50,7 +49,6 @@ const eventCbs: EventCallbacks = {
 }
 
 export const knexConfig = {
-  ...initialKnexConfig,
   client: 'pg',
   connection: {
     host: process.env['POSTGRES_HOST'] ? process.env['POSTGRES_HOST'] : 'localhost',

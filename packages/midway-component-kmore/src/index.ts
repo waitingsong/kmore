@@ -10,7 +10,6 @@ export {
   KmoreEvent,
   KnexConfig,
   mergeDoWithInitData,
-  wrapIdentifier,
 } from 'kmore'
 
 export type { Knex } from 'knex'

@@ -2,7 +2,8 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, Kmore, postProcessResponse } from '../src/index.js'
+import { KmoreFactory, Kmore } from '../src/index.js'
+import { postProcessResponse } from '../src/lib/helper.js'
 
 import { config, dbDict } from './test.config.js'
 import { Db, Context, UserDo } from './test.model.js'

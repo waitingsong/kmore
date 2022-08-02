@@ -1,8 +1,10 @@
 
-// export * from './config.js'
-export * from './helper.js'
 export * from './kmore.js'
 export * from './types.js'
 
 export { initKmoreEvent } from './config.js'
+export {
+  getCurrentTime,
+  mergeDoWithInitData,
+} from './helper.js'
 
