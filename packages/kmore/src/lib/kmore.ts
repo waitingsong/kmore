@@ -9,7 +9,7 @@ import { default as _knex } from 'knex'
 
 import { defaultPropDescriptor } from './config.js'
 import { callCbOnQuery, callCbOnQueryError, callCbOnQueryResp, callCbOnStart } from './event.js'
-import { postProcessResponse, wrapIdentifier } from './helper.js'
+import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import {
   CaseType,
   DbQueryBuilder,
@@ -69,6 +69,7 @@ export class Kmore<D = any, Context = any> {
   readonly Dict: DbDict<D>
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
+  readonly postProcessResponseSet = new Set<typeof postProcessResponse>()
 
   public readonly config: KnexConfig
   public readonly dict: DbDict<D>
@@ -85,7 +86,6 @@ export class Kmore<D = any, Context = any> {
 
     const dbId = options.dbId ? options.dbId : Date.now().toString()
     this.dbId = dbId
-    this.dbh = options.dbh ? options.dbh : createDbh(options.config)
     this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
     this.eventCallbacks = options.eventCallbacks
 
@@ -98,20 +98,30 @@ export class Kmore<D = any, Context = any> {
      * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
      */
     this.wrapIdentifierCaseConvert = options.wrapIdentifierCaseConvert ?? CaseType.snake
-    // /**
 
     if (this.wrapIdentifierCaseConvert !== CaseType.none
       && this.config.wrapIdentifier !== wrapIdentifier) {
       this.config.wrapIdentifier = wrapIdentifier
     }
-    if (! this.config.postProcessResponse) {
-      this.config.postProcessResponse = postProcessResponse
+
+    this.postProcessResponseSet.add(postProcessResponse)
+    if (typeof this.config.postProcessResponse === 'function') {
+      const fn = this.config.postProcessResponse
+      this.postProcessResponseSet.add(fn)
     }
+    delete this.config.postProcessResponse
+    this.config.postProcessResponse = (
+      result: PostProcessInput,
+      queryContext?: QueryContext,
+    ) => this.postProcessResponse(result, queryContext)
+
 
     this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
     this.camelTables = this.createRefTables<'ref_'>('ref_', CaseType.camel)
     // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
     this.snakeTables = this.createRefTables<'ref_'>('ref_', CaseType.snake)
+
+    this.dbh = options.dbh ? options.dbh : createDbh(this.config)
   }
 
 
@@ -200,6 +210,17 @@ export class Kmore<D = any, Context = any> {
     return refTable
   }
 
+  protected postProcessResponse(
+    result: any,
+    queryContext?: QueryContext,
+  ): unknown {
+
+    let ret = result
+    for (const fn of this.postProcessResponseSet) {
+      ret = fn(ret, queryContext)
+    }
+    return ret
+  }
 }
 
 export interface KmoreFactoryOpts<D, Ctx = unknown> {
