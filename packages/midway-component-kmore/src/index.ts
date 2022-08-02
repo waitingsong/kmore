@@ -9,10 +9,7 @@ export {
   Kmore,
   KmoreEvent,
   KnexConfig,
-  genCamelKeysFrom,
-  genSnakeKeysFrom,
   mergeDoWithInitData,
-  postProcessResponseToCamel,
   wrapIdentifier,
 } from 'kmore'
 

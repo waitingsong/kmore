@@ -106,7 +106,7 @@ type PostProcessRecordCaseConvert<T extends PostProcessRecord, CaseConvert exten
 /**
  * Convert keys of result to camelcase, if input is object
  */
-export function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
+function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
   result: T,
   _queryContext?: QueryContext,
 ): PostProcessRespRet<T, CaseType.camel> {
@@ -146,7 +146,7 @@ export function postProcessResponseToCamel<T extends PostProcessInput = PostProc
 /**
  * Convert keys of result to snake_case, if input is object
  */
-export function postProcessResponseToSnake<T extends PostProcessInput = PostProcessInput>(
+function postProcessResponseToSnake<T extends PostProcessInput = PostProcessInput>(
   result: T,
   _queryContext?: QueryContext,
 ): PostProcessRespRet<T, CaseType.snake> {
@@ -164,7 +164,7 @@ export function postProcessResponseToSnake<T extends PostProcessInput = PostProc
 }
 
 
-export function genCamelKeysFrom<From extends PostProcessRecord>(
+function genCamelKeysFrom<From extends PostProcessRecord>(
   input: From,
 ): RecordCamelKeys<From, '_'> {
   return camelKeys(input)
@@ -176,7 +176,7 @@ export function genCamelKeysFrom<From extends PostProcessRecord>(
 //   return pascalCase(input)
 // }
 
-export function genSnakeKeysFrom<From extends PostProcessRecord>(
+function genSnakeKeysFrom<From extends PostProcessRecord>(
   input: From,
 ): RecordSnakeKeys<From, '_'> {
   return snakeKeys(input)
