@@ -106,7 +106,7 @@ type PostProcessRecordCaseConvert<T extends PostProcessRecord, CaseConvert exten
 /**
  * Convert keys of result to camelcase, if input is object
  */
-function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
+export function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
   result: T,
   _queryContext?: QueryContext,
 ): PostProcessRespRet<T, CaseType.camel> {

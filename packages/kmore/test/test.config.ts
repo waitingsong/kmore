@@ -2,13 +2,12 @@ import assert from 'node:assert/strict'
 
 import { genDbDict } from 'kmore-types'
 
-import { KnexConfig, initialConfig } from '../src/index.js'
+import { KnexConfig } from '../src/index.js'
 
 import { Db } from './test.model.js'
 
 
 export const config: KnexConfig = {
-  ...initialConfig,
   client: 'pg',
   connection: {
     host: process.env['POSTGRES_HOST'] ? process.env['POSTGRES_HOST'] : 'localhost',
