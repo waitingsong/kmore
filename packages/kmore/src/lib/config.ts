@@ -1,4 +1,3 @@
-import { postProcessResponse, wrapIdentifier } from './helper.js'
 import type { KmoreEvent, KnexConfig } from './types.js'
 
 
@@ -30,7 +29,5 @@ export const initialConfig: Omit<KnexConfig, 'client' | 'connection'> = {
   acquireConnectionTimeout: 60000,
   debug: false,
   pool: { min: 0, max: 30 },
-  postProcessResponse,
-  wrapIdentifier,
 }
 

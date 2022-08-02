@@ -7,7 +7,7 @@ import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
 
-import { defaultPropDescriptor } from './config.js'
+import { defaultPropDescriptor, initialConfig } from './config.js'
 import { callCbOnQuery, callCbOnQueryError, callCbOnQueryResp, callCbOnStart } from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import {
@@ -89,7 +89,12 @@ export class Kmore<D = any, Context = any> {
     this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
     this.eventCallbacks = options.eventCallbacks
 
-    this.config = options.config
+    const config = {
+      ...initialConfig,
+      ...options.config,
+    }
+    this.config = config
+
     assert(options.dict, 'options.dict must be defined')
     this.dict = options.dict
 
@@ -115,11 +120,11 @@ export class Kmore<D = any, Context = any> {
       queryContext?: QueryContext,
     ) => this.postProcessResponse(result, queryContext)
 
-
     this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
     this.camelTables = this.createRefTables<'ref_'>('ref_', CaseType.camel)
     // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
     this.snakeTables = this.createRefTables<'ref_'>('ref_', CaseType.snake)
+
 
     this.dbh = options.dbh ? options.dbh : createDbh(this.config)
   }
