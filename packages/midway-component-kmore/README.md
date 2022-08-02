@@ -215,15 +215,15 @@ await km.dbh.destroy()
 
 @Provide()
 export class UserRepo {
-  @Inject() readonly ctx: Context
-  @Inject() dbManager: DbSourceManager<'master' | 'slave', Db>
+
+  @Inject() dbManager: DbManager<'master' | 'slave', Db>
 
   async getUser(uid: number): Promise<UserDTO[]> {
     const db = this.dbManager.getDataSource('master')
     assert(db)
 
     const { ref_tb_user } = db.camelTables
-    const user = await ref_tb_user(this.ctx)
+    const user = await ref_tb_user()
       .select('*')
       .where({ uid })
     return user
