@@ -172,7 +172,7 @@ type CT = DbDictType<Db>
 type CT_USER = CT['tb_user']
 type CT_USER_EXT = CT['tb_user_ext']
 
-const ret = await refTables.ref_tb_user()
+const ret = await camelTables.ref_tb_user()
   .innerJoin<CT_USER & CT_USER_EXT>(
   tables.tb_user_ext,
   scoped.tb_user.uid,
@@ -187,7 +187,7 @@ const cols = {
   foo: scoped.tb_user_ext.uid,
 }
 
-const ret = await refTables.ref_tb_user()
+const ret = await camelTables.ref_tb_user()
   .innerJoin<CT_USER & CT_USER_EXT>(
   tables.tb_user_ext,
   scoped.tb_user.uid,
