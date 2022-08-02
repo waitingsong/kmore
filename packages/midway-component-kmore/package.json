@@ -39,10 +39,6 @@
     "cross-env": "7",
     "kmore-types": "^31.0.0"
   },
-  "peerDependencies": {
-    "@midwayjs/core": ">=3",
-    "@midwayjs/decorator": ">=3"
-  },
   "engines": {
     "node": ">=16.13.0"
   },

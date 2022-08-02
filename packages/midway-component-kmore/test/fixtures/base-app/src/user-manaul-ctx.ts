@@ -18,8 +18,8 @@ import {
 import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model'
 
 
-@Controller('/user')
-export class HomeController {
+@Controller('/user2')
+export class User2Controller {
 
   @_Config(ConfigKey.config) protected readonly config: Config
   @_Config(ConfigKey.middlewareConfig) protected readonly mwConfig: MiddlewareConfig
@@ -33,10 +33,6 @@ export class HomeController {
     assert(db)
 
     const { ref_tb_user } = db.camelTables
-    // const user0 = await ref_tb_user(this.ctx)
-    //   .select('*')
-    //   .where({ uid })
-    // assert(user0)
     const user = await ref_tb_user(this.ctx)
       .select('*')
       .where({ uid })
