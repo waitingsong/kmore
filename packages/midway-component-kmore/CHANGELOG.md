@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [32.0.0](https://github.com/waitingsong/kmore/compare/v31.3.0...v32.0.0) (2022-08-02)
+
+
+### Features
+
+* **midway-component-kmore:** breaking change exports ([5508ea4](https://github.com/waitingsong/kmore/commit/5508ea450346d46837d4bfa4f495540a211deeb4))
+
+
+
+
+
 # [31.3.0](https://github.com/waitingsong/kmore/compare/v31.2.0...v31.3.0) (2022-08-01)
 
 **Note:** Version bump only for package @mw-components/kmore

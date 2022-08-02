@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [32.0.0](https://github.com/waitingsong/kmore/compare/v31.3.0...v32.0.0) (2022-08-02)
+
+
+### Features
+
+* **kmore:** change create function of refTable to writable:true ([6703b59](https://github.com/waitingsong/kmore/commit/6703b599482c3ae6c70e56bafb9b1ca1dc907064))
+
+
+
+
+
 # [31.3.0](https://github.com/waitingsong/kmore/compare/v31.2.0...v31.3.0) (2022-08-01)
 
 
