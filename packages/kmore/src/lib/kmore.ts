@@ -105,6 +105,7 @@ export class Kmore<D = any, Context = any> {
       const name = `${prefix}${refName}`
       Object.defineProperty(rb, name, {
         ...defaultPropDescriptor,
+        writable: true,
         value: (ctx?: Context) => {
           return this.extRefTableFnProperty(refName, caseConvert, ctx)
         }, // must dynamically!!
