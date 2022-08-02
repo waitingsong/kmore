@@ -5,8 +5,6 @@ import {
 } from './types'
 
 
-export { initialConfig as initialKnexConfig } from 'kmore'
-
 export const initialConfig: Readonly<Config> = {
   timeoutWhenDestroy: 10000,
 }
