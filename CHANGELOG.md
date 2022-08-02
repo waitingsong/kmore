@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [32.0.1](/compare/v32.0.0...v32.0.1) (2022-08-02)
+
+
+### Bug Fixes
+
+* **kmore:** postProcessResponseToSnake() wrong case conversion 4fb2011
+
+
+
+
+
 # [32.0.0](/compare/v31.3.0...v32.0.0) (2022-08-02)
 
 
