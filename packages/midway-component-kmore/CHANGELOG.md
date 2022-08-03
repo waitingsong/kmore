@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [33.0.1](https://github.com/waitingsong/kmore/compare/v33.0.0...v33.0.1) (2022-08-03)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** wrong object to bind ([8bc8033](https://github.com/waitingsong/kmore/commit/8bc80336259e54ed83b311441af448bf132f180f))
+
+
+
+
+
 # [33.0.0](https://github.com/waitingsong/kmore/compare/v32.0.1...v33.0.0) (2022-08-02)
 
 
