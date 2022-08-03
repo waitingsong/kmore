@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [32.0.2](https://github.com/waitingsong/kmore/compare/v32.0.1...v32.0.2) (2022-08-03)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** wrong object to bind ([b030fff](https://github.com/waitingsong/kmore/commit/b030fff1cf16fcb86dda95794ada30c3d70d28be))
+
+
+
+
+
 ## [32.0.1](https://github.com/waitingsong/kmore/compare/v32.0.0...v32.0.1) (2022-08-02)
 
 **Note:** Version bump only for package @mw-components/kmore

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [32.0.2](/compare/v32.0.1...v32.0.2) (2022-08-03)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** wrong object to bind b030fff
+
+
+
+
+
 ## [32.0.1](/compare/v32.0.0...v32.0.1) (2022-08-02)
 
 
