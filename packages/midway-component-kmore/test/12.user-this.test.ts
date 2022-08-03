@@ -8,7 +8,7 @@ import { testConfig } from '@/root.config'
 
 const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
 
-describe.only(filename, () => {
+describe(filename, () => {
 
   const path = '/user_this/'
 
