@@ -46,7 +46,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx = Co
           ),
         })
 
-        Object.defineProperty(db.camelTables, refTableName, {
+        Object.defineProperty(refObj, refTableName, {
           enumerable: true,
           writable: true,
           configurable: false,
