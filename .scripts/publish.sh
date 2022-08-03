@@ -53,15 +53,16 @@ else
   branch="$RELEASE_BRANCH"
 fi
 
+echo $branch
 
-source $scriptDir/util/validate-head-diff.sh "$branch"
-if [ "$?" -ne 0 ]; then
-  echo -e "Release branch \"$branch\" has changed!"
-  echo -e "Retry publishing on the latest pipeline"
-  echo -e "script: $0 "
-  echo -e "------------------------------------------------------"
-  exit 1
-fi
+#source $scriptDir/util/validate-head-diff.sh "$branch"
+#if [ "$?" -ne 0 ]; then
+#  echo -e "Release branch \"$branch\" has changed!"
+#  echo -e "Retry publishing on the latest pipeline"
+#  echo -e "script: $0 "
+#  echo -e "------------------------------------------------------"
+#  exit 1
+#fi
 
 
 # echo ">>> lerna initializing..."
