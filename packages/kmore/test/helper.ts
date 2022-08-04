@@ -22,7 +22,7 @@ export async function initDb(): Promise<void> {
     config,
     dict: dbDict,
   }
-  const km = KmoreFactory(opts)
+  const km = KmoreFactory<Db>(opts)
   await dropTables(km.dbh, Object.values(km.dict.tables))
 
   const iso = await getTransactionIsolation(km.dbh)

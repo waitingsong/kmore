@@ -72,7 +72,7 @@ export class Kmore<D = any, Context = any> {
   readonly postProcessResponseSet = new Set<typeof postProcessResponse>()
 
   public readonly config: KnexConfig
-  public readonly dict: DbDict<D>
+  public readonly dict: unknown extends D ? undefined : DbDict<D>
   public readonly dbId: string
   public readonly dbh: Knex
   public readonly instanceId: string | symbol
@@ -80,10 +80,7 @@ export class Kmore<D = any, Context = any> {
   public readonly wrapIdentifierCaseConvert: CaseType
 
 
-  constructor(
-    options: KmoreFactoryOpts<D, Context>,
-  ) {
-
+  constructor(options: KmoreFactoryOpts<D, Context>) {
     const dbId = options.dbId ? options.dbId : Date.now().toString()
     this.dbId = dbId
     this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
@@ -95,8 +92,16 @@ export class Kmore<D = any, Context = any> {
     }
     this.config = config
 
-    assert(options.dict, 'options.dict must be defined')
-    this.dict = options.dict
+    // assert(options.dict, 'options.dict must be defined')
+    if (options.dict) {
+      // @ts-expect-error
+      this.dict = options.dict
+    }
+    else {
+      console.info('Kmore:constructor() options.dict empty')
+      // @ts-expect-error
+      this.dict = void 0
+    }
 
     /**
      * Table identifier case convertion,
@@ -249,18 +254,12 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
   wrapIdentifierCaseConvert?: CaseType | undefined
 }
 
-export function KmoreFactory<D, Ctx = unknown>(
-  options: KmoreFactoryOpts<D, Ctx>,
-): Kmore<D, Ctx> {
-
+export function KmoreFactory<D, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {
   const km = new Kmore<D, Ctx>(options)
   return km
 }
 
-export function createDbh(
-  knexConfig: KnexConfig,
-): Knex {
-
+export function createDbh(knexConfig: KnexConfig): Knex {
   const inst = _knex(knexConfig)
   return inst
 }
