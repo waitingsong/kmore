@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.1.0](https://github.com/waitingsong/kmore/compare/v33.0.2...v33.1.0) (2022-08-04)
+
+
+### Features
+
+* **kmore:** allow dict be undefined when initialize Kmore ([e1dd5dc](https://github.com/waitingsong/kmore/commit/e1dd5dca1fd19cd6eb37f0fd2727e0f91b1e0404))
+
+
+
+
+
 ## [33.0.2](https://github.com/waitingsong/kmore/compare/v33.0.1...v33.0.2) (2022-08-04)
 
 **Note:** Version bump only for package kmore
