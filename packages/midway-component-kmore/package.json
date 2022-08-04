@@ -28,10 +28,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mw-components/jaeger": "^12.0.7",
+    "@mw-components/jaeger": "^13.0.0",
     "@waiting/shared-core": "^20.3.0",
     "kmore": "^33.0.0",
-    "knex": "^2.1.0",
+    "knex": "^2.2.0",
     "tsconfig-paths": "4"
   },
   "devDependencies": {
