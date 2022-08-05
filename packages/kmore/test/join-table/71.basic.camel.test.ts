@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
+import { RecordCamelKeys } from '@waiting/shared-types'
 
 import { KmoreFactory } from '../../src/index.js'
 import { config, dbDict } from '../test.config.js'
@@ -11,8 +12,10 @@ describe(fileShortPath(import.meta.url), () => {
   type Db = typeof km.DbModel
   type UserDo = Db['tb_user']
   type UserExtDo = Db['tb_user_ext']
+  type UserDTO = RecordCamelKeys<UserDo>
+  type UserExtDTO = RecordCamelKeys<UserExtDo>
 
-  const validateUserRows = (rows: Partial<UserDo>[]): void => {
+  const validateUserRows = (rows: Partial<UserDTO>[]): void => {
     assert(Array.isArray(rows) && rows.length === 1)
 
     rows.forEach((row) => {
@@ -21,7 +24,7 @@ describe(fileShortPath(import.meta.url), () => {
       switch (row.uid) {
         case 1:
           assert(row.name === 'user1', JSON.stringify(row))
-          assert(row.real_name === 'rn1', JSON.stringify(row))
+          assert(row.realName === 'rn1', JSON.stringify(row))
           break
         default:
           assert(false, `Should row.uid be 1 or 2, but got ${row.uid ? row.uid : 'n/a'}`)
@@ -40,12 +43,12 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should inner join table work', () => {
-    it('tb_user join tb_user_ext', async () => {
-      const { refTables } = km
+    it('tb_user join tb_user_ext: select later (prefer)', async () => {
+      const { camelTables } = km
       const { tables, scoped } = km.dict
 
-      await refTables.ref_tb_user()
-        .innerJoin<UserExtDo>(
+      await camelTables.ref_tb_user()
+        .innerJoin<UserExtDTO>(
         tables.tb_user_ext,
         scoped.tb_user.uid,
         scoped.tb_user_ext.uid,
@@ -62,20 +65,20 @@ describe(fileShortPath(import.meta.url), () => {
         })
     })
 
-    it('tb_user join tb_user_ext 2', async () => {
-      const { refTables } = km
+    it('tb_user join tb_user_ext: select first', async () => {
+      const { camelTables } = km
       const { tables, scoped } = km.dict
 
-      await refTables.ref_tb_user()
-        .select(scoped.tb_user.uid, scoped.tb_user.name, 'real_name')
-        .innerJoin(
-          tables.tb_user_ext,
-          scoped.tb_user.uid,
-          scoped.tb_user_ext.uid,
-        )
+      await camelTables.ref_tb_user()
+        .select(scoped.tb_user.uid, scoped.tb_user.name, 'realName')
+        .innerJoin<UserExtDTO>(
+        tables.tb_user_ext,
+        scoped.tb_user.uid,
+        scoped.tb_user_ext.uid,
+      )
         .where(scoped.tb_user.uid, 1)
         .then((rows) => {
-          validateUserRows(rows as Partial<UserDo>[])
+          validateUserRows(rows as Partial<UserDTO>[])
           const [row] = rows
           assert(row && row.uid)
           assert(row && row.name)
