@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.3.0](/compare/v33.2.0...v33.3.0) (2022-08-06)
+
+
+### Features
+
+* **kmore:** kmore.transaction() accepts 2nd param config 974b725
+
+
+
+
+
 # [33.2.0](/compare/v33.1.1...v33.2.0) (2022-08-06)
 
 

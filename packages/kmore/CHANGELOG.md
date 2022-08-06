@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.3.0](https://github.com/waitingsong/kmore/compare/v33.2.0...v33.3.0) (2022-08-06)
+
+
+### Features
+
+* **kmore:** kmore.transaction() accepts 2nd param config ([974b725](https://github.com/waitingsong/kmore/commit/974b725825e0bfbbc3a84595d5220336d0e48114))
+
+
+
+
+
 # [33.2.0](https://github.com/waitingsong/kmore/compare/v33.1.1...v33.2.0) (2022-08-06)
 
 
