@@ -137,12 +137,16 @@ export class Kmore<D = any, Context = any> {
   /**
    * Start a transaction.
    */
-  async transaction(id?: PropertyKey): Promise<Knex.Transaction & { kmoreTrxId: symbol }> {
+  async transaction(
+    id?: PropertyKey,
+    config?: Knex.TransactionConfig,
+  ): Promise<Knex.Transaction & { kmoreTrxId: symbol }> {
+
     const kmoreTrxId = typeof id === 'symbol'
       ? id
       : id ? Symbol(id) : Symbol(Date.now().toString())
 
-    const trx = await this.dbh.transaction()
+    const trx = await this.dbh.transaction(void 0, config)
 
     Object.defineProperty(trx, 'kmoreTrxId', {
       ...defaultPropDescriptor,
