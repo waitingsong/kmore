@@ -25,8 +25,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should transaction work', () => {
     it('transaction', async () => {
-      const { dbh } = km
-      const trx = await dbh.transaction()
+      const trx = await km.transaction()
       assert(trx)
       const tbUser = km.refTables.ref_tb_user()
       const ret = await tbUser
@@ -42,10 +41,8 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('transaction rollback', async () => {
-      const { dbh } = km
-
-      let trx = await dbh.transaction()
-      assert(trx)
+      const trx1 = await km.transaction()
+      assert(trx1)
       let tbUser = km.refTables.ref_tb_user()
 
       const uidsAll = await tbUser
@@ -57,7 +54,7 @@ describe(fileShortPath(import.meta.url), () => {
       const uid2 = 2
       const uid99 = 99
       await tbUser
-        .transacting(trx)
+        .transacting(trx1)
         .forUpdate()
         .update('uid', uid99)
         .where('uid', uid2)
@@ -74,7 +71,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then()
       assert(uidsAll2)
       assert(uidsAll2.length === 0)
-      await trx.rollback()
+      await trx1.rollback()
 
       tbUser = km.refTables.ref_tb_user()
       const uidsAll3 = await tbUser
@@ -85,10 +82,10 @@ describe(fileShortPath(import.meta.url), () => {
       assert(uidsAll3.length === 3)
 
       tbUser = km.refTables.ref_tb_user()
-      trx = await dbh.transaction()
-      assert(trx)
+      const trx2 = await km.transaction()
+      assert(trx2)
       const ret2 = await tbUser
-        .transacting(trx)
+        .transacting(trx2)
         .forUpdate()
         .select('*')
         .where('uid', 1)
@@ -97,7 +94,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(ret2.length === 1)
 
       const ret3 = await tbUser
-        .transacting(trx)
+        .transacting(trx2)
         .forUpdate()
         .select('*')
         .where('uid', uid2)
@@ -105,65 +102,8 @@ describe(fileShortPath(import.meta.url), () => {
       assert(ret3 && Array.isArray(ret3))
       assert(ret3.length === 0)
 
-      await trx.rollback()
+      await trx2.rollback()
     })
-
-    // it('transaction subscription', (done) => {
-    //   const { dbh } = km
-
-    //   dbh.transaction()
-    //     .then((trx) => {
-    //       const subsp = globalEvent
-    //         .subscribe({
-    //           next: (ev) => {
-    //             assert(ev.kUid)
-    //             assert(ev.queryUid)
-    //             assert(typeof ev.trxId === 'string' && ev.trxId)
-    //             assert(ev.method === 'select')
-
-    //             if (ev.type === 'query') {
-    //               assert(! ev.command)
-    //               assert(typeof ev.exData === 'undefined')
-    //               assert(typeof ev.exError === 'undefined')
-    //               assert(typeof ev.respRaw === 'undefined')
-    //             }
-    //             else if (ev.type === 'queryResponse') {
-    //               assert(ev.command === 'SELECT')
-    //               assert(ev.respRaw)
-
-    //               const rows = ev.respRaw && ev.respRaw.response ? ev.respRaw.response.rows : null
-
-    //               assert(rows && Array.isArray(rows))
-    //               assert(rows && rows.length === 1)
-
-    //               subsp.unsubscribe()
-    //               done()
-    //             }
-    //           },
-    //           error: done,
-    //         })
-    //       assert(typeof subsp.unsubscribe === 'function')
-
-    //       km.refTables.ref_tb_user()
-    //         .transacting(trx)
-    //         .forUpdate()
-    //         .select('*')
-    //         .where('uid', 1)
-    //         .then(async (rows) => {
-    //           await trx.commit()
-    //           return rows
-    //         })
-    //         .catch(async () => {
-    //           await trx.rollback()
-    //           return []
-    //         })
-
-    //     })
-    //     .catch((ex) => {
-    //       assert(false, (ex as Error).message)
-    //       done()
-    //     })
-    // })
   })
 
 })

@@ -134,6 +134,24 @@ export class Kmore<D = any, Context = any> {
     this.dbh = options.dbh ? options.dbh : createDbh(this.config)
   }
 
+  /**
+   * Start a transaction.
+   */
+  async transaction(id?: PropertyKey): Promise<Knex.Transaction & { kmoreTrxId: symbol }> {
+    const kmoreTrxId = typeof id === 'symbol'
+      ? id
+      : id ? Symbol(id) : Symbol(Date.now().toString())
+
+    const trx = await this.dbh.transaction()
+
+    Object.defineProperty(trx, 'kmoreTrxId', {
+      ...defaultPropDescriptor,
+      enumerable: false,
+      value: kmoreTrxId,
+    })
+    return trx as Knex.Transaction & { kmoreTrxId: symbol }
+  }
+
 
   protected createRefTables<P extends string>(
     prefix: P,
