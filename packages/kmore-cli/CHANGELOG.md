@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [33.1.1](https://github.com/waitingsong/kmore/compare/v33.1.0...v33.1.1) (2022-08-06)
+
+**Note:** Version bump only for package kmore-cli
+
+
+
+
+
 # [33.0.0](https://github.com/waitingsong/kmore/compare/v32.0.1...v33.0.0) (2022-08-02)
 
 **Note:** Version bump only for package kmore-cli
