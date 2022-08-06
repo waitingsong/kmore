@@ -144,7 +144,7 @@ export class Kmore<D = any, Context = any> {
 
     const kmoreTrxId = typeof id === 'symbol'
       ? id
-      : id ? Symbol(id) : Symbol(Date.now().toString())
+      : id ? Symbol(id) : Symbol(Date.now())
 
     const trx = await this.dbh.transaction(void 0, config)
 
