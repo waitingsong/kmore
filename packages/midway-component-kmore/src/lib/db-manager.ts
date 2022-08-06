@@ -26,7 +26,10 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx = Co
     const db = this.dbSourceManager.getDataSource<Db>(dataSourceName)
     assert(db)
 
-    const reqCtx = this.ctx;
+    const reqCtx: Ctx | undefined = this.ctx
+    if (! reqCtx) {
+      return db
+    }
 
     ['camelTables', 'refTables', 'snakeTables', 'pascalTables'].forEach((prop) => {
       const key = prop as unknown as (keyof Kmore<Db, Ctx> & string)
