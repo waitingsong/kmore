@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.2.0](https://github.com/waitingsong/kmore/compare/v33.1.1...v33.2.0) (2022-08-06)
+
+
+### Features
+
+* **kmore:** def Kmore.transaction() ([edef2bf](https://github.com/waitingsong/kmore/commit/edef2bf7945300b52d6bba80b9842a536630837b))
+
+
+
+
+
 ## [33.1.1](https://github.com/waitingsong/kmore/compare/v33.1.0...v33.1.1) (2022-08-06)
 
 **Note:** Version bump only for package kmore
