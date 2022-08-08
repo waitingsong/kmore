@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.6.0](/compare/v33.5.0...v33.6.0) (2022-08-08)
+
+
+### Features
+
+* **midway-component-kmore:** save config within createDataSource() 768bf36
+
+
+
+
+
 # [33.5.0](/compare/v33.4.0...v33.5.0) (2022-08-08)
 
 
