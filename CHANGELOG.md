@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.5.0](/compare/v33.4.0...v33.5.0) (2022-08-08)
+
+
+### Features
+
+* **midway-component-kmore:** cache instance within createDataSource() faf9668
+
+
+
+
+
 # [33.4.0](/compare/v33.3.1...v33.4.0) (2022-08-08)
 
 
