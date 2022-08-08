@@ -96,8 +96,11 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
     const inst = KmoreFactory<Db, Ctx>(opts)
     if (inst) {
-      // @ts-expect-error
-      this.dataSource.set(dataSourceName, inst)
+      // will save in initDataSource
+      // this.dataSource.set(dataSourceName, inst)
+      if (! this.dataSourceconfig.dataSource[dataSourceName]) {
+        this.dataSourceconfig.dataSource[dataSourceName] = options
+      }
     }
     return inst
   }
