@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [33.4.0](/compare/v33.3.1...v33.4.0) (2022-08-08)
+
+
+### Features
+
+* **midway-component-kmore:** def const kmoreDataSourceConfig 2ca29cc
+
+
+
+
+
 ## [33.3.1](/compare/v33.3.0...v33.3.1) (2022-08-08)
 
 
