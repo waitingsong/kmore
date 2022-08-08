@@ -1,6 +1,7 @@
 
 export { AutoConfiguration as Configuration } from './configuration'
 export * from './lib/index'
+export * from './middleware/db-trx.middleware'
 export { getConfigFromApp } from './util/common'
 
 

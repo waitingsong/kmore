@@ -1,14 +1,15 @@
 import { Middleware } from '@midwayjs/decorator'
 
 import { Context, IMiddleware, NextFunction } from '../interface'
+import { ConfigKey } from '../lib/config'
 import { rollbackAndCleanCtxTransactions } from '../util/database'
 
 
 @Middleware()
-export class DbTrxMiddleware implements IMiddleware<Context, NextFunction> {
+export class KmoreMiddleware implements IMiddleware<Context, NextFunction> {
 
   static getName(): string {
-    const name = 'dbTrxMiddleware'
+    const name = ConfigKey.middlewareName
     return name
   }
 
