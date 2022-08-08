@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [33.3.1](https://github.com/waitingsong/kmore/compare/v33.3.0...v33.3.1) (2022-08-08)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** config may undefined ([74af531](https://github.com/waitingsong/kmore/commit/74af53151c7665bebd8a41297b4574fc2529dcc2))
+
+
+
+
+
 # [33.3.0](https://github.com/waitingsong/kmore/compare/v33.2.0...v33.3.0) (2022-08-06)
 
 **Note:** Version bump only for package @mw-components/kmore
