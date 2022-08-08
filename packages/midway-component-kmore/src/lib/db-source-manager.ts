@@ -39,7 +39,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   extends DataSourceManager<Kmore | undefined> {
 
   // @_Config(ConfigKey.config) private readonly config: Config
-  @_Config(ConfigKey.dataSourceConfig) private readonly dataSourceconfig: DataSourceConfig<SourceName>
+  @_Config(ConfigKey.dataSourceConfig) private readonly dataSourceconfig: DataSourceConfig<SourceName> | undefined
 
   @_Logger() private readonly logger: ILogger
 
@@ -58,7 +58,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   @Init()
   async init(): Promise<void> {
     if (! this.dataSourceconfig) {
-      this.logger.warn('dataSourceConfig is not defined')
+      this.logger.info('dataSourceConfig is not defined')
       return
     }
     assert(this.dataSourceconfig.dataSource, 'dataSourceconfig must contains dataSource property')
@@ -187,7 +187,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   protected getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
     assert(dbId)
-    const dbConfig = this.dataSourceconfig.dataSource[dbId]
+    const dbConfig = this.dataSourceconfig?.dataSource[dbId]
     return dbConfig
   }
 
