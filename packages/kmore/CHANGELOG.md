@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.0.0](https://github.com/waitingsong/kmore/compare/v33.6.0...v34.0.0) (2022-08-08)
+
+
+### Features
+
+* **kmore:** store context:trx map ([e3b36e4](https://github.com/waitingsong/kmore/commit/e3b36e4265eb42ce0e2f3e994f22c87f2513fdbe))
+* **kmore:** transaction auto commit|rollback on error (from db or code inner ref_table) ([705ed5b](https://github.com/waitingsong/kmore/commit/705ed5b62bdde87bbe172a089ae90f2c8ca81d3d))
+
+
+
+
+
 # [33.3.0](https://github.com/waitingsong/kmore/compare/v33.2.0...v33.3.0) (2022-08-06)
 
 

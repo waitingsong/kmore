@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.0.0](https://github.com/waitingsong/kmore/compare/v33.6.0...v34.0.0) (2022-08-08)
+
+
+### Features
+
+* **midway-component-kmore:** transaction auto action by middle ware, enabled default rollback ([f462ddb](https://github.com/waitingsong/kmore/commit/f462ddb20e9666622feadfbac12ae4aad11ed85a))
+* **midway-component-kmore:** transaction auto action on error via middleware ([40ff1d2](https://github.com/waitingsong/kmore/commit/40ff1d2212433c05fca7dbff7b1283a04082f18d))
+
+
+
+
+
 # [33.6.0](https://github.com/waitingsong/kmore/compare/v33.5.0...v33.6.0) (2022-08-08)
 
 

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.0.0](/compare/v33.6.0...v34.0.0) (2022-08-08)
+
+
+### Features
+
+* **kmore:** store context:trx map e3b36e4
+* **kmore:** transaction auto commit|rollback on error (from db or code inner ref_table) 705ed5b
+* **midway-component-kmore:** transaction auto action by middle ware, enabled default rollback f462ddb
+* **midway-component-kmore:** transaction auto action on error via middleware 40ff1d2
+
+
+
+
+
 # [33.6.0](/compare/v33.5.0...v33.6.0) (2022-08-08)
 
 
