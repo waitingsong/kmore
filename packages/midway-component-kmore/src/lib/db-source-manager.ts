@@ -39,7 +39,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   extends DataSourceManager<Kmore | undefined> {
 
   // @_Config(ConfigKey.config) private readonly config: Config
-  @_Config(ConfigKey.dataSourceConfig) private readonly dataSourceconfig: DataSourceConfig<SourceName> | undefined
+  @_Config(ConfigKey.dataSourceConfig) private readonly dataSourceconfig: DataSourceConfig<SourceName>
 
   @_Logger() private readonly logger: ILogger
 
@@ -57,11 +57,14 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Init()
   async init(): Promise<void> {
-    if (! this.dataSourceconfig) {
-      this.logger.info('dataSourceConfig is not defined')
+    if (! this.dataSourceconfig || ! this.dataSourceconfig.dataSource) {
+      this.logger.warn('dataSourceConfig is not defined')
       return
     }
-    assert(this.dataSourceconfig.dataSource, 'dataSourceconfig must contains dataSource property')
+    if (! Object.keys(this.dataSourceconfig.dataSource).length) {
+      this.logger.info('dataSourceConfig.dataSource has no data')
+      return
+    }
     // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
     await this.initDataSource(this.dataSourceconfig, this.baseDir)
   }
