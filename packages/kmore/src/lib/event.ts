@@ -1,9 +1,9 @@
-import type { Knex } from 'knex'
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { initKmoreEvent } from './config.js'
 import {
   EventCallbacks,
   KmoreEvent,
+  KmoreQueryBuilder,
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,
@@ -12,97 +12,94 @@ import {
 } from './types.js'
 
 
-export async function callCbOnStart<Ctx = unknown>(
-  ctx: Ctx | undefined,
-  dbId: string,
-  cbs: EventCallbacks<Ctx> | undefined,
-  identifier: unknown,
-  builder: Knex.QueryBuilder,
-): Promise<void> {
+export interface CallCbOptionsBase<Ctx = any> {
+  ctx: Ctx | undefined
+  dbId: string
+  cbs: EventCallbacks<Ctx> | undefined
+  identifier: unknown
+  kmoreQueryId: symbol
+}
 
-  const cb: EventCallbacks<Ctx>['start'] = cbs?.start
+export interface CallCbOnStartOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+  builder: KmoreQueryBuilder
+}
+
+export async function callCbOnStart(options: CallCbOnStartOptions): Promise<void> {
+  const cb: EventCallbacks['start'] = options.cbs?.start
+
   if (typeof cb === 'function') {
     const event = processKnexOnEvent({
       type: 'start',
-      identifier,
+      identifier: options.identifier,
       data: void 0,
       queryUid: '',
-      queryBuilder: builder,
+      queryBuilder: options.builder,
     })
-    event.dbId = dbId
-    await cb(event, ctx)
+    event.dbId = options.dbId
+    await cb(event, options.ctx)
   }
 }
 
-export async function callCbOnQuery<Ctx = unknown>(
-  ctx: Ctx | undefined,
-  dbId: string,
-  cbs: EventCallbacks<Ctx> | undefined,
-  identifier: unknown,
-  data: OnQueryData,
-): Promise<void> {
+export interface CallCbOnQueryOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+  data: OnQueryData
+}
 
-  const cb: EventCallbacks<Ctx>['query'] = cbs?.query
+export async function callCbOnQuery(options: CallCbOnQueryOptions): Promise<void> {
+  const cb: EventCallbacks['query'] = options.cbs?.query
   if (typeof cb === 'function') {
-    const queryUid = pickQueryUidFrom(data)
+    const queryUid = pickQueryUidFrom(options.data)
     const event = processKnexOnEvent({
       type: 'query',
-      identifier,
-      data,
+      identifier: options.identifier,
+      data: options.data,
       queryUid,
       queryBuilder: void 0,
     })
-    event.dbId = dbId
-    await cb(event, ctx)
+    event.dbId = options.dbId
+    await cb(event, options.ctx)
   }
 }
 
-export async function callCbOnQueryResp<Ctx = unknown>(
-  ctx: Ctx | undefined,
-  dbId: string,
-  cbs: EventCallbacks<Ctx> | undefined,
-  identifier: unknown,
-  _resp: QueryResponse, // not used
-  respRaw: OnQueryRespRaw,
-): Promise<void> {
+export interface CallCbOnQueryRespOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+  _resp: QueryResponse
+  respRaw: OnQueryRespRaw
+}
 
-  const cb: EventCallbacks<Ctx>['queryResponse'] = cbs?.queryResponse
+export async function callCbOnQueryResp(options: CallCbOnQueryRespOptions): Promise<void> {
+  const cb: EventCallbacks['queryResponse'] = options.cbs?.queryResponse
   if (typeof cb === 'function') {
-    const queryUid = pickQueryUidFrom(respRaw)
+    const queryUid = pickQueryUidFrom(options.respRaw)
     const event = processKnexOnEvent({
       type: 'queryResponse',
-      identifier,
-      respRaw,
+      identifier: options.identifier,
+      respRaw: options.respRaw,
       queryUid,
       queryBuilder: void 0,
     })
-    event.dbId = dbId
-    await cb(event, ctx)
+    event.dbId = options.dbId
+    await cb(event, options.ctx)
   }
 }
 
-export async function callCbOnQueryError<Ctx = unknown>(
-  ctx: Ctx | undefined,
-  dbId: string,
-  cbs: EventCallbacks<Ctx> | undefined,
-  identifier: unknown,
-  err: OnQueryErrorErr,
-  data: OnQueryErrorData,
-): Promise<void> {
+export interface CallCbOnQueryErrorOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+  err: OnQueryErrorErr
+  data: OnQueryErrorData
+}
 
-  const cb: EventCallbacks<Ctx>['queryError'] = cbs?.queryError
+export async function callCbOnQueryError(options: CallCbOnQueryErrorOptions): Promise<void> {
+  const cb: EventCallbacks['queryError'] = options.cbs?.queryError
   if (typeof cb === 'function') {
-    const queryUid = pickQueryUidFrom(data)
+    const queryUid = pickQueryUidFrom(options.data)
     const event = processKnexOnEvent({
       type: 'queryError',
-      identifier,
-      exError: err,
-      exData: data,
+      identifier: options.identifier,
+      exError: options.err,
+      exData: options.data,
       queryUid,
       queryBuilder: void 0,
     })
-    event.dbId = dbId
-    await cb(event, ctx)
+    event.dbId = options.dbId
+    await cb(event, options.ctx)
   }
 }
 

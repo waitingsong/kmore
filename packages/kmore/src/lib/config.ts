@@ -12,6 +12,7 @@ export const initKmoreEvent: KmoreEvent = {
   dbId: '',
   type: 'unknown',
   identifier: void 0,
+  kmoreQueryId: void 0,
   kUid: '',
   queryUid: '',
   trxId: void 0,

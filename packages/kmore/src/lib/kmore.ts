@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'assert'
@@ -8,12 +9,21 @@ import type { Knex } from 'knex'
 import { default as _knex } from 'knex'
 
 import { defaultPropDescriptor, initialConfig } from './config.js'
-import { callCbOnQuery, callCbOnQueryError, callCbOnQueryResp, callCbOnStart } from './event.js'
+import {
+  callCbOnQuery,
+  callCbOnQueryError,
+  callCbOnQueryResp,
+  callCbOnStart,
+  CallCbOptionsBase,
+} from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import {
   CaseType,
   DbQueryBuilder,
   EventCallbacks,
+  KmoreQueryBuilder,
+  KmoreTransaction,
+  KmoreTransactionConfig,
   KnexConfig,
   OnQueryData,
   OnQueryErrorData,
@@ -70,14 +80,23 @@ export class Kmore<D = any, Context = any> {
 
   readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
   readonly postProcessResponseSet = new Set<typeof postProcessResponse>()
+  readonly trxActionOnError: KmoreTransactionConfig['trxActionOnError'] = 'rollback'
+  /**
+   * kmoreTrxid => trx
+   */
+  readonly trxMap = new Map<symbol, KmoreTransaction>()
+  /**
+   * kmoreTrxId => Set<kmoreQueryId>
+   */
+  readonly trxIdQueryMap: TrxIdQueryMap = new Map()
 
-  public readonly config: KnexConfig
-  public readonly dict: unknown extends D ? undefined : DbDict<D>
-  public readonly dbId: string
-  public readonly dbh: Knex
-  public readonly instanceId: string | symbol
-  public readonly eventCallbacks: EventCallbacks<Context> | undefined
-  public readonly wrapIdentifierCaseConvert: CaseType
+  readonly config: KnexConfig
+  readonly dict: unknown extends D ? undefined : DbDict<D>
+  readonly dbId: string
+  readonly dbh: Knex
+  readonly instanceId: string | symbol
+  readonly eventCallbacks: EventCallbacks<Context> | undefined
+  readonly wrapIdentifierCaseConvert: CaseType
 
 
   constructor(options: KmoreFactoryOpts<D, Context>) {
@@ -125,6 +144,10 @@ export class Kmore<D = any, Context = any> {
       queryContext?: QueryContext,
     ) => this.postProcessResponse(result, queryContext)
 
+    if (options.trxActionOnError) {
+      this.trxActionOnError = options.trxActionOnError
+    }
+
     this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
     this.camelTables = this.createRefTables<'ref_'>('ref_', CaseType.camel)
     // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
@@ -139,21 +162,107 @@ export class Kmore<D = any, Context = any> {
    */
   async transaction(
     id?: PropertyKey,
-    config?: Knex.TransactionConfig,
-  ): Promise<Knex.Transaction & { kmoreTrxId: symbol }> {
+    config?: KmoreTransactionConfig,
+  ): Promise<KmoreTransaction> {
 
     const kmoreTrxId = typeof id === 'symbol'
       ? id
       : id ? Symbol(id) : Symbol(Date.now())
 
-    const trx = await this.dbh.transaction(void 0, config)
+    const tmp = await this.dbh.transaction(void 0, config)
 
-    Object.defineProperty(trx, 'kmoreTrxId', {
+    Object.defineProperty(tmp, 'kmoreTrxId', {
       ...defaultPropDescriptor,
       enumerable: false,
       value: kmoreTrxId,
     })
-    return trx as Knex.Transaction & { kmoreTrxId: symbol }
+
+    const trxActionOnError: KmoreTransactionConfig['trxActionOnError'] = config?.trxActionOnError
+      ?? this.trxActionOnError ?? 'rollback'
+    Object.defineProperty(tmp, 'trxActionOnError', {
+      ...defaultPropDescriptor,
+      enumerable: false,
+      value: trxActionOnError,
+    })
+
+    if (trxActionOnError === 'none') {
+      return tmp as KmoreTransaction
+    }
+
+    const trx = this.createTrxProxy(tmp as KmoreTransaction)
+    this.trxMap.set(kmoreTrxId, trx)
+    this.trxIdQueryMap.set(kmoreTrxId, new Set())
+
+    return trx
+  }
+
+  getTrxByKmoreQueryId(kmoreQueryId: symbol): KmoreTransaction | undefined {
+    for (const [trxId, queryIdSet] of this.trxIdQueryMap.entries()) {
+      if (queryIdSet.has(kmoreQueryId)) {
+        const trx = this.trxMap.get(trxId)
+        if (trx) {
+          return trx
+        }
+      }
+    }
+  }
+
+  getTrxByKmoreTrxId(id: symbol): KmoreTransaction | undefined {
+    return this.trxMap.get(id)
+  }
+
+  async doTrxActionOnError(trx: KmoreTransaction | undefined): Promise<void> {
+    if (trx && ! trx.isCompleted()) {
+      switch (trx.trxActionOnError) {
+        case 'rollback': {
+          await trx.rollback()
+          break
+        }
+
+        case 'commit': {
+          await trx.commit()
+          break
+        }
+
+        default:
+          break
+      }
+    }
+  }
+
+
+  protected createTrxProxy(trx: KmoreTransaction): KmoreTransaction {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const commit = new Proxy(trx.commit, {
+      apply: (target: typeof trx.commit, ctx: KmoreTransaction, args: unknown[]) => {
+        this.trxIdQueryMap.delete(ctx.kmoreTrxId)
+        this.trxMap.delete(ctx.kmoreTrxId)
+        return Reflect.apply(target, ctx, args)
+      },
+    })
+    Object.defineProperty(trx, 'commit', {
+      enumerable: true,
+      writable: true,
+      configurable: false,
+      value: commit,
+    })
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const rollback = new Proxy(trx.rollback, {
+      apply: (target: typeof trx.rollback, ctx: KmoreTransaction, args: unknown[]) => {
+        this.trxIdQueryMap.delete(ctx.kmoreTrxId)
+        this.trxMap.delete(ctx.kmoreTrxId)
+        return Reflect.apply(target, ctx, args)
+      },
+    })
+    Object.defineProperty(trx, 'rollback', {
+      enumerable: true,
+      writable: true,
+      configurable: false,
+      value: rollback,
+    })
+
+    return trx
   }
 
 
@@ -193,53 +302,141 @@ export class Kmore<D = any, Context = any> {
     refName: string,
     caseConvert: CaseType,
     ctx: Context | undefined,
-  ): Knex.QueryBuilder {
+  ): KmoreQueryBuilder {
 
     assert(caseConvert, 'caseConvert must be defined')
 
-    const opts: QueryContext = {
+    const kmoreQueryId = Symbol(`${this.dbId}-${Date.now()}`)
+
+    let refTable = this.dbh(refName)
+
+    refTable = this.extRefTableFnPropertyCallback(
+      refTable as KmoreQueryBuilder,
+      caseConvert,
+      ctx,
+      kmoreQueryId,
+    )
+    refTable = this.extRefTableFnPropertyTransacting(refTable as KmoreQueryBuilder)
+    refTable = this.extRefTableFnPropertyThen(refTable as KmoreQueryBuilder)
+
+    void Object.defineProperty(refTable, 'kmoreQueryId', {
+      ...defaultPropDescriptor,
+      value: kmoreQueryId,
+    })
+
+    return refTable as KmoreQueryBuilder
+  }
+
+  protected extRefTableFnPropertyCallback(
+    refTable: KmoreQueryBuilder,
+    caseConvert: CaseType,
+    ctx: Context | undefined,
+    kmoreQueryId: symbol,
+  ): KmoreQueryBuilder {
+
+    assert(caseConvert, 'caseConvert must be defined')
+
+    const queryCtxOpts: QueryContext = {
       wrapIdentifierCaseConvert: this.wrapIdentifierCaseConvert,
       postProcessResponseCaseConvert: caseConvert,
+      kmoreQueryId,
     }
-    const refTable = this.dbh(refName)
-      .queryContext(opts)
-      .on('start', async (builder: Knex.QueryBuilder) => callCbOnStart<Context>(
-        ctx,
-        this.dbId,
-        this.eventCallbacks,
-        this.instanceId,
-        builder,
-      ))
-      .on('query', async (data: OnQueryData) => callCbOnQuery<Context>(
-        ctx,
-        this.dbId,
-        this.eventCallbacks,
-        this.instanceId,
-        data,
-      ))
+    const opts: CallCbOptionsBase = {
+      ctx,
+      dbId: this.dbId,
+      cbs: this.eventCallbacks,
+      identifier: this.instanceId,
+      kmoreQueryId,
+    }
+
+    const refTable2 = refTable
+      .queryContext(queryCtxOpts)
+      .on(
+        'start',
+        async (builder: KmoreQueryBuilder) => callCbOnStart({
+          ...opts,
+          builder,
+        }),
+      )
+      .on(
+        'query',
+        async (data: OnQueryData) => callCbOnQuery({
+          ...opts,
+          data,
+        }),
+      )
       .on(
         'query-response',
-        async (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp<Context>(
-          ctx,
-          this.dbId,
-          this.eventCallbacks,
-          this.instanceId,
-          resp,
+        async (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp({
+          ...opts,
+          _resp: resp,
           respRaw,
-        ),
+        }),
       )
       .on(
         'query-error',
-        async (err: OnQueryErrorErr, data: OnQueryErrorData) => callCbOnQueryError<Context>(
-          ctx,
-          this.dbId,
-          this.eventCallbacks,
-          this.instanceId,
-          err,
-          data,
-        ),
+        async (err: OnQueryErrorErr, data: OnQueryErrorData) => {
+          const trx = this.getTrxByKmoreQueryId(kmoreQueryId)
+          await this.doTrxActionOnError(trx)
+          return callCbOnQueryError({
+            ...opts,
+            err,
+            data,
+          })
+        },
       )
-    return refTable
+
+    return refTable2 as KmoreQueryBuilder
+  }
+
+  protected extRefTableFnPropertyTransacting(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const ts = new Proxy(refTable.transacting, {
+      apply: (target: KmoreQueryBuilder['transacting'], ctx2: KmoreQueryBuilder, args: [KmoreTransaction]) => {
+        const [trx] = args
+        assert(trx?.isTransaction === true, 'trx must be a transaction')
+        const { kmoreTrxId } = trx
+        const qid = ctx2.kmoreQueryId as symbol | undefined
+        if (qid && kmoreTrxId) {
+          this.trxIdQueryMap.get(kmoreTrxId)?.add(qid)
+        }
+        return Reflect.apply(target, ctx2, args)
+      },
+    })
+    void Object.defineProperty(refTable, 'transacting', {
+      ...defaultPropDescriptor,
+      value: ts,
+    })
+
+    return refTable as KmoreQueryBuilder
+  }
+
+  protected extRefTableFnPropertyThen(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const pm = new Proxy(refTable.then, {
+      apply: (target: () => Promise<unknown>, ctx2: KmoreQueryBuilder, args: unknown[]) => {
+        const qid = ctx2.kmoreQueryId
+        const trx = this.getTrxByKmoreQueryId(qid)
+        if (! trx) {
+          return Reflect.apply(target, ctx2, args)
+        }
+
+        return (Reflect.apply(target, ctx2, args) as Promise<unknown>)
+          .catch(async (err: unknown) => {
+            const trx2 = this.getTrxByKmoreQueryId(qid)
+            await this.doTrxActionOnError(trx2)
+            return Promise.reject(err)
+          })
+
+      },
+    })
+    void Object.defineProperty(refTable, 'then', {
+      ...defaultPropDescriptor,
+      configurable: true,
+      value: pm,
+    })
+
+    return refTable as KmoreQueryBuilder
   }
 
   protected postProcessResponse(
@@ -253,6 +450,7 @@ export class Kmore<D = any, Context = any> {
     }
     return ret
   }
+
 }
 
 export interface KmoreFactoryOpts<D, Ctx = unknown> {
@@ -274,6 +472,12 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    * @docs https://knexjs.org/guide/#wrapidentifier
    */
   wrapIdentifierCaseConvert?: CaseType | undefined
+  /**
+   * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
+   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * @default rollback
+   */
+  trxActionOnError?: KmoreTransactionConfig['trxActionOnError']
 }
 
 export function KmoreFactory<D, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {
@@ -285,4 +489,10 @@ export function createDbh(knexConfig: KnexConfig): Knex {
   const inst = _knex(knexConfig)
   return inst
 }
+
+
+/**
+ * kmoreTrxId => Set<kmoreQueryId>
+ */
+type TrxIdQueryMap = Map<symbol, Set<symbol>>
 

@@ -6,6 +6,26 @@ import { Span } from 'opentracing'
 
 
 export type KnexConfig = Knex.Config
+export type KmoreTransaction = Knex.Transaction & {
+  kmoreTrxId: symbol,
+  /**
+   * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
+   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * @default rollback
+   */
+  trxActionOnError: NonNullable<KmoreTransactionConfig['trxActionOnError']>,
+}
+export type KmoreTransactionConfig = Knex.TransactionConfig & {
+  /**
+   * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
+   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * @default rollback
+   */
+  trxActionOnError?: 'commit' | 'rollback' | 'none',
+}
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type KmoreQueryBuilder<TRecord extends {} = any, TResult = any> =
+  Knex.QueryBuilder<TRecord, TResult> & { kmoreQueryId: symbol }
 
 export enum EnumClient {
   pg = 'pg',
@@ -45,7 +65,7 @@ export interface BuilderInput {
   caseConvert?: CaseType | undefined
 }
 
-export type TbQueryBuilder<TRecord, Context> = (ctx?: Context) => Knex.QueryBuilder<TRecord, TRecord[]>
+export type TbQueryBuilder<TRecord, Context> = (ctx?: Context) => KmoreQueryBuilder<TRecord, TRecord[]>
 // export type TbQueryBuilder<TRecord>
 //   = <CaseConvert extends CaseType = CaseType.none>(caseConvert?: CaseConvert)
 //   => CaseConvert extends CaseType.camel
@@ -76,6 +96,7 @@ export interface KmoreEvent <T = unknown> {
   kUid: string
   /** __knexQueryUid */
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
+  kmoreQueryId: symbol | undefined
   /**
    * @description Note: may keep value of the latest transaction id,
    * even if no transaction this query!
@@ -98,6 +119,7 @@ export interface KmoreEvent <T = unknown> {
 export interface QueryContext {
   wrapIdentifierCaseConvert: CaseType
   postProcessResponseCaseConvert: CaseType
+  kmoreQueryId: symbol
 }
 
 export interface OnQueryData {

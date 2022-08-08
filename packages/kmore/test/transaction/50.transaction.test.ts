@@ -3,10 +3,9 @@ import assert from 'node:assert/strict'
 import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '../src/index.js'
-
-import { config } from './test.config.js'
-import { Db } from './test.model.js'
+import { KmoreFactory } from '../../src/index.js'
+import { config } from '../test.config.js'
+import { Db } from '../test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -27,13 +26,12 @@ describe(fileShortPath(import.meta.url), () => {
     it('transaction', async () => {
       const trx = await km.transaction()
       assert(trx)
-      const tbUser = km.refTables.ref_tb_user()
+      const tbUser = km.camelTables.ref_tb_user()
       const ret = await tbUser
         .transacting(trx)
         .forUpdate()
         .select('*')
         .where('uid', 1)
-        .then()
 
       await trx.commit()
       assert(ret && Array.isArray(ret))
@@ -43,11 +41,11 @@ describe(fileShortPath(import.meta.url), () => {
     it('transaction rollback', async () => {
       const trx1 = await km.transaction()
       assert(trx1)
-      let tbUser = km.refTables.ref_tb_user()
+      let tbUser = km.camelTables.ref_tb_user()
 
       const uidsAll = await tbUser
         .select('*')
-        .then()
+
       assert(uidsAll)
       assert(uidsAll.length === 3)
 
@@ -68,12 +66,12 @@ describe(fileShortPath(import.meta.url), () => {
         })
       const uidsAll2 = await tbUser
         .select('*')
-        .then()
+
       assert(uidsAll2)
       assert(uidsAll2.length === 0)
       await trx1.rollback()
 
-      tbUser = km.refTables.ref_tb_user()
+      tbUser = km.camelTables.ref_tb_user()
       const uidsAll3 = await tbUser
         .select('*')
         .then()
@@ -81,7 +79,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(uidsAll3)
       assert(uidsAll3.length === 3)
 
-      tbUser = km.refTables.ref_tb_user()
+      tbUser = km.camelTables.ref_tb_user()
       const trx2 = await km.transaction()
       assert(trx2)
       const ret2 = await tbUser
@@ -89,7 +87,6 @@ describe(fileShortPath(import.meta.url), () => {
         .forUpdate()
         .select('*')
         .where('uid', 1)
-        .then()
       assert(ret2 && Array.isArray(ret2))
       assert(ret2.length === 1)
 
@@ -98,12 +95,13 @@ describe(fileShortPath(import.meta.url), () => {
         .forUpdate()
         .select('*')
         .where('uid', uid2)
-        .then()
+
       assert(ret3 && Array.isArray(ret3))
       assert(ret3.length === 0)
 
       await trx2.rollback()
     })
+
   })
 
 })

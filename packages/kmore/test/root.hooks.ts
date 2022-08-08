@@ -1,3 +1,4 @@
+import 'tsconfig-paths/register'
 import { initDb } from './helper.js'
 
 

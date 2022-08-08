@@ -1,5 +1,6 @@
 import assert from 'assert/strict'
 
+import { sleep } from '@waiting/shared-core'
 import type { Knex } from 'knex'
 
 import { KmoreFactory, Kmore, getCurrentTime, EnumClient, KmoreFactoryOpts } from '../src/index.js'
@@ -88,12 +89,15 @@ async function initUser(km: Kmore<Db>): Promise<void> {
     ])
     .returning('*')
     .then((rows) => {
+      console.log(JSON.stringify(rows, null, 2))
       validateUserRows(rows)
       return rows
     })
     .catch((err: Error) => {
       assert(false, err.message)
     })
+
+  await sleep(1000)
 
 }
 
@@ -151,6 +155,7 @@ async function initUserCamel(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
+  await sleep(1000)
 }
 export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
   assert(Array.isArray(rows) && rows.length > 0)
