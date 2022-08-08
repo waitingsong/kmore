@@ -76,6 +76,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     dataSourceName: SourceName,
   ): Promise<Kmore<Db, Ctx>> {
 
+    const cacheInst = this.getDataSource(dataSourceName)
+    if (cacheInst) {
+      // @ts-expect-error
+      return cacheInst
+    }
+
     const globalEventCbs: EventCallbacks = {
       start: (event: KmoreEvent, ctx?: Ctx) => this.cbOnStart(event, ctx),
       query: (event: KmoreEvent, ctx?: Ctx) => this.cbOnQuery(event, ctx),
@@ -88,7 +94,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
       eventCallbacks: globalEventCbs,
     }
 
-    return KmoreFactory<Db, Ctx>(opts)
+    const inst = KmoreFactory<Db, Ctx>(opts)
+    if (inst) {
+      // @ts-expect-error
+      this.dataSource.set(dataSourceName, inst)
+    }
+    return inst
   }
 
 
