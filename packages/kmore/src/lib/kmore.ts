@@ -246,21 +246,27 @@ export class Kmore<D = any, Context = any> {
   }
 
   async doTrxActionOnError(trx: KmoreTransaction | undefined): Promise<void> {
-    if (trx && ! trx.isCompleted()) {
-      switch (trx.trxActionOnError) {
-        case 'rollback': {
-          await trx.rollback()
-          break
-        }
-
-        case 'commit': {
-          await trx.commit()
-          break
-        }
-
-        default:
-          break
+    if (! trx) { return }
+    if (! trx.isCompleted()) {
+      this.trxMap.delete(trx.kmoreTrxId)
+    }
+    switch (trx.trxActionOnError) {
+      case 'rollback': {
+        await trx.rollback()
+        this.trxMap.delete(trx.kmoreTrxId)
+        this.trxIdQueryMap.delete(trx.kmoreTrxId)
+        break
       }
+
+      case 'commit': {
+        await trx.commit()
+        this.trxMap.delete(trx.kmoreTrxId)
+        this.trxIdQueryMap.delete(trx.kmoreTrxId)
+        break
+      }
+
+      default:
+        break
     }
   }
 
