@@ -89,6 +89,10 @@ export class Kmore<D = any, Context = any> {
    * kmoreTrxId => Set<kmoreQueryId>
    */
   readonly trxIdQueryMap: TrxIdQueryMap = new Map()
+  /**
+   * context => Set<kmoreTrxId>
+   */
+  readonly ctxTrxIdMap = new WeakMap<object, Set<symbol>>()
 
   readonly config: KnexConfig
   readonly dict: unknown extends D ? undefined : DbDict<D>
@@ -211,6 +215,36 @@ export class Kmore<D = any, Context = any> {
     return this.trxMap.get(id)
   }
 
+  setCtxTrxIdMap(
+    ctx: unknown,
+    kmoreTrxId: symbol,
+  ): void {
+
+    if (! ctx || ! kmoreTrxId || typeof ctx !== 'object') { return }
+    if (! this.ctxTrxIdMap.get(ctx)) {
+      this.ctxTrxIdMap.set(ctx, new Set())
+    }
+    this.ctxTrxIdMap.get(ctx)?.add(kmoreTrxId)
+  }
+
+  getTrxSetByCtx(
+    ctx: unknown,
+  ): Set<KmoreTransaction> {
+
+    const ret = new Set<KmoreTransaction>()
+    if (! ctx || typeof ctx !== 'object') {
+      return ret
+    }
+    const trxIdMap = this.ctxTrxIdMap.get(ctx)
+    trxIdMap?.forEach((kmoreTrxId) => {
+      const trx = this.trxMap.get(kmoreTrxId)
+      if (trx) {
+        ret.add(trx)
+      }
+    })
+    return ret
+  }
+
   async doTrxActionOnError(trx: KmoreTransaction | undefined): Promise<void> {
     if (trx && ! trx.isCompleted()) {
       switch (trx.trxActionOnError) {
@@ -229,6 +263,7 @@ export class Kmore<D = any, Context = any> {
       }
     }
   }
+
 
 
   protected createTrxProxy(trx: KmoreTransaction): KmoreTransaction {
@@ -316,7 +351,7 @@ export class Kmore<D = any, Context = any> {
       ctx,
       kmoreQueryId,
     )
-    refTable = this.extRefTableFnPropertyTransacting(refTable as KmoreQueryBuilder)
+    refTable = this.extRefTableFnPropertyTransacting(refTable as KmoreQueryBuilder, ctx)
     refTable = this.extRefTableFnPropertyThen(refTable as KmoreQueryBuilder)
 
     void Object.defineProperty(refTable, 'kmoreQueryId', {
@@ -389,7 +424,11 @@ export class Kmore<D = any, Context = any> {
     return refTable2 as KmoreQueryBuilder
   }
 
-  protected extRefTableFnPropertyTransacting(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
+  protected extRefTableFnPropertyTransacting(
+    refTable: KmoreQueryBuilder,
+    ctx: Context | undefined,
+  ): KmoreQueryBuilder {
+
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const ts = new Proxy(refTable.transacting, {
       apply: (target: KmoreQueryBuilder['transacting'], ctx2: KmoreQueryBuilder, args: [KmoreTransaction]) => {
@@ -399,6 +438,7 @@ export class Kmore<D = any, Context = any> {
         const qid = ctx2.kmoreQueryId as symbol | undefined
         if (qid && kmoreTrxId) {
           this.trxIdQueryMap.get(kmoreTrxId)?.add(qid)
+          this.setCtxTrxIdMap(ctx, kmoreTrxId)
         }
         return Reflect.apply(target, ctx2, args)
       },
