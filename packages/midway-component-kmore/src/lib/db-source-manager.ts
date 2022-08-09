@@ -74,11 +74,11 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   protected async createDataSource<Db>(
     options: DbConfig<Db, Ctx>,
     dataSourceName: SourceName,
+    cacheDataSource = true,
   ): Promise<Kmore<Db, Ctx>> {
 
-    const cacheInst = this.getDataSource(dataSourceName)
-    if (cacheInst) {
-      // @ts-expect-error
+    const cacheInst = cacheDataSource ? this.getDataSource<Db>(dataSourceName) : null
+    if (cacheDataSource && cacheInst) {
       return cacheInst
     }
 
@@ -95,12 +95,17 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     }
 
     const inst = KmoreFactory<Db, Ctx>(opts)
-    if (inst) {
+    if (cacheDataSource && inst) {
       // will save in initDataSource
       // this.dataSource.set(dataSourceName, inst)
       if (! this.dataSourceconfig.dataSource[dataSourceName]) {
         this.dataSourceconfig.dataSource[dataSourceName] = options
       }
+    }
+
+    if (! cacheDataSource) {
+      // saved in initDataSource
+      this.dataSource.delete(dataSourceName)
     }
     return inst
   }
