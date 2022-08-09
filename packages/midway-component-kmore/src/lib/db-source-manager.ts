@@ -138,7 +138,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   override async destroyDataSource(dataSource: Kmore): Promise<void> {
     if (await this.checkConnected(dataSource)) {
       try {
-        await dataSource.dbh.destroy()
+        await dataSource.destroy()
         // @ts-expect-error
         this.dataSource.delete(dataSource.dbId)
       }
