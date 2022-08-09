@@ -270,6 +270,10 @@ export class Kmore<D = any, Context = any> {
     }
   }
 
+  destroy(): Promise<void> {
+    return this.dbh.destroy()
+  }
+
 
 
   protected createTrxProxy(trx: KmoreTransaction): KmoreTransaction {
