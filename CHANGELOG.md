@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.1.0](/compare/v34.0.0...v34.1.0) (2022-08-09)
+
+
+### Features
+
+* **midway-component-kmore:** createDataSource() accepts 3rd param cacheDataSource e344ea2
+* **midway-component-kmore:** delete from dataSource within destroyDataSource() 11a2f0e
+
+
+
+
+
 # [34.0.0](/compare/v33.6.0...v34.0.0) (2022-08-08)
 
 

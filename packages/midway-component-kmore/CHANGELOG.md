@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.1.0](https://github.com/waitingsong/kmore/compare/v34.0.0...v34.1.0) (2022-08-09)
+
+
+### Features
+
+* **midway-component-kmore:** createDataSource() accepts 3rd param cacheDataSource ([e344ea2](https://github.com/waitingsong/kmore/commit/e344ea27bbfac6c70dd89de74a159d9d3f74a2bb))
+* **midway-component-kmore:** delete from dataSource within destroyDataSource() ([11a2f0e](https://github.com/waitingsong/kmore/commit/11a2f0e3d43a0d9e077e5dd737f3d2b66b765d57))
+
+
+
+
+
 # [34.0.0](https://github.com/waitingsong/kmore/compare/v33.6.0...v34.0.0) (2022-08-08)
 
 
