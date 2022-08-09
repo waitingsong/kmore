@@ -30,8 +30,8 @@ describe(fileShortPath(import.meta.url), () => {
       const { tables, scoped, alias } = km.dict
 
       const cols = [
-        alias.tb_user.uid, // { tbUser: 'tb_user.uid' }
-        alias.tb_user_ext.uid, // { tbUserExt: 'tb_user_ext.uid' }
+        alias.tb_user.uid, // { tbUserUid: 'tb_user.uid' }
+        alias.tb_user_ext.uid, // { tbUserExtUid: 'tb_user_ext.uid' }
       ]
 
       const ret = await camelTables.ref_tb_user()
