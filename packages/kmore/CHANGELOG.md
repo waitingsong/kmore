@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.2.0](https://github.com/waitingsong/kmore/compare/v34.1.0...v34.2.0) (2022-08-09)
+
+
+### Features
+
+* **kmore:** add Kmore.destroy() ([04cc3a2](https://github.com/waitingsong/kmore/commit/04cc3a25d446c9b70938fa2f2767e0a7ed343cb8))
+
+
+
+
+
 # [34.0.0](https://github.com/waitingsong/kmore/compare/v33.6.0...v34.0.0) (2022-08-08)
 
 

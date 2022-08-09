@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.2.0](/compare/v34.1.0...v34.2.0) (2022-08-09)
+
+
+### Features
+
+* **kmore:** add Kmore.destroy() 04cc3a2
+
+
+
+
+
 # [34.1.0](/compare/v34.0.0...v34.1.0) (2022-08-09)
 
 
