@@ -139,6 +139,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     if (await this.checkConnected(dataSource)) {
       try {
         await dataSource.dbh.destroy()
+        // @ts-expect-error
+        this.dataSource.delete(dataSource.dbId)
       }
       catch (ex: unknown) {
         this.logger.error(
