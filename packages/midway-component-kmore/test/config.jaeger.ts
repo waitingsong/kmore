@@ -1,12 +1,11 @@
 // config for `npm run cov|ci`
 import { MidwayConfig } from '@midwayjs/core'
-import { initialConfig as initTracerConfig, TracerTag } from '@mw-components/jaeger'
+import { TracerTag } from '@mw-components/jaeger'
 
 
 type AppConfig = Partial<MidwayConfig>
 
 export const tracerConfig: AppConfig['tracerConfig'] = {
-  ...initTracerConfig,
   tracingConfig: {
     sampler: {
       type: 'const',
@@ -17,8 +16,6 @@ export const tracerConfig: AppConfig['tracerConfig'] = {
     },
   },
 }
-tracerConfig.loggingReqHeaders?.push(TracerTag.svcName)
-tracerConfig.loggingReqHeaders?.push(TracerTag.svcVer)
 
 export const tracerMiddlewareConfig: AppConfig['tracerMiddlewareConfig'] = {
   ignore: [
