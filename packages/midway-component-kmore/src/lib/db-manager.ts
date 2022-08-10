@@ -22,6 +22,15 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx = Co
 
   getName(): string { return 'dbManager' }
 
+
+  /**
+   * Check the data source is connected
+   */
+  async isConnected(dataSourceName: SourceName): Promise<boolean> {
+    return this.dbSourceManager.isConnected(dataSourceName)
+  }
+
+
   getDataSource<Db = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
     const db = this.dbSourceManager.getDataSource<Db>(dataSourceName)
     assert(db)
