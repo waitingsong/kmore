@@ -19,6 +19,7 @@ import {
   KmoreFactory,
   KmoreFactoryOpts,
   QuerySpanInfo,
+  getCurrentTime,
 } from 'kmore'
 
 import { Context } from '../interface'
@@ -116,18 +117,14 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   }
 
   protected async checkConnected(dataSource: Kmore): Promise<boolean> {
-    assert(dataSource)
-    const { dbh } = dataSource
+    if (! dataSource) {
+      return false
+    }
+    const { dbh, config } = dataSource
 
     try {
-      return dbh.raw('SHOW TIME ZONE')
-        .then((rows) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          if (rows && rows.rows.length > 0) {
-            return true
-          }
-          return false
-        })
+      const time = await getCurrentTime(dbh, config.client)
+      return !! time
     }
     catch (ex) {
       this.logger.error('[KmoreDbSourceManager]: checkConnected()', ex)
