@@ -115,7 +115,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     return 'dbSourceManager'
   }
 
-  async checkConnected(dataSource: Kmore): Promise<boolean> {
+  protected async checkConnected(dataSource: Kmore): Promise<boolean> {
     assert(dataSource)
     const { dbh } = dataSource
 
@@ -129,8 +129,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
           return false
         })
     }
-    catch {
-      void 0
+    catch (ex) {
+      this.logger.error('[KmoreDbSourceManager]: checkConnected()', ex)
     }
     return false
   }
