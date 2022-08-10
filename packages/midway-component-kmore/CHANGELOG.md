@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.3.0](https://github.com/waitingsong/kmore/compare/v34.2.0...v34.3.0) (2022-08-10)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** getDataSource() with createRefProxy() ([fc39327](https://github.com/waitingsong/kmore/commit/fc39327f61e4ce628f2c90c4c4ff3c538f9328ad))
+
+
+### Features
+
+* **midway-component-kmore:** change checkConnected() to protected ([916d835](https://github.com/waitingsong/kmore/commit/916d8358d301df9beb43b81e4dbde9cbc13bcc93))
+* **midway-component-kmore:** DbManager.isConnected() ([a3bcb58](https://github.com/waitingsong/kmore/commit/a3bcb589073ffd29399217053f559c13d95a67ef))
+
+
+
+
+
 # [34.2.0](https://github.com/waitingsong/kmore/compare/v34.1.0...v34.2.0) (2022-08-09)
 
 **Note:** Version bump only for package @mw-components/kmore

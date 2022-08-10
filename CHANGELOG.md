@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.3.0](/compare/v34.2.0...v34.3.0) (2022-08-10)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** getDataSource() with createRefProxy() fc39327
+
+
+### Features
+
+* **midway-component-kmore:** change checkConnected() to protected 916d835
+* **midway-component-kmore:** DbManager.isConnected() a3bcb58
+
+
+
+
+
 # [34.2.0](/compare/v34.1.0...v34.2.0) (2022-08-09)
 
 
