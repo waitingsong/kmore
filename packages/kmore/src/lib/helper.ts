@@ -17,7 +17,7 @@ export async function getCurrentTime(
 ): Promise<string> {
 
   if (typeof clientType === 'string' && clientType) {
-    const res = await dbh.raw('SELECT now() AS currenttime;')
+    const res = await dbh.raw('SELECT CURRENT_TIMESTAMP AS currenttime;')
 
     switch (clientType) {
       case EnumClient.pg:
