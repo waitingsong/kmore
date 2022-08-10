@@ -53,7 +53,11 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   declare getDataSource: <Db = D>(dataSourceName: SourceName)
   => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
 
-  declare createInstance: <Db = D>(config: DbConfig<D, Ctx>, clientName: SourceName)
+  declare createInstance: <Db = D>(
+    config: DbConfig<D, Ctx>,
+    clientName: SourceName,
+    options?: CreateInstanceOptions,
+  )
   => Promise<Kmore<Db, Ctx> | void>
 
   @Init()
@@ -267,4 +271,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
 }
 
+
+export interface CreateInstanceOptions {
+  cacheInstance?: boolean | undefined
+}
 
