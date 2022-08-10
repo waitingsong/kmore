@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [34.3.2](/compare/v34.3.1...v34.3.2) (2022-08-10)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+
+
+
 ## [34.3.1](/compare/v34.3.0...v34.3.1) (2022-08-10)
 
 **Note:** Version bump only for package kmore

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [34.3.2](https://github.com/waitingsong/kmore/compare/v34.3.1...v34.3.2) (2022-08-10)
+
+**Note:** Version bump only for package @mw-components/kmore
+
+
+
+
+
 ## [34.3.1](https://github.com/waitingsong/kmore/compare/v34.3.0...v34.3.1) (2022-08-10)
 
 **Note:** Version bump only for package @mw-components/kmore
