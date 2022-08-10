@@ -14,7 +14,7 @@ import { DbSourceManager } from './db-source-manager'
 
 
 @Provide()
-export class DbManager<SourceName extends string = string, D = unknown, Ctx = Context> {
+export class DbManager<SourceName extends string = string, D = unknown, Ctx extends object = Context> {
 
   @Inject() readonly ctx: Ctx
 
@@ -40,8 +40,22 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx = Co
       return db
     }
 
+    const db2 = this.createRefProxy(db, reqCtx)
+    return db2
+  }
+
+  protected createRefProxy(db: Kmore, reqCtx: Ctx): Kmore {
+    assert(reqCtx)
+
+    if (db.ctxTrxIdMap.has(reqCtx)) {
+      return db
+    }
+    else {
+      db.ctxTrxIdMap.set(reqCtx, new Set())
+    }
+
     ['camelTables', 'refTables', 'snakeTables', 'pascalTables'].forEach((prop) => {
-      const key = prop as unknown as (keyof Kmore<Db, Ctx> & string)
+      const key = prop as unknown as (keyof Kmore & string)
       if (! Object.hasOwn(db, key)) { return }
 
       const refObj = db[key]
