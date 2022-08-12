@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.5.0](https://github.com/waitingsong/kmore/compare/v34.4.0...v34.5.0) (2022-08-12)
+
+
+### Features
+
+* **midway-component-kmore:** def kmoreDataSourceConfig.default ([91c7830](https://github.com/waitingsong/kmore/commit/91c7830d166b1cef4e6b60db8231e4b10b34d0c3))
+
+
+
+
+
 # [34.4.0](https://github.com/waitingsong/kmore/compare/v34.3.2...v34.4.0) (2022-08-12)
 
 
