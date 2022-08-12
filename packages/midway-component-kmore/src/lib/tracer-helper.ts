@@ -286,7 +286,7 @@ async function caseQueryResp(options: ProcessOpts): Promise<void> {
     [TracerLog.svcMemoryUsage]: humanMemoryUsage(),
   }
 
-  if (sampleThrottleMs > 0 && cost > sampleThrottleMs) {
+  if (typeof sampleThrottleMs === 'number' && sampleThrottleMs > 0 && cost > sampleThrottleMs) {
     const tags: SpanLogInput = {
       [Tags.SAMPLING_PRIORITY]: 50,
       [TracerTag.logLevel]: 'warn',

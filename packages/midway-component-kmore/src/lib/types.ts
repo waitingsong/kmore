@@ -28,18 +28,19 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
    * Enable tracing via @mw-components/jaeger
    * @default false
    */
-  enableTracing: boolean
+  enableTracing?: boolean
   /**
    * Tracing query response (respRaw.response),
    * @default true
    * @description tracing if true of if query cost > sampleThrottleMs
    */
-  tracingResponse: boolean
+  tracingResponse?: boolean
   /**
    * 强制采样请求处理时间（毫秒）阈值
    * 负数不采样
+   * @default 3000
    */
-  sampleThrottleMs: number
+  sampleThrottleMs?: number
 }
 
 export interface QuerySpanInfo {

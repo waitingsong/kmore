@@ -223,48 +223,51 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     const dbConfig = this.getDbConfigByDbId(dbId as SourceName)
     assert(dbConfig, `dbConfig not found for dbId: ${dbId}`)
 
-    if (dbConfig.enableTracing) {
+    if (! dbConfig.enableTracing) { return }
+
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (ctx.requestContext && ctx.requestContext.getAsync) {
+      if (typeof dbConfig.sampleThrottleMs === 'undefined') {
+        dbConfig.sampleThrottleMs = 3000
+      }
       // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (ctx.requestContext && ctx.requestContext.getAsync) {
-        // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const logger = await ctx.requestContext.getAsync(TLogger) as TLogger
-        // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const trm = await ctx.requestContext.getAsync(TracerManager) as TracerManager
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const logger = await ctx.requestContext.getAsync(TLogger) as TLogger
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const trm = await ctx.requestContext.getAsync(TracerManager) as TracerManager
 
-        const { queryUidSpanMap } = this
-        const opts = {
-          dbConfig,
-          ev: event,
-          logger,
-          queryUidSpanMap,
-          tagClass: '',
-          trm,
-        }
+      const { queryUidSpanMap } = this
+      const opts = {
+        dbConfig,
+        ev: event,
+        logger,
+        queryUidSpanMap,
+        tagClass: '',
+        trm,
+      }
 
-        switch (event.type) {
-          case 'start':
-            await processStartEvent(opts)
-            break
+      switch (event.type) {
+        case 'start':
+          await processStartEvent(opts)
+          break
 
-          case 'query':
-            await processQueryEvent(opts)
-            break
+        case 'query':
+          await processQueryEvent(opts)
+          break
 
-          case 'queryResponse':
-            await processQueryRespAndExEvent(opts)
-            break
+        case 'queryResponse':
+          await processQueryRespAndExEvent(opts)
+          break
 
-          case 'queryError':
-            await processQueryRespAndExEvent(opts)
-            await cleanAllQuerySpan(opts)
-            break
+        case 'queryError':
+          await processQueryRespAndExEvent(opts)
+          await cleanAllQuerySpan(opts)
+          break
 
-          default:
-            break
-        }
+        default:
+          break
       }
     }
   }
