@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.4.0](https://github.com/waitingsong/kmore/compare/v34.3.2...v34.4.0) (2022-08-12)
+
+
+### Features
+
+* **midway-component-kmore:** change properties of DbConfig to optional ([9845251](https://github.com/waitingsong/kmore/commit/9845251523827c1d149a8ec174486cc35ba457a4))
+
+
+
+
+
 ## [34.3.2](https://github.com/waitingsong/kmore/compare/v34.3.1...v34.3.2) (2022-08-10)
 
 **Note:** Version bump only for package @mw-components/kmore

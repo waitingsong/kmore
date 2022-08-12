@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [34.4.0](/compare/v34.3.2...v34.4.0) (2022-08-12)
+
+
+### Features
+
+* **midway-component-kmore:** change properties of DbConfig to optional 9845251
+
+
+
+
+
 ## [34.3.2](/compare/v34.3.1...v34.3.2) (2022-08-10)
 
 
