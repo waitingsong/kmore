@@ -64,9 +64,6 @@ export const knexConfig = {
 export const master: DbConfig<Db> = {
   config: knexConfig,
   dict: dbDict,
-  sampleThrottleMs: 300,
-  enableTracing: true,
-  tracingResponse: true,
   eventCallbacks: eventCbs,
 }
 export const kmoreDataSourceConfig: DataSourceConfig<'master'> = {

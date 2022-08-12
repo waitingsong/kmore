@@ -21,6 +21,7 @@ export type MiddlewareConfig = MWConfig<MiddlewareOptions>
 /** midway DataSource */
 export interface DataSourceConfig<SourceName extends string = string> {
   dataSource: DataSource<SourceName>
+  default?: DbConfig<'default'>
 }
 export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
 export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {

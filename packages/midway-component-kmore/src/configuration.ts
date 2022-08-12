@@ -7,7 +7,7 @@ import * as jaeger from '@mw-components/jaeger'
 
 import { ConfigKey } from './lib/config'
 import { DbSourceManager } from './lib/db-source-manager'
-import { Config as KmoreComponentConfig } from './lib/types'
+import { Config as KmoreComponentConfig, DataSourceConfig } from './lib/types'
 import { KmoreMiddleware } from './middleware/db-trx.middleware'
 
 import type { Application } from '~/interface'
@@ -24,6 +24,8 @@ export class AutoConfiguration {
   @Inject() readonly dbManager: DbSourceManager
 
   @Config(ConfigKey.config) readonly kmoreComponentConfig: KmoreComponentConfig
+
+  @Config() readonly kmoreDataSourceConfig: DataSourceConfig
 
   async onReady(): Promise<void> {
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务

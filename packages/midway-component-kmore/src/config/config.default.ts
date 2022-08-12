@@ -1,5 +1,6 @@
 import { Config, DataSourceConfig, MiddlewareConfig } from '../index'
 import {
+  initDbConfig,
   initialConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
@@ -7,7 +8,10 @@ import {
 
 
 export const kmoreDataSourceConfig: DataSourceConfig = {
-  dataSource: { },
+  dataSource: {},
+  default: {
+    ...initDbConfig,
+  },
 }
 
 export const kmoreConfig: Config = {

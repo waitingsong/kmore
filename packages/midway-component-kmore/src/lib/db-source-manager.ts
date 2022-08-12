@@ -75,12 +75,14 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   }
 
 
-  /** 创建单个实例 */
+  /**
+   * 创建单个实例
+   */
   protected async createDataSource<Db>(
     options: DbConfig<Db, Ctx>,
     dataSourceName: SourceName,
     cacheDataSource = true,
-  ): Promise<Kmore<Db, Ctx>> {
+  ): Promise<Kmore<Db, Ctx> | undefined> {
 
     const cacheInst = cacheDataSource ? this.getDataSource<Db>(dataSourceName) : null
     if (cacheDataSource && cacheInst) {

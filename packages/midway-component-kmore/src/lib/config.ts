@@ -1,5 +1,6 @@
 import {
   Config,
+  DbConfig,
   MiddlewareConfig,
   MiddlewareOptions,
 } from './types'
@@ -23,5 +24,13 @@ export enum ConfigKey {
   namespace = 'kmore',
   componentName = 'kmoreComponent',
   middlewareName = 'kmoreMiddleware'
+}
+
+
+export const initDbConfig: DbConfig = {
+  config: {},
+  sampleThrottleMs: 3000,
+  enableTracing: true,
+  tracingResponse: true,
 }
 
