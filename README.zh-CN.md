@@ -20,9 +20,9 @@
 
 ## 安装
 ```sh
-npm i kmore
+npm i kmore && npm i -D kmore-cli
 // or
-npm i @mw-components/kmore
+npm i @mw-components/kmore && npm i -D kmore-cli
 
 # Then add one of the following:
 npm install pg

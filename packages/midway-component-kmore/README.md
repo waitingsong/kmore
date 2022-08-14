@@ -20,8 +20,9 @@ A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScrip
 
 ## Installation
 ```sh
+npm i kmore && npm i -D kmore-cli
 // or
-npm i @mw-components/kmore
+npm i @mw-components/kmore && npm i -D kmore-cli
 
 # Then add one of the following:
 npm install pg
