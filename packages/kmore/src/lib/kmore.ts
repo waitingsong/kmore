@@ -17,6 +17,7 @@ import {
   CallCbOptionsBase,
 } from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
+import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
   CaseType,
   DbQueryBuilder,
@@ -363,10 +364,21 @@ export class Kmore<D = any, Context = any> {
     )
     refTable = this.extRefTableFnPropertyTransacting(refTable as KmoreQueryBuilder, ctx)
     refTable = this.extRefTableFnPropertyThen(refTable as KmoreQueryBuilder)
+    refTable = extRefTableFnPropertySmartJoin(refTable as KmoreQueryBuilder)
 
     void Object.defineProperty(refTable, 'kmoreQueryId', {
       ...defaultPropDescriptor,
       value: kmoreQueryId,
+    })
+
+    void Object.defineProperty(refTable, 'dbDict', {
+      ...defaultPropDescriptor,
+      value: this.dict,
+    })
+
+    void Object.defineProperty(refTable, '_tablesJoin', {
+      ...defaultPropDescriptor,
+      value: [],
     })
 
     return refTable as KmoreQueryBuilder
@@ -441,7 +453,12 @@ export class Kmore<D = any, Context = any> {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const ts = new Proxy(refTable.transacting, {
-      apply: (target: KmoreQueryBuilder['transacting'], ctx2: KmoreQueryBuilder, args: [KmoreTransaction]) => {
+      apply: (
+        target: KmoreQueryBuilder['transacting'],
+        ctx2: KmoreQueryBuilder,
+        args: [KmoreTransaction],
+      ) => {
+
         const [trx] = args
         assert(trx?.isTransaction === true, 'trx must be a transaction')
         const { kmoreTrxId } = trx
@@ -464,7 +481,12 @@ export class Kmore<D = any, Context = any> {
   protected extRefTableFnPropertyThen(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const pm = new Proxy(refTable.then, {
-      apply: (target: () => Promise<unknown>, ctx2: KmoreQueryBuilder, args: unknown[]) => {
+      apply: (
+        target: () => Promise<unknown>,
+        ctx2: KmoreQueryBuilder,
+        args: unknown[],
+      ) => {
+
         const qid = ctx2.kmoreQueryId
         const trx = this.getTrxByKmoreQueryId(qid)
         if (! trx) {

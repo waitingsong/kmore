@@ -34,6 +34,7 @@ export async function initDb(): Promise<void> {
   await initUser(km)
   await initUserCamel(km)
   await initUserExt(km)
+  await initOrder(km)
   await km.dbh.destroy()
 }
 
@@ -46,7 +47,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
   console.info(`CurrrentTime: ${time}`)
 
   const { tables, scoped } = km.dict
-  const { tb_user, tb_user_ext } = dict.columns
+  const { tb_user, tb_user_ext, tb_order } = dict.columns
 
   await km.dbh.schema
     .createTable(tables.tb_user, (tb) => {
@@ -65,6 +66,12 @@ async function initTable(km: Kmore<Db>): Promise<void> {
         .onUpdate('CASCADE')
       tb.integer(tb_user_ext.age)
       tb.string(tb_user_ext.address, 255)
+    })
+    .createTable(tables.tb_order, (tb) => {
+      tb.bigIncrements(tb_order.order_id).primary()
+      tb.string(tb_order.order_name, 30)
+      tb.integer(tb_order.uid)
+      tb.timestamp(tb_order.ctime, { useTz: false })
     })
     .catch((err: Error) => {
       assert(false, err.message)
@@ -240,6 +247,35 @@ export function validateUserExtRows(rows: Partial<UserExtDo>[]): void {
         break
     }
   })
+}
+
+async function initOrder(km: Kmore<Db>): Promise<void> {
+  const { ref_tb_order } = km.refTables
+
+  // insert
+  await ref_tb_order()
+    .insert([
+      {
+        uid: 1,
+        order_name: 'order1',
+        ctime: 'now()',
+      },
+      {
+        uid: 1,
+        order_name: 'order2',
+        ctime: 'now()',
+      },
+    ])
+    .returning('*')
+    .catch((err: Error) => {
+      assert(false, err.message)
+    })
+
+  const countRes = await km.refTables.ref_tb_order().count()
+  assert(
+    countRes && countRes[0] && countRes[0]['count'] === '2',
+    'Should count be "2"',
+  )
 }
 
 

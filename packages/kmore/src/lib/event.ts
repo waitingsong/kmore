@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { initKmoreEvent } from './config.js'
+import { processJoinTableColumnAlias } from './smart-join.js'
 import {
   EventCallbacks,
   KmoreEvent,
@@ -25,6 +26,7 @@ export interface CallCbOnStartOptions<Ctx = any> extends CallCbOptionsBase<Ctx> 
 }
 
 export async function callCbOnStart(options: CallCbOnStartOptions): Promise<void> {
+  const queryBuilder = processJoinTableColumnAlias(options.builder)
   const cb: EventCallbacks['start'] = options.cbs?.start
 
   if (typeof cb === 'function') {
@@ -33,7 +35,7 @@ export async function callCbOnStart(options: CallCbOnStartOptions): Promise<void
       identifier: options.identifier,
       data: void 0,
       queryUid: '',
-      queryBuilder: options.builder,
+      queryBuilder,
     })
     event.dbId = options.dbId
     await cb(event, options.ctx)

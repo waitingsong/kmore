@@ -1,9 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/no-extraneous-dependencies */
-import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
+/* eslint-disable @typescript-eslint/ban-types */
+import {
+  CaseConvertTable,
+  CaseType,
+  DbScopedColsByKey,
+  DbScopedColsByTableType,
+  JoinTableWithCaseConvert,
+  SplitScopedColumn,
+  StrKey,
+  UnwrapArrayMember,
+} from '@waiting/shared-types'
+import { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
-import { Span } from 'opentracing'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type { Span } from 'opentracing'
 
+
+export { CaseType }
 
 export type KnexConfig = Knex.Config
 export type KmoreTransaction = Knex.Transaction & {
@@ -23,10 +36,6 @@ export type KmoreTransactionConfig = Knex.TransactionConfig & {
    */
   trxActionOnError?: 'commit' | 'rollback' | 'none',
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type KmoreQueryBuilder<TRecord extends {} = any, TResult = any> =
-  Knex.QueryBuilder<TRecord, TResult> & { kmoreQueryId: symbol }
-
 export enum EnumClient {
   pg = 'pg',
   mssql = 'mssql',
@@ -36,11 +45,12 @@ export enum EnumClient {
   oracledb = 'oracledb',
 }
 
-export enum CaseType {
-  camel = 'camel',
-  pascal = 'pascal',
-  snake = 'snake',
-  none = 'none'
+export enum SmartKey {
+  join = 'smartJoin',
+  leftJoin = 'smartLeftJoin',
+  rightJoin = 'smartRightJoin',
+  innerJoin = 'smartInnerJoin',
+  crossJoin = 'smartCrossJoin',
 }
 
 export type DbQueryBuilder<
@@ -50,14 +60,8 @@ export type DbQueryBuilder<
   CaseConvert extends CaseType
 > = {
   /** ref_tb_name: () => knex('tb_name') */
-  // [tb in keyof D as `${Prefix}${tb & string}`]: TbQueryBuilder<D[tb]>
-  [tb in keyof D as `${Prefix}${tb & string}`]: CaseConvert extends CaseType.camel
-    ? TbQueryBuilder<RecordCamelKeys<D[tb]>, Context>
-    : CaseConvert extends CaseType.snake
-      ? TbQueryBuilder<RecordSnakeKeys<D[tb]>, Context>
-      : CaseConvert extends CaseType.pascal
-        ? TbQueryBuilder<RecordPascalKeys<D[tb]>, Context>
-        : TbQueryBuilder<D[tb], Context>
+  [tb in keyof D as `${Prefix}${tb & string}`]:
+  TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
 }
 
 export interface BuilderInput {
@@ -65,25 +69,50 @@ export interface BuilderInput {
   caseConvert?: CaseType | undefined
 }
 
-export type TbQueryBuilder<TRecord, Context> = (ctx?: Context) => KmoreQueryBuilder<TRecord, TRecord[]>
-// export type TbQueryBuilder<TRecord>
-//   = <CaseConvert extends CaseType = CaseType.none>(caseConvert?: CaseConvert)
-//   => CaseConvert extends CaseType.camel
-//     ? Knex.QueryBuilder<RecordCamelKeys<TRecord>, TRecord[]>
-//     : CaseConvert extends CaseType.snake
-//       ? Knex.QueryBuilder<RecordSnakeKeys<TRecord>, TRecord[]>
-//       : CaseConvert extends CaseType.pascal
-//         ? Knex.QueryBuilder<RecordPascalKeys<TRecord>, TRecord[]>
-//         : Knex.QueryBuilder<TRecord, TRecord[]>
+export type TbQueryBuilder<D, CaseConvert extends CaseType, TRecord, Context>
+  = (ctx?: Context) => KmoreQueryBuilder<D, CaseConvert, TRecord, TRecord[]>
+
+export type KmoreQueryBuilder<
+  D = {}, CaseConvert extends CaseType = CaseType, TRecord extends {} = any, TResult = any> =
+  Knex.QueryBuilder<TRecord, TResult>
+  & QueryBuilderExtMethod<D, CaseConvert, TRecord>
+  & QueryBuilderExtName<D>
+
+interface QueryBuilderExtName<D extends {} = {}> {
+  kmoreQueryId: symbol
+  dbDict: DbDict<D>
+  _tablesJoin: string[]
+}
+
+interface QueryBuilderExtMethod<D, CaseConvert extends CaseType, TRecord extends {} = any> {
+  smartCrossJoin: SmartJoin<D, CaseConvert, TRecord>
+  smartInnerJoin: SmartJoin<D, CaseConvert, TRecord>
+  smartJoin: SmartJoin<D, CaseConvert, TRecord>
+  smartLeftJoin: SmartJoin<D, CaseConvert, TRecord>
+  smartRightJoin: SmartJoin<D, CaseConvert, TRecord>
+}
+
+type SmartJoin<D extends {}, CaseConvert extends CaseType, TResult = unknown[]> = <
+  TRecord1 = UnwrapArrayMember<TResult>,
+  C2 extends DbScopedColsByKey<D> = DbScopedColsByKey<D>,
+  C1 extends DbScopedColsByKey<D> = DbScopedColsByTableType<D, TRecord1>,
+  TTable2 extends StrKey<D> = SplitScopedColumn<D, C2>[0],
+  TRecord2 extends D[TTable2] = D[TTable2],
+  TResult2 = JoinTableWithCaseConvert<TRecord1, TRecord2 extends any ? D[TTable2] : TRecord2, TTable2, CaseConvert>,
+>(
+  /**
+   * scoped column name, e.g. 'tb_name.col_name',
+   * <tb_name> is the table name be joined, <col_name> is the column name
+   */
+  scopedColumnBeJoined: C2,
+  /**
+   * scoped column name, e.g. 'tb_name.col_name',
+   * <tb_name> is the upstream table name , <col_name> is the column name
+   */
+  scopedColumn: C1 extends C2 ? never : C1,
+) => KmoreQueryBuilder<D, CaseConvert, TResult2, TResult2[]>
 
 
-// export type QueryBuilderExt<TRecord, TResult = TRecord[]>
-//  = Knex.QueryBuilder<TRecord, TResult>
-// export type TbQueryBuilder<TRecord>
-//   = <KeyExcludeOptional extends keyof TRecord | void = void>
-//   () => KeyExcludeOptional extends void
-//     ? QueryBuilderExt<TRecord>
-//     : QueryBuilderExt<Omit<TRecord, KeyExcludeOptional extends void ? never : KeyExcludeOptional>>
 
 export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'unknown'
 

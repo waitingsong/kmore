@@ -11,8 +11,9 @@ describe(fileShortPath(import.meta.url), () => {
   type Db = typeof km.DbModel
   type UserDo = Db['tb_user']
   type UserExtDo = Db['tb_user_ext']
+  type OrderDo = Db['tb_order']
 
-  const validateUserRows = (rows: Partial<UserDo>[]): void => {
+  const validateUserRows = (rows: (UserDo & UserExtDo)[]): void => {
     assert(Array.isArray(rows) && rows.length === 1)
 
     rows.forEach((row) => {
@@ -55,6 +56,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then((rows) => {
           validateUserRows(rows)
           const [row] = rows
+          assert(row)
           assert(row && row.uid)
           assert(row && row.name)
           assert(row && row.age)
@@ -62,27 +64,6 @@ describe(fileShortPath(import.meta.url), () => {
         })
     })
 
-    it('tb_user join tb_user_ext 2', async () => {
-      const { refTables } = km
-      const { tables, scoped } = km.dict
-
-      await refTables.ref_tb_user()
-        .select(scoped.tb_user.uid, scoped.tb_user.name, 'real_name')
-        .innerJoin(
-          tables.tb_user_ext,
-          scoped.tb_user.uid,
-          scoped.tb_user_ext.uid,
-        )
-        .where(scoped.tb_user.uid, 1)
-        .then((rows) => {
-          validateUserRows(rows as Partial<UserDo>[])
-          const [row] = rows
-          assert(row && row.uid)
-          assert(row && row.name)
-          assert(row && typeof row.age === 'undefined')
-          return rows
-        })
-    })
   })
 
 })

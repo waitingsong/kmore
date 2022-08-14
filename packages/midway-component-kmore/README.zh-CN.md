@@ -20,7 +20,9 @@
 
 ## 安装
 ```sh
-npm install kmore kmore-cli
+npm i kmore
+// or
+npm i @mw-components/kmore
 
 # Then add one of the following:
 npm install pg
@@ -146,54 +148,25 @@ const users: UserDTO[] = await ref_tb_user()
   .then()
 ```
 
-### 连表
+### 智能连表 （类型提示和自动完成）
 ```ts
-const { refTables } = km
-const { tables, scoped } = km.dict
+const uid = 1
 
-const ret = await refTables.ref_tb_user()
-  .innerJoin<UserExtDo>(
-  tables.tb_user_ext,
-  scoped.tb_user.uid,
-  scoped.tb_user_ext.uid,
-)
+// tb_user JOIN tb_user_ext ON tb_user_ext.uid = tb_user.uid
+const ret = await km.refTables.ref_tb_user()
+  .smartJoin(
+    'tb_user_ext.uid',
+    'tb_user.uid',
+  )
   .select('*')
-  .where(scoped.tb_user.uid, 1)
-
-const cols = [
-  alias.tb_user.uid, // { tbUser: 'tb_user.uid' }
-  alias.tb_user_ext.uid, // { tbUserExt: 'tb_user_ext.uid' }
-]
-
-// --------------
-
-type CT = DbDictType<Db>
-type CT_USER = CT['tb_user']
-type CT_USER_EXT = CT['tb_user_ext']
-
-const ret = await camelTables.ref_tb_user()
-  .innerJoin<CT_USER & CT_USER_EXT>(
-  tables.tb_user_ext,
-  scoped.tb_user.uid,
-  scoped.tb_user_ext.uid,
-)
-  .columns(cols)
+  .where({ uid })
+  // .where('uid', uid)
+  // .where('tb_user_ext_uid', uid)
+  // .where(km.dict.scoped.tb_user.uid, 1)
   .then(rows => rows[0])
 
+assert(ret)
 
-const cols = {
-  uid: scoped.tb_user.uid,
-  foo: scoped.tb_user_ext.uid,
-}
-
-const ret = await camelTables.ref_tb_user()
-  .innerJoin<CT_USER & CT_USER_EXT>(
-  tables.tb_user_ext,
-  scoped.tb_user.uid,
-  scoped.tb_user_ext.uid,
-)
-  .columns(cols)
-  .then(rows => rows[0])
 ```
 
 More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/join-table/71.advanced.test.ts)

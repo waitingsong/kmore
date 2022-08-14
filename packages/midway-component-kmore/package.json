@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "cross-env": "7",
+    "kmore-cli": "34.0.0",
     "kmore-types": "^34.0.0"
   },
   "engines": {

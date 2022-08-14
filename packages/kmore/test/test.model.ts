@@ -4,6 +4,7 @@ import { RecordCamelKeys } from '@waiting/shared-types'
 export class Db {
   tb_user: UserDo
   tb_user_ext: UserExtDo
+  tb_order: OrderDo
 }
 
 /**
@@ -22,6 +23,12 @@ export class UserExtDo {
   address: string | number
 }
 
+export class OrderDo {
+  order_id: string | bigint
+  order_name: string
+  uid: number
+  ctime: Date | 'now()'
+}
 
 export type UserDTO = RecordCamelKeys<UserDo>
 
