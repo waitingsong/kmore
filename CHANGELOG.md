@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [35.0.0](/compare/v34.5.0...v35.0.0) (2022-08-14)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* **kmore:** extends query builder with smart join methods d93b44f
+
+
+
+
+
 # [34.5.0](/compare/v34.4.0...v34.5.0) (2022-08-12)
 
 

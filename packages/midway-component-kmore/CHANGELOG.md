@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [35.0.0](https://github.com/waitingsong/kmore/compare/v34.5.0...v35.0.0) (2022-08-14)
+
+
+### Features
+
+* **kmore:** extends query builder with smart join methods ([d93b44f](https://github.com/waitingsong/kmore/commit/d93b44f4b761d1564083735b787549ababe8ab1b))
+
+
+
+
+
 # [34.5.0](https://github.com/waitingsong/kmore/compare/v34.4.0...v34.5.0) (2022-08-12)
 
 
