@@ -31,12 +31,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types-dev": "^11.2.0"
+    "@waiting/shared-types-dev": "^11.2.1"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13",
     "cross-env": "7",
-    "rollup-plugin-typescript2": "^0.32.0"
+    "rollup-plugin-typescript2": "^0.32.1"
   },
   "engines": {
     "node": ">=16.13.0"
