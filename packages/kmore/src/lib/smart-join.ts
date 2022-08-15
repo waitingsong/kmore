@@ -88,6 +88,8 @@ export function extRefTableFnPropertySmartJoin(
 ): KmoreQueryBuilder {
 
   Object.values(SmartKey).forEach((joinType) => {
+    if (typeof refTable[joinType] === 'function') { return }
+
     void Object.defineProperty(refTable, joinType, {
       ...defaultPropDescriptor,
       value: (
