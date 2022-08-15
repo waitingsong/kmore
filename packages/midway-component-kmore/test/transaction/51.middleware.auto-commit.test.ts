@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import { relative } from 'node:path'
 
+import { sleep } from '@waiting/shared-core'
+
 import { testConfig } from '@/root.config'
 import { UserDTO } from '@/test.model'
 
@@ -24,6 +26,8 @@ describe(filename, () => {
       .expect(200)
     const ctime0 = (resp0.body as UserDTO[])[0]?.ctime
     assert(ctime0)
+
+    await sleep(1000)
 
     const resp1 = await httpRequest
       .get(urlUpdate)

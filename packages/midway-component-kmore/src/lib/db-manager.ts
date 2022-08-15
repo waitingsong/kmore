@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import assert from 'node:assert'
+import { isProxy } from 'node:util/types'
 
 import {
   Inject,
@@ -13,6 +13,8 @@ import { Context } from '../interface'
 import { DbSourceManager } from './db-source-manager'
 
 
+const keys = new Set<PropertyKey>(['camelTables', 'refTables', 'snakeTables', 'pascalTables'])
+
 @Provide()
 export class DbManager<SourceName extends string = string, D = unknown, Ctx extends object = Context> {
 
@@ -22,6 +24,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
 
   getName(): string { return 'dbManager' }
 
+  instCacheMap: Map<SourceName, Kmore<any, Ctx>> = new Map()
 
   /**
    * Check the data source is connected
@@ -32,6 +35,11 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
 
 
   getDataSource<Db = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
+    const cacheInst = this.instCacheMap.get(dataSourceName)
+    if (cacheInst) {
+      return cacheInst
+    }
+
     const db = this.dbSourceManager.getDataSource<Db>(dataSourceName)
     assert(db)
 
@@ -41,49 +49,60 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const db2 = this.createRefProxy(db, reqCtx)
+    if (db2) {
+      this.instCacheMap.set(dataSourceName, db2)
+    }
     return db2
   }
 
-  protected createRefProxy(db: Kmore, reqCtx: Ctx): Kmore {
+  protected createRefProxy(db: Kmore, reqCtx: Ctx): Kmore<any, Ctx> {
     assert(reqCtx)
 
-    if (db.ctxTrxIdMap.has(reqCtx)) {
-      return db
-    }
-    else {
+    if (! db.ctxTrxIdMap.has(reqCtx)) {
       db.ctxTrxIdMap.set(reqCtx, new Set())
     }
 
-    ['camelTables', 'refTables', 'snakeTables', 'pascalTables'].forEach((prop) => {
-      const key = prop as unknown as (keyof Kmore & string)
-      if (! Object.hasOwn(db, key)) { return }
+    const ret = new Proxy(db, {
+      get: (target: Kmore, propKey: keyof Kmore) => {
+        if (! keys.has(propKey)) {
+          return target[propKey]
+        }
 
-      const refObj = db[key]
-      if (! refObj || ! Object.keys(refObj).length) { return }
-
-      Object.entries(refObj).forEach(([refTableName, fn]) => {
-        if (typeof fn !== 'function') { return }
-
-        const value = new Proxy(fn, {
-          apply: (target: any, ctx: unknown, args: unknown[]) => Reflect.apply(
-            target,
-            ctx,
-            args && args.length ? args : [reqCtx],
-          ),
-        })
-
-        Object.defineProperty(refObj, refTableName, {
-          enumerable: true,
-          writable: true,
-          configurable: false,
-          value,
-        })
-      })
-
+        const refObj = target[propKey] as object
+        const refObj2 = createRefProxy(refObj, propKey, reqCtx)
+        return refObj2
+      },
     })
 
-    return db
+    return ret
   }
 
 }
 
+
+function createRefProxy(refObj: object, key: string, reqCtx: unknown): object {
+  const ret = {}
+  Object.entries(refObj).forEach(([refTableName, fn]) => {
+    if (typeof fn !== 'function') { return }
+    if (isProxy(fn)) {
+      throw new TypeError(`${key}:${refTableName} is already a proxy`)
+    }
+
+    const value = new Proxy(fn, {
+      apply: (target2: () => unknown, ctx: unknown, args: unknown[]) => Reflect.apply(
+        target2,
+        ctx,
+        args && args.length ? args : [reqCtx],
+      ),
+    })
+
+    Object.defineProperty(ret, refTableName, {
+      enumerable: true,
+      writable: true,
+      configurable: false,
+      value,
+    })
+  })
+
+  return ret
+}
