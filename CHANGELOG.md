@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [35.0.1](/compare/v35.0.0...v35.0.1) (2022-08-15)
+
+
+### Bug Fixes
+
+* **kmore:** update extRefTableFnPropertySmartJoin() 262a124
+
+
+
+
+
 # [35.0.0](/compare/v34.5.0...v35.0.0) (2022-08-14)
 
 
