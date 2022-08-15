@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [35.0.2](https://github.com/waitingsong/kmore/compare/v35.0.1...v35.0.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** createRefProxy() ([9d94774](https://github.com/waitingsong/kmore/commit/9d94774355704109975ca8eca3b9dfdf722ae26e))
+
+
+
+
+
 ## [35.0.1](https://github.com/waitingsong/kmore/compare/v35.0.0...v35.0.1) (2022-08-15)
 
 **Note:** Version bump only for package @mw-components/kmore
