@@ -46,7 +46,7 @@ export class UserController {
 
     await this.update(uid, trx)
 
-    throw new Error('trx auto commit by middleware debug')
+    throw new Error('trigger an error for trx auto commit by middleware test')
   }
 
   @Get('/rollback/:id')
