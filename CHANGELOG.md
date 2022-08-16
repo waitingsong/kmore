@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [35.0.3](/compare/v35.0.2...v35.0.3) (2022-08-16)
+
+
+### Performance Improvements
+
+* **midway-component-kmore:** proxy creation bf116a3
+
+
+
+
+
 ## [35.0.2](/compare/v35.0.1...v35.0.2) (2022-08-15)
 
 

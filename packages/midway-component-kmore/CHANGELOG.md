@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [35.0.3](https://github.com/waitingsong/kmore/compare/v35.0.2...v35.0.3) (2022-08-16)
+
+
+### Performance Improvements
+
+* **midway-component-kmore:** proxy creation ([bf116a3](https://github.com/waitingsong/kmore/commit/bf116a3fcdbd2fef94bee93e7dc52cbc4969e827))
+
+
+
+
+
 ## [35.0.2](https://github.com/waitingsong/kmore/compare/v35.0.1...v35.0.2) (2022-08-15)
 
 
