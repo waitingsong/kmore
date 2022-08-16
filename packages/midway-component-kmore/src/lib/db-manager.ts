@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'node:assert'
-import { isProxy } from 'node:util/types'
+// import { isProxy } from 'node:util/types'
 
 import {
   Inject,
   Provide,
 } from '@midwayjs/decorator'
-import { Kmore } from 'kmore'
+import { CaseType, DbQueryBuilder, Kmore } from 'kmore'
 
 import { Context } from '../interface'
 
@@ -63,45 +63,39 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const ret = new Proxy(db, {
-      get: (target: Kmore, propKey: keyof Kmore) => {
-        if (! keys.has(propKey)) {
-          return target[propKey]
-        }
-
-        const refObj = target[propKey] as object
-        const refObj2 = createRefProxy(refObj, propKey, reqCtx)
-        return refObj2
-      },
+      get: (target: Kmore, propKey: keyof Kmore) => keys.has(propKey)
+        ? createRefProxy(target[propKey] as Dbb, reqCtx)
+        : target[propKey],
     })
-
     return ret
   }
 
 }
 
+type Dbb = DbQueryBuilder<Context, object, string, CaseType>
 
-function createRefProxy(refObj: object, key: string, reqCtx: unknown): object {
-  const ret = {}
-  Object.entries(refObj).forEach(([refTableName, fn]) => {
-    if (typeof fn !== 'function') { return }
-    if (isProxy(fn)) {
-      throw new TypeError(`${key}:${refTableName} is already a proxy`)
-    }
+function createRefProxy(
+  refObj: Dbb,
+  reqCtx: unknown,
+): Dbb {
 
-    const value = new Proxy(fn, {
-      apply: (target2: () => unknown, ctx: unknown, args: unknown[]) => Reflect.apply(
-        target2,
-        ctx,
-        args && args.length ? args : [reqCtx],
-      ),
-    })
+  const ret = new Proxy(refObj, {
+    get: (target: Dbb, propKey: PropertyKey) => {
+      // @ts-ignore
+      if (typeof target[propKey] === 'function') {
+        // if (isProxy(target[propKey])) {
+        //   throw new TypeError(`${key}:${refTableName} is already a proxy`)
+        // }
+        const fn = (ctx?: unknown) => {
+          const args: unknown[] = ctx ? [ctx] : [reqCtx]
+          // @ts-ignore
+          return target[propKey](...args)
+        }
+        return fn
+      }
 
-    Object.defineProperty(ret, refTableName, {
-      enumerable: true,
-      writable: true,
-      configurable: false,
-      value,
-    })
+      throw new TypeError(`${propKey.toString()} is not a function`)
+    },
   })
 
   return ret
