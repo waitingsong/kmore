@@ -154,19 +154,21 @@ const users: UserDTO[] = await ref_tb_user()
 const uid = 1
 
 // tb_user JOIN tb_user_ext ON tb_user_ext.uid = tb_user.uid
-const ret = await km.refTables.ref_tb_user()
+const ret = await km.camelTables.ref_tb_user()
   .smartJoin(
-    'tb_user_ext.uid', 
+    'tb_user_ext.uid',
     'tb_user.uid',
   )
   .select('*')
-  .where({ uid })
-  // .where('uid', uid)
-  // .where('tb_user_ext_uid', uid)
+  .where({ uid }) // <-- has auto-complete with 'uid'
+  // .where('uid', uid)   <-- has auto-complete with 'uid'
+  // .where('tb_user_ext_uid', uid) <-- has auto-complete with 'tb_user_ext_uid'
   // .where(km.dict.scoped.tb_user.uid, 1)
   .then(rows => rows[0])
 
 assert(ret)
+ret.uid
+ret.tb_user_ext_uid   // <-- duplicate uid will be converted with table prefix like "<tb_name>_<column>"
 
 ```
 
@@ -184,21 +186,64 @@ await km.dbh.destroy()
 
 ## Midway.js component
 
+### Config
 ```ts
+// file: src/config/config.{prod | local | unittest}.ts
+
+import { genDbDict } from 'kmore-types'
+import { TbAppDO, TbMemberDO } from '../do/database.do.js'
+
+export interface Db {
+  tb_app: TbAppDO
+  tb_user: TbMemberDO
+}
+
+export const dbDict = genDbDict<Db>()
+
+const master: DbConfig<Db, Context> = {
+  config: {
+    client: 'pg',
+    connection: {
+      host: 'localhost',
+      port: 5432,
+      database: 'db_test',
+      user: 'postgres',
+      password: 'password',
+    },
+  },
+  dict: dbDict,
+  sampleThrottleMs: 500,
+  enableTracing: true, // jaeger tracer
+}
+export const kmoreDataSourceConfig: DataSourceConfig = {
+  dataSource: {
+    master,
+    // slave,
+  },
+}  
+```
+
+### Usage
+```ts
+import { Init, Inject } from '@midwayjs/decorator'
 
 @Provide()
 export class UserRepo {
 
   @Inject() dbManager: DbManager<'master' | 'slave', Db>
 
-  async getUser(uid: number): Promise<UserDTO[]> {
-    const db = this.dbManager.getDataSource('master')
-    assert(db)
+  protected db: Kmore<Db>
 
-    const { ref_tb_user } = db.camelTables
+  @Init()
+  async init(): Promise<void> {
+    this.db = this.dbManager.getDataSource('master')
+  }
+
+  async getUser(uid: number): Promise<UserDTO | undefined> {
+    const { ref_tb_user } = this.db.camelTables
     const user = await ref_tb_user()
-      .select('*')
       .where({ uid })
+      .then(rows => rows[0])
     return user
   }
 }
