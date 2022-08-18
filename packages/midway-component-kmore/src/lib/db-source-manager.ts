@@ -36,7 +36,7 @@ import { DataSourceConfig, DbConfig } from './types'
 
 @Provide()
 @Scope(ScopeEnum.Singleton)
-export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx = Context>
+export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
   extends DataSourceManager<Kmore | undefined> {
 
   // @_Config(ConfigKey.config) private readonly config: Config
@@ -227,18 +227,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
     if (! dbConfig.enableTracing) { return }
 
-    // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (ctx.requestContext && ctx.requestContext.getAsync) {
       if (typeof dbConfig.sampleThrottleMs === 'undefined') {
         dbConfig.sampleThrottleMs = 3000
       }
-      // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const logger = await ctx.requestContext.getAsync(TLogger) as TLogger
-      // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const trm = await ctx.requestContext.getAsync(TracerManager) as TracerManager
+      const logger = await ctx.requestContext.getAsync(TLogger)
+      const trm = await ctx.requestContext.getAsync(TracerManager)
 
       const { queryUidSpanMap } = this
       const opts = {

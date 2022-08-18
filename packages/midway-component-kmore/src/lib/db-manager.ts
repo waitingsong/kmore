@@ -16,7 +16,7 @@ import { DbSourceManager } from './db-source-manager'
 const keys = new Set<PropertyKey>(['camelTables', 'refTables', 'snakeTables', 'pascalTables'])
 
 @Provide()
-export class DbManager<SourceName extends string = string, D = unknown, Ctx extends object = Context> {
+export class DbManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context> {
 
   @Inject() readonly ctx: Ctx
 
