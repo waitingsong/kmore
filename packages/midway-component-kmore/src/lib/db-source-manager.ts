@@ -57,17 +57,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     config: DbConfig<D, Ctx>,
     clientName: SourceName,
     options?: CreateInstanceOptions,
-  )
-  => Promise<Kmore<Db, Ctx> | void>
+  ) => Promise<Kmore<Db, Ctx> | void>
 
   @Init()
   async init(): Promise<void> {
     if (! this.dataSourceconfig || ! this.dataSourceconfig.dataSource) {
-      this.logger.warn('dataSourceConfig is not defined')
-      return
-    }
-    if (! Object.keys(this.dataSourceconfig.dataSource).length) {
-      this.logger.info('dataSourceConfig.dataSource has no data')
+      this.logger.info('dataSourceConfig is not defined')
       return
     }
     // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
