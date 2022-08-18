@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [35.0.4](/compare/v35.0.3...v35.0.4) (2022-08-18)
+
+
+### Bug Fixes
+
+* **midway-component-kmore:** wrong generics type 9717cff
+
+
+
+
+
 ## [35.0.3](/compare/v35.0.2...v35.0.3) (2022-08-16)
 
 
