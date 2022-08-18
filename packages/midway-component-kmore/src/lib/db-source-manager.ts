@@ -79,7 +79,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
    * 创建单个实例
    */
   protected async createDataSource<Db>(
-    options: DbConfig<Db, Ctx>,
+    config: DbConfig<Db, Ctx>,
     dataSourceName: SourceName,
     cacheDataSource = true,
   ): Promise<Kmore<Db, Ctx> | undefined> {
@@ -90,23 +90,21 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     }
 
     const globalEventCbs: EventCallbacks = {
-      start: (event: KmoreEvent, ctx?: Ctx) => this.cbOnStart(event, ctx),
-      query: (event: KmoreEvent, ctx?: Ctx) => this.cbOnQuery(event, ctx),
-      queryResponse: (event: KmoreEvent, ctx?: Ctx) => this.cbOnResp(event, ctx),
-      queryError: (event: KmoreEvent, ctx?: Ctx) => this.cbOnError(event, ctx),
+      start: (event: KmoreEvent, ctx?: Ctx) => this.cbOnStart(config, event, ctx),
+      query: (event: KmoreEvent, ctx?: Ctx) => this.cbOnQuery(config, event, ctx),
+      queryResponse: (event: KmoreEvent, ctx?: Ctx) => this.cbOnResp(config, event, ctx),
+      queryError: (event: KmoreEvent, ctx?: Ctx) => this.cbOnError(config, event, ctx),
     }
     const opts: KmoreFactoryOpts<Db, Ctx> = {
       dbId: dataSourceName,
-      ...options,
+      ...config,
       eventCallbacks: globalEventCbs,
     }
 
     const inst = KmoreFactory<Db, Ctx>(opts)
     if (cacheDataSource && inst) {
-      // will save in initDataSource
-      // this.dataSource.set(dataSourceName, inst)
       if (! this.dataSourceconfig.dataSource[dataSourceName]) {
-        this.dataSourceconfig.dataSource[dataSourceName] = options
+        this.dataSourceconfig.dataSource[dataSourceName] = config
       }
     }
 
@@ -155,57 +153,44 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   }
 
 
-  protected async cbOnStart(event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected async cbOnStart(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+    assert(dbConfig)
     assert(event.type === 'start', event.type)
     assert(event.queryBuilder)
 
-    await this.tracer(event, ctx)
-
-    const { dbId } = event
-    const dbConfig = this.getDbConfigByDbId(dbId as SourceName)
-    assert(dbConfig, `dbConfig not found for dbId: ${dbId}`)
+    await this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.start
     await (cb && cb(event, ctx))
   }
 
-  protected async cbOnQuery(event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected async cbOnQuery(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+    assert(dbConfig)
     assert(event.type === 'query', event.type)
     assert(event.data)
 
-    await this.tracer(event, ctx)
-
-    const { dbId } = event
-    const dbConfig = this.getDbConfigByDbId(dbId as SourceName)
-    assert(dbConfig, `dbConfig not found for dbId: ${dbId}`)
+    await this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.query
     await (cb && cb(event, ctx))
   }
 
-  protected async cbOnResp(event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected async cbOnResp(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+    assert(dbConfig)
     assert(event.type === 'queryResponse', event.type)
     assert(event.respRaw)
 
-    await this.tracer(event, ctx)
-
-    const { dbId } = event
-    const dbConfig = this.getDbConfigByDbId(dbId as SourceName)
-    assert(dbConfig, `dbConfig not found for dbId: ${dbId}`)
+    await this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.queryResponse
     await (cb && cb(event, ctx))
   }
 
-  protected async cbOnError(event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected async cbOnError(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+    assert(dbConfig)
     assert(event.type === 'queryError', event.type)
 
-    await this.tracer(event, ctx)
-
-    const { dbId } = event
-    assert(dbId)
-    const dbConfig = this.getDbConfigByDbId(dbId as SourceName)
-    assert(dbConfig, `dbConfig not found for dbId: ${dbId}`)
+    await this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.queryError
     await (cb && cb(event, ctx))
@@ -218,12 +203,10 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     return dbConfig
   }
 
-  protected async tracer(event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected async tracer(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
     if (! ctx) { return }
 
-    const { dbId } = event
-    const dbConfig = this.getDbConfigByDbId(dbId as SourceName)
-    assert(dbConfig, `dbConfig not found for dbId: ${dbId}`)
+    assert(dbConfig)
 
     if (! dbConfig.enableTracing) { return }
 
