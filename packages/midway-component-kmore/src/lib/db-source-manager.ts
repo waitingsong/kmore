@@ -24,14 +24,13 @@ import {
 
 import { Context } from '../interface'
 
-import { ConfigKey } from './config'
 import {
   processStartEvent,
   processQueryEvent,
   processQueryRespAndExEvent,
   cleanAllQuerySpan,
 } from './tracer-helper'
-import { DataSourceConfig, DbConfig } from './types'
+import { ConfigKey, DataSourceConfig, DbConfig } from './types'
 
 
 @Provide()

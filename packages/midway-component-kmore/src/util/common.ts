@@ -1,8 +1,5 @@
-import {
-  ConfigKey,
-  initialConfig,
-} from '../lib/config'
-import { Config } from '../lib/types'
+import { initialConfig } from '../lib/config'
+import { Config, ConfigKey } from '../lib/types'
 
 import { Application } from '~/interface'
 

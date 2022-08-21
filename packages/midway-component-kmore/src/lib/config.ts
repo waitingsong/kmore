@@ -17,15 +17,6 @@ export const initialMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'ignore' |
   enableMiddleware: true,
 }
 
-export enum ConfigKey {
-  config = 'kmoreConfig',
-  middlewareConfig = 'kmoreMiddlewareConfig',
-  dataSourceConfig = 'kmoreDataSourceConfig',
-  namespace = 'kmore',
-  componentName = 'kmoreComponent',
-  middlewareName = 'kmoreMiddleware'
-}
-
 
 export const initDbConfig: DbConfig = {
   config: {},

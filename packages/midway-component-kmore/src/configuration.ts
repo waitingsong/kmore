@@ -5,8 +5,8 @@ import { join } from 'path'
 import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
 import * as jaeger from '@mw-components/jaeger'
 
-import { ConfigKey } from './lib/config'
 import { DbSourceManager } from './lib/db-source-manager'
+import { ConfigKey } from './lib/index'
 import { Config as KmoreComponentConfig, DataSourceConfig } from './lib/types'
 import { KmoreMiddleware } from './middleware/db-trx.middleware'
 

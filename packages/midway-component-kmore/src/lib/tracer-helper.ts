@@ -14,8 +14,7 @@ import {
 import { KmoreEvent } from 'kmore'
 import { Tags } from 'opentracing'
 
-import { ConfigKey } from './config'
-import { DbConfig, QuerySpanInfo } from './types'
+import { ConfigKey, DbConfig, QuerySpanInfo } from './types'
 
 
 interface ProcessStartEventOpts {

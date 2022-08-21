@@ -3,6 +3,15 @@ import type { KmoreFactoryOpts } from 'kmore'
 import type { Span } from 'opentracing'
 
 
+export enum ConfigKey {
+  config = 'kmoreConfig',
+  middlewareConfig = 'kmoreMiddlewareConfig',
+  dataSourceConfig = 'kmoreDataSourceConfig',
+  namespace = 'kmore',
+  componentName = 'kmoreComponent',
+  middlewareName = 'kmoreMiddleware'
+}
+
 /**
  * KmoreComponentConfig
  */
