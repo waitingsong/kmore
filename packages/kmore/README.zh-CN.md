@@ -190,6 +190,7 @@ await km.dbh.destroy()
 // file: src/config/config.{prod | local | unittest}.ts
 
 import { genDbDict } from 'kmore-types'
+import { KmoreSourceConfig } from '@mw-components/kmore'
 import { TbAppDO, TbMemberDO } from '../do/database.do.js'
 
 export interface Db {
@@ -214,7 +215,7 @@ const master: DbConfig<Db, Context> = {
   sampleThrottleMs: 500,
   enableTracing: true, // jaeger tracer
 }
-export const kmoreDataSourceConfig: DataSourceConfig = {
+export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {
     master,
     // slave,
