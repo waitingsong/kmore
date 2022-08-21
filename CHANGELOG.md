@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [36.0.0](/compare/v35.0.5...v36.0.0) (2022-08-21)
+
+
+### Features
+
+* **midway-component-kmore:** breaking changes variable name and type name bbae4cd
+
+
+
+
+
 ## [35.0.5](/compare/v35.0.4...v35.0.5) (2022-08-18)
 
 **Note:** Version bump only for package kmore

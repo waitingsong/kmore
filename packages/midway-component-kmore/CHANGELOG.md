@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [36.0.0](https://github.com/waitingsong/kmore/compare/v35.0.5...v36.0.0) (2022-08-21)
+
+
+### Features
+
+* **midway-component-kmore:** breaking changes variable name and type name ([bbae4cd](https://github.com/waitingsong/kmore/commit/bbae4cdfa2fa862c62fc2abc97a0c144efe9f997))
+
+
+
+
+
 ## [35.0.5](https://github.com/waitingsong/kmore/compare/v35.0.4...v35.0.5) (2022-08-18)
 
 **Note:** Version bump only for package @mw-components/kmore
