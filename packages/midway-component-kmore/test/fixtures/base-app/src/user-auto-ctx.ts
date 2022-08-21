@@ -10,7 +10,6 @@ import {
 
 import { Context } from '~/interface'
 import {
-  Config,
   ConfigKey,
   DbManager,
   MiddlewareConfig,
@@ -21,7 +20,6 @@ import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model'
 @Controller('/user')
 export class UserController {
 
-  @_Config(ConfigKey.config) protected readonly config: Config
   @_Config(ConfigKey.middlewareConfig) protected readonly mwConfig: MiddlewareConfig
 
   @Inject() readonly ctx: Context

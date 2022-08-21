@@ -11,7 +11,6 @@ import {
 
 import { Context } from '~/interface'
 import {
-  Config,
   ConfigKey,
   DbManager,
   Kmore,
@@ -23,7 +22,6 @@ import { Db, UserDTO } from '../../../test.model'
 @Controller('/user_this')
 export class UserThisController {
 
-  @_Config(ConfigKey.config) protected readonly config: Config
   @_Config(ConfigKey.middlewareConfig) protected readonly mwConfig: MiddlewareConfig
 
   @Inject() readonly ctx: Context

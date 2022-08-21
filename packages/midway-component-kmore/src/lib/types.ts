@@ -6,7 +6,6 @@ import type { Span } from 'opentracing'
 export enum ConfigKey {
   config = 'kmoreConfig',
   middlewareConfig = 'kmoreMiddlewareConfig',
-  dataSourceConfig = 'kmoreDataSourceConfig',
   namespace = 'kmore',
   componentName = 'kmoreComponent',
   middlewareName = 'kmoreMiddleware'
@@ -15,12 +14,12 @@ export enum ConfigKey {
 /**
  * KmoreComponentConfig
  */
-export interface Config {
-  /**
-   * @default 10_000
-   */
-  timeoutWhenDestroy?: number
-}
+// export interface Config {
+//   /**
+//    * @default 10_000
+//    */
+//   timeoutWhenDestroy?: number
+// }
 
 export interface MiddlewareOptions {
   debug: boolean
@@ -28,7 +27,7 @@ export interface MiddlewareOptions {
 export type MiddlewareConfig = MWConfig<MiddlewareOptions>
 
 /** midway DataSource */
-export interface DataSourceConfig<SourceName extends string = string> {
+export interface KmoreSourceConfig<SourceName extends string = string> {
   dataSource: DataSource<SourceName>
   default?: DbConfig
 }

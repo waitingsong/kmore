@@ -1,8 +1,8 @@
-import { DataSourceConfig } from '../index'
+import { KmoreSourceConfig } from '../index'
 import { initDbConfig } from '../lib/config'
 
 
-export const kmoreDataSourceConfig: DataSourceConfig = {
+export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {},
   default: {
     ...initDbConfig,

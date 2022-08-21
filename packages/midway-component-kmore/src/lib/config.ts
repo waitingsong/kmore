@@ -1,14 +1,13 @@
 import {
-  Config,
   DbConfig,
   MiddlewareConfig,
   MiddlewareOptions,
 } from './types'
 
 
-export const initialConfig: Readonly<Config> = {
-  timeoutWhenDestroy: 10000,
-}
+// export const initialConfig: Readonly<KmoreSourceConfig> = {
+//   timeoutWhenDestroy: 10000,
+// }
 
 export const initMiddlewareOptions: MiddlewareOptions = {
   debug: false,

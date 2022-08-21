@@ -1,22 +1,18 @@
-import { Config, DataSourceConfig, MiddlewareConfig } from '../index'
+import { KmoreSourceConfig, MiddlewareConfig } from '../index'
 import {
   initDbConfig,
-  initialConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
 } from '../lib/config'
 
 
-export const kmoreDataSourceConfig: DataSourceConfig = {
+export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {},
   default: {
     ...initDbConfig,
   },
 }
 
-export const kmoreConfig: Config = {
-  ...initialConfig,
-}
 
 export const kmoreMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {
   ...initialMiddlewareConfig,

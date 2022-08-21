@@ -30,7 +30,7 @@ import {
   processQueryRespAndExEvent,
   cleanAllQuerySpan,
 } from './tracer-helper'
-import { ConfigKey, DataSourceConfig, DbConfig } from './types'
+import { ConfigKey, KmoreSourceConfig, DbConfig } from './types'
 
 
 @Provide()
@@ -38,8 +38,7 @@ import { ConfigKey, DataSourceConfig, DbConfig } from './types'
 export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
   extends DataSourceManager<Kmore | undefined> {
 
-  // @_Config(ConfigKey.config) private readonly config: Config
-  @_Config(ConfigKey.dataSourceConfig) private readonly dataSourceconfig: DataSourceConfig<SourceName>
+  @_Config(ConfigKey.config) private readonly sourceconfig: KmoreSourceConfig<SourceName>
 
   @_Logger() private readonly logger: ILogger
 
@@ -60,12 +59,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Init()
   async init(): Promise<void> {
-    if (! this.dataSourceconfig || ! this.dataSourceconfig.dataSource) {
+    if (! this.sourceconfig || ! this.sourceconfig.dataSource) {
       this.logger.info('dataSourceConfig is not defined')
       return
     }
     // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
-    await this.initDataSource(this.dataSourceconfig, this.baseDir)
+    await this.initDataSource(this.sourceconfig, this.baseDir)
   }
 
 
@@ -97,8 +96,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
     const inst = KmoreFactory<Db, Ctx>(opts)
     if (cacheDataSource && inst) {
-      if (! this.dataSourceconfig.dataSource[dataSourceName]) {
-        this.dataSourceconfig.dataSource[dataSourceName] = config
+      if (! this.sourceconfig.dataSource[dataSourceName]) {
+        this.sourceconfig.dataSource[dataSourceName] = config
       }
     }
 
@@ -193,7 +192,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   protected getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
     assert(dbId)
-    const dbConfig = this.dataSourceconfig?.dataSource[dbId]
+    const dbConfig = this.sourceconfig?.dataSource[dbId]
     return dbConfig
   }
 

@@ -6,22 +6,17 @@ import { genDbDict } from 'kmore-types'
 import { Db } from './test.model'
 
 import {
-  Config,
-  initialConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
   MiddlewareConfig,
   MiddlewareOptions,
   DbConfig,
-  DataSourceConfig,
   KmoreEvent,
+  KmoreSourceConfig,
 } from '~/index'
 import { Context } from '~/interface'
 
 
-export const config: Config = {
-  ...initialConfig,
-}
 
 export const mwConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {
   ...initialMiddlewareConfig,
@@ -66,7 +61,7 @@ export const master: DbConfig<Db> = {
   dict: dbDict,
   eventCallbacks: eventCbs,
 }
-export const kmoreDataSourceConfig: DataSourceConfig<'master'> = {
+export const kmoreConfig: KmoreSourceConfig<'master'> = {
   dataSource: {
     master,
   },
