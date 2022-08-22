@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [36.0.1](/compare/v36.0.0...v36.0.1) (2022-08-22)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 # [36.0.0](/compare/v35.0.5...v36.0.0) (2022-08-21)
 
 
