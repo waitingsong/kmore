@@ -37,12 +37,16 @@ export type KmoreTransactionConfig = Knex.TransactionConfig & {
   trxActionOnError?: 'commit' | 'rollback' | 'none',
 }
 export enum EnumClient {
-  pg = 'pg',
+  betterSqlite3 = 'better-sqlite3',
+  cockroachdb = 'cockroachdb',
   mssql = 'mssql',
   mysql = 'mysql',
   mysql2 = 'mysql2',
-  sqlite3 = 'sqlite3',
+  pg = 'pg',
+  pgnative = 'pgnative',
   oracledb = 'oracledb',
+  redshift = 'redshift',
+  sqlite3 = 'sqlite3',
 }
 
 export enum SmartKey {
