@@ -21,15 +21,18 @@ A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScrip
 ## Installation
 ```sh
 npm i kmore && npm i -D kmore-cli
-// or
+// for Midway.js
 npm i @mw-components/kmore && npm i -D kmore-cli
 
 # Then add one of the following:
 npm install pg
+npm install pg-native
 npm install mssql
 npm install oracle
 npm install sqlite3
 ```
+
+[pg-native-installation][pg-native]
 
 ## Basic usage
 
@@ -312,3 +315,7 @@ This repository contains all these packages. Below you will find a summary of ea
 [mw-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/midway-component-kmore
 [mw-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/egg-kmore#info=midway-component-kmore
 
+
+<br>
+
+[pg-native]: https://github.com/brianc/node-pg-native
