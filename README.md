@@ -5,7 +5,7 @@ A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScrip
 
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-![](https://img.shields.io/badge/lang-TypeScript-blue.svg)
+[![](https://img.shields.io/badge/lang-TypeScript-blue.svg)]()
 [![ci](https://github.com/waitingsong/kmore/workflows/ci/badge.svg)](https://github.com/waitingsong/kmore/actions)
 [![codecov](https://codecov.io/gh/waitingsong/kmore/branch/main/graph/badge.svg?token=wNYqpmseCn)](https://codecov.io/gh/waitingsong/kmore)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
@@ -263,12 +263,12 @@ export class UserRepo {
 kmore is comprised of many specialized packages.
 This repository contains all these packages. Below you will find a summary of each package.
 
-| Package                    | Version                  |
-| -------------------------- | ------------------------ |
-| [`kmore`]                  | [![kmore-svg]][kmore-ch] |
-| [`kmore-types`]            | [![types-svg]][types-ch] |
-| [`kmore-cli`]              | [![cli-svg]][cli-ch]     |
-| [`midway-component-kmore`] | [![mw-svg]][mw-ch]       |
+| Package                  | Version                  |
+| ------------------------ | ------------------------ |
+| [`kmore`]                | [![kmore-svg]][kmore-ch] |
+| [`kmore-types`]          | [![types-svg]][types-ch] |
+| [`kmore-cli`]            | [![cli-svg]][cli-ch]     |
+| [`@mw-components/kmore`] | [![mw-svg]][mw-ch]       |
 
 
 
@@ -284,38 +284,23 @@ This repository contains all these packages. Below you will find a summary of ea
 [`kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore
 [`kmore-types`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-types
 [`kmore-cli`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-cli
-[`midway-component-kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore
+[`@mw-components/kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore
 
 [kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=7200
 [kmore-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore/CHANGELOG.md
-[kmore-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
-[kmore-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
-[kmore-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore
-[kmore-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore#info=devDependencies
 
 [types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=7200
 [types-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-types/CHANGELOG.md
-[types-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
-[types-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
-[types-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-types
-[types-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-types#info=devDependencies
 
 [cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=7200
 [cli-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-clie/CHANGELOG.md
-[cli-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
-[cli-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
-[cli-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-cli
-[cli-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-cli#info=devDependencies
 
 
 [mw-svg]: https://img.shields.io/npm/v/@mw-components/kmore.svg?maxAge=7200
 [mw-ch]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore/CHANGELOG.md
-[mw-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/midway-component-kmore
-[mw-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/midway-component-kmore
-[mw-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/midway-component-kmore
-[mw-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/egg-kmore#info=midway-component-kmore
 
 
 <br>
 
 [pg-native]: https://github.com/brianc/node-pg-native
+
