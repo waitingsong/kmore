@@ -1,7 +1,7 @@
 {
   "name": "@mw-components/kmore",
   "author": "waiting",
-  "version": "36.0.2",
+  "version": "36.0.3",
   "description": "midway component for knex",
   "keywords": [
     "midway",
@@ -30,13 +30,13 @@
   "dependencies": {
     "@mw-components/jaeger": "^13.1.3",
     "@waiting/shared-core": "^20.5.0",
-    "kmore": "^36.0.2",
+    "kmore": "^36.0.3",
     "knex": "^2.2.0"
   },
   "devDependencies": {
     "cross-env": "7",
-    "kmore-cli": "^36.0.0",
-    "kmore-types": "^36.0.0"
+    "kmore-cli": "^36.0.3",
+    "kmore-types": "^36.0.3"
   },
   "engines": {
     "node": ">=16.13.0"
