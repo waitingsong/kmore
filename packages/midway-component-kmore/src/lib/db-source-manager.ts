@@ -11,7 +11,7 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { Logger as TLogger, TracerManager } from '@mw-components/jaeger'
+import { Logger as TLogger, TracerManager } from '@mwcp/jaeger'
 import {
   EventCallbacks,
   Kmore,

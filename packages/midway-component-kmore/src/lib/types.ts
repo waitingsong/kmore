@@ -34,7 +34,7 @@ export interface KmoreSourceConfig<SourceName extends string = string> {
 export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
 export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
   /**
-   * Enable tracing via @mw-components/jaeger
+   * Enable tracing via @mwcp/jaeger
    * @default false
    */
   enableTracing?: boolean

@@ -4,7 +4,7 @@ import { join } from 'node:path'
 
 import * as WEB from '@midwayjs/koa'
 import { createApp, close, createHttpRequest } from '@midwayjs/mock'
-import { ConfigKey as JConfigKey } from '@mw-components/jaeger'
+import { ConfigKey as JConfigKey } from '@mwcp/jaeger'
 
 import { tracerConfig, tracerMiddlewareConfig } from './config.jaeger'
 import { initDb } from './helper'

@@ -5,7 +5,7 @@ import {
   TracerManager,
   TracerLog,
   TracerTag,
-} from '@mw-components/jaeger'
+} from '@mwcp/jaeger'
 import {
   genISO8601String,
   humanMemoryUsage,

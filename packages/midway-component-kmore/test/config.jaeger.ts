@@ -1,6 +1,6 @@
 // config for `npm run cov|ci`
 import { MidwayConfig } from '@midwayjs/core'
-import { TracerTag } from '@mw-components/jaeger'
+import { TracerTag } from '@mwcp/jaeger'
 
 
 type AppConfig = Partial<MidwayConfig>

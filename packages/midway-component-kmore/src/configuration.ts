@@ -3,7 +3,7 @@ import 'tsconfig-paths/register'
 import { join } from 'path'
 
 import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
-import * as jaeger from '@mw-components/jaeger'
+import * as jaeger from '@mwcp/jaeger'
 
 import { DbSourceManager } from './lib/db-source-manager'
 import { ConfigKey, KmoreSourceConfig } from './lib/index'
