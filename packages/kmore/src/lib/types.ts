@@ -65,6 +65,7 @@ export type DbQueryBuilder<
 > = {
   /** ref_tb_name: () => knex('tb_name') */
   [tb in keyof D as `${Prefix}${tb & string}`]:
+  // @ts-expect-error
   TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
 }
 
@@ -73,11 +74,11 @@ export interface BuilderInput {
   caseConvert?: CaseType | undefined
 }
 
-export type TbQueryBuilder<D, CaseConvert extends CaseType, TRecord, Context>
+export type TbQueryBuilder<D extends {}, CaseConvert extends CaseType, TRecord extends {}, Context>
   = (ctx?: Context) => KmoreQueryBuilder<D, CaseConvert, TRecord, TRecord[]>
 
 export type KmoreQueryBuilder<
-  D = {}, CaseConvert extends CaseType = CaseType, TRecord extends {} = any, TResult = any> =
+  D extends {} = {}, CaseConvert extends CaseType = CaseType, TRecord extends {} = any, TResult = any> =
   Knex.QueryBuilder<TRecord, TResult>
   & QueryBuilderExtMethod<D, CaseConvert, TRecord>
   & QueryBuilderExtName<D>
@@ -88,7 +89,7 @@ interface QueryBuilderExtName<D extends {} = {}> {
   _tablesJoin: string[]
 }
 
-interface QueryBuilderExtMethod<D, CaseConvert extends CaseType, TRecord extends {} = any> {
+interface QueryBuilderExtMethod<D extends {}, CaseConvert extends CaseType, TRecord extends {} = any> {
   smartCrossJoin: SmartJoin<D, CaseConvert, TRecord>
   smartInnerJoin: SmartJoin<D, CaseConvert, TRecord>
   smartJoin: SmartJoin<D, CaseConvert, TRecord>
@@ -102,6 +103,7 @@ type SmartJoin<D extends {}, CaseConvert extends CaseType, TResult = unknown[]> 
   C1 extends DbScopedColsByKey<D> = DbScopedColsByTableType<D, TRecord1>,
   TTable2 extends StrKey<D> = SplitScopedColumn<D, C2>[0],
   TRecord2 extends D[TTable2] = D[TTable2],
+  // @ts-expect-error
   TResult2 = JoinTableWithCaseConvert<TRecord1, TRecord2 extends any ? D[TTable2] : TRecord2, TTable2, CaseConvert>,
 >(
   /**
@@ -114,6 +116,7 @@ type SmartJoin<D extends {}, CaseConvert extends CaseType, TResult = unknown[]> 
    * <tb_name> is the upstream table name , <col_name> is the column name
    */
   scopedColumn: C1 extends C2 ? never : C1,
+  // @ts-expect-error
 ) => KmoreQueryBuilder<D, CaseConvert, TResult2, TResult2[]>
 
 
