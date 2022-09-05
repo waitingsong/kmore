@@ -28,10 +28,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/jaeger": "^13.2.0",
+    "@mwcp/jaeger": "^14.0.0",
     "@waiting/shared-core": "^20.6.3",
     "kmore": "^36.2.0",
-    "knex": "^2.2.0"
+    "knex": "^2.3.0"
   },
   "devDependencies": {
     "cross-env": "7",
