@@ -4,7 +4,8 @@ import { join } from 'node:path'
 
 import * as WEB from '@midwayjs/koa'
 import { createApp, close, createHttpRequest } from '@midwayjs/mock'
-import { ConfigKey as JConfigKey } from '@mwcp/jaeger'
+import { TracerConfigKey } from '@mwcp/jaeger'
+import type { Application } from '@mwcp/share'
 
 import { tracerConfig, tracerMiddlewareConfig } from './config.jaeger'
 import { initDb } from './helper'
@@ -12,7 +13,6 @@ import { initDb } from './helper'
 import { kmoreConfig, mwConfig } from '@/config.unittest'
 import { testConfig } from '@/root.config'
 import { ConfigKey } from '~/index'
-import { Application } from '~/interface'
 
 
 /**
@@ -36,8 +36,8 @@ export const mochaHooks = async () => {
         keys: Math.random().toString(),
         [ConfigKey.middlewareConfig]: mwConfig,
         [ConfigKey.config]: kmoreConfig,
-        [JConfigKey.config]: tracerConfig,
-        [JConfigKey.middlewareConfig]: tracerMiddlewareConfig,
+        [TracerConfigKey.config]: tracerConfig,
+        [TracerConfigKey.middlewareConfig]: tracerMiddlewareConfig,
       }
       const opts = {
         imports: [WEB],

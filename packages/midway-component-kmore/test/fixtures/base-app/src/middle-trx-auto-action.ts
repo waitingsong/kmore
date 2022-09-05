@@ -8,9 +8,9 @@ import {
   Inject,
   Param,
 } from '@midwayjs/decorator'
+import type { Context } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
 
-import type { Context } from '~/interface'
 import {
   DbManager,
   Kmore,

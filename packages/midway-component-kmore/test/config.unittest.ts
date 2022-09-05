@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 
+import type { Context } from '@mwcp/share'
 import { EventCallbacks } from 'kmore'
 import { genDbDict } from 'kmore-types'
 
@@ -14,8 +15,6 @@ import {
   KmoreEvent,
   KmoreSourceConfig,
 } from '~/index'
-import { Context } from '~/interface'
-
 
 
 export const mwConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {

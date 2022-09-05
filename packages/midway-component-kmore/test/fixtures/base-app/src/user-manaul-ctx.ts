@@ -7,8 +7,8 @@ import {
   Inject,
   Param,
 } from '@midwayjs/decorator'
+import type { Context } from '@mwcp/share'
 
-import { Context } from '~/interface'
 import {
   ConfigKey,
   DbSourceManager,

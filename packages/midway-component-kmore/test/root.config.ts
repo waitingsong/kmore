@@ -1,8 +1,8 @@
 import { IncomingHttpHeaders } from 'node:http'
 
+import type { Application, IMidwayContainer } from '@mwcp/share'
 import supertest, { SuperTest } from 'supertest'
 
-import { Application, IMidwayContainer } from '~/interface'
 import { MiddlewareConfig } from '~/lib/index'
 
 
