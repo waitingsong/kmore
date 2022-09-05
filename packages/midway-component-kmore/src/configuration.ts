@@ -26,8 +26,7 @@ export class AutoConfiguration {
 
   async onReady(): Promise<void> {
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
-    const mws = [KmoreMiddleware]
-    this.app.useMiddleware(mws)
+    registerMiddleware(this.app)
 
     return
   }
@@ -45,3 +44,16 @@ export class AutoConfiguration {
   }
 }
 
+
+function registerMiddleware(
+  app: Application,
+): void {
+
+  const mwNames = app.getMiddleware().getNames()
+  if (mwNames.includes(KmoreMiddleware.name)) {
+    return
+  }
+
+  // @ts-ignore
+  app.getMiddleware().insertLast(KmoreMiddleware)
+}
