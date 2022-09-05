@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [36.2.0](https://github.com/waitingsong/kmore/compare/v36.1.0...v36.2.0) (2022-09-05)
+
+
+### Features
+
+* **kmore:** update getCurrentTime() ([f1e4da3](https://github.com/waitingsong/kmore/commit/f1e4da3010d0cdb3c045e37ed46ac503e23ed243))
+
+
+
+
+
 ## [36.0.4](https://github.com/waitingsong/kmore/compare/v36.0.3...v36.0.4) (2022-08-30)
 
 **Note:** Version bump only for package kmore

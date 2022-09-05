@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [36.2.0](/compare/v36.1.0...v36.2.0) (2022-09-05)
+
+
+### Features
+
+* **kmore:** update getCurrentTime() f1e4da3
+
+
+
+
+
 # [36.1.0](/compare/v36.0.4...v36.1.0) (2022-08-31)
 
 
