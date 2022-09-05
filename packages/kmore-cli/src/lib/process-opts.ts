@@ -56,7 +56,7 @@ export function parseCliOpts(
 }
 
 
-export function mergeOptions<T>(
+export function mergeOptions<T extends object>(
   initOptions: T,
   inputOptions: InputOptions,
 ): T {
