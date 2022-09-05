@@ -21,8 +21,7 @@ export async function getCurrentTime(
 
     switch (clientType) {
       case EnumClient.pg:
-        return parseRespCommon(res as RespCommon)
-
+      case EnumClient.pgnative:
       case EnumClient.mysql:
         return parseRespCommon(res as RespCommon)
 
@@ -30,8 +29,7 @@ export async function getCurrentTime(
         return parseRespMysql2(res as RespMysql2)
 
       default:
-        console.warn(`Unsupported client value: '${clientType}' for getCurrentTime().
-        Only ${EnumClient.pg}, ${EnumClient.mysql}, ${EnumClient.mysql2} so far. `)
+        console.warn(`[Kmore] Unsupported client value: '${clientType}' for getCurrentTime(). `)
         return ''
     }
   }
