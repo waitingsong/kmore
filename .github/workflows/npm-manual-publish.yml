@@ -14,11 +14,12 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     container: node:18-bullseye
+    timeout-minutes: 60
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
 
     strategy:
       matrix:
-        node: [18]
+        node: ['current']
         os: [ubuntu-latest]
 
     steps:
@@ -54,9 +55,9 @@ jobs:
           uname -a
           export DEBIAN_FRONTEND=noninteractive
           apt-get update -qq --yes > /dev/null
-          apt-get upgrade -qq --yes > /dev/null
+          # apt-get upgrade -qq --yes > /dev/null
           apt-get install -qq --yes --no-install-recommends bash dnsutils git jq locales net-tools wget > /dev/null
-          apt-get install -qq --yes postgresql-client > /dev/null
+          apt-get install -qq --yes postgresql-client libpq-dev > /dev/null
           uname -a
           npm -v && node -v
           git --version
@@ -89,6 +90,7 @@ jobs:
           PGPASSWORD: postgres
 
       - name: Inatall Dependencies
+        timeout-minutes: 15
         run: |
           chmod a+w -R .
           # DO NOT execute: npm config set unsafe-perm=true
@@ -96,6 +98,7 @@ jobs:
           .github/workflows/fix.sh
           npm i -g c8 lerna rollup zx
           # .github/workflows/fix.sh
+          # npm run purge
           npm run bootstrap
         env:
           CI: true
