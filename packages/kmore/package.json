@@ -38,13 +38,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^20.5.0"
+    "@waiting/shared-core": "^20.6.3"
   },
   "devDependencies": {
     "cross-env": "7",
     "kmore-cli": "^36.0.3",
     "kmore-types": "^36.0.3",
-    "knex": "^2.2.0",
+    "knex": "^2.3.0",
     "pg": "^8.7.3"
   },
   "engines": {
