@@ -1,6 +1,6 @@
-import { DbSourceManager } from '../lib/db-source-manager'
+import type { Context } from '@mwcp/share'
 
-import type { Context } from '~/interface'
+import { DbSourceManager } from '../lib/db-source-manager'
 
 
 /**

@@ -4,12 +4,11 @@ import { join } from 'path'
 
 import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
 import * as jaeger from '@mwcp/jaeger'
+import type { Application } from '@mwcp/share'
 
 import { DbSourceManager } from './lib/db-source-manager'
 import { ConfigKey, KmoreSourceConfig } from './lib/index'
 import { KmoreMiddleware } from './middleware/db-trx.middleware'
-
-import type { Application } from '~/interface'
 
 
 @Configuration({

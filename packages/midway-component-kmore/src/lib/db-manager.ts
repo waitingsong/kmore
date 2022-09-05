@@ -6,9 +6,8 @@ import {
   Inject,
   Provide,
 } from '@midwayjs/decorator'
+import type { Context } from '@mwcp/share'
 import { CaseType, DbQueryBuilder, Kmore } from 'kmore'
-
-import { Context } from '../interface'
 
 import { DbSourceManager } from './db-source-manager'
 

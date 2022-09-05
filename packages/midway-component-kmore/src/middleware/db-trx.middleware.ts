@@ -1,6 +1,6 @@
 import { Middleware } from '@midwayjs/decorator'
+import type { Context, IMiddleware, NextFunction } from '@mwcp/share'
 
-import { Context, IMiddleware, NextFunction } from '../interface'
 import { ConfigKey } from '../lib/index'
 import { rollbackAndCleanCtxTransactions } from '../util/database'
 

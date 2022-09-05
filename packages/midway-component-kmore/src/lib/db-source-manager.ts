@@ -12,6 +12,7 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import { Logger as TLogger, TracerManager } from '@mwcp/jaeger'
+import type { Context } from '@mwcp/share'
 import {
   EventCallbacks,
   Kmore,
@@ -21,8 +22,6 @@ import {
   QuerySpanInfo,
   getCurrentTime,
 } from 'kmore'
-
-import { Context } from '../interface'
 
 import {
   processStartEvent,
