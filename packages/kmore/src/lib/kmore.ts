@@ -7,6 +7,7 @@ import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
+// import * as _knex from 'knex'
 
 import { defaultPropDescriptor, initialConfig } from './config.js'
 import {
@@ -558,7 +559,7 @@ export function KmoreFactory<D, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>
 }
 
 export function createDbh(knexConfig: KnexConfig): Knex {
-  const inst = _knex(knexConfig)
+  const inst = _knex.knex(knexConfig)
   return inst
 }
 
