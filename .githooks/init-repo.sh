@@ -22,9 +22,9 @@ git config --local remote.origin.prune true
 git config --local remote.origin.tagopt --tags
 git config --local remote.pushdefault origin
 
-# if [[ -z $CI ]]; then
-#   echo It may going for a long time. Plese wait...
-#   cd .githooks && tsc && node gen-file-from-example.js && cd -
-# fi;
+if [ -z $CI ]; then
+  echo It may going for a long time. Plese wait...
+  cd .githooks && tsc && node gen-file-from-example.js && cd -
+fi;
 
 lerna list
