@@ -24,7 +24,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should auto rollback work on error', () => {
     it('catch error from .then()', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnError: 'rollback' })
+      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()
@@ -74,7 +74,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('with savepoint: catch error from .then()', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnError: 'rollback' })
+      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()
@@ -127,7 +127,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('rollback by db server always although auto commit', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnError: 'rollback' })
+      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()
@@ -173,7 +173,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('reuse tbUser', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnError: 'rollback' })
+      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()

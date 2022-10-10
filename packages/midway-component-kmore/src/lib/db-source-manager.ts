@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
 import { DataSourceManager } from '@midwayjs/core'
@@ -11,7 +12,14 @@ import {
   ScopeEnum,
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
-import { Logger as TLogger, TracerManager } from '@mwcp/jaeger'
+import {
+  OtelConfigKey,
+  Context as TraceContext,
+  setSpan,
+  Span,
+  SpanKind,
+  TraceService,
+} from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
 import {
   EventCallbacks,
@@ -24,10 +32,12 @@ import {
 } from 'kmore'
 
 import {
-  processStartEvent,
-  processQueryEvent,
-  processQueryRespAndExEvent,
-  cleanAllQuerySpan,
+  traceStartEvent,
+  TraceQueryEvent,
+  TraceQueryRespEvent,
+  TraceQueryExceptionEvent,
+  TraceStartEventOptions,
+  TraceEventOptions,
 } from './tracer-helper'
 import { ConfigKey, KmoreSourceConfig, DbConfig } from './types'
 
@@ -43,7 +53,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Inject() baseDir: string
 
-  public queryUidSpanMap = new Map<string, QuerySpanInfo>()
+  // kmoreQueryId => QuerySpanInfo
+  public queryUidSpanMap = new Map<symbol, QuerySpanInfo>()
 
   declare dataSource: Map<SourceName, Kmore<D, Ctx>>
 
@@ -58,12 +69,19 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Init()
   async init(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (! this.sourceconfig || ! this.sourceconfig.dataSource) {
       this.logger.info('dataSourceConfig is not defined')
       return
     }
     // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
     await this.initDataSource(this.sourceconfig, this.baseDir)
+  }
+
+  getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
+    assert(dbId)
+    const dbConfig = this.sourceconfig.dataSource[dbId]
+    return dbConfig
   }
 
 
@@ -94,7 +112,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     }
 
     const inst = KmoreFactory<Db, Ctx>(opts)
-    if (cacheDataSource && inst) {
+    if (cacheDataSource) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (! this.sourceconfig.dataSource[dataSourceName]) {
         this.sourceconfig.dataSource[dataSourceName] = config
       }
@@ -113,6 +132,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   }
 
   protected async checkConnected(dataSource: Kmore): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (! dataSource) {
       return false
     }
@@ -145,104 +165,111 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   }
 
 
-  protected async cbOnStart(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected cbOnStart(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
     assert(dbConfig)
     assert(event.type === 'start', event.type)
     assert(event.queryBuilder)
 
-    await this.tracer(dbConfig, event, ctx)
+    this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.start
-    await (cb && cb(event, ctx))
+    return cb?.(event, ctx)
   }
 
-  protected async cbOnQuery(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected cbOnQuery(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
     assert(dbConfig)
     assert(event.type === 'query', event.type)
     assert(event.data)
 
-    await this.tracer(dbConfig, event, ctx)
+    this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.query
-    await (cb && cb(event, ctx))
+    return cb?.(event, ctx)
   }
 
-  protected async cbOnResp(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected cbOnResp(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
     assert(dbConfig)
     assert(event.type === 'queryResponse', event.type)
     assert(event.respRaw)
 
-    await this.tracer(dbConfig, event, ctx)
+    this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.queryResponse
-    await (cb && cb(event, ctx))
+    return cb?.(event, ctx)
   }
 
   protected async cbOnError(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
     assert(dbConfig)
     assert(event.type === 'queryError', event.type)
 
-    await this.tracer(dbConfig, event, ctx)
+    this.tracer(dbConfig, event, ctx)
 
     const cb = dbConfig.eventCallbacks?.queryError
-    await (cb && cb(event, ctx))
+    return cb?.(event, ctx)
   }
 
 
-  protected getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
-    assert(dbId)
-    const dbConfig = this.sourceconfig?.dataSource[dbId]
-    return dbConfig
-  }
-
-  protected async tracer(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected tracer(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
     if (! ctx) { return }
+    if (! dbConfig.enableTrace) { return }
 
-    assert(dbConfig)
+    if (typeof dbConfig.sampleThrottleMs === 'undefined') {
+      dbConfig.sampleThrottleMs = 3000
+    }
+    const trm = ctx[`_${OtelConfigKey.serviceName}`] as TraceService | undefined
+    if (! trm) { return }
 
-    if (! dbConfig.enableTracing) { return }
+    const { queryUidSpanMap } = this
+    const opts: TraceEventOptions = {
+      dbConfig,
+      ev: event,
+      queryUidSpanMap,
+      trm,
+    }
 
-    if (ctx.requestContext && ctx.requestContext.getAsync) {
-      if (typeof dbConfig.sampleThrottleMs === 'undefined') {
-        dbConfig.sampleThrottleMs = 3000
+    switch (event.type) {
+      case 'start': {
+        const { span } = this.prepareTrace(trm)
+        const opts2: TraceStartEventOptions = {
+          ...opts,
+          span,
+        }
+        traceStartEvent(opts2)
+        break
       }
-      const logger = await ctx.requestContext.getAsync(TLogger)
-      const trm = await ctx.requestContext.getAsync(TracerManager)
 
-      const { queryUidSpanMap } = this
-      const opts = {
-        dbConfig,
-        ev: event,
-        logger,
-        queryUidSpanMap,
-        tagClass: '',
-        trm,
-      }
+      case 'query':
+        TraceQueryEvent(opts)
+        break
 
-      switch (event.type) {
-        case 'start':
-          await processStartEvent(opts)
-          break
+      case 'queryResponse':
+        TraceQueryRespEvent(opts)
+        break
 
-        case 'query':
-          await processQueryEvent(opts)
-          break
+      case 'queryError':
+        TraceQueryExceptionEvent(opts)
+        break
 
-        case 'queryResponse':
-          await processQueryRespAndExEvent(opts)
-          break
-
-        case 'queryError':
-          await processQueryRespAndExEvent(opts)
-          await cleanAllQuerySpan(opts)
-          break
-
-        default:
-          break
-      }
+      default:
+        break
     }
   }
 
+  protected prepareTrace(traceService: TraceService): { span: Span, traceContext: TraceContext } {
+    const tmpCtx = traceService.getActiveContext()
+    const name = 'KmoreComponent'
+    const span = traceService.startSpan(
+      name,
+      { kind: SpanKind.INTERNAL },
+      tmpCtx,
+    )
+    const traceContext = setSpan(tmpCtx, span)
+    const ret = {
+      span,
+      traceContext,
+    }
+    return ret
+  }
 }
 
 

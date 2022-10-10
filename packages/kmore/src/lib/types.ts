@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
+import type { Span } from '@mwcp/otel'
 import {
   CaseConvertTable,
   CaseType,
@@ -12,8 +13,6 @@ import {
 } from '@waiting/shared-types'
 import { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import type { Span } from 'opentracing'
 
 
 export { CaseType }
@@ -22,19 +21,19 @@ export type KnexConfig = Knex.Config
 export type KmoreTransaction = Knex.Transaction & {
   kmoreTrxId: symbol,
   /**
-   * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
-   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * Auto transction action (rollback|commit|none) on error (Rejection or Exception),
+   * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    * @default rollback
    */
-  trxActionOnError: NonNullable<KmoreTransactionConfig['trxActionOnError']>,
+  trxActionOnEnd: NonNullable<KmoreTransactionConfig['trxActionOnEnd']>,
 }
 export type KmoreTransactionConfig = Knex.TransactionConfig & {
   /**
    * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
-   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    * @default rollback
    */
-  trxActionOnError?: 'commit' | 'rollback' | 'none',
+  trxActionOnEnd?: 'commit' | 'rollback' | 'none',
 }
 export enum EnumClient {
   betterSqlite3 = 'better-sqlite3',
@@ -126,13 +125,11 @@ export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'un
 export interface KmoreEvent <T = unknown> {
   dbId: string
   type: EventType
-  /** passed from external */
-  identifier: unknown
   /** __knexUid */
   kUid: string
   /** __knexQueryUid */
   queryUid: string // 'mXxtvuJLHkZI816UZic57'
-  kmoreQueryId: symbol | undefined
+  kmoreQueryId: symbol
   /**
    * @description Note: may keep value of the latest transaction id,
    * even if no transaction this query!
@@ -241,7 +238,6 @@ export interface OnQueryErrorErr {
 
 export interface QuerySpanInfo {
   span: Span
-  tagClass: string
   timestamp: number
 }
 
@@ -252,7 +248,9 @@ export interface EventCallbackOptions<Ctx = unknown, R = unknown> {
 /**
  * @docs https://knexjs.org/guide/interfaces.html#query-response
  */
-export type EventCallback<Ctx = any> = (event: KmoreEvent, ctx?: Ctx) => Promise<void>
+// export type EventCallback<Ctx = any> = (event: KmoreEvent, ctx?: Ctx) => Promise<void>
+
+
 /**
  * @docs https://knexjs.org/guide/interfaces.html#query-response
  */
@@ -260,5 +258,13 @@ export type EventCallbackType = Exclude<EventType, 'unknown'>
 /**
  * @docs https://knexjs.org/guide/interfaces.html#query-response
  */
-export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
+export type EventCallbacks<Ctx = any> = Partial<EventCallbackList<Ctx>>
+export interface EventCallbackList<Ctx = any> {
+  start: (event: KmoreEvent, ctx?: Ctx) => void
+  query: (event: KmoreEvent, ctx?: Ctx) => void
+  queryResponse: (event: KmoreEvent, ctx?: Ctx) => void
+  queryError: (event: KmoreEvent, ctx?: Ctx) => Promise<void>
+}
+// export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
+
 

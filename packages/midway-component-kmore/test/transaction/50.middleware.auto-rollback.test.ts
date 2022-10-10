@@ -19,6 +19,17 @@ describe(filename, () => {
     const urlGet = `${pathGet}${uid}`
     const urlUpdate = `${pathUpdate}${uid}`
 
+    await httpRequest
+      .get(urlUpdate)
+  })
+
+  it('Should work mixed', async () => {
+    const { httpRequest } = testConfig
+
+    const uid = 1
+    const urlGet = `${pathGet}${uid}`
+    const urlUpdate = `${pathUpdate}${uid}`
+
     const resp0 = await httpRequest
       .get(urlGet)
       .expect(200)

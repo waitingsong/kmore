@@ -8,20 +8,23 @@ import { DbSourceManager } from '../lib/db-source-manager'
  */
 export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<void> {
   const container = ctx.app.getApplicationContext()
-
   const dbSourceManager = await container.getAsync(DbSourceManager)
+
   for (const [name, kmore] of dbSourceManager.dataSource.entries()) {
     const trxSet = kmore.getTrxSetByCtx(ctx)
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (! trxSet || ! trxSet.size) { continue }
 
     for (const trx of trxSet.values()) {
-      const { trxActionOnError, kmoreTrxId } = trx
+      const { trxActionOnEnd, kmoreTrxId } = trx
       if (! trx.isCompleted()) {
-        ctx.logger.info(
-          `[Kmore]: middleware auto transaction action: ${trxActionOnError} for ${name}: ${kmoreTrxId.toString()}`,
-        )
+        const msg = `[Kmore]: middleware auto transaction action: ${trxActionOnEnd} for ${name}: ${kmoreTrxId.toString()}`
+        ctx.logger.info(msg)
       }
-      await kmore.doTrxActionOnError(trx)
+      // void else
+
+      // eslint-disable-next-line no-await-in-loop
+      await kmore.finishTransaction(trx)
     }
 
     kmore.ctxTrxIdMap.delete(ctx)

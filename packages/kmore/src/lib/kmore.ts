@@ -33,7 +33,6 @@ import {
   OnQueryRespRaw,
   QueryContext,
   QueryResponse,
-  QuerySpanInfo,
 } from './types.js'
 
 
@@ -80,11 +79,10 @@ export class Kmore<D = any, Context = any> {
   */
   readonly Dict: DbDict<D>
 
-  readonly queryUidSpanMap = new Map<string, QuerySpanInfo>()
   readonly postProcessResponseSet = new Set<typeof postProcessResponse>()
-  readonly trxActionOnError: KmoreTransactionConfig['trxActionOnError'] = 'rollback'
+  readonly trxActionOnEnd: KmoreTransactionConfig['trxActionOnEnd'] = 'rollback'
   /**
-   * kmoreTrxid => trx
+   * kmoreTrxId => trx
    */
   readonly trxMap = new Map<symbol, KmoreTransaction>()
   /**
@@ -150,8 +148,8 @@ export class Kmore<D = any, Context = any> {
       queryContext?: QueryContext,
     ) => this.postProcessResponse(result, queryContext)
 
-    if (options.trxActionOnError) {
-      this.trxActionOnError = options.trxActionOnError
+    if (options.trxActionOnEnd) {
+      this.trxActionOnEnd = options.trxActionOnEnd
     }
 
     this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
@@ -173,7 +171,7 @@ export class Kmore<D = any, Context = any> {
 
     const kmoreTrxId = typeof id === 'symbol'
       ? id
-      : id ? Symbol(id) : Symbol(Date.now())
+      : id ? Symbol(id) : Symbol(`trx-${Date.now()}`)
 
     const tmp = await this.dbh.transaction(void 0, config)
 
@@ -183,15 +181,15 @@ export class Kmore<D = any, Context = any> {
       value: kmoreTrxId,
     })
 
-    const trxActionOnError: KmoreTransactionConfig['trxActionOnError'] = config?.trxActionOnError
-      ?? this.trxActionOnError ?? 'rollback'
-    Object.defineProperty(tmp, 'trxActionOnError', {
+    const trxActionOnEnd: KmoreTransactionConfig['trxActionOnEnd'] = config?.trxActionOnEnd
+      ?? this.trxActionOnEnd ?? 'rollback'
+    Object.defineProperty(tmp, 'trxActionOnEnd', {
       ...defaultPropDescriptor,
       enumerable: false,
-      value: trxActionOnError,
+      value: trxActionOnEnd,
     })
 
-    if (trxActionOnError === 'none') {
+    if (trxActionOnEnd === 'none') {
       return tmp as KmoreTransaction
     }
 
@@ -247,12 +245,12 @@ export class Kmore<D = any, Context = any> {
     return ret
   }
 
-  async doTrxActionOnError(trx: KmoreTransaction | undefined): Promise<void> {
+  async finishTransaction(trx: KmoreTransaction | undefined): Promise<void> {
     if (! trx) { return }
     if (! trx.isCompleted()) {
       this.trxMap.delete(trx.kmoreTrxId)
     }
-    switch (trx.trxActionOnError) {
+    switch (trx.trxActionOnEnd) {
       case 'rollback': {
         await trx.rollback()
         this.trxMap.delete(trx.kmoreTrxId)
@@ -403,7 +401,6 @@ export class Kmore<D = any, Context = any> {
       ctx,
       dbId: this.dbId,
       cbs: this.eventCallbacks,
-      identifier: this.instanceId,
       kmoreQueryId,
     }
 
@@ -411,21 +408,21 @@ export class Kmore<D = any, Context = any> {
       .queryContext(queryCtxOpts)
       .on(
         'start',
-        async (builder: KmoreQueryBuilder) => callCbOnStart({
+        (builder: KmoreQueryBuilder) => callCbOnStart({
           ...opts,
           builder,
         }),
       )
       .on(
         'query',
-        async (data: OnQueryData) => callCbOnQuery({
+        (data: OnQueryData) => callCbOnQuery({
           ...opts,
           data,
         }),
       )
       .on(
         'query-response',
-        async (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp({
+        (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp({
           ...opts,
           _resp: resp,
           respRaw,
@@ -435,7 +432,7 @@ export class Kmore<D = any, Context = any> {
         'query-error',
         async (err: OnQueryErrorErr, data: OnQueryErrorData) => {
           const trx = this.getTrxByKmoreQueryId(kmoreQueryId)
-          await this.doTrxActionOnError(trx)
+          await this.finishTransaction(trx)
           return callCbOnQueryError({
             ...opts,
             err,
@@ -465,7 +462,9 @@ export class Kmore<D = any, Context = any> {
         const { kmoreTrxId } = trx
         const qid = ctx2.kmoreQueryId as symbol | undefined
         if (qid && kmoreTrxId) {
-          this.trxIdQueryMap.get(kmoreTrxId)?.add(qid)
+          const st = this.trxIdQueryMap.get(kmoreTrxId)
+          assert(st, 'trxIdQueryMap not contains kmoreTrxId:' + kmoreTrxId.toString())
+          st.add(qid)
           this.setCtxTrxIdMap(ctx, kmoreTrxId)
         }
         return Reflect.apply(target, ctx2, args)
@@ -497,7 +496,7 @@ export class Kmore<D = any, Context = any> {
         return (Reflect.apply(target, ctx2, args) as Promise<unknown>)
           .catch(async (err: unknown) => {
             const trx2 = this.getTrxByKmoreQueryId(qid)
-            await this.doTrxActionOnError(trx2)
+            await this.finishTransaction(trx2)
             return Promise.reject(err)
           })
 
@@ -550,7 +549,7 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
    * @default rollback
    */
-  trxActionOnError?: KmoreTransactionConfig['trxActionOnError']
+  trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
 }
 
 export function KmoreFactory<D, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {

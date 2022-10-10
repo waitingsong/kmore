@@ -20,7 +20,8 @@ export const initialMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'ignore' |
 export const initDbConfig: DbConfig = {
   config: {},
   sampleThrottleMs: 3000,
-  enableTracing: true,
-  tracingResponse: true,
+  enableTrace: true,
+  traceEvent: true,
+  traceResponse: true,
 }
 

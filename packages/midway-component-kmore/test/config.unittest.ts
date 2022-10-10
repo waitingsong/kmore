@@ -14,6 +14,7 @@ import {
   DbConfig,
   KmoreEvent,
   KmoreSourceConfig,
+  initDbConfig,
 } from '~/index'
 
 
@@ -56,6 +57,7 @@ export const knexConfig = {
 }
 
 export const master: DbConfig<Db> = {
+  ...initDbConfig,
   config: knexConfig,
   dict: dbDict,
   eventCallbacks: eventCbs,
@@ -66,7 +68,7 @@ export const kmoreConfig: KmoreSourceConfig<'master'> = {
   },
 }
 
-async function cbOnStart(event: KmoreEvent, ctx?: Context): Promise<void> {
+function cbOnStart(event: KmoreEvent, ctx?: Context): void {
   assert(ctx)
   assert(event.type === 'start', event.type)
   assert(event.queryBuilder)
@@ -74,7 +76,7 @@ async function cbOnStart(event: KmoreEvent, ctx?: Context): Promise<void> {
   assert(! event.respRaw)
 }
 
-async function cbOnQuery(event: KmoreEvent, ctx?: Context): Promise<void> {
+function cbOnQuery(event: KmoreEvent, ctx?: Context): void {
   assert(ctx)
   assert(event.type === 'query', event.type)
   assert(! event.queryBuilder)
@@ -83,7 +85,7 @@ async function cbOnQuery(event: KmoreEvent, ctx?: Context): Promise<void> {
 }
 
 
-async function cbOnResp(event: KmoreEvent, ctx?: Context): Promise<void> {
+function cbOnResp(event: KmoreEvent, ctx?: Context): void {
   assert(ctx)
   assert(event.type === 'queryResponse', event.type)
   assert(! event.queryBuilder)

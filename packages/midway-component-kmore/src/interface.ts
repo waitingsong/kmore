@@ -1,6 +1,4 @@
-// import { Context } from '@midwayjs/koa'
 
-export { TracerLog } from '@mwcp/jaeger'
 export {
   JsonObject,
   JsonResp,

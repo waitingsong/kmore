@@ -1,7 +1,8 @@
 # [kmore](https://waitingsong.github.io/kmore/)
 
 基于 [Knex](https://knexjs.org/) 的 SQL 查询生成器工厂，
-提供高级 TypeScript 类型支持。
+提供高级 TypeScript 类型支持，
+集成 [OpenTelemetry] 链路追踪。
 
 
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
@@ -215,8 +216,6 @@ const master: DbConfig<Db, Context> = {
     },
   },
   dict: dbDict,
-  sampleThrottleMs: 500,
-  enableTracing: true, // jaeger tracer
 }
 export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {
@@ -302,4 +301,5 @@ This repository contains all these packages. Below you will find a summary of ea
 <br>
 
 [pg-native]: https://github.com/brianc/node-pg-native
+[OpenTelemetry]: https://github.com/open-telemetry/opentelemetry-js-api
 

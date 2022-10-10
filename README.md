@@ -1,6 +1,7 @@
 # [kmore](https://waitingsong.github.io/kmore/)
 
 A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScript type support.
+Intergrated Tracing of [OpenTelemetry].
 
 
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
@@ -216,8 +217,6 @@ const master: DbConfig<Db, Context> = {
     },
   },
   dict: dbDict,
-  sampleThrottleMs: 500,
-  enableTracing: true, // jaeger tracer
 }
 export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {
@@ -303,4 +302,5 @@ This repository contains all these packages. Below you will find a summary of ea
 <br>
 
 [pg-native]: https://github.com/brianc/node-pg-native
+[OpenTelemetry]: https://github.com/open-telemetry/opentelemetry-js-api
 

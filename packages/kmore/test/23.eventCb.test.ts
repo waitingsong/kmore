@@ -38,7 +38,7 @@ describe(fileShortPath(import.meta.url), () => {
 
       // validate insert result
       const countRes = await km.refTables.ref_tb_user(ctx).count()
-      const ret = await km.refTables.ref_tb_user().select('*')
+      const ret = await km.refTables.ref_tb_user(ctx).select('*')
       assert(
         ret.length === 3,
         `Should count be "3", but got ${JSON.stringify(ret)}`,
@@ -63,7 +63,7 @@ describe(fileShortPath(import.meta.url), () => {
 
 })
 
-async function cbOnStart(event: KmoreEvent, ctx?: Context): Promise<void > {
+function cbOnStart(event: KmoreEvent, ctx?: Context): void {
   assert(ctx)
   assert(ctx.uid === 9)
   assert(event.type === 'start', event.type)
@@ -72,7 +72,7 @@ async function cbOnStart(event: KmoreEvent, ctx?: Context): Promise<void > {
   assert(! event.respRaw)
 }
 
-async function cbOnQuery(event: KmoreEvent, ctx?: Context): Promise<void > {
+function cbOnQuery(event: KmoreEvent, ctx?: Context): void {
   assert(ctx)
   assert(ctx.uid === 9)
   assert(event.type === 'query', event.type)
@@ -82,7 +82,7 @@ async function cbOnQuery(event: KmoreEvent, ctx?: Context): Promise<void > {
 }
 
 
-async function cbOnResp(event: KmoreEvent, ctx?: Context): Promise<void > {
+function cbOnResp(event: KmoreEvent, ctx?: Context): void {
   assert(ctx)
   assert(ctx.uid === 9)
   assert(event.type === 'queryResponse', event.type)

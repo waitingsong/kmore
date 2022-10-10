@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import assert from 'assert'
+
 import { initKmoreEvent } from './config.js'
 import { processJoinTableColumnAlias } from './smart-join.js'
 import {
@@ -17,7 +19,6 @@ export interface CallCbOptionsBase<Ctx = any> {
   ctx: Ctx | undefined
   dbId: string
   cbs: EventCallbacks<Ctx> | undefined
-  identifier: unknown
   kmoreQueryId: symbol
 }
 
@@ -25,20 +26,20 @@ export interface CallCbOnStartOptions<Ctx = any> extends CallCbOptionsBase<Ctx> 
   builder: KmoreQueryBuilder
 }
 
-export async function callCbOnStart(options: CallCbOnStartOptions): Promise<void> {
+export function callCbOnStart(options: CallCbOnStartOptions): void {
   const queryBuilder = processJoinTableColumnAlias(options.builder)
   const cb: EventCallbacks['start'] = options.cbs?.start
 
   if (typeof cb === 'function') {
     const event = processKnexOnEvent({
       type: 'start',
-      identifier: options.identifier,
       data: void 0,
       queryUid: '',
       queryBuilder,
+      kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    await cb(event, options.ctx)
+    return cb(event, options.ctx)
   }
 }
 
@@ -46,19 +47,19 @@ export interface CallCbOnQueryOptions<Ctx = any> extends CallCbOptionsBase<Ctx> 
   data: OnQueryData
 }
 
-export async function callCbOnQuery(options: CallCbOnQueryOptions): Promise<void> {
+export function callCbOnQuery(options: CallCbOnQueryOptions): void {
   const cb: EventCallbacks['query'] = options.cbs?.query
   if (typeof cb === 'function') {
     const queryUid = pickQueryUidFrom(options.data)
     const event = processKnexOnEvent({
       type: 'query',
-      identifier: options.identifier,
       data: options.data,
       queryUid,
       queryBuilder: void 0,
+      kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    await cb(event, options.ctx)
+    return cb(event, options.ctx)
   }
 }
 
@@ -67,19 +68,19 @@ export interface CallCbOnQueryRespOptions<Ctx = any> extends CallCbOptionsBase<C
   respRaw: OnQueryRespRaw
 }
 
-export async function callCbOnQueryResp(options: CallCbOnQueryRespOptions): Promise<void> {
+export function callCbOnQueryResp(options: CallCbOnQueryRespOptions): void {
   const cb: EventCallbacks['queryResponse'] = options.cbs?.queryResponse
   if (typeof cb === 'function') {
     const queryUid = pickQueryUidFrom(options.respRaw)
     const event = processKnexOnEvent({
       type: 'queryResponse',
-      identifier: options.identifier,
       respRaw: options.respRaw,
       queryUid,
       queryBuilder: void 0,
+      kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    await cb(event, options.ctx)
+    return cb(event, options.ctx)
   }
 }
 
@@ -88,30 +89,31 @@ export interface CallCbOnQueryErrorOptions<Ctx = any> extends CallCbOptionsBase<
   data: OnQueryErrorData
 }
 
-export async function callCbOnQueryError(options: CallCbOnQueryErrorOptions): Promise<void> {
+export function callCbOnQueryError(options: CallCbOnQueryErrorOptions): void | Promise<void> {
   const cb: EventCallbacks['queryError'] = options.cbs?.queryError
   if (typeof cb === 'function') {
     const queryUid = pickQueryUidFrom(options.data)
     const event = processKnexOnEvent({
       type: 'queryError',
-      identifier: options.identifier,
       exError: options.err,
       exData: options.data,
       queryUid,
       queryBuilder: void 0,
+      kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    await cb(event, options.ctx)
+    return cb(event, options.ctx)
   }
 }
 
 
 function processKnexOnEvent(input: Partial<KmoreEvent>): KmoreEvent {
-  const ev: KmoreEvent = {
+  const ev = {
     ...initKmoreEvent,
     ...input,
     timestamp: Date.now(),
-  }
+  } as KmoreEvent
+  assert(ev.kmoreQueryId, 'kmoreQueryId is required')
 
   switch (ev.type) {
     case 'start': {

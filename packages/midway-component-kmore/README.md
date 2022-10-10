@@ -217,7 +217,7 @@ const master: DbConfig<Db, Context> = {
   },
   dict: dbDict,
   sampleThrottleMs: 500,
-  enableTracing: true, // jaeger tracer
+  enableTrace: true, // open telemetry
 }
 export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {

@@ -8,11 +8,9 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 } as const
 
 
-export const initKmoreEvent: KmoreEvent = {
+export const initKmoreEvent: Omit<KmoreEvent, 'kmoreQueryId'> = {
   dbId: '',
   type: 'unknown',
-  identifier: void 0,
-  kmoreQueryId: void 0,
   kUid: '',
   queryUid: '',
   trxId: void 0,

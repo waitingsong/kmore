@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
 import type { KmoreFactoryOpts } from 'kmore'
-import type { Span } from 'opentracing'
+
+
+export type { QuerySpanInfo } from 'kmore'
 
 
 export enum ConfigKey {
@@ -34,16 +37,21 @@ export interface KmoreSourceConfig<SourceName extends string = string> {
 export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
 export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
   /**
-   * Enable tracing via @mwcp/jaeger
-   * @default false
+   * Enable open telemetry via @mwcp/otel
+   * @default true
    */
-  enableTracing?: boolean
+  enableTrace?: boolean
+  /**
+   * Whether add event on span
+   * @default true
+   */
+  traceEvent?: boolean
   /**
    * Tracing query response (respRaw.response),
    * @default true
    * @description tracing if true of if query cost > sampleThrottleMs
    */
-  tracingResponse?: boolean
+  traceResponse?: boolean
   /**
    * 强制采样请求处理时间（毫秒）阈值
    * 负数不采样
@@ -52,9 +60,4 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
   sampleThrottleMs?: number
 }
 
-export interface QuerySpanInfo {
-  span: Span
-  tagClass: string
-  timestamp: number
-}
 
