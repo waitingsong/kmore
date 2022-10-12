@@ -87,7 +87,8 @@ export function TraceQueryEvent(
   trm.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
 
   new Promise<void>((done) => {
-    const spanName = `Kmore ${dbId} ${method}`
+    const name = method === 'del' ? 'delete' : method
+    const spanName = `Kmore ${dbId} ${name}`
     span.updateName(spanName)
 
     const attrs: Attributes = {
