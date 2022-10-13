@@ -34,7 +34,6 @@
     "@waiting/shared-types-dev": "^11.2.1"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "14",
     "cross-env": "7",
     "rollup-plugin-typescript2": "^0.33.0"
   },
