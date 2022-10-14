@@ -216,20 +216,20 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     if (typeof dbConfig.sampleThrottleMs === 'undefined') {
       dbConfig.sampleThrottleMs = 3000
     }
-    const trm = ctx[`_${OtelConfigKey.serviceName}`] as TraceService | undefined
-    if (! trm) { return }
+    const traceSvc = ctx[`_${OtelConfigKey.serviceName}`] as TraceService | undefined
+    if (! traceSvc) { return }
 
     const { queryUidSpanMap } = this
     const opts: TraceEventOptions = {
       dbConfig,
       ev: event,
       queryUidSpanMap,
-      trm,
+      traceSvc,
     }
 
     switch (event.type) {
       case 'start': {
-        const { span } = this.startSpan(trm)
+        const { span } = this.startSpan(traceSvc)
         const opts2: TraceStartEventOptions = {
           ...opts,
           span,

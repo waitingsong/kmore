@@ -22,7 +22,7 @@ export interface TraceEventOptions {
   dbConfig: DbConfig
   ev: KmoreEvent
   queryUidSpanMap: Map<symbol, QuerySpanInfo>
-  trm: TraceService
+  traceSvc: TraceService
 }
 
 export interface TraceStartEventOptions extends TraceEventOptions {
@@ -37,7 +37,7 @@ export function traceStartEvent(
     dbConfig,
     ev,
     queryUidSpanMap,
-    trm,
+    traceSvc,
     span,
   } = options
 
@@ -53,7 +53,7 @@ export function traceStartEvent(
       dbId: ev.dbId,
       time: genISO8601String(),
     }
-    trm.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
+    traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
   }
   queryUidSpanMap.set(ev.kmoreQueryId, spanInfo)
 }
@@ -62,7 +62,7 @@ export function TraceQueryEvent(
   options: TraceEventOptions,
 ): void {
 
-  const { dbConfig, trm, queryUidSpanMap } = options
+  const { dbConfig, traceSvc, queryUidSpanMap } = options
   if (! dbConfig.traceEvent) { return }
 
   const { config: knexConfig, sampleThrottleMs } = options.dbConfig
@@ -84,7 +84,7 @@ export function TraceQueryEvent(
     queryUid,
     time: genISO8601String(),
   }
-  trm.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
+  traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
 
   new Promise<void>((done) => {
     const name = method === 'del' ? 'delete' : method
@@ -107,7 +107,7 @@ export function TraceQueryEvent(
       [SemanticAttributes.DB_STATEMENT]: data?.sql ?? '',
       bindings: data?.bindings ? JSON.stringify(data.bindings, null, 2) : void 0,
     }
-    trm.setAttributes(span, attrs)
+    traceSvc.setAttributes(span, attrs)
     done()
   })
     .catch(console.error)
@@ -117,7 +117,7 @@ export function TraceQueryRespEvent(
   options: TraceEventOptions,
 ): void {
 
-  const { dbConfig, trm, queryUidSpanMap } = options
+  const { dbConfig, traceSvc, queryUidSpanMap } = options
   if (! dbConfig.traceEvent) { return }
 
   const { sampleThrottleMs, traceResponse } = options.dbConfig
@@ -137,7 +137,7 @@ export function TraceQueryRespEvent(
     if (traceResponse) {
       tags[AttrNames.QueryResponse] = JSON.stringify(respRaw.response.rows, null, 2)
     }
-    trm.setAttributes(span, tags)
+    traceSvc.setAttributes(span, tags)
   }
 
   const input: Attributes = {
@@ -156,17 +156,17 @@ export function TraceQueryRespEvent(
     if (! traceResponse && respRaw) {
       tags[AttrNames.QueryResponse] = JSON.stringify(respRaw.response?.rows, null, 2)
     }
-    trm.setAttributes(span, tags)
+    traceSvc.setAttributes(span, tags)
   }
 
-  trm.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
-  trm.endSpan(span)
+  traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
+  traceSvc.endSpan(span)
 
   queryUidSpanMap.delete(kmoreQueryId)
 }
 
 export function TraceQueryExceptionEvent(options: TraceEventOptions): void {
-  const { trm, queryUidSpanMap } = options
+  const { traceSvc, queryUidSpanMap } = options
 
   const {
     kmoreQueryId, dbId, kUid, queryUid, trxId, exData, exError,
@@ -191,14 +191,14 @@ export function TraceQueryExceptionEvent(options: TraceEventOptions): void {
     exData: JSON.stringify(exData, null, 2),
     exError: JSON.stringify(exError, null, 2),
   }
-  trm.addEvent(span, input, { logCpuUsage: true, logMemeoryUsage: true })
+  traceSvc.addEvent(span, input, { logCpuUsage: true, logMemeoryUsage: true })
 
   const attrs: Attributes = {
     // [AttrNames.SAMPLING_PRIORITY]: 100,
     [AttrNames.LogLevel]: 'error',
   }
-  trm.setAttributes(span, attrs)
-  trm.endSpan(span, {
+  traceSvc.setAttributes(span, attrs)
+  traceSvc.endSpan(span, {
     code: SpanStatusCode.ERROR,
     // @FIXME
     // error: exError ?? exData ?? new Error('unknown error'),
