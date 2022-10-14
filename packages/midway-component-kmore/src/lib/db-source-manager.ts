@@ -229,7 +229,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
     switch (event.type) {
       case 'start': {
-        const { span } = this.prepareTrace(trm)
+        const { span } = this.startSpan(trm)
         const opts2: TraceStartEventOptions = {
           ...opts,
           span,
@@ -255,7 +255,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     }
   }
 
-  protected prepareTrace(traceService: TraceService): { span: Span, traceContext: TraceContext } {
+  protected startSpan(traceService: TraceService): { span: Span, traceContext: TraceContext } {
     const tmpCtx = traceService.getActiveContext()
     const name = 'KmoreComponent'
     const span = traceService.startSpan(
