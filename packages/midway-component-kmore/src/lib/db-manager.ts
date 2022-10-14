@@ -16,7 +16,7 @@ import { CaseType, DbQueryBuilder, Kmore } from 'kmore'
 import { DbSourceManager } from './db-source-manager'
 
 
-const keys = new Set<PropertyKey>(['camelTables', 'refTables', 'snakeTables', 'pascalTables'])
+const refTableKeys = new Set<PropertyKey>(['camelTables', 'refTables', 'snakeTables', 'pascalTables'])
 
 @Provide()
 export class DbManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context> {
@@ -66,7 +66,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const ret = new Proxy(db, {
-      get: (target: Kmore, propKey: keyof Kmore) => keys.has(propKey)
+      get: (target: Kmore, propKey: keyof Kmore) => refTableKeys.has(propKey)
         ? createRefProxy(target[propKey] as Dbb, reqCtx)
         : target[propKey],
     })
