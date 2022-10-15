@@ -10,8 +10,8 @@ import {
   transformCallExpressionToLiteralType,
 } from '@waiting/shared-types-dev'
 import { CallerFuncNameSet } from 'kmore-types'
-import { from as ofrom, of, Observable, iif, concat, defer } from 'rxjs'
-import { map, mergeMap, filter, reduce, take, catchError } from 'rxjs/operators'
+import { from as ofrom, of, Observable, iif, defer } from 'rxjs'
+import { map, mergeMap, filter, reduce, take, catchError, defaultIfEmpty } from 'rxjs/operators'
 import { walk, EntryType } from 'rxwalker'
 // eslint-disable-next-line import/named
 import { CacheStrategy, TsConfigResolverOptions, tsconfigResolver } from 'tsconfig-resolver'
@@ -236,18 +236,19 @@ function ifFileContentContainsCallerFuncNames(
     }),
     filter(exists => !! exists),
     catchError(() => of(false)),
+    defaultIfEmpty(false),
   )
 
-  const notExists$ = of(false)
-  const ret$ = concat(scan$, notExists$).pipe(
-    take(1),
-    // tap((exists) => {
-    //   // eslint-disable-next-line no-console
-    //   console.info(exists)
-    // }),
-  )
+  // const notExists$ = of(false)
+  // const ret$ = concat(scan$, notExists$).pipe(
+  //   take(1),
+  //   // tap((exists) => {
+  //   //   // eslint-disable-next-line no-console
+  //   //   console.info(exists)
+  //   // }),
+  // )
 
-  return ret$
+  return scan$
 }
 
 function hasContainsCallerFuncNames(
