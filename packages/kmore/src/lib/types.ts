@@ -19,6 +19,7 @@ export { CaseType }
 
 export type KnexConfig = Knex.Config
 export type KmoreTransaction = Knex.Transaction & {
+  dbId: string,
   kmoreTrxId: symbol,
   /**
    * Auto transction action (rollback|commit|none) on error (Rejection or Exception),

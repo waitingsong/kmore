@@ -163,6 +163,7 @@ export class Kmore<D = any, Context = any> {
 
   /**
    * Start a transaction.
+   * @param id - For generation of kmoreTrxId
    */
   async transaction(
     id?: PropertyKey,
@@ -174,6 +175,12 @@ export class Kmore<D = any, Context = any> {
       : id ? Symbol(id) : Symbol(`trx-${Date.now()}`)
 
     const tmp = await this.dbh.transaction(void 0, config)
+
+    Object.defineProperty(tmp, 'dbId', {
+      ...defaultPropDescriptor,
+      enumerable: false,
+      value: this.dbId,
+    })
 
     Object.defineProperty(tmp, 'kmoreTrxId', {
       ...defaultPropDescriptor,
