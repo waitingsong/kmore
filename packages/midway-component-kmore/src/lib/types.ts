@@ -60,4 +60,11 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
   sampleThrottleMs?: number
 }
 
+export enum KmoreAttrNames {
+  TrxBegin = 'trx.begin',
+  TrxCommit = 'trx.commit',
+  TrxEndWith = 'trx.end',
+  TrxRollback = 'trx.rollback',
+  TrxTransacting = 'trx.transacting',
+}
 

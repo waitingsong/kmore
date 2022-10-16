@@ -13,9 +13,10 @@ import {
   genISO8601String,
   humanMemoryUsage,
 } from '@waiting/shared-core'
-import { KmoreEvent } from 'kmore'
+import { KmoreEvent, KmoreTransaction, KmoreTransactionConfig } from 'kmore'
 
-import { DbConfig, QuerySpanInfo } from './types'
+import { DbSourceManager } from './db-source-manager'
+import { DbConfig, KmoreAttrNames, QuerySpanInfo } from './types'
 
 
 export interface TraceEventOptions {
@@ -50,7 +51,6 @@ export function traceStartEvent(
   if (dbConfig.traceEvent) {
     const input: Attributes = {
       event: 'query-builder-start',
-      dbId: ev.dbId,
       time: genISO8601String(),
     }
     traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
@@ -67,8 +67,8 @@ export function TraceQueryEvent(
 
   const { config: knexConfig, sampleThrottleMs } = options.dbConfig
   const {
-    dbId, kUid, queryUid, trxId, data, kmoreQueryId,
-    method,
+    dbId, kUid, queryUid, trxId,
+    data, kmoreQueryId, method,
   } = options.ev
 
   const spanInfo = queryUidSpanMap.get(kmoreQueryId)
@@ -79,9 +79,7 @@ export function TraceQueryEvent(
 
   const input: Attributes = {
     event: AttrNames.QueryStart,
-    dbId,
     kUid,
-    queryUid,
     time: genISO8601String(),
   }
   traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
@@ -121,7 +119,7 @@ export function TraceQueryRespEvent(
   if (! dbConfig.traceEvent) { return }
 
   const { sampleThrottleMs, traceResponse } = options.dbConfig
-  const { kmoreQueryId, dbId, queryUid, respRaw, timestamp: end } = options.ev
+  const { kmoreQueryId, respRaw, timestamp: end } = options.ev
 
   const spanInfo = queryUidSpanMap.get(kmoreQueryId)
   assert(spanInfo, 'spanInfo not found for ' + kmoreQueryId.toString())
@@ -142,10 +140,8 @@ export function TraceQueryRespEvent(
 
   const input: Attributes = {
     event: AttrNames.QueryResponse,
-    dbId,
     time: genISO8601String(),
     [AttrNames.QueryCost]: cost,
-    queryUid,
   }
 
   if (typeof sampleThrottleMs === 'number' && sampleThrottleMs > 0 && cost > sampleThrottleMs) {
@@ -206,6 +202,43 @@ export function TraceQueryExceptionEvent(options: TraceEventOptions): void {
 
   queryUidSpanMap.delete(kmoreQueryId)
 }
+
+export interface TraceFinishTrxOptions {
+  dbId: string
+  kmoreTrxId: KmoreTransaction['kmoreTrxId']
+  trxAction: KmoreTransactionConfig['trxActionOnEnd']
+  traceSvc: TraceService
+  trxSpanMap: DbSourceManager['trxSpanMap']
+}
+export function traceFinishTrx(options: TraceFinishTrxOptions): void {
+  const spanInfo = options.trxSpanMap.get(options.kmoreTrxId)
+  if (! spanInfo) { return }
+
+  const {
+    dbId,
+    kmoreTrxId,
+    trxSpanMap,
+    traceSvc,
+    trxAction: action,
+  } = options
+  if (! action) { return }
+
+  const { span } = spanInfo
+  const time = genISO8601String()
+
+  const eventName = `${KmoreAttrNames.TrxEndWith}.auto.${action}`
+  const event: Attributes = {
+    event: eventName,
+    action,
+    dbId,
+    time,
+    kmoreTrxId: kmoreTrxId.toString(),
+  }
+  traceSvc.addEvent(span, event, { logCpuUsage: false, logMemeoryUsage: false })
+  traceSvc.endSpan(span)
+  trxSpanMap.delete(kmoreTrxId)
+}
+
 
 interface ConnectionConfig {
   host: string

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import assert from 'node:assert'
 // import { isProxy } from 'node:util/types'
 
@@ -10,13 +9,13 @@ import {
   Inject,
   Provide,
 } from '@midwayjs/decorator'
+import { TraceService } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
-import { CaseType, DbQueryBuilder, Kmore } from 'kmore'
+import { Kmore } from 'kmore'
 
+import { knexKeys, ProxyOptions, proxyKnex, proxyRef, refTableKeys } from './db-manager.helper'
 import { DbSourceManager } from './db-source-manager'
 
-
-const refTableKeys = new Set<PropertyKey>(['camelTables', 'refTables', 'snakeTables', 'pascalTables'])
 
 @Provide()
 export class DbManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context> {
@@ -24,6 +23,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
   @Inject() readonly ctx: Ctx
 
   @Inject() dbSourceManager: DbSourceManager<SourceName, D, Ctx>
+  @Inject() traceSvc: TraceService
 
   getName(): string { return 'dbManager' }
 
@@ -51,14 +51,14 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
       return db
     }
 
-    const db2 = this.createRefProxy(db, reqCtx)
+    const db2 = this.createProxy(db, reqCtx)
     if (db2) {
       this.instCacheMap.set(dataSourceName, db2)
     }
     return db2
   }
 
-  protected createRefProxy(db: Kmore, reqCtx: Ctx): Kmore<any, Ctx> {
+  protected createProxy(db: Kmore, reqCtx: Ctx): Kmore<any, Ctx> {
     assert(reqCtx)
 
     if (! db.ctxTrxIdMap.has(reqCtx)) {
@@ -66,40 +66,30 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const ret = new Proxy(db, {
-      get: (target: Kmore, propKey: keyof Kmore) => refTableKeys.has(propKey)
-        ? createRefProxy(target[propKey] as Dbb, reqCtx)
-        : target[propKey],
+      get: (target: Kmore, propKey: keyof Kmore) => {
+        const opts: ProxyOptions = {
+          targetProperty: target[propKey],
+          reqCtx,
+          propKey,
+          // @ts-expect-error
+          dbSourceManager: this.dbSourceManager,
+          traceSvc: this.traceSvc,
+          func: target[propKey] as () => unknown,
+        }
+
+        if (refTableKeys.has(propKey)) {
+          return proxyRef(opts)
+        }
+
+        if (this.traceSvc.isStarted && knexKeys.has(propKey)) {
+          return proxyKnex(opts)
+        }
+
+        return target[propKey]
+      },
     })
     return ret
   }
 
 }
 
-type Dbb = DbQueryBuilder<Context, object, string, CaseType>
-
-function createRefProxy(
-  refObj: Dbb,
-  reqCtx: unknown,
-): Dbb {
-
-  const ret = new Proxy(refObj, {
-    get: (target: Dbb, propKey: PropertyKey) => {
-      // @ts-ignore
-      if (typeof target[propKey] === 'function') {
-        // if (isProxy(target[propKey])) {
-        //   throw new TypeError(`${key}:${refTableName} is already a proxy`)
-        // }
-        const fn = (ctx?: unknown) => {
-          const args: unknown[] = ctx ? [ctx] : [reqCtx]
-          // @ts-ignore
-          return target[propKey](...args)
-        }
-        return fn
-      }
-
-      throw new TypeError(`${propKey.toString()} is not a function`)
-    },
-  })
-
-  return ret
-}

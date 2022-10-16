@@ -14,10 +14,10 @@ import {
 import { ILogger } from '@midwayjs/logger'
 import {
   OtelConfigKey,
-  Context as TraceContext,
   setSpan,
   Span,
   SpanKind,
+  TraceContext,
   TraceService,
 } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
@@ -54,7 +54,9 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   @Inject() baseDir: string
 
   // kmoreQueryId => QuerySpanInfo
-  public queryUidSpanMap = new Map<symbol, QuerySpanInfo>()
+  readonly queryUidSpanMap = new Map<symbol, QuerySpanInfo>()
+  // kmoreTrxId => QuerySpanInfo
+  readonly trxSpanMap = new Map<symbol, QuerySpanInfo>()
 
   declare dataSource: Map<SourceName, Kmore<D, Ctx>>
 
@@ -229,7 +231,9 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
     switch (event.type) {
       case 'start': {
-        const { span } = this.startSpan(traceSvc)
+        const trxQuerySpanInfo = this.getTrxSpanInfoByQueryId(event.dbId as SourceName, event.kmoreQueryId)
+        void trxQuerySpanInfo
+        const { span } = this.createSpan(traceSvc, { traceContext: trxQuerySpanInfo?.traceContext })
         const opts2: TraceStartEventOptions = {
           ...opts,
           span,
@@ -255,21 +259,44 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     }
   }
 
-  protected startSpan(traceService: TraceService): { span: Span, traceContext: TraceContext } {
-    const tmpCtx = traceService.getActiveContext()
-    const name = 'KmoreComponent'
+  createSpan(traceService: TraceService, options?: CreateSpanOptions): CreateSpanRetType {
+    const tmpCtx = options?.traceContext ?? traceService.getActiveContext()
+    const name = options?.name ?? 'KmoreComponent'
     const span = traceService.startSpan(
       name,
       { kind: SpanKind.INTERNAL },
       tmpCtx,
     )
-    const traceContext = setSpan(tmpCtx, span)
     const ret = {
       span,
-      traceContext,
+      traceContext: setSpan(tmpCtx, span),
     }
     return ret
   }
+
+  getTrxSpanInfoByQueryId(sourceName: SourceName, queryId: symbol): QuerySpanInfo | undefined {
+    if (! this.trxSpanMap.size) { return }
+    const dataSource = this.getDataSource(sourceName)
+    assert(dataSource, `getTrxSpanInfoByQueryId() dataSource not found: ${sourceName}`)
+
+    const trx = dataSource.getTrxByKmoreQueryId(queryId)
+    if (! trx) { return }
+    const querySpanInfo = this.trxSpanMap.get(trx.kmoreTrxId)
+    return querySpanInfo
+  }
+
+}
+
+export interface CreateSpanOptions {
+  /**
+   * @default 'KmoreComponent'
+   */
+  name?: string
+  traceContext?: TraceContext | undefined
+}
+export interface CreateSpanRetType {
+  span: Span
+  traceContext: TraceContext
 }
 
 

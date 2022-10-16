@@ -1,6 +1,10 @@
+import { TraceService } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
 
 import { DbSourceManager } from '../lib/db-source-manager'
+
+import { traceFinishTrx, TraceFinishTrxOptions } from '~/lib/tracer-helper'
+
 
 
 /**
@@ -25,6 +29,20 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
 
       // eslint-disable-next-line no-await-in-loop
       await kmore.finishTransaction(trx)
+
+      // eslint-disable-next-line no-await-in-loop
+      const traceSvc = await container.getAsync(TraceService)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (traceSvc) {
+        const opts: TraceFinishTrxOptions = {
+          dbId: name,
+          kmoreTrxId,
+          trxAction: trxActionOnEnd,
+          traceSvc,
+          trxSpanMap: dbSourceManager.trxSpanMap,
+        }
+        traceFinishTrx(opts)
+      }
     }
 
     kmore.ctxTrxIdMap.delete(ctx)

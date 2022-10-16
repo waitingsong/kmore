@@ -16,7 +16,6 @@ describe(filename, () => {
     const { httpRequest } = testConfig
 
     const uid = 1
-    const urlGet = `${pathGet}${uid}`
     const urlUpdate = `${pathUpdate}${uid}`
 
     await httpRequest
