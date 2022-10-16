@@ -479,6 +479,7 @@ export class Kmore<D = any, Context = any> {
     })
     void Object.defineProperty(refTable, 'transacting', {
       ...defaultPropDescriptor,
+      writable: true,
       value: ts,
     })
 

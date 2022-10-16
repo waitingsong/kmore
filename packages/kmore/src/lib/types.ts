@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import type { Span } from '@mwcp/otel'
+import type { TraceContext, Span } from '@mwcp/otel'
 import {
   CaseConvertTable,
   CaseType,
@@ -240,6 +240,7 @@ export interface OnQueryErrorErr {
 export interface QuerySpanInfo {
   span: Span
   timestamp: number
+  traceContext?: TraceContext
 }
 
 export interface EventCallbackOptions<Ctx = unknown, R = unknown> {
