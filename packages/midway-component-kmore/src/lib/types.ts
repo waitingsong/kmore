@@ -61,6 +61,8 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
 }
 
 export enum KmoreAttrNames {
+  QueryBuilderStart = 'query.builder.start',
+
   TrxBegin = 'trx.begin',
   TrxBeginStart = 'trx.begin.start',
   TrxBeginEnd = 'trx.begin.end',

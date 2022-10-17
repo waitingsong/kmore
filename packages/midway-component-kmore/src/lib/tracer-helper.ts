@@ -50,7 +50,7 @@ export function traceStartEvent(
 
   if (dbConfig.traceEvent) {
     const input: Attributes = {
-      event: 'query-builder-start',
+      event: KmoreAttrNames.QueryBuilderStart,
       time: genISO8601String(),
     }
     traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
