@@ -472,7 +472,7 @@ export class Kmore<D = any, Context = any> {
           const st = this.trxIdQueryMap.get(kmoreTrxId)
           assert(
             st,
-            'Transaction invalid, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
+            'Transaction already completed, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
               + kmoreTrxId.toString(),
           )
           st.add(qid)
