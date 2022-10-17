@@ -293,9 +293,9 @@ export class Kmore<D = any, Context = any> {
       },
     })
     Object.defineProperty(trx, 'commit', {
+      configurable: false,
       enumerable: true,
       writable: true,
-      configurable: false,
       value: commit,
     })
 
@@ -308,9 +308,9 @@ export class Kmore<D = any, Context = any> {
       },
     })
     Object.defineProperty(trx, 'rollback', {
+      configurable: false,
       enumerable: true,
       writable: true,
-      configurable: false,
       value: rollback,
     })
 
