@@ -27,10 +27,9 @@ describe(filename, () => {
     const ctime0 = (resp0.body as UserDTO[])[0]?.ctime
     assert(ctime0)
 
-    await sleep(1000)
-
     const resp1 = await httpRequest
       .get(urlUpdate)
+      .expect(204)
 
     const resp2 = await httpRequest
       .get(urlGet)

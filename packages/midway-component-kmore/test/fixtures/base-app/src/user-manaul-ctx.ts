@@ -11,7 +11,7 @@ import type { Context } from '@mwcp/share'
 
 import {
   ConfigKey,
-  DbSourceManager,
+  DbManager,
   MiddlewareConfig,
 } from '~/index'
 import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model'
@@ -23,7 +23,7 @@ export class User2Controller {
   @_Config(ConfigKey.middlewareConfig) protected readonly mwConfig: MiddlewareConfig
 
   @Inject() readonly ctx: Context
-  @Inject() dbManager: DbSourceManager<'master', Db>
+  @Inject() dbManager: DbManager<'master', Db>
 
   @Get('/:id')
   async user(@Param('id') uid: number): Promise<UserDTO[]> {

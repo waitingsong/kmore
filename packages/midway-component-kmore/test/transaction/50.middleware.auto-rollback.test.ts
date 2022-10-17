@@ -20,6 +20,7 @@ describe(filename, () => {
 
     await httpRequest
       .get(urlUpdate)
+      .expect(204)
   })
 
   it('Should work mixed', async () => {

@@ -62,9 +62,18 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
 
 export enum KmoreAttrNames {
   TrxBegin = 'trx.begin',
+  TrxBeginStart = 'trx.begin.start',
+  TrxBeginEnd = 'trx.begin.end',
+
   TrxCommit = 'trx.commit',
-  TrxEndWith = 'trx.end',
+  TrxCommitStart = 'trx.commit.start',
+  TrxCommitEnd = 'trx.commit.end',
+
   TrxRollback = 'trx.rollback',
+  TrxRollbackStart = 'trx.rollback.start',
+  TrxRollbackEnd = 'trx.rollback.end',
+
   TrxTransacting = 'trx.transacting',
+  TrxEndWith = 'trx.end',
 }
 

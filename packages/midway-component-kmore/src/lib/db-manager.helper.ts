@@ -19,6 +19,7 @@ import {
 } from 'kmore'
 
 import { DbSourceManager } from './db-source-manager'
+import { traceCommitRollbackTrx, TraceCommitRollbackTrxOptions } from './tracer-helper'
 import { KmoreAttrNames } from './types'
 
 
@@ -101,15 +102,31 @@ function knexTransaction(options: ProxyOptionsKnexTransaction): Kmore['transacti
         timestamp: Date.now(),
       }
 
-      const trx = await Reflect.apply(target, thisBinding, args) as KmoreTransaction
-      assert(trx.kmoreTrxId, 'trx.kmoreTrxId is empty when calling db.transaction()')
       const event: Attributes = {
-        event: KmoreAttrNames.TrxBegin,
+        event: KmoreAttrNames.TrxBeginStart,
         time: genISO8601String(),
       }
       traceSvc.addEvent(span, event)
+      const trx = await Reflect.apply(target, thisBinding, args) as KmoreTransaction
+      assert(trx.kmoreTrxId, 'trx.kmoreTrxId is empty when calling db.transaction()')
+
+      const event2: Attributes = {
+        event: KmoreAttrNames.TrxBeginEnd,
+        time: genISO8601String(),
+      }
+      traceSvc.addEvent(span, event2)
 
       dbSourceManager.trxSpanMap.set(trx.kmoreTrxId, querySpanInfo)
+
+      const trxOpts: TrxCommitRollbackOptions = {
+        dbSourceManager,
+        op: 'commit',
+        targetProperty: trx,
+        traceSvc,
+      }
+      trxCommitRollback(trxOpts)
+      trxOpts.op = 'rollback'
+      trxCommitRollback(trxOpts)
 
       new Promise<void>((done) => {
         const name = `Kmore ${trx.dbId} transaction`
@@ -202,4 +219,63 @@ function transacting(key: string, options: ProxyBuilderOptions): KmoreQueryBuild
   })
 
   return targetProperty
+}
+
+interface TrxCommitRollbackOptions {
+  dbSourceManager: DbSourceManager
+  op: 'commit' | 'rollback'
+  targetProperty: KmoreTransaction
+  traceSvc: TraceService
+}
+function trxCommitRollback(options: TrxCommitRollbackOptions): KmoreTransaction {
+  const { op, dbSourceManager, traceSvc, targetProperty: trx } = options
+
+  assert(['commit', 'rollback'].includes(op), `unknown op: ${op}`)
+  assert(typeof trx[op] === 'function', `trx.${op} is not a function`)
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (! traceSvc?.isStarted) {
+    return trx
+  }
+
+  const backName = `__${op}__`
+  // @ts-ignore
+  if (typeof trx[backName] === 'function') {
+    console.warn(`trx.${backName} is already a function, skip`)
+    return trx
+  }
+
+  void Object.defineProperty(trx, backName, {
+    writable: true,
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    value: trx[op],
+  })
+  // @ts-ignore
+  assert(typeof trx[backName] === 'function', `trx.${backName} is not a function`)
+
+  const fn = async (data?: unknown) => {
+    const opts: TraceCommitRollbackTrxOptions = {
+      dbId: trx.dbId,
+      kmoreTrxId: trx.kmoreTrxId,
+      stage: 'start',
+      traceSvc,
+      trxAction: op,
+      trxSpanMap: dbSourceManager.trxSpanMap,
+    }
+    traceCommitRollbackTrx(opts)
+
+    // @ts-ignore
+    const builder = await trx[backName](data)
+
+    opts.stage = 'end'
+    traceCommitRollbackTrx(opts)
+    return builder
+  }
+  void Object.defineProperty(trx, op, {
+    enumerable: true,
+    writable: false,
+    value: fn,
+  })
+
+  return trx
 }

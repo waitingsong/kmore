@@ -13,6 +13,7 @@ import {
 } from '@midwayjs/decorator'
 import { ILogger } from '@midwayjs/logger'
 import {
+  Attributes,
   OtelConfigKey,
   setSpan,
   Span,
@@ -231,9 +232,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
     switch (event.type) {
       case 'start': {
+        const { kmoreQueryId } = event
         const trxQuerySpanInfo = this.getTrxSpanInfoByQueryId(event.dbId as SourceName, event.kmoreQueryId)
-        void trxQuerySpanInfo
-        const { span } = this.createSpan(traceSvc, { traceContext: trxQuerySpanInfo?.traceContext })
+        const { span } = this.createSpan(traceSvc, {
+          traceContext: trxQuerySpanInfo?.traceContext,
+          attributes: { kmoreQueryId: kmoreQueryId.toString() },
+        })
         const opts2: TraceStartEventOptions = {
           ...opts,
           span,
@@ -262,9 +266,13 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   createSpan(traceService: TraceService, options?: CreateSpanOptions): CreateSpanRetType {
     const tmpCtx = options?.traceContext ?? traceService.getActiveContext()
     const name = options?.name ?? 'KmoreComponent'
+    const opts = {
+      kind: SpanKind.INTERNAL,
+      attributes: options?.attributes ?? {},
+    }
     const span = traceService.startSpan(
       name,
-      { kind: SpanKind.INTERNAL },
+      opts,
       tmpCtx,
     )
     const ret = {
@@ -293,6 +301,7 @@ export interface CreateSpanOptions {
    */
   name?: string
   traceContext?: TraceContext | undefined
+  attributes?: Attributes
 }
 export interface CreateSpanRetType {
   span: Span

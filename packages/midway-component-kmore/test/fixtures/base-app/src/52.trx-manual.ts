@@ -14,19 +14,18 @@ import {
   DbManager,
   Kmore,
 } from '~/index'
-import type { Db, UserDTO } from '@/test.model'
+import type { Db } from '@/test.model'
 import { KmoreTransaction } from 'kmore'
 
 
-@Controller('/middle_trx_auto_action')
-export class UserController {
+@Controller('/trx_manual')
+export class TrxController {
 
   @Inject() readonly ctx: Context
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
   ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -35,27 +34,40 @@ export class UserController {
 
     this.db = db
     this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
   }
 
   @Get('/commit/:id')
-  async userAll(@Param('id') uid: number): Promise<UserDTO[]> {
-    const trx = await this.db.transaction(void 0, { trxActionOnEnd: 'commit' })
+  async userAll(@Param('id') uid: number): Promise<'OK'> {
+    const trx = await this.db.transaction()
     assert(trx)
-
     await this.update(uid, trx)
 
-    throw new Error('trigger an error for trx auto commit by middleware test')
+    const currCtime2 = await this.ref_tb_user()
+      .transacting(trx)
+      .select('ctime')
+      .where({uid})
+      .then(rows => rows[0]?.ctime)
+    assert(currCtime2)
+
+    await trx.commit()
+    return 'OK'
   }
 
   @Get('/rollback/:id')
-  async user(@Param('id') uid: number): Promise<void> {
+  async user(@Param('id') uid: number): Promise<'OK'> {
     const trx = await this.db.transaction()
     assert(trx)
-
     await this.update(uid, trx)
 
-    throw new Error('trx auto rollback by middleware debug')
+    const currCtime2 = await this.ref_tb_user()
+      .transacting(trx)
+      .select('ctime')
+      .where({uid})
+      .then(rows => rows[0]?.ctime)
+    assert(currCtime2)
+
+    await trx.rollback()
+    return 'OK'
   }
 
 

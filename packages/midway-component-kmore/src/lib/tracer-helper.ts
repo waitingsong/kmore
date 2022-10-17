@@ -205,6 +205,7 @@ export function TraceQueryExceptionEvent(options: TraceEventOptions): void {
 
 export interface TraceFinishTrxOptions {
   dbId: string
+  isAuto: boolean
   kmoreTrxId: KmoreTransaction['kmoreTrxId']
   trxAction: KmoreTransactionConfig['trxActionOnEnd']
   traceSvc: TraceService
@@ -217,16 +218,24 @@ export function traceFinishTrx(options: TraceFinishTrxOptions): void {
   const {
     dbId,
     kmoreTrxId,
+    isAuto,
     trxSpanMap,
     traceSvc,
     trxAction: action,
   } = options
-  if (! action) { return }
+
+  assert(action, 'action is required')
 
   const { span } = spanInfo
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (! span.isRecording) {
+    trxSpanMap.delete(kmoreTrxId)
+    return
+  }
   const time = genISO8601String()
 
-  const eventName = `${KmoreAttrNames.TrxEndWith}.auto.${action}`
+  const op = isAuto ? 'auto' : 'manual'
+  const eventName = `${KmoreAttrNames.TrxEndWith}.${op}.${action}`
   const event: Attributes = {
     event: eventName,
     action,
@@ -237,6 +246,50 @@ export function traceFinishTrx(options: TraceFinishTrxOptions): void {
   traceSvc.addEvent(span, event, { logCpuUsage: false, logMemeoryUsage: false })
   traceSvc.endSpan(span)
   trxSpanMap.delete(kmoreTrxId)
+}
+
+export interface TraceCommitRollbackTrxOptions {
+  stage: 'start' | 'end'
+  dbId: string
+  kmoreTrxId: KmoreTransaction['kmoreTrxId']
+  traceSvc: TraceService
+  trxAction: KmoreTransactionConfig['trxActionOnEnd']
+  trxSpanMap: DbSourceManager['trxSpanMap']
+}
+export function traceCommitRollbackTrx(options: TraceCommitRollbackTrxOptions): void {
+  const spanInfo = options.trxSpanMap.get(options.kmoreTrxId)
+  if (! spanInfo) { return }
+
+  const {
+    dbId,
+    kmoreTrxId,
+    stage,
+    traceSvc,
+    trxAction: action,
+    trxSpanMap,
+  } = options
+
+  assert(action, 'action is required')
+
+  const { span } = spanInfo
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (! span.isRecording) { return }
+  const time = genISO8601String()
+
+  const eventName = action === 'commit'
+    ? `${KmoreAttrNames.TrxCommit}.${stage}`
+    : `${KmoreAttrNames.TrxRollback}.${stage}`
+  const event: Attributes = {
+    event: eventName,
+    dbId,
+    time,
+    kmoreTrxId: kmoreTrxId.toString(),
+  }
+  traceSvc.addEvent(span, event)
+  if (stage === 'end') {
+    traceSvc.endSpan(span)
+    trxSpanMap.delete(kmoreTrxId)
+  }
 }
 
 

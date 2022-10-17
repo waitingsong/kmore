@@ -6,7 +6,6 @@ import { DbSourceManager } from '../lib/db-source-manager'
 import { traceFinishTrx, TraceFinishTrxOptions } from '~/lib/tracer-helper'
 
 
-
 /**
  * Rollback or Commit all uncommitted transaction
  */
@@ -36,6 +35,7 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
       if (traceSvc) {
         const opts: TraceFinishTrxOptions = {
           dbId: name,
+          isAuto: true,
           kmoreTrxId,
           trxAction: trxActionOnEnd,
           traceSvc,
