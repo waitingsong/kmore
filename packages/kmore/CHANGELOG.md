@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [39.0.0](https://github.com/waitingsong/kmore/compare/v38.0.2...v39.0.0) (2022-10-17)
+
+
+### Features
+
+* **kmore:** change scope of Object.defineProperty ([b8173d3](https://github.com/waitingsong/kmore/commit/b8173d3239893f4271ca497dac427a74c5dca888))
+
+
+
+
+
 # [38.0.0](https://github.com/waitingsong/kmore/compare/v37.0.2...v38.0.0) (2022-10-17)
 
 

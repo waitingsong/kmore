@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [39.0.0](/compare/v38.0.2...v39.0.0) (2022-10-17)
+
+
+### Features
+
+* **kmore:** change scope of Object.defineProperty b8173d3
+* **mwcp:** trace manual commit, rollback 473b4f2
+
+
+
+
+
 ## [38.0.2](/compare/v38.0.1...v38.0.2) (2022-10-17)
 
 **Note:** Version bump only for package kmore
