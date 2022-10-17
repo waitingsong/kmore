@@ -44,7 +44,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const db = this.dbSourceManager.getDataSource<Db>(dataSourceName)
-    assert(db)
+    assert(db, `db is empty: ${dataSourceName}`)
 
     const reqCtx: Ctx | undefined = this.ctx
     if (! reqCtx) {
