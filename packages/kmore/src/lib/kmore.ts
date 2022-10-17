@@ -470,7 +470,11 @@ export class Kmore<D = any, Context = any> {
         const qid = ctx2.kmoreQueryId as symbol | undefined
         if (qid && kmoreTrxId) {
           const st = this.trxIdQueryMap.get(kmoreTrxId)
-          assert(st, 'trxIdQueryMap not contains kmoreTrxId:' + kmoreTrxId.toString())
+          assert(
+            st,
+            'Transaction invalid, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
+              + kmoreTrxId.toString(),
+          )
           st.add(qid)
           this.setCtxTrxIdMap(ctx, kmoreTrxId)
         }
