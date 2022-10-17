@@ -172,7 +172,7 @@ function transacting(key: string, options: ProxyBuilderOptions): KmoreQueryBuild
     apply: (target: KmoreQueryBuilder['transacting'], thisBinding, args: [KmoreTransaction]) => {
       const [trx] = args
       assert(trx, 'trx is empty when calling builder.transacting()')
-      assert(trx.kmoreTrxId, 'trx.kmoreTrxId is empty when calling db.transaction()')
+      assert(trx.kmoreTrxId, 'trx.kmoreTrxId is empty when calling builder.transacting(). May calling db.dbh.transaction(), use db.transaction() instead')
 
       const builder = Reflect.apply(target, thisBinding, args) as KmoreQueryBuilder
 
