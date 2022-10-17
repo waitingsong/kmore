@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [38.0.0](https://github.com/waitingsong/kmore/compare/v37.0.2...v38.0.0) (2022-10-17)
+
+
+### Features
+
+* **mwcp:** trace capture transaction ([902c460](https://github.com/waitingsong/kmore/commit/902c4605852dffb042e9d45d259358e0500d6111))
+
+
+
+
+
 ## [37.0.2](https://github.com/waitingsong/kmore/compare/v37.0.1...v37.0.2) (2022-10-14)
 
 **Note:** Version bump only for package @mwcp/kmore

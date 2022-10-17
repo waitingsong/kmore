@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [38.0.0](https://github.com/waitingsong/kmore/compare/v37.0.2...v38.0.0) (2022-10-17)
+
+
+### Features
+
+* **kmore:** add property KmoreTransaction['dbId'] ([dbd9d60](https://github.com/waitingsong/kmore/commit/dbd9d607ac1b2e9c5d56700e6e009ca3ebb79050))
+* **kmore:** update ([4852df2](https://github.com/waitingsong/kmore/commit/4852df20b9400a6031518667c1e7006cb6d8bb1d))
+
+
+
+
+
 ## [37.0.2](https://github.com/waitingsong/kmore/compare/v37.0.1...v37.0.2) (2022-10-14)
 
 **Note:** Version bump only for package kmore
