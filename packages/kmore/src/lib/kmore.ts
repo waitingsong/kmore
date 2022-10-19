@@ -533,8 +533,9 @@ export class Kmore<D = any, Context = any> {
       assert(qid, 'kmoreQueryId should be set on QueryBuilder')
 
       try {
-        const resp = await Reflect.apply(target.then, target, []) // query response or response data
-        if (cb && typeof cb === 'function') {
+        // query response or response data
+        const resp = await Reflect.apply(target.then, target, []) as unknown
+        if (typeof cb === 'function') {
           const data = await cb(resp) // await for try/catch
           return data
         }

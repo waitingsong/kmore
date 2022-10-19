@@ -126,7 +126,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(false, 'Should throw error')
     })
 
-    it('rollback by db server always although auto commit', async () => {
+    it('rollback by db server always, although auto commit. NOTE then()', async () => {
       const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
       assert(trx)
 
@@ -152,6 +152,7 @@ describe(fileShortPath(import.meta.url), () => {
           .forUpdate()
           .select('*')
           .where('fake', 1)
+          .then() // MUST have .then() to trigger error
       }
       catch (ex) {
         assert(trx.isCompleted() === true)
