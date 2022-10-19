@@ -541,11 +541,7 @@ export class Kmore<D = any, Context = any> {
         return resp
       }
       catch (ex) {
-        const trx = this.getTrxByKmoreQueryId(qid)
-        if (trx) {
-          const trx2 = this.getTrxByKmoreQueryId(qid)
-          await this.finishTransaction(trx2)
-        }
+        await this.finishTransaction(this.getTrxByKmoreQueryId(qid))
         throw ex
       }
     }
