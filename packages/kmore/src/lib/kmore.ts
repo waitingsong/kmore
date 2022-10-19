@@ -227,7 +227,10 @@ export class Kmore<D = any, Context = any> {
     kmoreTrxId: symbol,
   ): void {
 
-    if (! ctx || ! kmoreTrxId || typeof ctx !== 'object') { return }
+    assert(ctx, 'ctx must be defined')
+    assert(kmoreTrxId, 'kmoreTrxId must be defined')
+    assert(typeof ctx === 'object')
+
     if (! this.ctxTrxIdMap.get(ctx)) {
       this.ctxTrxIdMap.set(ctx, new Set())
     }
@@ -336,7 +339,8 @@ export class Kmore<D = any, Context = any> {
         ...defaultPropDescriptor,
         writable: true,
         value: (ctx?: Context) => {
-          return this.extRefTableFnProperty(refName, caseConvert, ctx)
+          const ctx2 = ctx ?? { id: this.dbId, instanceId: this.instanceId }
+          return this.extRefTableFnProperty(refName, caseConvert, ctx2)
         }, // must dynamically!!
       })
 
@@ -353,7 +357,7 @@ export class Kmore<D = any, Context = any> {
   protected extRefTableFnProperty(
     refName: string,
     caseConvert: CaseType,
-    ctx: Context | undefined,
+    ctx: Context | object,
   ): KmoreQueryBuilder {
 
     assert(caseConvert, 'caseConvert must be defined')
@@ -393,7 +397,7 @@ export class Kmore<D = any, Context = any> {
   protected extRefTableFnPropertyCallback(
     refTable: KmoreQueryBuilder,
     caseConvert: CaseType,
-    ctx: Context | undefined,
+    ctx: Context | object,
     kmoreQueryId: symbol,
   ): KmoreQueryBuilder {
 
@@ -453,7 +457,7 @@ export class Kmore<D = any, Context = any> {
 
   protected extRefTableFnPropertyTransacting(
     refTable: KmoreQueryBuilder,
-    ctx: Context | undefined,
+    ctx: Context | object,
   ): KmoreQueryBuilder {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
