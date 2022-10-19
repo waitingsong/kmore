@@ -360,7 +360,7 @@ export class Kmore<D = any, Context = any> {
 
     const kmoreQueryId = Symbol(`${this.dbId}-${Date.now()}`)
 
-    let refTable = this.dbh(refName)
+    let refTable = this.dbh(refName) as KmoreQueryBuilder
 
     refTable = this.extRefTableFnPropertyCallback(
       refTable as KmoreQueryBuilder,
@@ -368,9 +368,9 @@ export class Kmore<D = any, Context = any> {
       ctx,
       kmoreQueryId,
     )
-    refTable = this.extRefTableFnPropertyTransacting(refTable as KmoreQueryBuilder, ctx)
-    refTable = this.extRefTableFnPropertyThen(refTable as KmoreQueryBuilder)
-    refTable = extRefTableFnPropertySmartJoin(refTable as KmoreQueryBuilder)
+    refTable = this.extRefTableFnPropertyTransacting(refTable, ctx)
+    refTable = extRefTableFnPropertySmartJoin(refTable)
+    refTable = this.createQueryBuilderGetProxy(refTable)
 
     void Object.defineProperty(refTable, 'kmoreQueryId', {
       ...defaultPropDescriptor,
@@ -387,7 +387,7 @@ export class Kmore<D = any, Context = any> {
       value: [],
     })
 
-    return refTable as KmoreQueryBuilder
+    return refTable
   }
 
   protected extRefTableFnPropertyCallback(
@@ -490,39 +490,6 @@ export class Kmore<D = any, Context = any> {
     return refTable as KmoreQueryBuilder
   }
 
-  protected extRefTableFnPropertyThen(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const pm = new Proxy(refTable.then, {
-      apply: (
-        target: () => Promise<unknown>,
-        ctx2: KmoreQueryBuilder,
-        args: unknown[],
-      ) => {
-
-        const qid = ctx2.kmoreQueryId
-        const trx = this.getTrxByKmoreQueryId(qid)
-        if (! trx) {
-          return Reflect.apply(target, ctx2, args)
-        }
-
-        return (Reflect.apply(target, ctx2, args) as Promise<unknown>)
-          .catch(async (err: unknown) => {
-            const trx2 = this.getTrxByKmoreQueryId(qid)
-            await this.finishTransaction(trx2)
-            return Promise.reject(err)
-          })
-
-      },
-    })
-    void Object.defineProperty(refTable, 'then', {
-      ...defaultPropDescriptor,
-      configurable: true,
-      value: pm,
-    })
-
-    return refTable as KmoreQueryBuilder
-  }
-
   protected postProcessResponse(
     result: any,
     queryContext?: QueryContext,
@@ -534,6 +501,54 @@ export class Kmore<D = any, Context = any> {
     }
     return ret
   }
+
+  protected createQueryBuilderGetProxy(builder: KmoreQueryBuilder): KmoreQueryBuilder {
+    const ret = new Proxy(builder, {
+      get: (target: KmoreQueryBuilder, propKey: string | symbol, receiver: unknown) => {
+        switch (propKey) {
+          case 'then':
+            return this.proxyGetThen({ target, propKey, receiver })
+          default:
+            return Reflect.get(target, propKey, receiver)
+        }
+      },
+    })
+
+    return ret
+  }
+
+  /**
+   * Create a proxy for `then` method on QueryBuilder, not on QueryResponse
+   */
+  protected proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
+    const { target, propKey } = options
+    assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
+
+    const fn = async (cb?: PromiseLike<unknown> | unknown) => {
+      const qid = target.kmoreQueryId
+      assert(qid, 'kmoreQueryId should be set on QueryBuilder')
+
+      try {
+        const resp = await Reflect.apply(target.then, target, []) // query response or response data
+        if (cb && typeof cb === 'function') {
+          const data = await cb(resp) // await for try/catch
+          return data
+        }
+        return resp
+      }
+      catch (ex) {
+        const trx = this.getTrxByKmoreQueryId(qid)
+        if (trx) {
+          const trx2 = this.getTrxByKmoreQueryId(qid)
+          await this.finishTransaction(trx2)
+        }
+        throw ex
+      }
+    }
+
+    return fn
+  }
+
 
 }
 
@@ -580,3 +595,9 @@ export function createDbh(knexConfig: KnexConfig): Knex {
  */
 type TrxIdQueryMap = Map<symbol, Set<symbol>>
 
+
+interface ProxyGetOptions {
+  target: KmoreQueryBuilder
+  propKey: string | symbol
+  receiver: unknown
+}
