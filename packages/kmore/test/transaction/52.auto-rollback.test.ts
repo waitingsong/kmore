@@ -28,9 +28,9 @@ describe(fileShortPath(import.meta.url), () => {
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
+        .first('ctime')
         .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
+        .then(row => row?.ctime)
       assert(currCtime)
 
       await sleep(1000)
@@ -58,9 +58,9 @@ describe(fileShortPath(import.meta.url), () => {
         assert(trx.isCompleted() === true)
 
         const currCtime2 = await km.camelTables.ref_tb_user()
-          .select('*')
+          .first('ctime')
           .where('uid', 1)
-          .then(rows => rows[0]?.ctime)
+          .then(row => row?.ctime)
         assert(currCtime2)
 
         const str1 = currCtime.toLocaleString()
@@ -78,9 +78,9 @@ describe(fileShortPath(import.meta.url), () => {
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
+        .first('ctime')
         .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
+        .then(row => row?.ctime)
       assert(currCtime)
 
       const newTime = new Date()
@@ -111,9 +111,9 @@ describe(fileShortPath(import.meta.url), () => {
         assert(trx.isCompleted() === true)
 
         const currCtime2 = await km.camelTables.ref_tb_user()
-          .select('*')
+          .first('ctime')
           .where('uid', 1)
-          .then(rows => rows[0]?.ctime)
+          .then(row => row?.ctime)
         assert(currCtime2)
 
         const str1 = currCtime.toLocaleString()
@@ -131,9 +131,9 @@ describe(fileShortPath(import.meta.url), () => {
       assert(trx)
 
       const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
+        .first('ctime')
         .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
+        .then(row => row?.ctime)
       assert(currCtime)
 
       const newTime = new Date()
@@ -207,9 +207,8 @@ describe(fileShortPath(import.meta.url), () => {
         try {
           // reuse tbUser will fail
           await tbUser
-            .select('*')
+            .first()
             .where('uid', 1)
-            .then(rows => rows[0])
         }
         catch {
           assert(true)
