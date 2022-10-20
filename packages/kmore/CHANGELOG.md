@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [40.0.0](https://github.com/waitingsong/kmore/compare/v39.0.2...v40.0.0) (2022-10-20)
+
+
+### Features
+
+* **kmore:** process query error and re-throw ([22d4cf9](https://github.com/waitingsong/kmore/commit/22d4cf95ad2611de2c791ff52ab1d18cf9eeec1a))
+* **kmore:** validate parameters within setCtxTrxIdMap() and generate default value of ctx ([01e5e74](https://github.com/waitingsong/kmore/commit/01e5e74ac9a38e215c7606933eac244758e60254))
+
+
+
+
+
 ## [39.0.2](https://github.com/waitingsong/kmore/compare/v39.0.1...v39.0.2) (2022-10-18)
 
 **Note:** Version bump only for package kmore

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [40.0.0](/compare/v39.0.2...v40.0.0) (2022-10-20)
+
+
+### Features
+
+* **kmore:** process query error and re-throw 22d4cf9
+* **kmore:** validate parameters within setCtxTrxIdMap() and generate default value of ctx 01e5e74
+
+
+
+
+
 ## [39.0.2](/compare/v39.0.1...v39.0.2) (2022-10-18)
 
 
