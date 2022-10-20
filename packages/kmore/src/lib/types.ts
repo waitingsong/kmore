@@ -266,6 +266,15 @@ export interface EventCallbackList<Ctx = any> {
   query: (event: KmoreEvent, ctx?: Ctx) => void
   queryResponse: (event: KmoreEvent, ctx?: Ctx) => void
   queryError: (event: KmoreEvent, ctx?: Ctx) => Promise<void>
+  /**
+   * Fire a single "end" event on the builder when
+   * all queries have successfully completed.
+   */
+  // end: () => void
+  /**
+   * Triggered after event 'queryError'
+   */
+  // error: (ex: Error) => void
 }
 // export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
 

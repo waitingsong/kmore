@@ -374,6 +374,7 @@ export class Kmore<D = any, Context = any> {
     )
     refTable = this.extRefTableFnPropertyTransacting(refTable, ctx)
     refTable = extRefTableFnPropertySmartJoin(refTable)
+    // refTable = this.extRefTableFnPropertyThen(refTable)
     refTable = this.createQueryBuilderGetProxy(refTable)
 
     void Object.defineProperty(refTable, 'kmoreQueryId', {
@@ -451,6 +452,12 @@ export class Kmore<D = any, Context = any> {
           })
         },
       )
+      // .on('error', (ex: unknown) => {
+      //   void ex
+      // })
+      // .on('end', () => {
+      //   void 0
+      // })
 
     return refTable2 as KmoreQueryBuilder
   }
@@ -461,7 +468,7 @@ export class Kmore<D = any, Context = any> {
   ): KmoreQueryBuilder {
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const ts = new Proxy(refTable.transacting, {
+    const applyTransactingProxy = new Proxy(refTable.transacting, {
       apply: (
         target: KmoreQueryBuilder['transacting'],
         ctx2: KmoreQueryBuilder,
@@ -488,10 +495,10 @@ export class Kmore<D = any, Context = any> {
     void Object.defineProperty(refTable, 'transacting', {
       ...defaultPropDescriptor,
       writable: true,
-      value: ts,
+      value: applyTransactingProxy,
     })
 
-    return refTable as KmoreQueryBuilder
+    return refTable
   }
 
   protected postProcessResponse(
@@ -517,6 +524,10 @@ export class Kmore<D = any, Context = any> {
         }
       },
     })
+    void Object.defineProperty(ret, 'createQueryBuilderGetProxyKey', {
+      ...defaultPropDescriptor,
+      value: Date.now(),
+    })
 
     return ret
   }
@@ -528,28 +539,84 @@ export class Kmore<D = any, Context = any> {
     const { target, propKey } = options
     assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
-    const fn = async (cb?: PromiseLike<unknown> | unknown) => {
-      const qid = target.kmoreQueryId
-      assert(qid, 'kmoreQueryId should be set on QueryBuilder')
+    const getThenProxy = async (
+      done?: PromiseLike<unknown> | unknown,
+      reject?: PromiseLike<unknown> | undefined,
+    ) => {
 
       try {
         // query response or response data
         const resp = await Reflect.apply(target.then, target, []) as unknown
-        if (typeof cb === 'function') {
-          const data = await cb(resp) // await for try/catch
+        if (typeof done === 'function') {
+          const data = await done(resp) // await for try/catch
           return data
         }
         return resp
       }
       catch (ex) {
-        await this.finishTransaction(this.getTrxByKmoreQueryId(qid))
-        throw ex
+        const qid = target.kmoreQueryId
+        assert(qid, 'kmoreQueryId should be set on QueryBuilder')
+        const trx = this.getTrxByKmoreQueryId(qid)
+        if (trx) {
+          await this.finishTransaction(trx)
+        }
+
+        if (typeof reject === 'function') {
+          // @ts-ignore
+          return reject(ex)
+        }
+
+        if (ex instanceof Error) {
+          throw ex
+        }
+        else if (typeof ex === 'string') {
+          throw new Error(ex)
+        }
+        else {
+          throw new Error('Kmore Error when executing then()', {
+            cause: ex,
+          })
+        }
       }
     }
 
-    return fn
+    return getThenProxy.bind(target) as KmoreQueryBuilder['then']
   }
 
+  /*
+  protected extRefTableFnPropertyThen(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const applyThenProxy = new Proxy(refTable.then, {
+      apply: async (
+        target: () => Promise<unknown>,
+        ctx2: KmoreQueryBuilder,
+        args: unknown[],
+      ) => {
+
+        try {
+          // query response or response data
+          // undefined means calling builder without tailing then(),
+          const resp = await Reflect.apply(target, ctx2, args) as unknown
+          return resp
+        }
+        catch (ex) {
+          const qid = ctx2.kmoreQueryId
+          const trx = this.getTrxByKmoreQueryId(qid)
+          if (trx) {
+            await this.finishTransaction(trx)
+          }
+          throw ex
+        }
+      },
+    })
+    void Object.defineProperty(refTable, 'then', {
+      ...defaultPropDescriptor,
+      configurable: true,
+      value: applyThenProxy,
+    })
+
+    return refTable
+  } */
 
 }
 

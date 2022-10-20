@@ -126,7 +126,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(false, 'Should throw error')
     })
 
-    it('rollback by db server always, although auto commit. NOTE then()', async () => {
+    it('rollback by db server always, although auto commit. with tailing then()', async () => {
       const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
       assert(trx)
 
@@ -152,7 +152,7 @@ describe(fileShortPath(import.meta.url), () => {
           .forUpdate()
           .select('*')
           .where('fake', 1)
-          .then() // MUST have .then() to trigger error
+          .then()
       }
       catch (ex) {
         assert(trx.isCompleted() === true)
@@ -160,6 +160,9 @@ describe(fileShortPath(import.meta.url), () => {
         const currCtime2 = await km.camelTables.ref_tb_user()
           .select('*')
           .where('uid', 1)
+          .then((rows) => {
+            return rows
+          })
           .then(rows => rows[0]?.ctime)
         assert(currCtime2)
 
@@ -172,6 +175,58 @@ describe(fileShortPath(import.meta.url), () => {
       }
       assert(false, 'Should throw error')
     })
+
+    it('rollback by db server always, although auto commit. without tailing then()', async () => {
+      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
+      assert(trx)
+
+      const currCtime = await km.camelTables.ref_tb_user()
+        .first('ctime')
+        .where('uid', 1)
+        .then(row => row?.ctime)
+      assert(currCtime)
+
+      const newTime = new Date()
+
+      try {
+        await km.camelTables.ref_tb_user()
+          .transacting(trx)
+          .forUpdate()
+          .update({
+            ctime: newTime,
+          })
+          .where('uid', 1)
+
+        await km.camelTables.ref_tb_user()
+          .transacting(trx)
+          .forUpdate()
+          .select('*')
+          .where('fake', 1)
+
+      }
+      catch (ex) {
+        assert(trx.isCompleted() === true)
+
+        const currCtime2 = await km.camelTables.ref_tb_user()
+          .select('*')
+          .where('uid', 1)
+          .then((rows) => {
+            return rows
+          })
+          .then(rows => rows[0]?.ctime)
+        assert(currCtime2)
+
+        const str1 = currCtime.toLocaleString()
+        const str2 = currCtime2.toLocaleString()
+        assert(str1 === str2)
+        const str3 = newTime?.toLocaleString()
+        assert(str2 !== str3)
+        return
+      }
+
+      assert(false, 'Should error be catched, but not')
+    })
+
 
     it('reuse tbUser', async () => {
       const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
