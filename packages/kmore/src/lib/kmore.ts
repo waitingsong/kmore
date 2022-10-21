@@ -367,6 +367,7 @@ export class Kmore<D = any, Context = any> {
 
     let refTable = this.dbh(refName) as KmoreQueryBuilder
 
+    refTable = this.createQueryBuilderGetProxy(refTable)
     refTable = this.extRefTableFnPropertyCallback(
       refTable as KmoreQueryBuilder,
       caseConvert,
@@ -376,7 +377,6 @@ export class Kmore<D = any, Context = any> {
     refTable = this.extRefTableFnPropertyTransacting(refTable, ctx)
     refTable = extRefTableFnPropertySmartJoin(refTable)
     // refTable = this.extRefTableFnPropertyThen(refTable)
-    refTable = this.createQueryBuilderGetProxy(refTable)
 
     void Object.defineProperty(refTable, 'kmoreQueryId', {
       ...defaultPropDescriptor,
@@ -557,8 +557,6 @@ export class Kmore<D = any, Context = any> {
             value: true,
           })
         }
-
-        void queryMergeItemSet
 
         if (typeof done === 'function') {
           const data = await done(resp) // await for try/catch
