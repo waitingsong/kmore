@@ -69,11 +69,6 @@ export abstract class KmoreBase<D = any, Context = any> {
     queryContext?: QueryContext,
   ): unknown
 
-  /**
-   * Create a proxy for `then` method on QueryBuilder, not on QueryResponse
-   */
-  protected abstract proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then']
-
 }
 
 export interface ProxyGetOptions {
