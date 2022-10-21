@@ -128,7 +128,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(false, 'Should throw error')
     })
 
-    it('rollback by db server always although auto commit', async () => {
+    it('rollback by db server always, ignore auto commit', async () => {
       const trx = await km.transaction(void 0, { trxActionOnEnd: 'commit' })
       assert(trx)
 
