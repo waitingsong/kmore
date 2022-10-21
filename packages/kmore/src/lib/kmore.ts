@@ -18,6 +18,7 @@ import {
   CallCbOptionsBase,
 } from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
+import { extRefTableFnPropertyTransacting } from './proxy.apply.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
@@ -377,7 +378,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
       ctx,
       kmoreQueryId,
     )
-    refTable = this.extRefTableFnPropertyTransacting(refTable, ctx)
+    refTable = extRefTableFnPropertyTransacting(this, refTable, ctx)
     refTable = extRefTableFnPropertySmartJoin(refTable)
     // refTable = this.extRefTableFnPropertyThen(refTable)
 
@@ -464,45 +465,6 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
       // })
 
     return refTable2 as KmoreQueryBuilder
-  }
-
-  protected extRefTableFnPropertyTransacting(
-    refTable: KmoreQueryBuilder,
-    ctx: Context | object,
-  ): KmoreQueryBuilder {
-
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const applyTransactingProxy = new Proxy(refTable.transacting, {
-      apply: (
-        target: KmoreQueryBuilder['transacting'],
-        ctx2: KmoreQueryBuilder,
-        args: [KmoreTransaction],
-      ) => {
-
-        const [trx] = args
-        assert(trx?.isTransaction === true, 'trx must be a transaction')
-        const { kmoreTrxId } = trx
-        const qid = ctx2.kmoreQueryId as symbol | undefined
-        if (qid && kmoreTrxId) {
-          const st = this.trxIdQueryMap.get(kmoreTrxId)
-          assert(
-            st,
-            'Transaction already completed, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
-              + kmoreTrxId.toString(),
-          )
-          st.add(qid)
-          this.setCtxTrxIdMap(ctx, kmoreTrxId)
-        }
-        return Reflect.apply(target, ctx2, args)
-      },
-    })
-    void Object.defineProperty(refTable, 'transacting', {
-      ...defaultPropDescriptor,
-      writable: true,
-      value: applyTransactingProxy,
-    })
-
-    return refTable
   }
 
   protected postProcessResponse(

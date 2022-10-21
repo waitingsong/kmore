@@ -6,10 +6,16 @@ import {
   KmoreTransaction,
   KmoreTransactionConfig,
   QueryContext,
+  TrxIdQueryMap,
 } from './types.js'
 
 
 export abstract class KmoreBase<D = any, Context = any> {
+
+  /**
+   * kmoreTrxId => Set<kmoreQueryId>
+   */
+  readonly abstract trxIdQueryMap: TrxIdQueryMap
 
   /**
    * Start a transaction.
@@ -57,11 +63,6 @@ export abstract class KmoreBase<D = any, Context = any> {
     caseConvert: CaseType,
     ctx: Context | object,
     kmoreQueryId: symbol,
-  ): KmoreQueryBuilder
-
-  protected abstract extRefTableFnPropertyTransacting(
-    refTable: KmoreQueryBuilder,
-    ctx: Context | object,
   ): KmoreQueryBuilder
 
   protected abstract postProcessResponse(
