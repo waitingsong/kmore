@@ -20,6 +20,7 @@ import {
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
+import { createTrxProxy } from './proxy.trx.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
   CaseType,
@@ -205,7 +206,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
       return tmp as KmoreTransaction
     }
 
-    const trx = this.createTrxProxy(tmp as KmoreTransaction)
+    const trx = createTrxProxy(this, tmp as KmoreTransaction)
     this.trxMap.set(kmoreTrxId, trx)
     this.trxIdQueryMap.set(kmoreTrxId, new Set())
 
@@ -290,40 +291,6 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
   }
 
   /* -------------- protected -------------- */
-
-  protected createTrxProxy(trx: KmoreTransaction): KmoreTransaction {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const commit = new Proxy(trx.commit, {
-      apply: (target: typeof trx.commit, ctx: KmoreTransaction, args: unknown[]) => {
-        this.trxIdQueryMap.delete(ctx.kmoreTrxId)
-        this.trxMap.delete(ctx.kmoreTrxId)
-        return Reflect.apply(target, ctx, args)
-      },
-    })
-    Object.defineProperty(trx, 'commit', {
-      configurable: false,
-      enumerable: true,
-      writable: true,
-      value: commit,
-    })
-
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const rollback = new Proxy(trx.rollback, {
-      apply: (target: typeof trx.rollback, ctx: KmoreTransaction, args: unknown[]) => {
-        this.trxIdQueryMap.delete(ctx.kmoreTrxId)
-        this.trxMap.delete(ctx.kmoreTrxId)
-        return Reflect.apply(target, ctx, args)
-      },
-    })
-    Object.defineProperty(trx, 'rollback', {
-      configurable: false,
-      enumerable: true,
-      writable: true,
-      value: rollback,
-    })
-
-    return trx
-  }
 
 
   protected createRefTables<P extends string>(

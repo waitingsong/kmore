@@ -18,6 +18,12 @@ export abstract class KmoreBase<D = any, Context = any> {
   readonly abstract trxIdQueryMap: TrxIdQueryMap
 
   /**
+   * kmoreTrxId => trx
+   */
+  readonly abstract trxMap: Map<symbol, KmoreTransaction>
+
+
+  /**
    * Start a transaction.
    * @param id - For generation of kmoreTrxId
    */
@@ -44,8 +50,6 @@ export abstract class KmoreBase<D = any, Context = any> {
   abstract destroy(): Promise<void>
 
   /* -------------- protected -------------- */
-
-  protected abstract createTrxProxy(trx: KmoreTransaction): KmoreTransaction
 
   protected abstract createRefTables<P extends string>(
     prefix: P,
