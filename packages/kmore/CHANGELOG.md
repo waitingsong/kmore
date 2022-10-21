@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [40.1.0](https://github.com/waitingsong/kmore/compare/v40.0.0...v40.1.0) (2022-10-21)
+
+
+### Bug Fixes
+
+* **kmore:** calling order of createQueryBuilderGetProxy() first ([1a2f709](https://github.com/waitingsong/kmore/commit/1a2f709ce885309f5187a0778fb82097ad0c1c97))
+
+
+### Features
+
+* **kmore:** add property KmoreProxyKey.getThenProxyProcessed on response data ([10cd1d0](https://github.com/waitingsong/kmore/commit/10cd1d031993eca776cc947a6eaba0ef755b776e))
+* **kmore:** define KmoreProxyKey ([9ffd394](https://github.com/waitingsong/kmore/commit/9ffd394383c87e1b77b71424bb3d243dc13d6882))
+
+
+
+
+
 # [40.0.0](https://github.com/waitingsong/kmore/compare/v39.0.2...v40.0.0) (2022-10-20)
 
 

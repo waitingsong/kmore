@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [40.1.0](/compare/v40.0.0...v40.1.0) (2022-10-21)
+
+
+### Bug Fixes
+
+* **kmore:** calling order of createQueryBuilderGetProxy() first 1a2f709
+
+
+### Features
+
+* **kmore:** add property KmoreProxyKey.getThenProxyProcessed on response data 10cd1d0
+* **kmore:** define KmoreProxyKey 9ffd394
+
+
+
+
+
 # [40.0.0](/compare/v39.0.2...v40.0.0) (2022-10-20)
 
 
