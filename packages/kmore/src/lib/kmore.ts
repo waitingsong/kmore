@@ -9,27 +9,23 @@ import type { Knex } from 'knex'
 import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
-import { builderBindEvents } from './builder.event.js'
 import { defaultPropDescriptor, initialConfig } from './config.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
-import { builderApplyTransactingProxy } from './proxy.apply.js'
-import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { trxApplyCommandProxy } from './proxy.trx.js'
-import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
   CaseType,
   DbQueryBuilder,
   EventCallbacks,
-  KmoreQueryBuilder,
   KmoreTransaction,
   KmoreTransactionConfig,
   KnexConfig,
   QueryContext,
   TrxIdQueryMap,
 } from './types.js'
+import { createRefTables } from './util.js'
 
 
-export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
+export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
 
   /**
    * Original table names, without case convertion.
@@ -147,10 +143,10 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
       this.trxActionOnEnd = options.trxActionOnEnd
     }
 
-    this.refTables = this.createRefTables<'ref_'>('ref_', CaseType.none)
-    this.camelTables = this.createRefTables<'ref_'>('ref_', CaseType.camel)
+    this.refTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.none)
+    this.camelTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.camel)
     // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
-    this.snakeTables = this.createRefTables<'ref_'>('ref_', CaseType.snake)
+    this.snakeTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.snake)
 
 
     this.dbh = options.dbh ? options.dbh : createDbh(this.config)
@@ -280,82 +276,6 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
   }
 
   /* -------------- protected -------------- */
-
-
-  protected createRefTables<P extends string>(
-    prefix: P,
-    caseConvert: CaseType,
-  ): DbQueryBuilder<Context, D, P, CaseType> {
-
-    const rb = {} as DbQueryBuilder<Context, D, P, CaseType>
-
-    if (! this.dict || ! this.dict.tables || ! Object.keys(this.dict.tables).length) {
-      console.info('Kmore:createRefTables() this.dict or this.dict.tables empty')
-      return rb
-    }
-
-    Object.keys(this.dict.tables).forEach((refName) => {
-      const name = `${prefix}${refName}`
-      Object.defineProperty(rb, name, {
-        ...defaultPropDescriptor,
-        writable: true,
-        value: (ctx?: Context) => {
-          const ctx2 = ctx ?? { id: this.dbId, instanceId: this.instanceId }
-          return this.extRefTableFnProperty(refName, caseConvert, ctx2)
-        }, // must dynamically!!
-      })
-
-      Object.defineProperty(rb[name as keyof typeof rb], 'name', {
-        ...defaultPropDescriptor,
-        value: name,
-      })
-
-    })
-
-    return rb
-  }
-
-  protected extRefTableFnProperty(
-    refName: string,
-    caseConvert: CaseType,
-    ctx: Context | object,
-  ): KmoreQueryBuilder {
-
-    assert(caseConvert, 'caseConvert must be defined')
-
-    const kmoreQueryId = Symbol(`${this.dbId}-${Date.now()}`)
-
-    let refTable = this.dbh(refName) as KmoreQueryBuilder
-
-    refTable = createQueryBuilderGetProxy(this, refTable)
-    refTable = builderBindEvents(
-      this,
-      refTable as KmoreQueryBuilder,
-      caseConvert,
-      ctx,
-      kmoreQueryId,
-    )
-    refTable = builderApplyTransactingProxy(this, refTable, ctx)
-    refTable = extRefTableFnPropertySmartJoin(refTable)
-    // refTable = this.extRefTableFnPropertyThen(refTable)
-
-    void Object.defineProperty(refTable, 'kmoreQueryId', {
-      ...defaultPropDescriptor,
-      value: kmoreQueryId,
-    })
-
-    void Object.defineProperty(refTable, 'dbDict', {
-      ...defaultPropDescriptor,
-      value: this.dict,
-    })
-
-    void Object.defineProperty(refTable, '_tablesJoin', {
-      ...defaultPropDescriptor,
-      value: [],
-    })
-
-    return refTable
-  }
 
 
   protected postProcessResponse(

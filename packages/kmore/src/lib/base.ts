@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CaseType,
-  DbQueryBuilder,
   EventCallbacks,
   KmoreQueryBuilder,
   KmoreTransaction,
@@ -11,10 +10,12 @@ import {
 } from './types.js'
 
 
-export abstract class KmoreBase<D = any, Context = any> {
+export abstract class KmoreBase<Context = any> {
 
+  readonly abstract dict: unknown
   readonly abstract dbId: string
   readonly abstract eventCallbacks: EventCallbacks<Context> | undefined
+  readonly abstract instanceId: string | symbol
   readonly abstract wrapIdentifierCaseConvert: CaseType
 
   /**
@@ -27,6 +28,7 @@ export abstract class KmoreBase<D = any, Context = any> {
    */
   readonly abstract trxMap: Map<symbol, KmoreTransaction>
 
+  readonly abstract DbModel: any
 
   /**
    * Start a transaction.
@@ -55,17 +57,6 @@ export abstract class KmoreBase<D = any, Context = any> {
   abstract destroy(): Promise<void>
 
   /* -------------- protected -------------- */
-
-  protected abstract createRefTables<P extends string>(
-    prefix: P,
-    caseConvert: CaseType,
-  ): DbQueryBuilder<Context, D, P, CaseType>
-
-  protected abstract extRefTableFnProperty(
-    refName: string,
-    caseConvert: CaseType,
-    ctx: Context | object,
-  ): KmoreQueryBuilder
 
   protected abstract postProcessResponse(
     result: any,

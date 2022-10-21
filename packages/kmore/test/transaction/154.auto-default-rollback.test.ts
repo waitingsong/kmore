@@ -83,6 +83,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then(rows => rows[0]?.ctime)
       assert(currCtime)
 
+      await sleep(100)
       const newTime = new Date()
 
       try {
@@ -136,6 +137,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then(rows => rows[0]?.ctime)
       assert(currCtime)
 
+      await sleep(100)
       const newTime = new Date()
 
       try {
@@ -182,6 +184,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then(rows => rows[0]?.ctime)
       assert(currCtime)
 
+      await sleep(100)
       const newTime = new Date()
 
       const tbUser = km.camelTables.ref_tb_user()
