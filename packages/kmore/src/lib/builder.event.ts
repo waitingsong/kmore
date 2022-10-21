@@ -20,7 +20,7 @@ import {
 } from './types.js'
 
 
-export function extRefTableFnPropertyCallback(
+export function builderBindEvents(
   kmore: KmoreBase,
   refTable: KmoreQueryBuilder,
   caseConvert: CaseType,

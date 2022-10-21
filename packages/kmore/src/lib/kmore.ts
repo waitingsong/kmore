@@ -9,7 +9,7 @@ import type { Knex } from 'knex'
 import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
-import { extRefTableFnPropertyCallback } from './builder.event.js'
+import { builderBindEvents } from './builder.event.js'
 import { defaultPropDescriptor, initialConfig } from './config.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
@@ -328,7 +328,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
     let refTable = this.dbh(refName) as KmoreQueryBuilder
 
     refTable = createQueryBuilderGetProxy(this, refTable)
-    refTable = extRefTableFnPropertyCallback(
+    refTable = builderBindEvents(
       this,
       refTable as KmoreQueryBuilder,
       caseConvert,
