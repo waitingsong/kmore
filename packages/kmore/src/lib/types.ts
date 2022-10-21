@@ -285,3 +285,8 @@ export enum KmoreProxyKey {
 
 }
 
+
+/**
+ * kmoreTrxId => Set<kmoreQueryId>
+ */
+export type TrxIdQueryMap = Map<symbol, Set<symbol>>

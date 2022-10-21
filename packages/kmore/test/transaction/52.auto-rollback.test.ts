@@ -33,7 +33,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then(row => row?.ctime)
       assert(currCtime)
 
-      await sleep(1000)
+      await sleep(1001)
       const newTime = new Date()
 
       try {

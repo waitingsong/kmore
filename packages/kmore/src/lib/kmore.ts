@@ -7,8 +7,8 @@ import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
-// import * as _knex from 'knex'
 
+import { KmoreBase, ProxyGetOptions } from './base.js'
 import { defaultPropDescriptor, initialConfig } from './config.js'
 import {
   callCbOnQuery,
@@ -18,6 +18,7 @@ import {
   CallCbOptionsBase,
 } from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
+import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
   CaseType,
@@ -34,10 +35,11 @@ import {
   KmoreProxyKey,
   QueryContext,
   QueryResponse,
+  TrxIdQueryMap,
 } from './types.js'
 
 
-export class Kmore<D = any, Context = any> {
+export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
 
   /**
    * Original table names, without case convertion.
@@ -105,6 +107,8 @@ export class Kmore<D = any, Context = any> {
 
 
   constructor(options: KmoreFactoryOpts<D, Context>) {
+    super()
+
     const dbId = options.dbId ? options.dbId : Date.now().toString()
     this.dbId = dbId
     this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
@@ -285,7 +289,7 @@ export class Kmore<D = any, Context = any> {
     return this.dbh.destroy()
   }
 
-
+  /* -------------- protected -------------- */
 
   protected createTrxProxy(trx: KmoreTransaction): KmoreTransaction {
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -367,7 +371,7 @@ export class Kmore<D = any, Context = any> {
 
     let refTable = this.dbh(refName) as KmoreQueryBuilder
 
-    refTable = this.createQueryBuilderGetProxy(refTable)
+    refTable = createQueryBuilderGetProxy(this, refTable)
     refTable = this.extRefTableFnPropertyCallback(
       refTable as KmoreQueryBuilder,
       caseConvert,
@@ -514,25 +518,6 @@ export class Kmore<D = any, Context = any> {
     return ret
   }
 
-  protected createQueryBuilderGetProxy(builder: KmoreQueryBuilder): KmoreQueryBuilder {
-    const ret = new Proxy(builder, {
-      get: (target: KmoreQueryBuilder, propKey: string | symbol, receiver: unknown) => {
-        switch (propKey) {
-          case 'then':
-            return this.proxyGetThen({ target, propKey, receiver })
-          default:
-            return Reflect.get(target, propKey, receiver)
-        }
-      },
-    })
-    void Object.defineProperty(ret, 'createQueryBuilderGetProxyKey', {
-      ...defaultPropDescriptor,
-      value: Date.now(),
-    })
-
-    return ret
-  }
-
   /**
    * Create a proxy for `then` method on QueryBuilder, not on QueryResponse
    */
@@ -672,15 +657,3 @@ export function createDbh(knexConfig: KnexConfig): Knex {
   return inst
 }
 
-
-/**
- * kmoreTrxId => Set<kmoreQueryId>
- */
-type TrxIdQueryMap = Map<symbol, Set<symbol>>
-
-
-interface ProxyGetOptions {
-  target: KmoreQueryBuilder
-  propKey: string | symbol
-  receiver: unknown
-}
