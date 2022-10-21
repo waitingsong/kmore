@@ -31,6 +31,7 @@ import {
   OnQueryErrorData,
   OnQueryErrorErr,
   OnQueryRespRaw,
+  KmoreProxyKey,
   QueryContext,
   QueryResponse,
 } from './types.js'
@@ -547,6 +548,18 @@ export class Kmore<D = any, Context = any> {
       try {
         // query response or response data
         const resp = await Reflect.apply(target.then, target, []) as unknown
+
+        if (typeof resp === 'object' && resp !== null) {
+          Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
+            ...defaultPropDescriptor,
+            enumerable: false,
+            writable: true,
+            value: true,
+          })
+        }
+
+        void queryMergeItemSet
+
         if (typeof done === 'function') {
           const data = await done(resp) // await for try/catch
           return data
@@ -579,6 +592,10 @@ export class Kmore<D = any, Context = any> {
         }
       }
     }
+    void Object.defineProperty(getThenProxy, KmoreProxyKey.getThenProxy, {
+      ...defaultPropDescriptor,
+      value: Date.now(),
+    })
 
     return getThenProxy.bind(target) as KmoreQueryBuilder['then']
   }
