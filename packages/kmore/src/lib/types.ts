@@ -279,3 +279,9 @@ export interface EventCallbackList<Ctx = any> {
 // export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
 
 
+export enum KmoreProxyKey {
+  getThenProxy = 'KmoreGetThenProxy',
+  getThenProxyProcessed = 'KmoreGetThenProxyProcessed',
+
+}
+
