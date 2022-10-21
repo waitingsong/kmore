@@ -2,6 +2,7 @@
 import {
   CaseType,
   DbQueryBuilder,
+  EventCallbacks,
   KmoreQueryBuilder,
   KmoreTransaction,
   KmoreTransactionConfig,
@@ -11,6 +12,10 @@ import {
 
 
 export abstract class KmoreBase<D = any, Context = any> {
+
+  readonly abstract dbId: string
+  readonly abstract eventCallbacks: EventCallbacks<Context> | undefined
+  readonly abstract wrapIdentifierCaseConvert: CaseType
 
   /**
    * kmoreTrxId => Set<kmoreQueryId>
@@ -60,13 +65,6 @@ export abstract class KmoreBase<D = any, Context = any> {
     refName: string,
     caseConvert: CaseType,
     ctx: Context | object,
-  ): KmoreQueryBuilder
-
-  protected abstract extRefTableFnPropertyCallback(
-    refTable: KmoreQueryBuilder,
-    caseConvert: CaseType,
-    ctx: Context | object,
-    kmoreQueryId: symbol,
   ): KmoreQueryBuilder
 
   protected abstract postProcessResponse(

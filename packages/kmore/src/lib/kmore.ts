@@ -9,14 +9,8 @@ import type { Knex } from 'knex'
 import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
+import { extRefTableFnPropertyCallback } from './builder.event.js'
 import { defaultPropDescriptor, initialConfig } from './config.js'
-import {
-  callCbOnQuery,
-  callCbOnQueryError,
-  callCbOnQueryResp,
-  callCbOnStart,
-  CallCbOptionsBase,
-} from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
@@ -30,12 +24,7 @@ import {
   KmoreTransaction,
   KmoreTransactionConfig,
   KnexConfig,
-  OnQueryData,
-  OnQueryErrorData,
-  OnQueryErrorErr,
-  OnQueryRespRaw,
   QueryContext,
-  QueryResponse,
   TrxIdQueryMap,
 } from './types.js'
 
@@ -339,7 +328,8 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
     let refTable = this.dbh(refName) as KmoreQueryBuilder
 
     refTable = createQueryBuilderGetProxy(this, refTable)
-    refTable = this.extRefTableFnPropertyCallback(
+    refTable = extRefTableFnPropertyCallback(
+      this,
       refTable as KmoreQueryBuilder,
       caseConvert,
       ctx,
@@ -367,72 +357,6 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
     return refTable
   }
 
-  protected extRefTableFnPropertyCallback(
-    refTable: KmoreQueryBuilder,
-    caseConvert: CaseType,
-    ctx: Context | object,
-    kmoreQueryId: symbol,
-  ): KmoreQueryBuilder {
-
-    assert(caseConvert, 'caseConvert must be defined')
-
-    const queryCtxOpts: QueryContext = {
-      wrapIdentifierCaseConvert: this.wrapIdentifierCaseConvert,
-      postProcessResponseCaseConvert: caseConvert,
-      kmoreQueryId,
-    }
-    const opts: CallCbOptionsBase = {
-      ctx,
-      dbId: this.dbId,
-      cbs: this.eventCallbacks,
-      kmoreQueryId,
-    }
-
-    const refTable2 = refTable
-      .queryContext(queryCtxOpts)
-      .on(
-        'start',
-        (builder: KmoreQueryBuilder) => callCbOnStart({
-          ...opts,
-          builder,
-        }),
-      )
-      .on(
-        'query',
-        (data: OnQueryData) => callCbOnQuery({
-          ...opts,
-          data,
-        }),
-      )
-      .on(
-        'query-response',
-        (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp({
-          ...opts,
-          _resp: resp,
-          respRaw,
-        }),
-      )
-      .on(
-        'query-error',
-        async (err: OnQueryErrorErr, data: OnQueryErrorData) => {
-          const trx = this.getTrxByKmoreQueryId(kmoreQueryId)
-          await this.finishTransaction(trx)
-          return callCbOnQueryError({
-            ...opts,
-            err,
-            data,
-          })
-        },
-      )
-      // .on('error', (ex: unknown) => {
-      //   void ex
-      // })
-      // .on('end', () => {
-      //   void 0
-      // })
-
-    return refTable2 as KmoreQueryBuilder
-  }
 
   protected postProcessResponse(
     result: any,
