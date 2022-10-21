@@ -5,7 +5,7 @@ import { defaultPropDescriptor } from './config.js'
 import { KmoreQueryBuilder, KmoreTransaction } from './types.js'
 
 
-export function extRefTableFnPropertyTransacting(
+export function builderApplyTransactingProxy(
   kmore: KmoreBase,
   refTable: KmoreQueryBuilder,
   ctx: unknown,

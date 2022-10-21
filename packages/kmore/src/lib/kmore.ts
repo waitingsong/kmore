@@ -18,7 +18,7 @@ import {
   CallCbOptionsBase,
 } from './event.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
-import { extRefTableFnPropertyTransacting } from './proxy.apply.js'
+import { builderApplyTransactingProxy } from './proxy.apply.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
@@ -378,7 +378,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
       ctx,
       kmoreQueryId,
     )
-    refTable = extRefTableFnPropertyTransacting(this, refTable, ctx)
+    refTable = builderApplyTransactingProxy(this, refTable, ctx)
     refTable = extRefTableFnPropertySmartJoin(refTable)
     // refTable = this.extRefTableFnPropertyThen(refTable)
 
