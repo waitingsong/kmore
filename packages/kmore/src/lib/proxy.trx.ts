@@ -5,7 +5,7 @@ import { defaultPropDescriptor } from './config.js'
 import { KmoreTransaction } from './types.js'
 
 
-export function createTrxProxy(
+export function trxApplyCommandProxy(
   kmore: KmoreBase,
   trx: KmoreTransaction,
 ): KmoreTransaction {

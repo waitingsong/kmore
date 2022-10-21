@@ -20,7 +20,7 @@ import {
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
-import { createTrxProxy } from './proxy.trx.js'
+import { trxApplyCommandProxy } from './proxy.trx.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import {
   CaseType,
@@ -206,7 +206,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<D, Context> {
       return tmp as KmoreTransaction
     }
 
-    const trx = createTrxProxy(this, tmp as KmoreTransaction)
+    const trx = trxApplyCommandProxy(this, tmp as KmoreTransaction)
     this.trxMap.set(kmoreTrxId, trx)
     this.trxIdQueryMap.set(kmoreTrxId, new Set())
 
