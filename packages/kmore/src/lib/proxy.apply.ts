@@ -22,17 +22,19 @@ export function builderApplyTransactingProxy(
       const [trx] = args
       assert(trx?.isTransaction === true, 'trx must be a transaction')
       const { kmoreTrxId } = trx
-      const qid = ctx2.kmoreQueryId as symbol | undefined
-      if (qid && kmoreTrxId) {
-        const st = kmore.trxIdQueryMap.get(kmoreTrxId)
-        assert(
-          st,
-          'Transaction already completed, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
+      assert(kmoreTrxId, 'trx.kmoreTrxId must be provided when .transacting(trx)')
+
+      const qid = ctx2.kmoreQueryId
+      assert(qid, 'trx.kmoreQueryId must be provided when .transacting(trx)')
+
+      const qidSet = kmore.trxIdQueryMap.get(kmoreTrxId)
+      assert(
+        qidSet,
+        'Transaction already completed, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
               + kmoreTrxId.toString(),
-        )
-        st.add(qid)
-        kmore.setCtxTrxIdMap(ctx, kmoreTrxId)
-      }
+      )
+      qidSet.add(qid)
+      kmore.setCtxTrxIdMap(ctx, kmoreTrxId)
       return Reflect.apply(target, ctx2, args)
     },
   })

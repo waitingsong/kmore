@@ -19,7 +19,7 @@ export abstract class KmoreBase<Context = any> {
   readonly abstract wrapIdentifierCaseConvert: CaseType
 
   /**
-   * kmoreTrxId => Set<kmoreQueryId>
+   * kmoreTrxId => Set(kmoreQueryId)
    */
   readonly abstract trxIdQueryMap: TrxIdQueryMap
 
@@ -55,6 +55,11 @@ export abstract class KmoreBase<Context = any> {
   abstract finishTransaction(trx: KmoreTransaction | undefined): Promise<void>
 
   abstract destroy(): Promise<void>
+
+  /**
+   * Save a trx point and return a new trx.
+   */
+  // abstract trxSavepoint(trx: KmoreTransaction): Promise<KmoreTransaction>
 
   /* -------------- protected -------------- */
 
