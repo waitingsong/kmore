@@ -73,62 +73,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(false, 'Should throw error')
     })
 
-    it('with savepoint: catch error from .then()', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnEnd: 'commit' })
-      assert(trx)
-
-      const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
-        .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
-      assert(currCtime)
-
-      await sleep(1001)
-      const newTime = new Date()
-
-      try {
-        await km.camelTables.ref_tb_user()
-          .transacting(trx)
-          .forUpdate()
-          .update({
-            ctime: newTime,
-          })
-          .where('uid', 1)
-
-        await trx.savepoint(async (trx1) => {
-          await trx1.commit()
-        })
-
-        await km.camelTables.ref_tb_user()
-          .transacting(trx)
-          .forUpdate()
-          .select('*')
-          .where('uid', 1)
-          .then(() => {
-            throw new Error('debug test error')
-          })
-      }
-      catch (ex) {
-        assert(trx.isCompleted() === true)
-
-        const currCtime2 = await km.camelTables.ref_tb_user()
-          .select('*')
-          .where('uid', 1)
-          .then(rows => rows[0]?.ctime)
-        assert(currCtime2)
-
-        const str1 = currCtime.toLocaleString()
-        const str2 = currCtime2.toLocaleString()
-        const str3 = newTime.toLocaleString()
-        console.log({ str1, str2, str3 })
-        assert(str1 !== str2)
-        assert(str2 === str3)
-        return
-      }
-      assert(false, 'Should throw error')
-    })
-
-    it('rollback by db server always although auto commit', async () => {
+    it('rollback by db server always, ignore auto commit', async () => {
       const trx = await km.transaction(void 0, { trxActionOnEnd: 'commit' })
       assert(trx)
 
