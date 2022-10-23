@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [45.1.0](/compare/v45.0.0...v45.1.0) (2022-10-23)
+
+
+### Features
+
+* **kmore:** check properties on trx when calling builder.transacting() 17c5c18
+
+
+
+
+
 # [45.0.0](/compare/v44.0.0...v45.0.0) (2022-10-21)
 
 **Note:** Version bump only for package kmore

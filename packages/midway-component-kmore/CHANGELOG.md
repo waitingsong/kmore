@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [45.1.0](https://github.com/waitingsong/kmore/compare/v45.0.0...v45.1.0) (2022-10-23)
+
+**Note:** Version bump only for package @mwcp/kmore
+
+
+
+
+
 # [45.0.0](https://github.com/waitingsong/kmore/compare/v44.0.0...v45.0.0) (2022-10-21)
 
 **Note:** Version bump only for package @mwcp/kmore
