@@ -9,9 +9,9 @@ import type { Knex } from 'knex'
 import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
-import { defaultPropDescriptor, initialConfig } from './config.js'
+import { initialConfig } from './config.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
-import { trxApplyCommandProxy } from './proxy.trx.js'
+import { createTrxProperties, genKmoreTrxId } from './proxy.trx.js'
 import {
   CaseType,
   DbQueryBuilder,
@@ -161,41 +161,19 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     config?: KmoreTransactionConfig,
   ): Promise<KmoreTransaction> {
 
-    const kmoreTrxId = typeof id === 'symbol'
-      ? id
-      : id ? Symbol(id) : Symbol(`trx-${Date.now()}`)
+    const trx = await this.dbh.transaction(void 0, config) as KmoreTransaction
 
-    const tmp = await this.dbh.transaction(void 0, config)
-
-    Object.defineProperty(tmp, 'dbId', {
-      ...defaultPropDescriptor,
-      enumerable: false,
-      value: this.dbId,
-    })
-
-    Object.defineProperty(tmp, 'kmoreTrxId', {
-      ...defaultPropDescriptor,
-      enumerable: false,
-      value: kmoreTrxId,
-    })
-
+    const kmoreTrxId = genKmoreTrxId(id)
     const trxActionOnEnd: KmoreTransactionConfig['trxActionOnEnd'] = config?.trxActionOnEnd
       ?? this.trxActionOnEnd ?? 'rollback'
-    Object.defineProperty(tmp, 'trxActionOnEnd', {
-      ...defaultPropDescriptor,
-      enumerable: false,
-      value: trxActionOnEnd,
+
+    const ret = createTrxProperties({
+      kmore: this,
+      kmoreTrxId,
+      trx,
+      trxActionOnEnd,
     })
-
-    if (trxActionOnEnd === 'none') {
-      return tmp as KmoreTransaction
-    }
-
-    const trx = trxApplyCommandProxy(this, tmp as KmoreTransaction)
-    this.trxMap.set(kmoreTrxId, trx)
-    this.trxIdQueryMap.set(kmoreTrxId, new Set())
-
-    return trx
+    return ret
   }
 
   getTrxByKmoreQueryId(kmoreQueryId: symbol): KmoreTransaction | undefined {
