@@ -17,7 +17,7 @@ export function builderApplyTransactingProxy(
       target: KmoreQueryBuilder['transacting'],
       ctx2: KmoreQueryBuilder,
       args: [KmoreTransaction],
-    ) => {
+    ): KmoreQueryBuilder => {
 
       const [trx] = args
       assert(trx?.isTransaction === true, 'trx must be a transaction')
