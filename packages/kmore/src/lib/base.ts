@@ -56,6 +56,8 @@ export abstract class KmoreBase<Context = any> {
 
   abstract destroy(): Promise<void>
 
+  abstract raw<T = unknown>(...args: unknown[]): Promise<T>
+
   /**
    * Save a trx point and return a new trx.
    */

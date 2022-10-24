@@ -254,6 +254,11 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     return this.dbh.destroy()
   }
 
+  async raw<T = unknown>(...args: unknown[]): Promise<T> {
+    // @ts-expect-error
+    return this.dbh.raw(...args)
+  }
+
   /* -------------- protected -------------- */
 
 
