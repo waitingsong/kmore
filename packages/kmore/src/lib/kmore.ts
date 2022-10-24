@@ -100,10 +100,11 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
     this.eventCallbacks = options.eventCallbacks
 
-    const config = {
+    const config: KnexConfig = {
       ...initialConfig,
       ...options.config,
     }
+    config.pool = { ...initialConfig.pool, ...options.config?.pool }
     this.config = config
 
     // assert(options.dict, 'options.dict must be defined')
