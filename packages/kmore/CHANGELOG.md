@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [45.2.0](https://github.com/waitingsong/kmore/compare/v45.1.0...v45.2.0) (2022-10-24)
+
+
+### Features
+
+* **kmore:** add kmore.raw() ([104c83a](https://github.com/waitingsong/kmore/commit/104c83a1fb98e02d093eb8d453e420b65f9e2ceb))
+
+
+
+
+
 # [45.1.0](https://github.com/waitingsong/kmore/compare/v45.0.0...v45.1.0) (2022-10-23)
 
 

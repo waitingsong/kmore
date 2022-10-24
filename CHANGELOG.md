@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [45.2.0](/compare/v45.1.0...v45.2.0) (2022-10-24)
+
+
+### Features
+
+* **kmore:** add kmore.raw() 104c83a
+
+
+
+
+
 # [45.1.0](/compare/v45.0.0...v45.1.0) (2022-10-23)
 
 
