@@ -1,4 +1,5 @@
-import assert from 'assert'
+import assert from 'node:assert'
+import { hrtime } from 'node:process'
 
 import type { KmoreBase } from './base.js'
 import { defaultPropDescriptor } from './config.js'
@@ -57,6 +58,12 @@ interface CreateTrxPropertiesOptions {
 
 export function createTrxProperties(options: CreateTrxPropertiesOptions): KmoreTransaction {
   const { trx, kmore, kmoreTrxId, trxActionOnEnd } = options
+
+  Object.defineProperty(trx, 'hrtime', {
+    ...defaultPropDescriptor,
+    enumerable: false,
+    value: hrtime.bigint(),
+  })
 
   Object.defineProperty(trx, 'dbId', {
     ...defaultPropDescriptor,
