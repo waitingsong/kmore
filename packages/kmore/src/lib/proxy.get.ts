@@ -74,30 +74,12 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
       return resp
     }
     catch (ex) {
-      const qid = target.kmoreQueryId
-      assert(qid, 'kmoreQueryId should be set on QueryBuilder')
-      const trx = kmore.getTrxByKmoreQueryId(qid)
-      if (trx) { // also processed on event `query-error`
-        await kmore.finishTransaction(trx)
-      }
-
-      if (typeof reject === 'function') {
-        // @ts-ignore
-        return reject(ex)
-      }
-
-      if (ex instanceof Error) {
-        throw ex
-      }
-      else if (typeof ex === 'string') {
-        throw new Error(ex)
-        // return Promise.reject(new Error(ex))
-      }
-      else {
-        throw new Error('Kmore Error when executing then()', {
-          cause: ex,
-        })
-      }
+      processEx({
+        ex,
+        kmore,
+        kmoreQueryId: target.kmoreQueryId,
+        reject,
+      })
     }
   }
   void Object.defineProperty(getThenProxy, KmoreProxyKey.getThenProxy, {
@@ -106,5 +88,42 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
   })
 
   return getThenProxy.bind(target) as KmoreQueryBuilder['then']
+}
+
+
+interface ProcessExOptions {
+  kmore: KmoreBase
+  kmoreQueryId: symbol
+  reject: PromiseLike<unknown> | ((error: Error) => unknown) | undefined
+  ex: unknown
+}
+function processEx(options: ProcessExOptions): never {
+  const { ex, kmore, kmoreQueryId, reject } = options
+
+  const qid = kmoreQueryId
+  assert(qid, 'kmoreQueryId should be set on QueryBuilder')
+
+  const trx = kmore.getTrxByKmoreQueryId(qid)
+  if (trx) { // also processed on event `query-error`
+    void kmore.finishTransaction(trx).catch(console.error)
+  }
+
+  if (typeof reject === 'function') {
+    // @ts-ignore
+    return reject(ex)
+  }
+
+  if (ex instanceof Error) {
+    throw ex
+  }
+  else if (typeof ex === 'string') {
+    throw new Error(ex)
+    // return Promise.reject(new Error(ex))
+  }
+  else {
+    throw new Error('Kmore Error when executing then()', {
+      cause: ex,
+    })
+  }
 }
 
