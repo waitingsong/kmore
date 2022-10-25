@@ -38,7 +38,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should auto rollback work on error', () => {
     it('catch error from .then()', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
       assert(trx)
 
       try {
@@ -71,7 +71,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('rollback by invalid sql query always, although auto commit. with tailing then()', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
       assert(trx)
 
       try {
@@ -103,7 +103,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('rollback by db server always, although auto commit. without tailing then()', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
       assert(trx)
 
       try {
@@ -130,7 +130,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('reuse tbUser', async () => {
-      const trx = await km.transaction(void 0, { trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
       assert(trx)
 
       const tbUser = km.camelTables.ref_tb_user()
