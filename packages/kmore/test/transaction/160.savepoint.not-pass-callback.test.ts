@@ -7,20 +7,12 @@ import { KmoreFactory } from '../../src/index.js'
 import { config } from '../test.config.js'
 import { Db } from '../test.model.js'
 
-import { read, readInvalid, readWithoutThen, update, updateWithoutTrx } from './helper.js'
+import { updateWithoutTrx } from './helper.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
   const dict = genDbDict<Db>()
   const km = KmoreFactory({ config, dict })
-
-  const date0 = new Date().toLocaleDateString()
-  const currCtime = date0
-  const date1 = '3000/1/1'
-  const date2 = '3000/1/2'
-  const newTime0 = new Date()
-  const newTime1 = new Date(date1)
-  const newTime2 = new Date(date2)
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
