@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [46.0.0](https://github.com/waitingsong/kmore/compare/v45.2.0...v46.0.0) (2022-10-25)
+
+**Note:** Version bump only for package kmore-cli
+
+
+
+
+
 # [45.0.0](https://github.com/waitingsong/kmore/compare/v44.0.0...v45.0.0) (2022-10-21)
 
 **Note:** Version bump only for package kmore-cli

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [46.0.0](/compare/v45.2.0...v46.0.0) (2022-10-25)
+
+
+### Features
+
+* **kmore:** breaking change trx.savepoint and Kmore:transaction() d572def
+
+
+
+
+
 # [45.2.0](/compare/v45.1.0...v45.2.0) (2022-10-24)
 
 

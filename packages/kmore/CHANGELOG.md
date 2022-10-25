@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [46.0.0](https://github.com/waitingsong/kmore/compare/v45.2.0...v46.0.0) (2022-10-25)
+
+
+### Features
+
+* **kmore:** breaking change trx.savepoint and Kmore:transaction() ([d572def](https://github.com/waitingsong/kmore/commit/d572defbd8a4dd7f89576030ab5198499722d94e))
+
+
+
+
+
 # [45.2.0](https://github.com/waitingsong/kmore/compare/v45.1.0...v45.2.0) (2022-10-24)
 
 
