@@ -20,19 +20,30 @@ export { CaseType }
 export type KnexConfig = Knex.Config
 export type KmoreTransaction = Knex.Transaction & {
   dbId: string,
+  hrtime: bigint,
   kmoreTrxId: symbol,
   /**
    * Auto transction action (rollback|commit|none) on error (Rejection or Exception),
-   * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
+   *
    * @default rollback
+   * @note Error from ONLY builder or fisrt builder.then() can be catched !
+   * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
   trxActionOnEnd: NonNullable<KmoreTransactionConfig['trxActionOnEnd']>,
+
+  savepoint: (
+    id?: PropertyKey,
+    config?: KmoreTransactionConfig,
+  ) => Promise<KmoreTransaction>,
 }
 export type KmoreTransactionConfig = Knex.TransactionConfig & {
+  kmoreTrxId?: PropertyKey,
   /**
-   * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
-   * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
+   * Auto transction action (rollback|commit|none) on error (Rejection or Exception),
+   *
    * @default rollback
+   * @note Error from ONLY builder or fisrt builder.then() can be catched !
+   * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
   trxActionOnEnd?: 'commit' | 'rollback' | 'none',
 }
@@ -290,3 +301,6 @@ export enum KmoreProxyKey {
  * kmoreTrxId => Set<kmoreQueryId>
  */
 export type TrxIdQueryMap = Map<symbol, Set<symbol>>
+
+export type TrxSavePointCallback = (trx: KmoreTransaction) => Promise<unknown>
+

@@ -22,6 +22,22 @@ describe(fileShortPath(import.meta.url), () => {
       const uid = 1
 
       const ret = await km.refTables.ref_tb_user()
+        .where('uid', uid)
+        .select('*')
+        .then((rows) => {
+          assert(Object.hasOwn(rows, KmoreProxyKey.getThenProxyProcessed), JSON.stringify(rows))
+          return rows
+        })
+
+      assert(ret)
+      assert(ret.length > 0)
+      assert(Object.hasOwn(ret, KmoreProxyKey.getThenProxyProcessed))
+    })
+
+    it('smartJoin', async () => {
+      const uid = 1
+
+      const ret = await km.refTables.ref_tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -29,7 +45,7 @@ describe(fileShortPath(import.meta.url), () => {
         .where('tb_user_ext_uid', uid)
         .select('*')
         .then((rows) => {
-          assert(Object.hasOwn(rows, KmoreProxyKey.getThenProxyProcessed))
+          assert(Object.hasOwn(rows, KmoreProxyKey.getThenProxyProcessed), JSON.stringify(rows))
           return rows
         })
 

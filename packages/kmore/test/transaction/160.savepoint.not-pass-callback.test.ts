@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 
-import { fileShortPath } from '@waiting/shared-core'
+import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
 import { KmoreFactory } from '../../src/index.js'
@@ -13,6 +13,14 @@ import { read, readInvalid, readWithoutThen, update, updateWithoutTrx } from './
 describe(fileShortPath(import.meta.url), () => {
   const dict = genDbDict<Db>()
   const km = KmoreFactory({ config, dict })
+
+  const date0 = new Date().toLocaleDateString()
+  const currCtime = date0
+  const date1 = '3000/1/1'
+  const date2 = '3000/1/2'
+  const newTime0 = new Date()
+  const newTime1 = new Date(date1)
+  const newTime2 = new Date(date2)
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
@@ -27,31 +35,26 @@ describe(fileShortPath(import.meta.url), () => {
   beforeEach(async () => {
     await updateWithoutTrx(km, new Date())
   })
-  describe('Should work', () => {
-    it('auto none', async () => {
+  describe('Should savepoint(arg) arg not support function', () => {
+    it('should throw error when pass function', async () => {
       const trx = await km.transaction()
       assert(trx)
-      const tbUser = km.camelTables.ref_tb_user()
-      const { kmoreQueryId } = tbUser
-      const pm = tbUser
-        .transacting(trx)
-        .forUpdate()
-        .select('*')
-        .where('uid', 1)
 
-      const { kmoreTrxId } = trx
-      const qidMap = km.trxIdQueryMap.get(kmoreTrxId)
-      assert(qidMap && qidMap.size > 0)
-      assert(qidMap.has(kmoreQueryId))
+      try {
+        await trx.savepoint(async (trx2) => {
+          await trx2.rollback()
+        })
+      }
+      catch (ex) {
+        assert(ex instanceof Error)
+        assert(ex.message.includes('trx.savepoint(arg) arg not support function'))
+        void trx.rollback()
+        return
+      }
 
-      await pm
-      await trx.rollback()
-      const qidMap2 = km.trxIdQueryMap.get(kmoreTrxId)
-      assert(! qidMap2)
+      assert(false, 'Should not reach here')
     })
 
-
   })
-
 })
 

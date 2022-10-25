@@ -34,10 +34,7 @@ export abstract class KmoreBase<Context = any> {
    * Start a transaction.
    * @param id - For generation of kmoreTrxId
    */
-  abstract transaction(
-    id?: PropertyKey,
-    config?: KmoreTransactionConfig,
-  ): Promise<KmoreTransaction>
+  abstract transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction>
 
   abstract getTrxByKmoreQueryId(kmoreQueryId: symbol): KmoreTransaction | undefined
 

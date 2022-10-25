@@ -72,7 +72,12 @@ function extRefTableFnProperty(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   let refTable = kmore.dbh(refName) as KmoreQueryBuilder
 
+  // refTable = extRefTableFnPropertyThen(kmore, refTable, ctx) // must before getProxy
   refTable = createQueryBuilderGetProxy(kmore, refTable)
+
+  refTable = builderApplyTransactingProxy(kmore, refTable, ctx)
+  refTable = extRefTableFnPropertySmartJoin(refTable)
+
   refTable = builderBindEvents(
     kmore,
     refTable as KmoreQueryBuilder,
@@ -80,9 +85,6 @@ function extRefTableFnProperty(
     ctx,
     kmoreQueryId,
   )
-  refTable = builderApplyTransactingProxy(kmore, refTable, ctx)
-  refTable = extRefTableFnPropertySmartJoin(refTable)
-  // refTable = kmore.extRefTableFnPropertyThen(refTable)
 
   void Object.defineProperty(refTable, 'kmoreQueryId', {
     ...defaultPropDescriptor,

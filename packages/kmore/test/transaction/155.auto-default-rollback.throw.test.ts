@@ -7,10 +7,20 @@ import { KmoreFactory } from '../../src/index.js'
 import { config } from '../test.config.js'
 import { Db } from '../test.model.js'
 
+import { read, readInvalid, readWithoutThen, update, updateWithoutTrx } from './helper.js'
+
 
 describe(fileShortPath(import.meta.url), () => {
   const dict = genDbDict<Db>()
   const km = KmoreFactory({ config, dict })
+
+  const date0 = new Date().toLocaleDateString()
+  const currCtime = date0
+  const date1 = '3000/1/1'
+  const date2 = '3000/1/2'
+  const newTime0 = new Date()
+  const newTime1 = new Date(date1)
+  const newTime2 = new Date(date2)
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
@@ -22,53 +32,39 @@ describe(fileShortPath(import.meta.url), () => {
     }
   })
 
+  beforeEach(async () => {
+    await updateWithoutTrx(km, new Date())
+  })
+
   describe('Should auto default(rollback) work on error', () => {
     it('catch error from .then()', async () => {
       const trx = await km.transaction()
       assert(trx)
 
-      const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
-        .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
-      assert(currCtime)
-
-      await sleep(1001)
-      const newTime = new Date()
-
       try {
-        await km.camelTables.ref_tb_user()
-          .transacting(trx)
-          .forUpdate()
-          .update({
-            ctime: newTime,
-          })
-          .where('uid', 1)
+        await update(km, trx, newTime1)
 
-        await km.camelTables.ref_tb_user()
-          .transacting(trx)
-          .forUpdate()
-          .select('*')
-          .where('uid', 1)
+        // NOTE: error from builder or ONLY fisrt builder.then() can be catched !
+        await readWithoutThen(km, trx)
           .then(() => {
             throw new Error('debug test error')
           })
       }
       catch (ex) {
-        assert(trx.isCompleted() === true)
+        // NOTE: error from ONLY fisrt builder.then() can be catched !
+        assert(trx.isCompleted())
 
-        const currCtime2 = await km.camelTables.ref_tb_user()
-          .select('*')
-          .where('uid', 1)
-          .then(rows => rows[0]?.ctime)
+        const currCtime2 = await read(km)
         assert(currCtime2)
 
         const str1 = currCtime.toLocaleString()
         const str2 = currCtime2.toLocaleString()
-        assert(str1 === str2)
-        const str3 = newTime?.toLocaleString()
-        assert(str2 !== str3)
+        assert(str1 === str2, `str1: ${str1}, str2: ${str2}`)
+        assert(str2 !== date1, `str2: ${str2}, date1: ${date1}`)
         return
+      }
+      finally {
+        await trx.rollback()
       }
       assert(false, 'Should throw error')
     })
@@ -77,61 +73,36 @@ describe(fileShortPath(import.meta.url), () => {
       const trx = await km.transaction()
       assert(trx)
 
-      const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
-        .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
-      assert(currCtime)
-
-      await sleep(100)
-      const newTime = new Date()
-
       try {
-        await km.camelTables.ref_tb_user()
-          .transacting(trx)
-          .forUpdate()
-          .update({
-            ctime: newTime,
-          })
-          .where('uid', 1)
+        await update(km, trx, newTime1)
 
-        await km.camelTables.ref_tb_user()
-          .transacting(trx)
-          .forUpdate()
-          .select('*')
-          .where('fake', 1)
+        // NOTE: error from ONLY fisrt builder.then() can be catched !
+        await readInvalid(km, trx)
+          .then()
       }
       catch (ex) {
-        assert(trx.isCompleted() === true)
+        // NOTE: error from ONLY fisrt builder.then() can be catched !
+        assert(trx.isCompleted(), 'trx.isCompleted() error')
 
-        const currCtime2 = await km.camelTables.ref_tb_user()
-          .select('*')
-          .where('uid', 1)
-          .then(rows => rows[0]?.ctime)
+        const currCtime2 = await read(km)
         assert(currCtime2)
 
         const str1 = currCtime.toLocaleString()
         const str2 = currCtime2.toLocaleString()
-        assert(str1 === str2)
-        const str3 = newTime?.toLocaleString()
-        assert(str2 !== str3)
+        assert(str1 === str2, `str1: ${str1}, str2: ${str2}`)
+        assert(str2 !== date1, `str2: ${str2}, date1: ${date1}`)
         return
       }
-      assert(false, 'Should throw error')
+      finally {
+        await trx.rollback()
+      }
+
+      assert(false, 'Should error be catched, but not')
     })
 
     it('reuse tbUser', async () => {
       const trx = await km.transaction()
       assert(trx)
-
-      const currCtime = await km.camelTables.ref_tb_user()
-        .select('*')
-        .where('uid', 1)
-        .then(rows => rows[0]?.ctime)
-      assert(currCtime)
-
-      await sleep(100)
-      const newTime = new Date()
 
       const tbUser = km.camelTables.ref_tb_user()
       try {
@@ -140,7 +111,7 @@ describe(fileShortPath(import.meta.url), () => {
           .forUpdate()
           .select('*')
           .update({
-            ctime: newTime,
+            ctime: newTime1,
           })
           .where('uid', 1)
 
@@ -156,15 +127,21 @@ describe(fileShortPath(import.meta.url), () => {
         try {
           // reuse tbUser will fail
           await tbUser
-            .select('*')
+            .first()
             .where('uid', 1)
-            .then(rows => rows[0])
         }
         catch {
           assert(true)
           return
         }
+        finally {
+          await trx.rollback()
+        }
       }
+      finally {
+        await trx.rollback()
+      }
+
       assert(false, 'Should throw error')
     })
   })

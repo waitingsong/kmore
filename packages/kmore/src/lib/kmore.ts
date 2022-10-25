@@ -157,14 +157,11 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
    * Start a transaction.
    * @param id - For generation of kmoreTrxId
    */
-  async transaction(
-    id?: PropertyKey,
-    config?: KmoreTransactionConfig,
-  ): Promise<KmoreTransaction> {
-
+  async transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction> {
+    const kmoreTrxId = genKmoreTrxId(config?.kmoreTrxId)
+    delete config?.kmoreTrxId
     const trx = await this.dbh.transaction(void 0, config) as KmoreTransaction
 
-    const kmoreTrxId = genKmoreTrxId(id)
     const trxActionOnEnd: KmoreTransactionConfig['trxActionOnEnd'] = config?.trxActionOnEnd
       ?? this.trxActionOnEnd ?? 'rollback'
 

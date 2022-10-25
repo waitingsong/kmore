@@ -46,3 +46,45 @@ export function builderApplyTransactingProxy(
 
   return refTable
 }
+
+/*
+export function extRefTableFnPropertyThen(
+  kmore: KmoreBase,
+  refTable: KmoreQueryBuilder,
+  _ctx: unknown,
+): KmoreQueryBuilder {
+
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const applyThenProxy = new Proxy(refTable.then, {
+    apply: async (
+      target: () => Promise<unknown>,
+      ctx2: KmoreQueryBuilder,
+      args: unknown[],
+    ) => {
+
+      try {
+        // query response or response data
+        // undefined means calling builder without tailing then(),
+        const resp = await Reflect.apply(target, ctx2, args) as unknown
+        return resp
+      }
+      catch (ex) {
+        const qid = ctx2.kmoreQueryId
+        const trx = kmore.getTrxByKmoreQueryId(qid)
+        if (trx) {
+          await kmore.finishTransaction(trx)
+        }
+        throw ex
+      }
+    },
+  })
+  void Object.defineProperty(refTable, 'then', {
+    ...defaultPropDescriptor,
+    configurable: true,
+    value: applyThenProxy,
+  })
+
+  return refTable
+}
+*/
+
