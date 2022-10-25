@@ -40,7 +40,7 @@ export class UserController {
 
   @Get('/commit/:id')
   async userAll(@Param('id') uid: number): Promise<UserDTO[]> {
-    const trx = await this.db.transaction(void 0, { trxActionOnEnd: 'commit' })
+    const trx = await this.db.transaction({ trxActionOnEnd: 'commit' })
     assert(trx)
 
     await this.update(uid, trx)
