@@ -44,9 +44,9 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
   ) => {
 
     // query response or response data
-    const getthenProxyRet = Reflect.apply(target.then, target, []) as Promise<unknown>
+    const getThenProxyRet = Reflect.apply(target.then, target, []) as Promise<unknown>
 
-    return getthenProxyRet
+    return getThenProxyRet
       .catch((ex: unknown) => processTrxOnEx(kmore, target.kmoreQueryId, ex))
       .then((resp: unknown) => processThen(resp, done))
       .catch((ex: unknown) => processEx({
