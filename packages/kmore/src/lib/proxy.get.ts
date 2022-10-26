@@ -40,13 +40,14 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
 
   const getThenProxy = async (
     done?: (data: unknown) => unknown,
-    reject?: (data: unknown) => unknown,
+    reject?: (data: unknown) => Error,
   ) => {
 
     // query response or response data
     const getthenProxyRet = Reflect.apply(target.then, target, []) as Promise<unknown>
 
     return getthenProxyRet
+      .catch((ex: unknown) => processTrxOnEx(kmore, target.kmoreQueryId, ex))
       .then((resp: unknown) => processThen(resp, done))
       .catch((ex: unknown) => processEx({
         ex,
@@ -100,36 +101,40 @@ function processThen(
 interface ProcessExOptions {
   kmore: KmoreBase
   kmoreQueryId: symbol
-  reject: ((error: unknown) => unknown) | undefined
+  reject: ((error: unknown) => Error) | undefined
   ex: unknown
 }
-function processEx(options: ProcessExOptions): never {
+async function processEx(options: ProcessExOptions): Promise<Error> {
   const { ex, kmore, kmoreQueryId, reject } = options
 
-  const qid = kmoreQueryId
-  assert(qid, 'kmoreQueryId should be set on QueryBuilder')
+  await processTrxOnEx(kmore, kmoreQueryId)
 
-  const trx = kmore.getTrxByKmoreQueryId(qid)
-  if (trx) { // also processed on event `query-error`
-    void kmore.finishTransaction(trx).catch(console.error)
-  }
+  const ex2 = ex instanceof Error
+    ? ex
+    : typeof ex === 'string'
+      ? new Error(ex)
+      : new Error('Kmore Error when executing then()', { cause: ex })
 
   if (typeof reject === 'function') {
-    // @ts-ignore
-    return reject(ex)
+    return reject(ex2)
   }
+  return Promise.reject(ex2)
+}
 
-  if (ex instanceof Error) {
-    throw ex
+async function processTrxOnEx(
+  kmore: KmoreBase,
+  kmoreQueryId: symbol,
+  ex?: unknown,
+): Promise<void> {
+
+  assert(kmoreQueryId, 'kmoreQueryId should be set on QueryBuilder')
+
+  const trx = kmore.getTrxByKmoreQueryId(kmoreQueryId)
+  if (trx) { // also processed on event `query-error`
+    await kmore.finishTransaction(trx).catch(console.error)
   }
-  else if (typeof ex === 'string') {
-    throw new Error(ex)
-    // return Promise.reject(new Error(ex))
-  }
-  else {
-    throw new Error('Kmore Error when executing then()', {
-      cause: ex,
-    })
+  if (ex) {
+    return Promise.reject(ex)
   }
 }
 
