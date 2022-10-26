@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'assert'
 
 import type { KmoreBase, ProxyGetOptions } from './base.js'
@@ -38,49 +39,35 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
   assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
   const getThenProxy = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    done?: PromiseLike<unknown> | ((data: unknown) => any),
-    reject?: PromiseLike<unknown> | ((error: Error) => unknown),
+    done?: (data: unknown) => unknown,
+    reject?: (data: unknown) => unknown,
   ) => {
 
-    try {
-      // query response or response data
-      const resp = await Reflect.apply(target.then, target, []) as unknown
+    // query response or response data
+    const getthenProxyRet = Reflect.apply(target.then, target, []) as Promise<unknown>
 
-      if (typeof resp === 'object' && resp !== null) {
-        Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
-          ...defaultPropDescriptor,
-          enumerable: false,
-          writable: true,
-          value: true,
-        })
-      }
-
-      if (typeof done === 'function') {
-        const resp2 = await done(resp)
-        if (typeof resp2 === 'object'
-          && resp2 !== null
-          && typeof resp2[KmoreProxyKey.getThenProxyProcessed] === 'undefined'
+    return getthenProxyRet
+      .then((resp: unknown) => processThen(resp, done))
+      .catch((ex: unknown) => processEx({
+        ex,
+        kmore,
+        kmoreQueryId: target.kmoreQueryId,
+        reject,
+      }))
+      .then((resp: unknown) => {
+        if (resp && typeof resp === 'object'
+          && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)
         ) {
-          Object.defineProperty(resp2, KmoreProxyKey.getThenProxyProcessed, {
+          Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
             ...defaultPropDescriptor,
             enumerable: false,
             writable: true,
             value: true,
           })
         }
-        return resp2
-      }
-      return resp
-    }
-    catch (ex) {
-      processEx({
-        ex,
-        kmore,
-        kmoreQueryId: target.kmoreQueryId,
-        reject,
+
+        return resp
       })
-    }
   }
   void Object.defineProperty(getThenProxy, KmoreProxyKey.getThenProxy, {
     ...defaultPropDescriptor,
@@ -90,11 +77,30 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
   return getThenProxy.bind(target) as KmoreQueryBuilder['then']
 }
 
+function processThen(
+  resp: unknown,
+  cb: ((data: unknown) => any) | undefined,
+): Promise<unknown> | unknown {
+
+  if (resp && typeof resp === 'object'
+    && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)
+  ) {
+    Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
+      ...defaultPropDescriptor,
+      enumerable: false,
+      writable: true,
+      value: true,
+    })
+  }
+
+  return typeof cb === 'function' ? cb(resp) : resp
+}
+
 
 interface ProcessExOptions {
   kmore: KmoreBase
   kmoreQueryId: symbol
-  reject: PromiseLike<unknown> | ((error: Error) => unknown) | undefined
+  reject: ((error: unknown) => unknown) | undefined
   ex: unknown
 }
 function processEx(options: ProcessExOptions): never {
