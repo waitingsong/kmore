@@ -43,32 +43,16 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
     reject?: (data: unknown) => Error,
   ) => {
 
+    const { kmoreQueryId } = target
     // query response or response data
     const getThenProxyRet = Reflect.apply(target.then, target, []) as Promise<unknown>
-
-    return getThenProxyRet
-      .catch((ex: unknown) => processTrxOnEx(kmore, target.kmoreQueryId, ex))
-      .then((resp: unknown) => processThen(resp, done))
-      .catch((ex: unknown) => processEx({
-        ex,
-        // kmore,
-        // kmoreQueryId: target.kmoreQueryId,
-        reject,
-      }))
-      .then((resp: unknown) => {
-        if (resp && typeof resp === 'object'
-          && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)
-        ) {
-          Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
-            ...defaultPropDescriptor,
-            enumerable: false,
-            writable: true,
-            value: true,
-          })
-        }
-
-        return resp
-      })
+    return processThenRet({
+      kmore,
+      kmoreQueryId,
+      input: getThenProxyRet,
+      done,
+      reject,
+    })
   }
   void Object.defineProperty(getThenProxy, KmoreProxyKey.getThenProxy, {
     ...defaultPropDescriptor,
@@ -136,5 +120,40 @@ async function processTrxOnEx(
   if (ex) {
     return Promise.reject(ex)
   }
+}
+
+interface ProcessThenRetOptions {
+  kmore: KmoreBase
+  kmoreQueryId: symbol
+  input: Promise<unknown>
+  done: undefined | ((data: unknown) => unknown)
+  reject: undefined | ((data: unknown) => Error)
+}
+async function processThenRet(options: ProcessThenRetOptions): Promise<unknown> {
+  const { kmore, kmoreQueryId, input, done, reject } = options
+
+  return input
+    .catch((ex: unknown) => processTrxOnEx(kmore, kmoreQueryId, ex))
+    .then((resp: unknown) => processThen(resp, done))
+    .catch((ex: unknown) => processEx({
+      ex,
+      // kmore,
+      // kmoreQueryId: target.kmoreQueryId,
+      reject,
+    }))
+    .then((resp: unknown) => {
+      if (resp && typeof resp === 'object'
+          && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)
+      ) {
+        Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
+          ...defaultPropDescriptor,
+          enumerable: false,
+          writable: true,
+          value: true,
+        })
+      }
+
+      return resp
+    })
 }
 
