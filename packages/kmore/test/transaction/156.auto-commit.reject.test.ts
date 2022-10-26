@@ -57,7 +57,7 @@ describe(fileShortPath(import.meta.url), () => {
         const str1 = currCtime.toLocaleString()
         const str2 = currCtime2.toLocaleString()
         console.log({ str1, str2, file: fileShortPath(import.meta.url) })
-        assert(str1 !== str2, `str1: ${str1}, str2: ${str2}`)
+        assert(str1 !== str2, `str1: ${str1}, str2: ${str2}, str2 should be ${date1}`)
         assert(str2 === date1, `str2: ${str2}, date1: ${date1}`)
         return
       }
