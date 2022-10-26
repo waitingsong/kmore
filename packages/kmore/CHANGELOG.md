@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [47.0.0](https://github.com/waitingsong/kmore/compare/v46.1.0...v47.0.0) (2022-10-26)
+
+
+### Features
+
+* **kmore:** breaking change KmoreTransaction['trxActionOnEnd'] only affects on QueryBuilder ([52bc21d](https://github.com/waitingsong/kmore/commit/52bc21d63496b60c496b5a2d7c9760f7741dd2f0))
+
+
+
+
+
 # [46.1.0](https://github.com/waitingsong/kmore/compare/v46.0.2...v46.1.0) (2022-10-26)
 
 
