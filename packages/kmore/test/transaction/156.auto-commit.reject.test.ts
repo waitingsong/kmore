@@ -34,31 +34,24 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto commit work on error', () => {
-    it('catch rejection from .then()', async () => {
+    it('ignore rejection from .then()', async () => {
       const trx = await km.transaction({ trxActionOnEnd: 'commit' })
       assert(trx)
 
       try {
         await update(km, trx, newTime1)
-
-        // NOTE: error from builder or ONLY fisrt builder.then() can be catched !
         await readWithoutThen(km, trx)
           .then(() => {
             return Promise.reject('debug test error')
           })
       }
       catch (ex) {
-        // NOTE: error from ONLY fisrt builder.then() can be catched !
-        assert(trx.isCompleted())
+        assert(ex instanceof Error)
+        assert(! trx.isCompleted())
 
         const currCtime2 = await read(km)
         assert(currCtime2)
-
-        const str1 = currCtime.toLocaleString()
-        const str2 = currCtime2.toLocaleString()
-        console.log({ str1, str2, file: fileShortPath(import.meta.url) })
-        assert(str1 !== str2, `str1: ${str1}, str2: ${str2}, str2 should be ${date1}`)
-        assert(str2 === date1, `str2: ${str2}, date1: ${date1}`)
+        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
         return
       }
       finally {
@@ -73,22 +66,16 @@ describe(fileShortPath(import.meta.url), () => {
 
       try {
         await update(km, trx, newTime1)
-
-        // NOTE: error from ONLY fisrt builder.then() can be catched !
         await readInvalid(km, trx)
           .then()
       }
       catch (ex) {
-        // NOTE: error from ONLY fisrt builder.then() can be catched !
+        assert(ex instanceof Error)
         assert(trx.isCompleted(), 'trx.isCompleted() error')
 
         const currCtime2 = await read(km)
         assert(currCtime2)
-
-        const str1 = currCtime.toLocaleString()
-        const str2 = currCtime2.toLocaleString()
-        assert(str1 === str2, `str1: ${str1}, str2: ${str2}`)
-        assert(str2 !== date1, `str2: ${str2}, date1: ${date1}`)
+        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
         return
       }
       finally {
@@ -107,15 +94,12 @@ describe(fileShortPath(import.meta.url), () => {
         await readInvalid(km, trx)
       }
       catch (ex) {
-        assert(trx.isCompleted() === true)
+        assert(ex instanceof Error)
+        assert(trx.isCompleted())
 
         const currCtime2 = await read(km)
         assert(currCtime2)
-
-        const str1 = currCtime.toLocaleString()
-        const str2 = currCtime2.toLocaleString()
-        assert(str1 === str2)
-        assert(str2 !== date1, `str2: ${str2}, date1: ${date1}`)
+        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
         return
       }
       finally {
@@ -148,7 +132,7 @@ describe(fileShortPath(import.meta.url), () => {
           .where('fake', 1)
       }
       catch (ex) {
-        assert(trx.isCompleted() === true)
+        assert(trx.isCompleted())
         try {
           // reuse tbUser will fail
           await tbUser
