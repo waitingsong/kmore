@@ -23,10 +23,10 @@ export type KmoreTransaction = Knex.Transaction & {
   hrtime: bigint,
   kmoreTrxId: symbol,
   /**
-   * Auto transction action (rollback|commit|none) on error (Rejection or Exception),
+   * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
    *
    * @default rollback
-   * @note Error from ONLY builder or fisrt builder.then() can be catched !
+   * @note Error from ONLY builder can be catched, from then() on builder not processed!
    * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
   trxActionOnEnd: NonNullable<KmoreTransactionConfig['trxActionOnEnd']>,
@@ -39,10 +39,10 @@ export type KmoreTransaction = Knex.Transaction & {
 export type KmoreTransactionConfig = Knex.TransactionConfig & {
   kmoreTrxId?: PropertyKey,
   /**
-   * Auto transction action (rollback|commit|none) on error (Rejection or Exception),
+   * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
    *
    * @default rollback
-   * @note Error from ONLY builder or fisrt builder.then() can be catched !
+   * @note Error from ONLY builder can be catched, from then() on builder not processed!
    * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
   trxActionOnEnd?: 'commit' | 'rollback' | 'none',

@@ -51,8 +51,8 @@ function proxyGetThen(options: ProxyGetOptions): KmoreQueryBuilder['then'] {
       .then((resp: unknown) => processThen(resp, done))
       .catch((ex: unknown) => processEx({
         ex,
-        kmore,
-        kmoreQueryId: target.kmoreQueryId,
+        // kmore,
+        // kmoreQueryId: target.kmoreQueryId,
         reject,
       }))
       .then((resp: unknown) => {
@@ -99,15 +99,15 @@ function processThen(
 
 
 interface ProcessExOptions {
-  kmore: KmoreBase
-  kmoreQueryId: symbol
+  // kmore: KmoreBase
+  // kmoreQueryId: symbol
   reject: ((error: unknown) => Error) | undefined
   ex: unknown
 }
 async function processEx(options: ProcessExOptions): Promise<Error> {
-  const { ex, kmore, kmoreQueryId, reject } = options
+  const { ex, reject } = options
 
-  await processTrxOnEx(kmore, kmoreQueryId)
+  // await processTrxOnEx(kmore, kmoreQueryId)
 
   const ex2 = ex instanceof Error
     ? ex
