@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [46.1.0](/compare/v46.0.2...v46.1.0) (2022-10-26)
+
+
+### Features
+
+* **kmore:** refactor error process of proxyGetThen() 58946d8
+
+
+
+
+
 ## [46.0.2](/compare/v46.0.1...v46.0.2) (2022-10-26)
 
 **Note:** Version bump only for package kmore
