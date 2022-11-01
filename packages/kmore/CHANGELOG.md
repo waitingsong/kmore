@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [47.0.2](https://github.com/waitingsong/kmore/compare/v47.0.1...v47.0.2) (2022-11-01)
+
+
+### Bug Fixes
+
+* **kmore:** column conversion of .where() ([7c47289](https://github.com/waitingsong/kmore/commit/7c472895423a64fc22aa68000d17e24d59e77a51))
+
+
+
+
+
 ## [47.0.1](https://github.com/waitingsong/kmore/compare/v47.0.0...v47.0.1) (2022-10-26)
 
 **Note:** Version bump only for package kmore
