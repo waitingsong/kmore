@@ -1,18 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import type { TraceContext, Span } from '@mwcp/otel'
-import {
-  CaseConvertTable,
-  CaseType,
-  DbScopedColsByKey,
-  DbScopedColsByTableType,
-  JoinTableWithCaseConvert,
-  SplitScopedColumn,
-  StrKey,
-  UnwrapArrayMember,
-} from '@waiting/shared-types'
-import { DbDict } from 'kmore-types'
+import { CaseType } from '@waiting/shared-types'
 import type { Knex } from 'knex'
+
+import type { KmoreQueryBuilder } from './builder.types.js'
 
 
 export { CaseType }
@@ -68,69 +60,6 @@ export enum SmartKey {
   crossJoin = 'smartCrossJoin',
 }
 
-export type DbQueryBuilder<
-  Context,
-  D,
-  Prefix extends string,
-  CaseConvert extends CaseType
-> = {
-  /** ref_tb_name: () => knex('tb_name') */
-  [tb in keyof D as `${Prefix}${tb & string}`]:
-  // @ts-expect-error
-  TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
-}
-
-export interface BuilderInput {
-  ctx?: unknown
-  caseConvert?: CaseType | undefined
-}
-
-export type TbQueryBuilder<D extends {}, CaseConvert extends CaseType, TRecord extends {}, Context>
-  = (ctx?: Context) => KmoreQueryBuilder<D, CaseConvert, TRecord, TRecord[]>
-
-export type KmoreQueryBuilder<
-  D extends {} = {}, CaseConvert extends CaseType = CaseType, TRecord extends {} = any, TResult = any> =
-  Knex.QueryBuilder<TRecord, TResult>
-  & QueryBuilderExtMethod<D, CaseConvert, TRecord>
-  & QueryBuilderExtName<D>
-
-interface QueryBuilderExtName<D extends {} = {}> {
-  kmoreQueryId: symbol
-  dbDict: DbDict<D>
-  _tablesJoin: string[]
-}
-
-interface QueryBuilderExtMethod<D extends {}, CaseConvert extends CaseType, TRecord extends {} = any> {
-  smartCrossJoin: SmartJoin<D, CaseConvert, TRecord>
-  smartInnerJoin: SmartJoin<D, CaseConvert, TRecord>
-  smartJoin: SmartJoin<D, CaseConvert, TRecord>
-  smartLeftJoin: SmartJoin<D, CaseConvert, TRecord>
-  smartRightJoin: SmartJoin<D, CaseConvert, TRecord>
-}
-
-type SmartJoin<D extends {}, CaseConvert extends CaseType, TResult = unknown[]> = <
-  TRecord1 = UnwrapArrayMember<TResult>,
-  C2 extends DbScopedColsByKey<D> = DbScopedColsByKey<D>,
-  C1 extends DbScopedColsByKey<D> = DbScopedColsByTableType<D, TRecord1>,
-  TTable2 extends StrKey<D> = SplitScopedColumn<D, C2>[0],
-  TRecord2 extends D[TTable2] = D[TTable2],
-  // @ts-expect-error
-  TResult2 = JoinTableWithCaseConvert<TRecord1, TRecord2 extends any ? D[TTable2] : TRecord2, TTable2, CaseConvert>,
->(
-  /**
-   * scoped column name, e.g. 'tb_name.col_name',
-   * <tb_name> is the table name be joined, <col_name> is the column name
-   */
-  scopedColumnBeJoined: C2,
-  /**
-   * scoped column name, e.g. 'tb_name.col_name',
-   * <tb_name> is the upstream table name , <col_name> is the column name
-   */
-  scopedColumn: C1 extends C2 ? never : C1,
-  // @ts-expect-error
-) => KmoreQueryBuilder<D, CaseConvert, TResult2, TResult2[]>
-
-
 
 export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'unknown'
 
@@ -157,7 +86,7 @@ export interface KmoreEvent <T = unknown> {
   respRaw: OnQueryRespRaw<T> | undefined
   exData: OnQueryErrorData | undefined
   exError: OnQueryErrorErr | undefined
-  queryBuilder: Knex.QueryBuilder | undefined // when event is 'start
+  queryBuilder: KmoreQueryBuilder | undefined // when event is 'start
   timestamp: number
 }
 
@@ -290,10 +219,18 @@ export interface EventCallbackList<Ctx = any> {
 // export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
 
 
+export enum KmorePageKey {
+  AutoPaging = 'autoPaging',
+  PagingOptions = '_pagingOptions',
+  PagingProcessed = '_pagingProcessed',
+  /**
+   * @value 'counter' | 'pager'
+   */
+  PagingBuilderType = 'pagingType',
+}
 export enum KmoreProxyKey {
   getThenProxy = 'KmoreGetThenProxy',
   getThenProxyProcessed = 'KmoreGetThenProxyProcessed',
-
 }
 
 
@@ -303,4 +240,10 @@ export enum KmoreProxyKey {
 export type TrxIdQueryMap = Map<symbol, Set<symbol>>
 
 export type TrxSavePointCallback = (trx: KmoreTransaction) => Promise<unknown>
+
+
+export interface BuilderInput {
+  ctx?: unknown
+  caseConvert?: CaseType | undefined
+}
 

@@ -4,6 +4,7 @@ import { genDbDict } from 'kmore-types'
 
 import { KnexConfig } from '../src/index.js'
 
+import { CI } from './root.config.js'
 import { Db } from './test.model.js'
 
 
@@ -22,7 +23,7 @@ export const config: KnexConfig = {
       done(null, conn)
     },
   },
-  acquireConnectionTimeout: 5000,
+  acquireConnectionTimeout: CI ? 5000 : 60000,
   debug: false,
 }
 

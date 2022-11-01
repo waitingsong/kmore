@@ -3,7 +3,7 @@ import assert from 'assert'
 import { snakeToCamel } from '@waiting/shared-core'
 import type { DbDict } from 'kmore-types'
 
-import { KmoreQueryBuilder } from './types.js'
+import type { KmoreQueryBuilder } from './builder.types.js'
 
 
 export function genColumnMaping(

@@ -1,8 +1,9 @@
 import assert from 'assert'
 
+import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { genColumnMaping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
-import { KmoreQueryBuilder, SmartKey } from './types.js'
+import { KmorePageKey, SmartKey } from './types.js'
 
 
 export function processJoinTableColumnAlias(
@@ -32,7 +33,12 @@ export function processJoinTableColumnAlias(
     })
   })
 
-  void builder.columns(aliasObject)
+  const pagingFlag = builder[KmorePageKey.PagingBuilderType]
+  // conter query is not need to process
+  if (! pagingFlag || pagingFlag === 'pager') {
+    void builder.columns(aliasObject)
+  }
+
   const ret = patchWhereColumnAlias(builder, aliasMap)
   return ret
 }

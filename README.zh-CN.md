@@ -18,6 +18,7 @@
 - 类型安全的表对象操作
 - 类型安全的表连接操作
 - 类型安全的 IDE 编辑器自动完成
+- 一条查询链实现自动分页
 
 ## 安装
 ```sh
@@ -176,6 +177,24 @@ ret.tb_user_ext_uid   // <-- 重复字段名将会自动转换 为 "<表名>_<�
 ```
 
 More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/join-table/)
+
+
+### 自动分页
+
+```
+const options: Partial<PagingOptions> = {
+  page: 2,      // default 1
+  pageSize: 20, // default 10
+}
+const users = await tables.ref_tb_user().autoPaging(options)
+assert(Array.isArray(users))
+assert(users.length)
+
+// 不可枚举分页属性
+const { pageCountAll, pageCurrent, pageSize } = users
+```
+
+More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
 
 
 ### 使用 knex

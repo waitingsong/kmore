@@ -95,7 +95,7 @@ describe(fileShortPath(import.meta.url), () => {
       await sleep(1000)
       const t4b = await read(km)
       console.warn('Retry after 1s: ', t4b)
-      assert(t4b === date1, `Retry failed: t4a: ${t4b}, date1: ${date1}`)
+      assert(t4b === date1, `Retry failed: t4b: ${t4b}, date1: ${date1}`)
 
       await restore(km, newTime0)
       assert(true)

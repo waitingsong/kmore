@@ -1,8 +1,9 @@
 import assert from 'node:assert'
 
 import { KmoreBase } from './base.js'
+import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
-import { KmoreQueryBuilder, KmoreTransaction } from './types.js'
+import { KmoreTransaction } from './types.js'
 
 
 export function builderApplyTransactingProxy(

@@ -4,6 +4,7 @@ import { hrtime } from 'node:process'
 import type { KmoreBase } from './base.js'
 import { defaultPropDescriptor } from './config.js'
 import type { KmoreTransaction, KmoreTransactionConfig } from './types.js'
+import { genKmoreTrxId } from './util.js'
 
 
 export function trxApplyCommandProxy(
@@ -115,25 +116,6 @@ export function createTrxProperties(options: CreateTrxPropertiesOptions): KmoreT
 
   const trx2 = trxApplyCommandProxy(kmore, trx)
   return trx2
-}
-
-
-export function genKmoreTrxId(id?: PropertyKey): PropertyKey {
-  if (! id) {
-    return Symbol(`trx-${Date.now()}`)
-  }
-  else if (typeof id === 'string') {
-    return Symbol(id)
-  }
-
-  const str = id.toString()
-  if (str.startsWith('Symbol(trx-')) {
-    const key = str.match(/Symbol\((trx-\S+)\)/u)?.[1]
-    assert(key, 'retrieve key from id failed, input should like "Symbol(trx-1234567890)"')
-    const key2 = `${key}-${Date.now()}`
-    return Symbol(key2)
-  }
-  return id
 }
 
 

@@ -87,9 +87,16 @@ describe(fileShortPath(import.meta.url), () => {
       await trx.commit() // ---------
 
       const t4a = await read(km)
-      assert(t4a === date2, `t4a: ${t4a}, date2: ${date2}`)
+      if (t4a === date2) {
+        await restore(km, newTime0)
+        return
+      }
 
-      await restore(km, newTime0)
+      await sleep(1000)
+      const t4b = await read(km)
+      console.warn('Retry after 1s: ', t4b)
+      assert(t4b === date2, `t4b: ${t4b}, date2: ${date2}`)
+
       assert(true)
     })
 

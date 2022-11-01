@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { KmoreQueryBuilder, PageArrayType } from './builder.types.js'
 import {
   CaseType,
   EventCallbacks,
-  KmoreQueryBuilder,
   KmoreTransaction,
   KmoreTransactionConfig,
   QueryContext,
@@ -71,8 +71,25 @@ export abstract class KmoreBase<Context = any> {
 
 export interface ProxyGetOptions {
   kmore: KmoreBase
+  builder: KmoreQueryBuilder
+  thenHandler: (options: ProxyGetHandlerOptions) => KmoreQueryBuilder['then']
+  resultPagerHandler?: ResultPagerHandler | undefined
+}
+
+export interface ProxyGetHandlerOptions {
+  kmore: KmoreBase
   target: KmoreQueryBuilder
   propKey: string | symbol
   receiver: unknown
+  resultPagerHandler?: ResultPagerHandler | undefined
 }
+export interface PagerOptions {
+  kmore: KmoreBase
+  builder: KmoreQueryBuilder
+}
+
+type ResultPagerHandler<T = unknown> = (
+  options: PagerOptions,
+  proxyCreator: (options: ProxyGetOptions) => KmoreQueryBuilder,
+) => Promise<PageArrayType<T> | undefined>
 

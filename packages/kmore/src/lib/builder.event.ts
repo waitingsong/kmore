@@ -1,6 +1,7 @@
 import assert from 'node:assert'
 
 import type { KmoreBase } from './base.js'
+import type { KmoreQueryBuilder } from './builder.types.js'
 import {
   callCbOnQuery,
   callCbOnQueryError,
@@ -10,7 +11,6 @@ import {
 } from './event.js'
 import {
   CaseType,
-  KmoreQueryBuilder,
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,

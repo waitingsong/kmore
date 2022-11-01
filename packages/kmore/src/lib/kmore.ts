@@ -9,12 +9,13 @@ import type { Knex } from 'knex'
 import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
+import { createRefTables } from './builder.index.js'
+import { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
 import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
-import { createTrxProperties, genKmoreTrxId } from './proxy.trx.js'
+import { createTrxProperties } from './proxy.trx.js'
 import {
   CaseType,
-  DbQueryBuilder,
   EventCallbacks,
   KmoreTransaction,
   KmoreTransactionConfig,
@@ -22,7 +23,7 @@ import {
   QueryContext,
   TrxIdQueryMap,
 } from './types.js'
-import { createRefTables } from './util.js'
+import { genKmoreTrxId } from './util.js'
 
 
 export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
@@ -247,6 +248,12 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     }
   }
 
+  finishTransactionByQueryId(kmoreQueryId: symbol): Promise<void> {
+    const trx = this.getTrxByKmoreQueryId(kmoreQueryId)
+    return this.finishTransaction(trx)
+  }
+
+
   destroy(): Promise<void> {
     return this.dbh.destroy()
   }
@@ -256,6 +263,10 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     return this.dbh.raw(...args)
   }
 
+  builderClone(builder: KmoreQueryBuilder): KmoreQueryBuilder {
+    const builder2 = builder.clone() as KmoreQueryBuilder
+    return builder2
+  }
   /* -------------- protected -------------- */
 
 

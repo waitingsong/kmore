@@ -1,0 +1,262 @@
+import assert from 'node:assert/strict'
+
+import { fileShortPath } from '@waiting/shared-core'
+
+import { KmoreFactory, PageArrayType } from '../../src/index.js'
+import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
+import { config, dbDict } from '../test.config.js'
+
+import type { UserDo, UserDTO } from '@/test.model.js'
+
+
+describe(fileShortPath(import.meta.url), () => {
+  const km = KmoreFactory({ config, dict: dbDict })
+  const colkeys: (keyof UserDo)[] = ['uid', 'real_name']
+
+  const tables = km.refTables
+  const uid = 1
+
+  before(() => {
+    assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
+  })
+
+  after(async () => {
+    await km.dbh.destroy() // !
+  })
+
+  describe('Should autoPaging work', () => {
+    it('normal', async () => {
+      const ret0 = await tables.ref_tb_user()
+      validateRet(ret0)
+
+      const ret = await tables.ref_tb_user()
+        .autoPaging()
+      validatePagerRet(ret)
+    })
+
+    it('all', async () => {
+      const ret10 = await tables.ref_tb_user()
+        .autoPaging()
+      validatePagerRet(ret10)
+
+      const ret11 = await tables.ref_tb_user()
+        .autoPaging()
+        .then()
+      validatePagerRet(ret11)
+
+      const ret12 = await tables.ref_tb_user()
+        .autoPaging()
+        .then()
+        .then(rows => rows)
+      validatePagerRet(ret12)
+
+      const ret20 = await tables.ref_tb_user()
+        .autoPaging()
+        .select('*')
+      validatePagerRet(ret20)
+
+      const ret21 = await tables.ref_tb_user()
+        .autoPaging()
+        .select('*')
+        .then()
+      validatePagerRet(ret21)
+
+      const ret22 = await tables.ref_tb_user()
+        .select('*')
+        .autoPaging()
+      validatePagerRet(ret22)
+
+      const ret23 = await tables.ref_tb_user()
+        .select('*')
+        .autoPaging()
+        .then()
+      validatePagerRet(ret23)
+    })
+
+    it('partial', async () => {
+      const ret30 = await tables.ref_tb_user()
+        .autoPaging()
+        .select('uid', 'realName')
+      validatePagerRetPartial(ret30, colkeys)
+
+      const ret31 = await tables.ref_tb_user()
+        .autoPaging()
+        .select('uid', 'realName')
+        .then()
+      validatePagerRetPartial(ret31, colkeys)
+
+      const ret32 = await tables.ref_tb_user()
+        .select('uid', 'realName')
+        .autoPaging()
+      validatePagerRetPartial(ret32, colkeys)
+
+      const ret33 = await tables.ref_tb_user()
+        .select('uid', 'realName')
+        .autoPaging()
+        .then()
+      validatePagerRetPartial(ret33, colkeys)
+
+      const ret40 = await tables.ref_tb_user()
+        .autoPaging()
+        .select(colkeys)
+      validatePagerRetPartial(ret40, colkeys)
+
+      const ret41 = await tables.ref_tb_user()
+        .autoPaging()
+        .select(colkeys)
+        .then()
+      validatePagerRetPartial(ret41, colkeys)
+
+      const ret42 = await tables.ref_tb_user()
+        .select(colkeys)
+        .autoPaging()
+      validatePagerRetPartial(ret42, colkeys)
+
+      const ret43 = await tables.ref_tb_user()
+        .select(colkeys)
+        .autoPaging()
+        .then()
+      validatePagerRetPartial(ret43, colkeys)
+    })
+
+    it('where', async () => {
+      const ret = await tables.ref_tb_user()
+        .autoPaging()
+        .where({ uid })
+      validatePagerRet(ret, 1)
+    })
+
+    it('where orderby asc', async () => {
+      const ret = await tables.ref_tb_user()
+        .autoPaging()
+        .where({ uid })
+        .orderBy('uid', 'asc')
+      validatePagerRet(ret, 1)
+    })
+
+    it('where orderby desc', async () => {
+      const ret = await tables.ref_tb_user()
+        .autoPaging()
+        .where({ uid })
+        .orderBy('uid', 'desc')
+      validatePagerRet(ret, 1)
+    })
+
+    it('ignore limit()', async () => {
+      const ret: PageArrayType<UserDo> = await tables.ref_tb_user()
+        .select('*')
+        .limit(1) // will be ignored
+        // @ts-ignore
+        .autoPaging()
+
+      validatePagerRet(ret, 3)
+    })
+
+    // it.skip('smartJoin', async () => {
+    //   const ret = await tables.ref_tb_user()
+    //     .autoPaging()
+    //     .smartJoin(
+    //       'tb_user_ext.uid',
+    //       'tb_user.uid',
+    //     )
+    //     .where('tb_user_ext_uid', uid)
+
+    //   console.log({ ret })
+    //   assert(ret)
+    // })
+
+  })
+})
+
+
+
+function validatePagerRet(input: PageArrayType<UserDo>, len = 3): void {
+  assert(input)
+
+  assert(Object.hasOwn(input, 'pageCountAll'))
+  assert(Object.hasOwn(input, 'pageCurrent'))
+  assert(Object.hasOwn(input, 'pageSize'))
+
+  const { pageCountAll: total, pageCurrent: page, pageSize } = input
+  console.log({ total, page, pageSize, rows: input.length })
+  assert(typeof total === 'number')
+  assert(typeof page === 'number')
+  assert(typeof pageSize === 'number')
+
+  assert(pageSize === initPagingMeta.pageSize)
+  assert(input.pageSize > 0)
+  assert(input.pageCountAll > 0)
+  assert(Array.isArray(input))
+  assert(input.length === len)
+  assert(pageSize >= input.length)
+
+  const [row] = input
+  console.log({ row })
+  assert(row)
+  assert(row.uid)
+  assert(row.name)
+}
+
+function validatePagerRetPartial(
+  input: PageArrayType<Partial<UserDTO>>,
+  keys: string[],
+  len = 3,
+): void {
+
+  assert(input)
+  assert(keys)
+  assert(keys.length > 0)
+
+  const inputKeys = Object.keys(input)
+  /**
+   * keyof PagingMeta is not enumerable
+   */
+  Object.keys(initPagingMeta).forEach((key) => {
+    assert(! inputKeys.includes(key))
+  })
+
+  const { pageCountAll: total, pageCurrent: page, pageSize } = input
+  console.log({ total, page, pageSize, rows: input.length })
+  assert(typeof total === 'number')
+  assert(typeof page === 'number')
+  assert(typeof pageSize === 'number')
+
+  assert(pageSize === initPagingMeta.pageSize)
+  assert(input.pageSize > 0)
+  assert(input.pageCountAll > 0)
+  assert(Array.isArray(input))
+  assert(input.length === len)
+  assert(pageSize >= input.length)
+
+  const [row] = input
+  assert(row)
+  const rowKeys = Object.keys(row)
+  assert(
+    rowKeys.length === keys.length,
+    `rowKeys: ${JSON.stringify(rowKeys)}, keys: ${JSON.stringify(keys)}`,
+  )
+  keys.forEach((key) => {
+    assert(rowKeys.includes(key))
+  })
+}
+
+function validateRet(input: UserDo[], len = 3): void {
+  assert(input)
+
+  const keys = Object.keys(input)
+  /**
+   * keyof PagingMeta is not enumerable
+   */
+  Object.keys(initPagingMeta).forEach((key) => {
+    assert(! keys.includes(key))
+  })
+
+  assert(Array.isArray(input))
+  assert(input.length === len)
+
+  const [row] = input
+  console.log({ row })
+  assert(row)
+  assert(row.uid)
+  assert(row.name)
+}

@@ -17,6 +17,7 @@ Intergrated Tracing of [OpenTelemetry].
 - Type-safe property of tables accessor 
 - Type-safe join table easily
 - Type-safe auto-completion in IDE
+- Auto Paging with one query
 
 
 ## Installation
@@ -177,6 +178,24 @@ ret.tb_user_ext_uid   // <-- duplicate uid will be converted with table prefix l
 ```
 
 More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/join-table/)
+
+
+### Auto Paging
+
+```
+const options: Partial<PagingOptions> = {
+  page: 2,      // default 1
+  pageSize: 20, // default 10
+}
+const users = await tables.ref_tb_user().autoPaging(options)
+assert(Array.isArray(users))
+assert(users.length)
+
+// not enumerable properties of pager
+const { pageCountAll, pageCurrent, pageSize } = users
+```
+
+More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
 
 
 ### Use instance of knex
