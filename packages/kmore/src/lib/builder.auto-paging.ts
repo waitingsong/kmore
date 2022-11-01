@@ -43,12 +43,6 @@ export async function pager<T = unknown>(
     thenHandler: proxyGetThen,
   })
 
-  // const queryCtxOpts: QueryContext = {
-  //   wrapIdentifierCaseConvert: kmore.wrapIdentifierCaseConvert,
-  //   postProcessResponseCaseConvert: caseConvert,
-  //   kmoreQueryId,
-  // }
-
   // const builderPagerSql = builderPagerPatched.toQuery()
   // console.info({ builderPageSql: builderPagerSql })
 
