@@ -1,6 +1,7 @@
 import assert from 'assert'
 
 import { defaultPropDescriptor } from './config.js'
+import { genColumnMaping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
 import { KmoreQueryBuilder, SmartKey } from './types.js'
 
 
@@ -17,28 +18,11 @@ export function processJoinTableColumnAlias(
     return builder
   }
 
-  const aliasMap = new Map<string, string>()
+  // @ts-ignore
+  // const queryContext = builder._queryContext as QueryContext | undefined
+  // const caseConvert = queryContext?.postProcessResponseCaseConvert ?? CaseType.snake
   const tablesJoin = new Set([...builder._tablesJoin])
-
-  tablesJoin.forEach((tableName) => {
-    // @ts-ignore
-    const scopedCols = dbDict.scoped[tableName]
-    if (typeof scopedCols === 'object') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      Object.entries(scopedCols).forEach(([colName, col]) => {
-        if (typeof col !== 'string') { return }
-
-        if (aliasMap.has(colName)) {
-          const colName2 = col.replace(/\./ug, '_')
-          aliasMap.set(colName2, col)
-        }
-        else {
-          aliasMap.set(colName, col)
-        }
-      })
-    }
-  })
-
+  const aliasMap = genColumnMaping(dbDict, tablesJoin)
 
   const aliasObject: Record<string, string> = {}
   aliasMap.forEach((col, alias) => {
@@ -51,35 +35,6 @@ export function processJoinTableColumnAlias(
   void builder.columns(aliasObject)
   const ret = patchWhereColumnAlias(builder, aliasMap)
   return ret
-}
-
-function patchWhereColumnAlias(
-  builder: KmoreQueryBuilder,
-  aliasMap: Map<string, string> = new Map(),
-): KmoreQueryBuilder {
-
-  if (! aliasMap.size) {
-    return builder
-  }
-
-  // @ts-ignore
-  const statements = builder._statements
-  if (Array.isArray(statements) && statements.length) {
-    statements.forEach((statement) => {
-      if (statement.grouping !== 'where') { return }
-      // if (statement.asColumn) { return }
-
-      const { column } = statement
-      if (! column || typeof column !== 'string') { return }
-
-      const scoped = aliasMap.get(column)
-      if (! scoped || column === scoped) { return }
-      statement.column = scoped
-    })
-
-  }
-
-  return builder
 }
 
 
@@ -142,17 +97,4 @@ function smartJoinBuilder(
 
   return ret as KmoreQueryBuilder
 }
-
-
-
-
-function splitScopedColumn(input: string): [string, string] {
-  const arr = input.split('.')
-  const tableName = arr.slice(0, -1).join('.')
-  const col = arr.at(-1)
-  assert(tableName)
-  assert(col)
-  return [tableName, col]
-}
-
 

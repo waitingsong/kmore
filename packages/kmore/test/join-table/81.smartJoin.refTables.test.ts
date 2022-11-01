@@ -8,6 +8,8 @@ import { config, dbDict } from '../test.config.js'
 
 describe(fileShortPath(import.meta.url), () => {
   const km = KmoreFactory({ config, dict: dbDict })
+  const tables = km.refTables
+  const uid = 1
 
   before(() => {
     assert(km.dict.tables && Object.keys(km.dict.tables).length > 0)
@@ -19,31 +21,45 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should smartJoin table work', () => {
     it('tb_user join tb_user_ext', async () => {
-      const uid = 1
-
-      const ret = await km.refTables.ref_tb_user()
+      const ret = await tables.ref_tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
         )
-        .select('*')
-        .where('tb_user_ext_uid', uid)
-        // .where({ uid })
-        // .where(km.dict.scoped.tb_user.uid, 1)
-        .then(rows => rows[0])
+        .where('tbUserExtUid', uid)
+        .first()
+      validateRet(ret)
 
-      assert(ret)
-      ret.real_name
-      ret.tb_user_ext_uid
-      assert(ret && ret.uid)
-      assert(ret && ret.name)
-      assert(ret && ret.age)
+      const ret2 = await tables.ref_tb_user()
+        .smartJoin(
+          'tb_user_ext.uid',
+          'tb_user.uid',
+        )
+        .where({ uid })
+        .first()
+      validateRet(ret2)
+
+      const ret3 = await tables.ref_tb_user()
+        .smartJoin(
+          'tb_user_ext.uid',
+          'tb_user.uid',
+        )
+        .where('tb_user_ext_uid', uid)
+        .first()
+      validateRet(ret3)
+
+      const ret4 = await tables.ref_tb_user()
+        .smartJoin(
+          'tb_user_ext.uid',
+          'tb_user.uid',
+        )
+        .where(km.dict.scoped.tb_user.uid, 1)
+        .first()
+      validateRet(ret4)
     })
 
     it('tb_user join tb_user_ext and tb_order', async () => {
-      const { scoped } = km.dict
-
-      const ret = await km.refTables.ref_tb_user()
+      const ret = await tables.ref_tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -52,7 +68,6 @@ describe(fileShortPath(import.meta.url), () => {
           'tb_order.uid',
           'tb_user.uid',
         )
-        .select('*')
 
       assert(ret)
       assert(ret.length === 2)
@@ -71,6 +86,13 @@ describe(fileShortPath(import.meta.url), () => {
       assert(row1.tb_user_ext_uid === 1)
       assert(row1.uid === 1)
       // @ts-expect-error
+      assert(typeof row1.tbUserAge === 'undefined')
+      // @ts-expect-error
+      assert(typeof row1.tbUserCtime === 'undefined')
+      // @ts-expect-error
+      assert(typeof row1.tbUserUid === 'undefined')
+
+      // @ts-expect-error
       assert(typeof row1.tb_user_age === 'undefined')
       // @ts-expect-error
       assert(typeof row1.tb_user_uid === 'undefined')
@@ -85,4 +107,13 @@ describe(fileShortPath(import.meta.url), () => {
 
 })
 
+
+function validateRet(ret: any): void {
+  assert(ret)
+  assert(ret.real_name)
+  assert(ret.tb_user_ext_uid)
+  assert(ret && ret.uid)
+  assert(ret && ret.name)
+  assert(ret && ret.age)
+}
 
