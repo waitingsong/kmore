@@ -1,6 +1,7 @@
 # [kmore](https://waitingsong.github.io/kmore/)
 
 A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScript type support.
+Intergrated Tracing of [OpenTelemetry].
 
 
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
@@ -16,13 +17,14 @@ A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScrip
 - Type-safe property of tables accessor 
 - Type-safe join table easily
 - Type-safe auto-completion in IDE
+- Auto Paging with one query
 
 
 ## Installation
 ```sh
 npm i kmore && npm i -D kmore-cli
 // for Midway.js
-npm i @mw-components/kmore && npm i -D kmore-cli
+npm i @mwcp/kmore && npm i -D kmore-cli
 
 # Then add one of the following:
 npm install pg
@@ -178,6 +180,24 @@ ret.tb_user_ext_uid   // <-- duplicate uid will be converted with table prefix l
 More examples of join see [joint-table](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/join-table/)
 
 
+### Auto Paging
+
+```
+const options: Partial<PagingOptions> = {
+  page: 2,      // default 1
+  pageSize: 20, // default 10
+}
+const users = await tables.ref_tb_user().autoPaging(options)
+assert(Array.isArray(users))
+assert(users.length)
+
+// not enumerable properties of pager
+const { pageCountAll, pageCurrent, pageSize } = users
+```
+
+More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
+
+
 ### Use instance of knex
 ```ts
 // drop table
@@ -194,7 +214,7 @@ await km.dbh.destroy()
 // file: src/config/config.{prod | local | unittest}.ts
 
 import { genDbDict } from 'kmore-types'
-import { KmoreSourceConfig } from '@mw-components/kmore'
+import { KmoreSourceConfig } from '@mwcp/kmore'
 import { TbAppDO, TbMemberDO } from '../do/database.do.js'
 
 export interface Db {
@@ -268,7 +288,7 @@ This repository contains all these packages. Below you will find a summary of ea
 | [`kmore`]                  | [![kmore-svg]][kmore-ch] |
 | [`kmore-types`]            | [![types-svg]][types-ch] |
 | [`kmore-cli`]              | [![cli-svg]][cli-ch]     |
-| [`midway-component-kmore`] | [![mw-svg]][mw-ch]       |
+| [`@mwcp/kmore`] | [![mw-svg]][mw-ch]       |
 
 
 
@@ -284,38 +304,24 @@ This repository contains all these packages. Below you will find a summary of ea
 [`kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore
 [`kmore-types`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-types
 [`kmore-cli`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-cli
-[`midway-component-kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore
+[`@mwcp/kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore
 
 [kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=7200
 [kmore-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore/CHANGELOG.md
-[kmore-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
-[kmore-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore
-[kmore-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore
-[kmore-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore#info=devDependencies
 
 [types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=7200
 [types-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-types/CHANGELOG.md
-[types-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
-[types-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-types
-[types-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-types
-[types-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-types#info=devDependencies
 
 [cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=7200
 [cli-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-clie/CHANGELOG.md
-[cli-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
-[cli-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/kmore-cli
-[cli-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/kmore-cli
-[cli-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/kmore-cli#info=devDependencies
 
 
-[mw-svg]: https://img.shields.io/npm/v/@mw-components/kmore.svg?maxAge=7200
+[mw-svg]: https://img.shields.io/npm/v/@mwcp/kmore.svg?maxAge=7200
 [mw-ch]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore/CHANGELOG.md
-[mw-d-svg]: https://david-dm.org/waitingsong/kmore.svg?path=packages/midway-component-kmore
-[mw-d-link]: https://david-dm.org/waitingsong/kmore.svg?path=packages/midway-component-kmore
-[mw-dd-svg]: https://david-dm.org/waitingsong/kmore/dev-status.svg?path=packages/midway-component-kmore
-[mw-dd-link]: https://david-dm.org/waitingsong/kmore?path=packages/egg-kmore#info=midway-component-kmore
 
 
 <br>
 
 [pg-native]: https://github.com/brianc/node-pg-native
+[OpenTelemetry]: https://github.com/open-telemetry/opentelemetry-js-api
+
