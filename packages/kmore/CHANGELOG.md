@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [48.0.0](https://github.com/waitingsong/kmore/compare/v47.0.2...v48.0.0) (2022-11-01)
+
+
+### Features
+
+* **kmore:** auto paging with one builder by builder.autoPaging() ([7a60915](https://github.com/waitingsong/kmore/commit/7a60915bfa5eb742a90812e985e970910e4bb759))
+
+
+
+
+
 ## [47.0.2](https://github.com/waitingsong/kmore/compare/v47.0.1...v47.0.2) (2022-11-01)
 
 
