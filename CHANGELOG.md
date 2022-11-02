@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [48.1.1](/compare/v48.1.0...v48.1.1) (2022-11-02)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+
+
+
 # [48.1.0](/compare/v48.0.1...v48.1.0) (2022-11-02)
 
 

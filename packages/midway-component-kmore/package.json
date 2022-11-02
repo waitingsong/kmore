@@ -1,7 +1,7 @@
 {
   "name": "@mwcp/kmore",
   "author": "waiting",
-  "version": "48.1.0",
+  "version": "48.1.1",
   "description": "midway component for knex",
   "keywords": [
     "midway",
@@ -30,7 +30,7 @@
   "dependencies": {
     "@mwcp/otel": "^3.8.3",
     "@waiting/shared-core": "^20.6.3",
-    "kmore": "^48.0.1",
+    "kmore": "^48.1.1",
     "knex": "^2.3.0"
   },
   "devDependencies": {
