@@ -28,13 +28,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/otel": "^3.8.0",
+    "@mwcp/otel": "^3.8.3",
     "@waiting/shared-core": "^20.6.3",
     "kmore": "^48.0.1",
     "knex": "^2.3.0"
   },
   "devDependencies": {
-    "@mwcp/share": "^2.0.0",
+    "@mwcp/share": "^2.0.7",
     "cross-env": "7",
     "kmore-cli": "^48.0.0",
     "kmore-types": "^48.0.0"
