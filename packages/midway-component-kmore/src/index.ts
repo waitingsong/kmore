@@ -10,6 +10,8 @@ export {
   getCurrentTime,
   Kmore,
   KmoreEvent,
+  KmoreTransaction,
+  KmoreTransactionConfig,
   KnexConfig,
   mergeDoWithInitData,
 } from 'kmore'
