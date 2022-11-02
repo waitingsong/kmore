@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [48.2.0](https://github.com/waitingsong/kmore/compare/v48.1.1...v48.2.0) (2022-11-02)
+
+
+### Features
+
+* bump deps version ([caa00c9](https://github.com/waitingsong/kmore/commit/caa00c9d7dd19d6de0a2e212793d418256b8f7ee))
+
+
+
+
+
 # [48.0.0](https://github.com/waitingsong/kmore/compare/v47.0.2...v48.0.0) (2022-11-01)
 
 **Note:** Version bump only for package kmore-types

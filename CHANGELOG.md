@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [48.2.0](/compare/v48.1.1...v48.2.0) (2022-11-02)
+
+
+### Features
+
+* bump deps version caa00c9
+
+
+
+
+
 ## [48.1.1](/compare/v48.1.0...v48.1.1) (2022-11-02)
 
 
