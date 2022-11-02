@@ -5,7 +5,8 @@
   ],
   "ignore": [
     "demo",
-    "@mw-components/demo"
+    "@mw-components/demo",
+    "@mwcp/demo"
   ],
   "command": {
     "publish": {
