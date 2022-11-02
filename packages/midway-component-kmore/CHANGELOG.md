@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [48.1.0](https://github.com/waitingsong/kmore/compare/v48.0.1...v48.1.0) (2022-11-02)
+
+
+### Features
+
+* **mwcp:** exports types ([88c6ad7](https://github.com/waitingsong/kmore/commit/88c6ad776813b873a67b8ecdae3ef1526a48b7e3))
+
+
+
+
+
 ## [48.0.1](https://github.com/waitingsong/kmore/compare/v48.0.0...v48.0.1) (2022-11-01)
 
 **Note:** Version bump only for package @mwcp/kmore
