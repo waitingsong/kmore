@@ -190,7 +190,11 @@ assert(Array.isArray(users))
 assert(users.length)
 
 // 不可枚举分页属性
-const { pageCountAll, pageCurrent, pageSize } = users
+const { 
+  total,    // 总记录数
+  page,     // 当前页号，起始 1
+  pageSize, // 每页记录数
+} = users
 ```
 
 More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)

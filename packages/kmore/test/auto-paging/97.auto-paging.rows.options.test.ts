@@ -32,8 +32,8 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user(options).autoPaging(options)
 
       const meta: PagingMeta = {
-        pageCountAll: 3,
-        pageCurrent: 1,
+        total: 3,
+        page: 1,
         pageSize: 1,
       }
       validatePagerRet(ret, meta)
@@ -46,8 +46,8 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user(options).autoPaging(options)
 
       const meta: PagingMeta = {
-        pageCountAll: 3,
-        pageCurrent: 1,
+        total: 3,
+        page: 1,
         pageSize: 2,
       }
       validatePagerRet(ret, meta)
@@ -60,8 +60,8 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user(options).autoPaging(options)
 
       const meta: PagingMeta = {
-        pageCountAll: 3,
-        pageCurrent: 1,
+        total: 3,
+        page: 1,
         pageSize: 3,
       }
       validatePagerRet(ret, meta)
@@ -75,8 +75,8 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user(options).autoPaging(options)
 
       const meta: PagingMeta = {
-        pageCountAll: 3,
-        pageCurrent: 2,
+        total: 3,
+        page: 2,
         pageSize: 2,
       }
       validatePagerRet(ret, meta)
@@ -90,8 +90,8 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user(options).autoPaging(options)
 
       const meta: PagingMeta = {
-        pageCountAll: 3,
-        pageCurrent: 3,
+        total: 3,
+        page: 3,
         pageSize: 2,
       }
       validatePagerRet(ret, meta)
@@ -121,13 +121,13 @@ function validatePagerRet(input: PageArrayType<UserDTO>, expect: PagingMeta): vo
     assert(Object.hasOwn(input, key))
   })
 
-  const { pageCountAll, pageCurrent, pageSize } = input
+  const { total: pageCountAll, page: pageCurrent, pageSize } = input
   assert(typeof pageCountAll === 'number')
   assert(typeof pageCurrent === 'number')
   assert(typeof pageSize === 'number')
 
   assert(pageSize === expect.pageSize)
-  assert(pageCountAll === expect.pageCountAll)
+  assert(pageCountAll === expect.total)
   assert(input.length <= expect.pageSize)
 }
 

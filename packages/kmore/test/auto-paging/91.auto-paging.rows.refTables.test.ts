@@ -177,7 +177,7 @@ function validatePagerRet(input: PageArrayType<UserDo>, len = 3): void {
   assert(Object.hasOwn(input, 'pageCurrent'))
   assert(Object.hasOwn(input, 'pageSize'))
 
-  const { pageCountAll: total, pageCurrent: page, pageSize } = input
+  const { total, page, pageSize } = input
   console.log({ total, page, pageSize, rows: input.length })
   assert(typeof total === 'number')
   assert(typeof page === 'number')
@@ -185,7 +185,7 @@ function validatePagerRet(input: PageArrayType<UserDo>, len = 3): void {
 
   assert(pageSize === initPagingMeta.pageSize)
   assert(input.pageSize > 0)
-  assert(input.pageCountAll > 0)
+  assert(input.total > 0)
   assert(Array.isArray(input))
   assert(input.length === len)
   assert(pageSize >= input.length)
@@ -215,7 +215,7 @@ function validatePagerRetPartial(
     assert(! inputKeys.includes(key))
   })
 
-  const { pageCountAll: total, pageCurrent: page, pageSize } = input
+  const { total, page, pageSize } = input
   console.log({ total, page, pageSize, rows: input.length })
   assert(typeof total === 'number')
   assert(typeof page === 'number')
@@ -223,7 +223,7 @@ function validatePagerRetPartial(
 
   assert(pageSize === initPagingMeta.pageSize)
   assert(input.pageSize > 0)
-  assert(input.pageCountAll > 0)
+  assert(input.total > 0)
   assert(Array.isArray(input))
   assert(input.length === len)
   assert(pageSize >= input.length)

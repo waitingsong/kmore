@@ -145,11 +145,11 @@ export interface PagingMeta {
    *  not the number of rows in the current page,
    *  also not the number of pages.
    */
-  pageCountAll: number
+  total: number
   /**
    * Current page number, start from 1
    */
-  pageCurrent: number
+  page: number
   /**
    * Number of rows of each page.
    * The number rows of the last page may be less than this value

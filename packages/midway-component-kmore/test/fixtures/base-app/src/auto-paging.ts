@@ -47,8 +47,8 @@ export class UserPagingController {
 
     assert(users)
     assert(users.length === 3)
-    assert(users.pageCountAll === 3)
-    assert(users.pageCurrent === 1)
+    assert(users.total === 3)
+    assert(users.page === 1)
     assert(users.pageSize)
 
     return users
@@ -70,8 +70,8 @@ export class UserPagingController {
 
     assert(users)
     assert(users.length === 2)
-    assert(users.pageCountAll === 2)
-    assert(users.pageCurrent === 1)
+    assert(users.total === 2)
+    assert(users.page === 1)
     assert(users.pageSize)
 
     await trx.rollback()
@@ -81,8 +81,8 @@ export class UserPagingController {
 
     assert(users2)
     assert(users2.length === 3)
-    assert(users2.pageCountAll === 3)
-    assert(users2.pageCurrent === 1)
+    assert(users2.total === 3)
+    assert(users2.page === 1)
 
     return users2
   }

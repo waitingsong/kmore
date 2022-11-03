@@ -12,8 +12,8 @@ export const initPagingOptions: PagingOptions = {
 }
 
 export const initPagingMeta: PagingMeta = {
-  pageCountAll: 0,
-  pageCurrent: 1,
+  total: 0,
+  page: 1,
   pageSize: initPagingOptions.pageSize,
 }
 

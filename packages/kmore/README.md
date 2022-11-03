@@ -191,7 +191,11 @@ assert(Array.isArray(users))
 assert(users.length)
 
 // not enumerable properties of pager
-const { pageCountAll, pageCurrent, pageSize } = users
+const { 
+  total,    // total records
+  page,     // current page number, start from 1
+  pageSize, // size of items each page
+} = users
 ```
 
 More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)

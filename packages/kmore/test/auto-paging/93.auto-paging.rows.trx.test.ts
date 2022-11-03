@@ -201,7 +201,7 @@ function validatePagerRet(input: PageArrayType<UserDTO>, len = 3): void {
   assert(Object.hasOwn(input, 'pageCurrent'))
   assert(Object.hasOwn(input, 'pageSize'))
 
-  const { pageCountAll: total, pageCurrent: page, pageSize } = input
+  const { total, page, pageSize } = input
   try {
     assert(typeof total === 'number')
     assert(typeof page === 'number')
@@ -246,7 +246,7 @@ function validatePagerRetPartial(
     assert(! inputKeys.includes(key))
   })
 
-  const { pageCountAll: total, pageCurrent: page, pageSize } = input
+  const { total, page, pageSize } = input
   try {
     assert(typeof total === 'number')
     assert(typeof page === 'number')

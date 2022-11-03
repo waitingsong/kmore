@@ -27,8 +27,8 @@ export async function pager<T = unknown>(
   const { total, builderPager, pagingOptions } = await genBuilderForPaging(options)
 
   const props: PagingMeta = {
-    pageCountAll: total,
-    pageCurrent: +pagingOptions.page,
+    total,
+    page: +pagingOptions.page,
     pageSize: +pagingOptions.pageSize,
   }
 
