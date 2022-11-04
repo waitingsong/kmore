@@ -1,20 +1,32 @@
 import assert from 'assert'
 
-import { KmoreQueryBuilder, PagingMeta, PagingOptions } from './builder.types.js'
+import { KmoreQueryBuilder, PageWrapType, PagingMeta, PagingOptions } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { KmorePageKey } from './types.js'
 
 
-export const initPagingOptions: PagingOptions = {
+export const initPagingOptions: _PagingOptions = {
   enable: true,
   page: 1,
   pageSize: 10,
+  wrapOutput: false,
 }
 
 export const initPagingMeta: PagingMeta = {
   total: 0,
   page: 1,
   pageSize: initPagingOptions.pageSize,
+}
+
+export const initPageTypeMaping: Record<keyof PageWrapType, string> = {
+  total: 'total',
+  page: 'page',
+  pageSize: 'pageSize',
+  rows: 'rows',
+}
+
+export interface _PagingOptions extends PagingOptions {
+  wrapOutput: boolean
 }
 
 export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
@@ -26,14 +38,18 @@ export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): Km
   void Object.defineProperty(refTable, KmorePageKey.AutoPaging, {
     ...defaultPropDescriptor,
     writable: true,
-    value: (options: Partial<PagingOptions>) => autoPagingBuilder(options, refTable),
+    value: (
+      options?: Partial<PagingOptions>,
+      wrapOutput?: boolean,
+    ) => autoPagingBuilder(options, wrapOutput ?? false, refTable),
   })
 
   return refTable as KmoreQueryBuilder
 }
 
 function autoPagingBuilder(
-  options: Partial<PagingOptions>,
+  options: Partial<PagingOptions> | undefined,
+  wrapOutput: boolean,
   queryBuilder: KmoreQueryBuilder,
 ): KmoreQueryBuilder {
 
@@ -41,9 +57,12 @@ function autoPagingBuilder(
     throw new Error('autoPaging() can only be called once')
   }
 
-  const opts: PagingOptions = {
+  const opts: _PagingOptions = {
     ...initPagingOptions,
     ...options,
+  }
+  if (wrapOutput === true) {
+    opts.wrapOutput = true
   }
   assert(opts.page > 0, 'AutoPagingOptions page should be greater than 0')
   assert(opts.pageSize > 0, 'AutoPagingOptions pageSize should be greater than 0')

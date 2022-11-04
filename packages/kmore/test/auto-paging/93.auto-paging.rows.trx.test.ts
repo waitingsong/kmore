@@ -7,7 +7,7 @@ import {
   DbQueryBuilder,
   KmoreFactory,
   KmoreTransaction,
-  PageArrayType,
+  PageRawType,
 } from '../../src/index.js'
 import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
 import { config, dbDict } from '../test.config.js'
@@ -194,11 +194,11 @@ describe(fileShortPath(import.meta.url), () => {
 
 
 
-function validatePagerRet(input: PageArrayType<UserDTO>, len = 3): void {
+function validatePagerRet(input: PageRawType<UserDTO>, len = 3): void {
   assert(input)
 
-  assert(Object.hasOwn(input, 'pageCountAll'))
-  assert(Object.hasOwn(input, 'pageCurrent'))
+  assert(Object.hasOwn(input, 'total'))
+  assert(Object.hasOwn(input, 'page'))
   assert(Object.hasOwn(input, 'pageSize'))
 
   const { total, page, pageSize } = input
@@ -229,7 +229,7 @@ function validatePagerRet(input: PageArrayType<UserDTO>, len = 3): void {
 }
 
 function validatePagerRetPartial(
-  input: PageArrayType<Partial<UserDTO>>,
+  input: PageRawType<Partial<UserDTO>>,
   keys: string[],
   len = 3,
 ): void {

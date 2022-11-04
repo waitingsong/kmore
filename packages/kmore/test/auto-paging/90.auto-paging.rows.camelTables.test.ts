@@ -2,10 +2,10 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, PageArrayType } from '../../src/index.js'
+import { KmoreFactory, PageRawType } from '../../src/index.js'
 import { config, dbDict } from '../test.config.js'
 
-import { validatePagerRet, validatePagerRetPartial, validateRet } from './util.js'
+import { validatePageRet, validatePageRetPartial, validateRet } from './util.js'
 
 import type { UserDTO } from '@/test.model.js'
 
@@ -32,99 +32,99 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret = await tables.ref_tb_user()
         .autoPaging()
-      validatePagerRet(ret)
+      validatePageRet(ret)
     })
 
     it('all', async () => {
       const ret10 = await tables.ref_tb_user()
         .autoPaging()
-      validatePagerRet(ret10)
+      validatePageRet(ret10)
 
       const ret11 = await tables.ref_tb_user()
         .autoPaging()
         .then()
-      validatePagerRet(ret11)
+      validatePageRet(ret11)
 
       const ret12 = await tables.ref_tb_user()
         .autoPaging()
         .then()
         .then(rows => rows)
-      validatePagerRet(ret12)
+      validatePageRet(ret12)
 
       const ret20 = await tables.ref_tb_user()
         .autoPaging()
         .select('*')
-      validatePagerRet(ret20)
+      validatePageRet(ret20)
 
       const ret21 = await tables.ref_tb_user()
         .autoPaging()
         .select('*')
         .then()
-      validatePagerRet(ret21)
+      validatePageRet(ret21)
 
       const ret22 = await tables.ref_tb_user()
         .select('*')
         .autoPaging()
-      validatePagerRet(ret22)
+      validatePageRet(ret22)
 
       const ret23 = await tables.ref_tb_user()
         .select('*')
         .autoPaging()
         .then()
-      validatePagerRet(ret23)
+      validatePageRet(ret23)
     })
 
     it('partial', async () => {
       const ret30 = await tables.ref_tb_user()
         .autoPaging()
         .select('uid', 'realName')
-      validatePagerRetPartial(ret30, colkeys)
+      validatePageRetPartial(ret30, colkeys)
 
       const ret31 = await tables.ref_tb_user()
         .autoPaging()
         .select('uid', 'realName')
         .then()
-      validatePagerRetPartial(ret31, colkeys)
+      validatePageRetPartial(ret31, colkeys)
 
       const ret32 = await tables.ref_tb_user()
         .select('uid', 'realName')
         .autoPaging()
-      validatePagerRetPartial(ret32, colkeys)
+      validatePageRetPartial(ret32, colkeys)
 
       const ret33 = await tables.ref_tb_user()
         .select('uid', 'realName')
         .autoPaging()
         .then()
-      validatePagerRetPartial(ret33, colkeys)
+      validatePageRetPartial(ret33, colkeys)
 
       const ret40 = await tables.ref_tb_user()
         .autoPaging()
         .select(colkeys)
-      validatePagerRetPartial(ret40, colkeys)
+      validatePageRetPartial(ret40, colkeys)
 
       const ret41 = await tables.ref_tb_user()
         .autoPaging()
         .select(colkeys)
         .then()
-      validatePagerRetPartial(ret41, colkeys)
+      validatePageRetPartial(ret41, colkeys)
 
       const ret42 = await tables.ref_tb_user()
         .select(colkeys)
         .autoPaging()
-      validatePagerRetPartial(ret42, colkeys)
+      validatePageRetPartial(ret42, colkeys)
 
       const ret43 = await tables.ref_tb_user()
         .select(colkeys)
         .autoPaging()
         .then()
-      validatePagerRetPartial(ret43, colkeys)
+      validatePageRetPartial(ret43, colkeys)
     })
 
     it('where', async () => {
       const ret = await tables.ref_tb_user()
         .autoPaging()
         .where({ uid })
-      validatePagerRet(ret, 1)
+      validatePageRet(ret, 1)
     })
 
     it('where orderby asc', async () => {
@@ -132,7 +132,7 @@ describe(fileShortPath(import.meta.url), () => {
         .autoPaging()
         .where({ uid })
         .orderBy('uid', 'asc')
-      validatePagerRet(ret, 1)
+      validatePageRet(ret, 1)
     })
 
     it('where orderby desc', async () => {
@@ -140,17 +140,17 @@ describe(fileShortPath(import.meta.url), () => {
         .autoPaging()
         .where({ uid })
         .orderBy('uid', 'desc')
-      validatePagerRet(ret, 1)
+      validatePageRet(ret, 1)
     })
 
     it('ignore limit()', async () => {
-      const ret: PageArrayType<UserDTO> = await tables.ref_tb_user()
+      const ret: PageRawType<UserDTO> = await tables.ref_tb_user()
         .select('*')
         .limit(1) // will be ignored
         // @ts-ignore
         .autoPaging()
 
-      validatePagerRet(ret, 3)
+      validatePageRet(ret, 3)
     })
 
     it('smartJoin', async () => {

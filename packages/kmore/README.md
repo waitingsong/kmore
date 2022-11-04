@@ -181,22 +181,46 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
 
 ### Auto Paging
 
-```
-const options: Partial<PagingOptions> = {
-  page: 2,      // default 1
-  pageSize: 20, // default 10
-}
-const users = await tables.ref_tb_user().autoPaging(options)
-assert(Array.isArray(users))
-assert(users.length)
+- RawType:
 
-// not enumerable properties of pager
-const { 
-  total,    // total records
-  page,     // current page number, start from 1
-  pageSize, // size of items each page
-} = users
-```
+  ```ts
+  const options: Partial<PagingOptions> = {
+    page: 2,      // default 1
+    pageSize: 20, // default 10
+  }
+  const users = await tables.ref_tb_user().autoPaging(options)
+  assert(Array.isArray(users))
+  assert(users.length)
+
+  // not enumerable properties of pager
+  const { 
+    total,    // total records
+    page,     // current page number, start from 1
+    pageSize, // size of items each page
+  } = users
+  ```
+
+- WrapType:
+
+  ```ts
+  const options: Partial<PagingOptions> = {
+    page: 2,      // default 1
+    pageSize: 20, // default 10
+  }
+  const users = await tables.ref_tb_user().autoPaging(options, true)
+  assert(! Array.isArray(users))
+  assert(Array.isArray(users.rows))
+  assert(users.rows.length)
+
+  // enumerable properties of pager
+  const { 
+    total,    // total records
+    page,     // current page number, start from 1
+    pageSize, // size of items each page
+    rows,     // response records
+  } = users
+  ```
+
 
 More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
 
@@ -286,11 +310,11 @@ export class UserRepo {
 kmore is comprised of many specialized packages.
 This repository contains all these packages. Below you will find a summary of each package.
 
-| Package                    | Version                  |
-| -------------------------- | ------------------------ |
-| [`kmore`]                  | [![kmore-svg]][kmore-ch] |
-| [`kmore-types`]            | [![types-svg]][types-ch] |
-| [`kmore-cli`]              | [![cli-svg]][cli-ch]     |
+| Package         | Version                  |
+| --------------- | ------------------------ |
+| [`kmore`]       | [![kmore-svg]][kmore-ch] |
+| [`kmore-types`] | [![types-svg]][types-ch] |
+| [`kmore-cli`]   | [![cli-svg]][cli-ch]     |
 | [`@mwcp/kmore`] | [![mw-svg]][mw-ch]       |
 
 

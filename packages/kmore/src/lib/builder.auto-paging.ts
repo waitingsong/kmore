@@ -4,13 +4,14 @@ import type { KmoreBase, PagerOptions, ProxyGetOptions } from './base.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
 import type {
-  PagingOptions,
   KmoreQueryBuilder,
-  PageArrayType,
+  PageRawType,
   PagingMeta,
+  PageWrapType,
 } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
+import { initPageTypeMaping, _PagingOptions } from './proxy.auto-paging.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import { KmorePageKey } from './types.js'
@@ -20,7 +21,7 @@ import { genKmoreTrxId } from './util.js'
 export async function pager<T = unknown>(
   options: PagerOptions,
   proxyCreator: (options: ProxyGetOptions) => KmoreQueryBuilder,
-): Promise<PageArrayType<T> | undefined> {
+): Promise<PageRawType<T> | PageWrapType<T> | undefined> {
 
   const { kmore } = options
 
@@ -32,8 +33,22 @@ export async function pager<T = unknown>(
     pageSize: +pagingOptions.pageSize,
   }
 
+  const outputMaping = pagingOptions.wrapOutput === true
+    ? { ...initPageTypeMaping }
+    : void 0
+
+
   if (! total || ! builderPager) {
-    return addPaginMetaOnArray([], props)
+    if (outputMaping) {
+      const data: PageWrapType<T> = {
+        ...props,
+        rows: [],
+      }
+      return data
+    }
+    else {
+      return addPaginMetaOnArray([], props)
+    }
   }
 
   // const builderPagerPatched = createQueryBuilderGetProxy(kmore, builderPager)
@@ -46,13 +61,45 @@ export async function pager<T = unknown>(
   // const builderPagerSql = builderPagerPatched.toQuery()
   // console.info({ builderPageSql: builderPagerSql })
 
-  return builderPagerPatched.then((rows: T[] | undefined) => addPaginMetaOnArray(rows, props))
+  return pagingOptions.wrapOutput
+    ? builderPagerPatched.then((rows: T[] | undefined) => genOutputData(rows, props, outputMaping))
+    : builderPagerPatched.then((rows: T[] | undefined) => addPaginMetaOnArray(rows, props))
 }
+
+function genOutputData<T = unknown>(
+  input: T[] | undefined,
+  props: PagingMeta,
+  outputMaping: Record<keyof PageWrapType, string> | undefined,
+): PageWrapType<T> {
+
+  assert(outputMaping, 'outputMaping should be set')
+  assert(Object.keys(outputMaping).length, 'outputMaping should not be empty')
+
+  const data: PageWrapType<T> = {
+    ...props,
+    rows: input ?? [],
+  }
+
+  if (outputMaping) {
+    Object.entries(outputMaping).forEach(([key, key2]) => {
+      if (! Object.hasOwn(props, key)) { return }
+      // @ts-ignore
+      const value = props[key] as unknown
+      Object.defineProperty(data, key2, {
+        ...defaultPropDescriptor,
+        value,
+      })
+    })
+  }
+
+  return data
+}
+
 
 function addPaginMetaOnArray<T = unknown>(
   input: T[] | undefined,
   props: PagingMeta,
-): PageArrayType<T> | undefined {
+): PageRawType<T> | undefined {
 
   if (! Array.isArray(input)) { return }
 
@@ -63,12 +110,12 @@ function addPaginMetaOnArray<T = unknown>(
       value,
     })
   })
-  return input as PageArrayType<T>
+  return input as PageRawType<T>
 }
 
 interface GenBuilderForPagingRetType {
   total: number
-  pagingOptions: PagingOptions
+  pagingOptions: _PagingOptions
   builderPager?: KmoreQueryBuilder | undefined
 }
 async function genBuilderForPaging(
@@ -90,7 +137,7 @@ async function genBuilderForPaging(
   )
 
   // @ts-ignore
-  const pagingOptions: PagingOptions = builder[KmorePageKey.PagingOptions]
+  const pagingOptions: _PagingOptions = builder[KmorePageKey.PagingOptions]
   assert(pagingOptions, 'pagingOptions should be set')
   void Object.defineProperty(builder, KmorePageKey.PagingProcessed, {
     ...defaultPropDescriptor,

@@ -16,22 +16,29 @@ import { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
 
+/**
+ * - 0: No paging
+ * - 1: Paging, PagingMeta on response Array
+ * - 2: paging, wrap response as `PageWrapType`
+ */
+type PagingCategory = 0 | 1 | 2
+
 export type KmoreQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = any
 > = QueryBuilderExtName<D>
-& QueryBuilderExtMethod<D, CaseConvert, IsEnabled<EnablePage>, TRecord>
-& QueryBuilder<D, CaseConvert, IsEnabled<EnablePage>, TRecord, AddPagingMeta<TResult, IsEnabled<EnablePage>>>
+& QueryBuilderExtMethod<D, CaseConvert, EnablePage, TRecord>
+& QueryBuilder<D, CaseConvert, EnablePage, TRecord, AddPagingMeta<TResult, EnablePage>>
 
 type OmitQueryBuilderKeys = 'select' | 'where' | 'orderBy' | keyof Knex.ChainableInterface
 
 interface QueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = any
 > extends
@@ -56,7 +63,7 @@ export type DbQueryBuilder<
 }
 
 export type TbQueryBuilder<D extends {}, CaseConvert extends CaseType, TRecord extends {}, Context>
-  = (ctx?: Context) => KmoreQueryBuilder<D, CaseConvert, false, TRecord, TRecord[]>
+  = (ctx?: Context) => KmoreQueryBuilder<D, CaseConvert, 0, TRecord, TRecord[]>
 
 interface QueryBuilderExtName<D extends {} = {}> {
   caseConvert: CaseType
@@ -69,7 +76,7 @@ interface QueryBuilderExtName<D extends {} = {}> {
 interface QueryBuilderExtMethod<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
 > {
   smartCrossJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
@@ -83,13 +90,31 @@ interface QueryBuilderExtMethod<
 type AutoPaging<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any
-> = (options?: Partial<PagingOptions>) => KmoreQueryBuilder<D, CaseConvert, true, TRecord, TRecord[]>
+  TRecord extends {} = any,
+> = <Wrap extends boolean | undefined = false>(options?: Partial<PagingOptions>, wrapOutput?: Wrap)
+=> KmoreQueryBuilder<D, CaseConvert, CalcPagingCat<Wrap>, TRecord, TRecord[]>
+
+type CalcPagingCat<T> = T extends true ? 2 : 1
+
+type AddPagingMeta<
+  TSelection,
+  EnablePage extends PagingCategory = 0
+> = EnablePage extends 0
+  ? TSelection
+  : TSelection extends (infer R)[]
+    ? EnablePage extends 2
+      ? WrapPageOutput<R>
+      : PageRawType<R>
+    : TSelection
+
+// type RemovePagingMeta<T> = T extends ((infer M)[] & PagingMeta) ? M[] : T
+type WrapPageOutput<T> = T extends PageWrapType ? T : PageWrapType<T>
+
 
 type SmartJoin<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TResult = unknown[]
 > = <
   TRecord1 = UnwrapArrayMember<TResult>,
@@ -129,14 +154,13 @@ export interface PagingOptions {
    */
   pageSize: number
 }
+
 /**
  * Note: keyof PagingMeta is not enumerable
  */
-export type PageArrayType<T = unknown> = T[] & PagingMeta
-/**
- * Note: keyof PagingMeta is not enumerable
- */
-export type PageDataType<T = {}> = T & PagingMeta
+export type PageRawType<T = unknown> = T[] & PagingMeta
+export interface PageWrapType<T = unknown> extends PagingMeta { rows: T[] }
+
 export interface PagingMeta {
   /**
    * Total count of rows in table
@@ -157,21 +181,13 @@ export interface PagingMeta {
   pageSize: number
 }
 
-type AddPagingMeta<TSelection, EnablePage extends boolean = false> = EnablePage extends false
-  ? RemovePagingMeta<TSelection>
-  : TSelection extends unknown[]
-    ? PageDataType<RemovePagingMeta<TSelection>>
-    : TSelection
-
-type RemovePagingMeta<T> = T extends ((infer M)[] & PagingMeta) ? M[] : T
-
 
 /*  ---------------- re-declare types of Knex ----------------  */
 
 interface Select<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any, TResult = unknown[]
 > extends
   AliasQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>,
@@ -200,7 +216,7 @@ interface Select<
 interface AliasQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[]
 > {
@@ -262,7 +278,7 @@ interface AliasQueryBuilder<
 interface ColumnNameQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[]
 > {
@@ -326,7 +342,7 @@ interface ColumnNameQueryBuilder<
 interface OrderBy<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[]
 > {
@@ -374,7 +390,6 @@ type CurlyCurlyToAny<T> = T extends unknown // distribute
 interface Dict<T = any> { [k: string]: T }
 // If T can't be assigned to TBase fallback to an alternate type TAlt
 type IncompatibleToAlt<T, TBase, TAlt> = T extends TBase ? T : TAlt
-type IsEnabled<T extends boolean> = T extends true ? true : false
 // Retain the association of original keys with aliased keys at type level
 // to facilitates type-safe aliasing for object syntax
 type MappedAliasType<TBase, TAliasMapping> = {} & {
@@ -639,7 +654,7 @@ export declare namespace DeferredKeySelectionNS {
 
 // If we have more categories of deferred selection in future,
 // this will combine all of them
-type ResolveResult<S, EnablePage extends boolean = false>
+type ResolveResult<S, EnablePage extends PagingCategory = 0>
   = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePage>
 
 type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
@@ -647,7 +662,7 @@ type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
 export interface Where<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = any
 > extends WhereRaw<D, CaseConvert, EnablePage, TRecord, TResult> {
@@ -704,7 +719,7 @@ export interface Where<
 interface WhereRaw<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends boolean = false,
+  EnablePage extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[]
 >

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { KmoreQueryBuilder, PageArrayType } from './builder.types.js'
+import { KmoreQueryBuilder, PageRawType, PageWrapType } from './builder.types.js'
 import {
   CaseType,
   EventCallbacks,
@@ -91,5 +91,5 @@ export interface PagerOptions {
 type ResultPagerHandler<T = unknown> = (
   options: PagerOptions,
   proxyCreator: (options: ProxyGetOptions) => KmoreQueryBuilder,
-) => Promise<PageArrayType<T> | undefined>
+) => Promise<PageRawType<T> | PageWrapType<T> | undefined>
 

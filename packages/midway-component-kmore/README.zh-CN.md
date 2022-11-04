@@ -181,22 +181,46 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
 
 ### 自动分页
 
-```
-const options: Partial<PagingOptions> = {
-  page: 2,      // default 1
-  pageSize: 20, // default 10
-}
-const users = await tables.ref_tb_user().autoPaging(options)
-assert(Array.isArray(users))
-assert(users.length)
+- RawType:
 
-// 不可枚举分页属性
-const { 
-  total,    // 总记录数
-  page,     // 当前页号，起始 1
-  pageSize, // 每页记录数
-} = users
-```
+  ```ts
+  const options: Partial<PagingOptions> = {
+    page: 2,      // default 1
+    pageSize: 20, // default 10
+  }
+  const users = await tables.ref_tb_user().autoPaging(options)
+  assert(Array.isArray(users))
+  assert(users.length)
+
+  // 不可枚举分页属性
+  const { 
+    total,    // 总记录数
+    page,     // 当前页号，起始 1
+    pageSize, // 每页记录数
+  } = users
+  ```
+
+- WrapType:
+
+  ```ts
+  const options: Partial<PagingOptions> = {
+    page: 2,      // default 1
+    pageSize: 20, // default 10
+  }
+  const users = await tables.ref_tb_user().autoPaging(options, true)
+  assert(! Array.isArray(users))
+  assert(Array.isArray(users.rows))
+  assert(users.rows.length)
+
+  // 可枚举分页属性
+  const { 
+    total,    // 总记录数
+    page,     // 当前页号，起始 1
+    pageSize, // 每页记录数
+    rows,     // 查询结果数据
+  } = users
+  ```
+
 
 More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
 

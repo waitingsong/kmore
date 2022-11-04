@@ -33,6 +33,7 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
       && target[KmorePageKey.PagingOptions]?.enable === true
       && ! Object.hasOwn(target, KmorePageKey.PagingProcessed)
     ) {
+      // pager()
       getThenProxyRet = resultPagerHandler({ builder: target, kmore }, createQueryBuilderGetProxy)
     }
     else {

@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict'
 
-import { PageArrayType } from '../../src/index.js'
+import { PageRawType } from '../../src/index.js'
 import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
 
 import type { UserDTO } from '@/test.model.js'
 
 
-export function validatePagerRet(input: PageArrayType<UserDTO>, len = 3): void {
+export function validatePageRet(input: PageRawType<UserDTO>, len = 3): void {
   assert(input)
 
-  assert(Object.hasOwn(input, 'pageCountAll'))
-  assert(Object.hasOwn(input, 'pageCurrent'))
+  assert(Object.hasOwn(input, 'total'))
+  assert(Object.hasOwn(input, 'page'))
   assert(Object.hasOwn(input, 'pageSize'))
 
   const { total, page, pageSize } = input
@@ -33,8 +33,8 @@ export function validatePagerRet(input: PageArrayType<UserDTO>, len = 3): void {
   assert(row.name)
 }
 
-export function validatePagerRetPartial(
-  input: PageArrayType<Partial<UserDTO>>,
+export function validatePageRetPartial(
+  input: PageRawType<Partial<UserDTO>>,
   keys: string[],
   len = 3,
 ): void {
@@ -98,7 +98,7 @@ export function validateRet(input: UserDTO[], len = 3): void {
 }
 
 
-export function validateRowsOrder(input: PageArrayType<UserDTO>, ord: 'asc' | 'desc'): void {
+export function validateRowsOrder(input: PageRawType<UserDTO>, ord: 'asc' | 'desc'): void {
   assert(input)
   const len = input.length
   assert(len > 1, 'should input.length > 1')
@@ -115,7 +115,7 @@ export function validateRowsOrder(input: PageArrayType<UserDTO>, ord: 'asc' | 'd
 
 }
 
-export function validateRowsOrderPartical(input: PageArrayType<Partial<UserDTO>>, ord: 'asc' | 'desc'): void {
+export function validateRowsOrderPartical(input: PageRawType<Partial<UserDTO>>, ord: 'asc' | 'desc'): void {
   assert(input)
   const len = input.length
   assert(len > 1, 'should input.length > 1')

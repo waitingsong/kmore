@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, PageArrayType } from '../../src/index.js'
+import { KmoreFactory, PageRawType } from '../../src/index.js'
 import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
 import { config, dbDict } from '../test.config.js'
 
@@ -143,7 +143,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('ignore limit()', async () => {
-      const ret: PageArrayType<UserDo> = await tables.ref_tb_user()
+      const ret: PageRawType<UserDo> = await tables.ref_tb_user()
         .select('*')
         .limit(1) // will be ignored
         // @ts-ignore
@@ -170,11 +170,11 @@ describe(fileShortPath(import.meta.url), () => {
 
 
 
-function validatePagerRet(input: PageArrayType<UserDo>, len = 3): void {
+function validatePagerRet(input: PageRawType<UserDo>, len = 3): void {
   assert(input)
 
-  assert(Object.hasOwn(input, 'pageCountAll'))
-  assert(Object.hasOwn(input, 'pageCurrent'))
+  assert(Object.hasOwn(input, 'total'))
+  assert(Object.hasOwn(input, 'page'))
   assert(Object.hasOwn(input, 'pageSize'))
 
   const { total, page, pageSize } = input
@@ -198,7 +198,7 @@ function validatePagerRet(input: PageArrayType<UserDo>, len = 3): void {
 }
 
 function validatePagerRetPartial(
-  input: PageArrayType<Partial<UserDTO>>,
+  input: PageRawType<Partial<UserDTO>>,
   keys: string[],
   len = 3,
 ): void {
