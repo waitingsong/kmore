@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [49.0.0](https://github.com/waitingsong/kmore/compare/v48.2.0...v49.0.0) (2022-11-04)
+
+
+### Features
+
+* **kmore:** breaking change types and wrap response to object PageWrapType ([8cc74ec](https://github.com/waitingsong/kmore/commit/8cc74ec86ca7d7b26605a31f455a904d1c2446aa))
+
+
+
+
+
 # [48.2.0](https://github.com/waitingsong/kmore/compare/v48.1.1...v48.2.0) (2022-11-02)
 
 **Note:** Version bump only for package kmore

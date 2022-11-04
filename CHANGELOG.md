@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [49.0.0](/compare/v48.2.0...v49.0.0) (2022-11-04)
+
+
+### Features
+
+* **kmore:** breaking change types and wrap response to object PageWrapType 8cc74ec
+
+
+
+
+
 # [48.2.0](/compare/v48.1.1...v48.2.0) (2022-11-02)
 
 
