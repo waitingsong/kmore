@@ -1,10 +1,10 @@
-import type { ProxyGetOptions } from './base.js'
+import type { CreateQueryBuilderGetProxyOptions } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 
 
 export function createQueryBuilderGetProxy(
-  options: ProxyGetOptions,
+  options: CreateQueryBuilderGetProxyOptions,
 ): KmoreQueryBuilder {
 
   const { kmore, builder, thenHandler, resultPagerHandler } = options

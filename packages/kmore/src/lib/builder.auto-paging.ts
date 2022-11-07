@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-import type { KmoreBase, PagerOptions, ProxyGetOptions } from './base.js'
+import type { KmoreBase, PagerOptions, CreateQueryBuilderGetProxyOptions } from './base.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
 import type {
@@ -20,7 +20,7 @@ import { genKmoreTrxId } from './util.js'
 
 export async function pager<T = unknown>(
   options: PagerOptions,
-  proxyCreator: (options: ProxyGetOptions) => KmoreQueryBuilder,
+  proxyCreator: (options: CreateQueryBuilderGetProxyOptions) => KmoreQueryBuilder,
 ): Promise<PageRawType<T> | PageWrapType<T> | undefined> {
 
   const { kmore } = options

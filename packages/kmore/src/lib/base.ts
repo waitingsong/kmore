@@ -69,7 +69,7 @@ export abstract class KmoreBase<Context = any> {
 
 }
 
-export interface ProxyGetOptions {
+export interface CreateQueryBuilderGetProxyOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
   thenHandler: (options: ProxyGetHandlerOptions) => KmoreQueryBuilder['then']
@@ -90,6 +90,6 @@ export interface PagerOptions {
 
 type ResultPagerHandler<T = unknown> = (
   options: PagerOptions,
-  proxyCreator: (options: ProxyGetOptions) => KmoreQueryBuilder,
+  proxyCreator: (options: CreateQueryBuilderGetProxyOptions) => KmoreQueryBuilder,
 ) => Promise<PageRawType<T> | PageWrapType<T> | undefined>
 
