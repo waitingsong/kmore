@@ -78,7 +78,7 @@ export interface CreateQueryBuilderGetProxyOptions {
 
 export interface ProxyGetHandlerOptions {
   kmore: KmoreBase
-  target: KmoreQueryBuilder
+  builder: KmoreQueryBuilder
   propKey: string | symbol
   receiver: unknown
   resultPagerHandler?: ResultPagerHandler | undefined
@@ -92,4 +92,5 @@ type ResultPagerHandler<T = unknown> = (
   options: PagerOptions,
   proxyCreator: (options: CreateQueryBuilderGetProxyOptions) => KmoreQueryBuilder,
 ) => Promise<PageRawType<T> | PageWrapType<T> | undefined>
+
 

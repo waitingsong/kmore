@@ -7,14 +7,24 @@ export function createQueryBuilderGetProxy(
   options: CreateQueryBuilderGetProxyOptions,
 ): KmoreQueryBuilder {
 
-  const { kmore, builder, thenHandler, resultPagerHandler } = options
+  const {
+    kmore,
+    thenHandler,
+    resultPagerHandler,
+  } = options
 
-  const ret = new Proxy(builder, {
+  const ret = new Proxy(options.builder, {
     get: (target: KmoreQueryBuilder, propKey: string | symbol, receiver: unknown) => {
       switch (propKey) {
         case 'then':
           // return proxyGetThen({ kmore, target, propKey, receiver })
-          return thenHandler({ kmore, target, propKey, receiver, resultPagerHandler })
+          return thenHandler({
+            kmore,
+            builder: target,
+            propKey,
+            receiver,
+            resultPagerHandler,
+          })
         default:
           return Reflect.get(target, propKey, receiver)
       }

@@ -16,7 +16,12 @@ import {
  * Create a proxy for `then` method on QueryBuilder, not on QueryResponse
  */
 export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder['then'] {
-  const { kmore, target, propKey, resultPagerHandler } = options
+  const {
+    kmore,
+    builder: origBuilder,
+    propKey,
+    resultPagerHandler,
+  } = options
   assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
   const getThenProxy = async (
@@ -24,21 +29,23 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     reject?: (data: unknown) => Error,
   ) => {
 
-    const { kmoreQueryId } = target
+    const builder = origBuilder
+
+    const { kmoreQueryId } = builder
 
     let getThenProxyRet: Promise<unknown>
 
-    if (resultPagerHandler && Object.hasOwn(target, KmorePageKey.PagingOptions)
+    if (resultPagerHandler && Object.hasOwn(builder, KmorePageKey.PagingOptions)
       // @ts-ignore
-      && target[KmorePageKey.PagingOptions]?.enable === true
-      && ! Object.hasOwn(target, KmorePageKey.PagingProcessed)
+      && builder[KmorePageKey.PagingOptions]?.enable === true
+      && ! Object.hasOwn(builder, KmorePageKey.PagingProcessed)
     ) {
       // pager()
-      getThenProxyRet = resultPagerHandler({ builder: target, kmore }, createQueryBuilderGetProxy)
+      getThenProxyRet = resultPagerHandler({ builder, kmore }, createQueryBuilderGetProxy)
     }
     else {
       // query response or response data
-      getThenProxyRet = Reflect.apply(target.then, target, []) as Promise<unknown>
+      getThenProxyRet = Reflect.apply(builder.then, builder, []) as Promise<unknown>
     }
 
     return processThenRet({
@@ -54,6 +61,6 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     value: Date.now(),
   })
 
-  return getThenProxy.bind(target) as KmoreQueryBuilder['then']
+  return getThenProxy.bind(origBuilder) as KmoreQueryBuilder['then']
 }
 
