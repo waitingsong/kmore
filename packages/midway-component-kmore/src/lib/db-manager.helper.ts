@@ -33,67 +33,91 @@ export const knexKeys = new Set<string>(['transaction'])
 export const builderKeys = new Set<PropertyKey>(['transacting'])
 
 
-type Dbb = DbQueryBuilder<Context, object, string, CaseType>
+type Dbqb = DbQueryBuilder<Context, any, string, CaseType>
 
-export function proxyRef(options: ProxyOptions): Dbb {
-  const { dbSourceManager, reqCtx, targetProperty, traceSvc } = options
+export function proxyRef(options: ProxyOptions): Dbqb {
+  const {
+    dbSourceManager,
+    reqCtx,
+    targetProperty,
+    traceSvc,
+  } = options
   assert(targetProperty, 'targetProperty is empty')
 
   const ret = new Proxy(targetProperty, {
-    get: (target: Dbb, propKey: string) => {
-      // @ts-ignore
-      if (typeof target[propKey] === 'function') {
-        const fn = (ctx?: unknown) => {
-          const args: unknown[] = ctx ? [ctx] : [reqCtx]
-          // @ts-ignore
-          const builder = target[propKey](...args) as KmoreQueryBuilder
-          assert(builder, 'builder is empty')
-          assert(typeof builder.transacting === 'function', 'builder.transacting is not a function')
+    get: (target: Dbqb, propKey: string) => {
+      assert(
+        typeof target[propKey] === 'function',
+        `${propKey.toString()} is not a function`,
+      )
 
-          const opts: ProxyBuilderOptions = {
-            dbSourceManager,
-            propKey,
-            targetProperty: builder,
-            traceSvc,
-          }
-          const builder2 = proxyBuilder(opts)
-          return builder2
-        }
-        return fn
-      }
-
-      throw new TypeError(`${propKey.toString()} is not a function`)
+      return (ctx?: unknown) => proxyRefTableFn(ctx, {
+        dbSourceManager,
+        propKey,
+        reqCtx,
+        targetProperty: target,
+        traceSvc,
+      })
     },
   })
 
   return ret
 }
 
+function proxyRefTableFn(ctx: unknown, options: ProxyOptions): KmoreQueryBuilder {
+  const {
+    dbSourceManager, propKey, reqCtx, targetProperty: target, traceSvc,
+  } = options
+
+  const args: unknown[] = ctx ? [ctx] : [reqCtx]
+  // @ts-ignore
+  const builder = target[propKey](...args) as KmoreQueryBuilder
+  assert(builder, 'builder is empty')
+  assert(typeof builder.transacting === 'function', 'builder.transacting is not a function')
+
+  const opts: ProxyBuilderOptions = {
+    dbSourceManager,
+    propKey,
+    targetProperty: builder,
+    traceSvc,
+  }
+  const builder2 = proxyBuilder(opts)
+  return builder2
+}
+
 export interface ProxyOptions {
-  targetProperty: Dbb
+  targetProperty: Dbqb | (Kmore[keyof Kmore])
   reqCtx: unknown
   propKey: string
   dbSourceManager: DbSourceManager
   traceSvc: TraceService
-  func: () => any
 }
 
-export function proxyKnex(options: ProxyOptions): Dbb {
+export function proxyKnex(options: ProxyOptions): ProxyOptions['targetProperty'] {
   switch (options.propKey) {
-    case 'transaction':
-      return knexTransaction(options)
+    case 'transaction': {
+      if (options.traceSvc.isStarted) {
+        return knexTransactionTracing(options)
+      }
+      return options.targetProperty
+    }
+
     default:
       throw new TypeError(`unknown propKey: ${options.propKey}`)
   }
 }
 
 interface ProxyOptionsKnexTransaction extends ProxyOptions {
-  func: Kmore['transaction']
+  targetProperty: Kmore['transaction']
 }
-function knexTransaction(options: ProxyOptionsKnexTransaction): Kmore['transaction'] {
-  const { dbSourceManager, traceSvc, func } = options
+function knexTransactionTracing(
+  options: ProxyOptionsKnexTransaction,
+): ProxyOptionsKnexTransaction['targetProperty'] {
 
-  const ret = new Proxy(func, {
+  const { dbSourceManager, traceSvc, targetProperty } = options
+  assert(typeof targetProperty === 'function', 'targetProperty is not a function transaction()')
+
+  const ret = new Proxy(targetProperty, {
     apply: async (target, thisBinding, args) => {
       const { span, traceContext } = dbSourceManager.createSpan(traceSvc, { name: 'Kmore transaction' })
       const querySpanInfo: QuerySpanInfo = {
@@ -124,9 +148,9 @@ function knexTransaction(options: ProxyOptionsKnexTransaction): Kmore['transacti
         targetProperty: trx,
         traceSvc,
       }
-      trxCommitRollback(trxOpts)
+      createProxyTrxCommitRollback(trxOpts)
       trxOpts.op = 'rollback'
-      trxCommitRollback(trxOpts)
+      createProxyTrxCommitRollback(trxOpts)
 
       new Promise<void>((done) => {
         const name = `Kmore ${trx.dbId} transaction`
@@ -227,7 +251,7 @@ interface TrxCommitRollbackOptions {
   targetProperty: KmoreTransaction
   traceSvc: TraceService
 }
-function trxCommitRollback(options: TrxCommitRollbackOptions): KmoreTransaction {
+function createProxyTrxCommitRollback(options: TrxCommitRollbackOptions): KmoreTransaction {
   const { op, dbSourceManager, traceSvc, targetProperty: trx } = options
 
   assert(['commit', 'rollback'].includes(op), `unknown op: ${op}`)
