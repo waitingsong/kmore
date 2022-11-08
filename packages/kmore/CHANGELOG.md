@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [49.0.2](https://github.com/waitingsong/kmore/compare/v49.0.1...v49.0.2) (2022-11-08)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 ## [49.0.1](https://github.com/waitingsong/kmore/compare/v49.0.0...v49.0.1) (2022-11-06)
 
 **Note:** Version bump only for package kmore
