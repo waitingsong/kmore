@@ -28,8 +28,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/otel": "^3.8.7",
-    "@waiting/shared-core": "^20.8.0",
+    "@mwcp/otel": "^3.16.0",
+    "@waiting/shared-core": "^20.10.1",
     "kmore": "^49.0.3",
     "knex": "^2.3.0"
   },
