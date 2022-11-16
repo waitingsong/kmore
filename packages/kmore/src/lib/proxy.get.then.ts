@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'assert'
 
-import type { ProxyGetHandlerOptions } from './base.js'
+import type { PagerOptions, ProxyGetHandlerOptions } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { processThenRet } from './proxy.get.helper.js'
@@ -21,6 +21,9 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     builder: origBuilder,
     propKey,
     resultPagerHandler,
+    ctxBuilderPreProcessor,
+    ctxBuilderResultPreProcessor,
+    ctxExceptionHandler,
   } = options
   assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
@@ -29,9 +32,20 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     reject?: (data: unknown) => Error,
   ) => {
 
-    const builder = origBuilder
+    const builder = typeof ctxBuilderPreProcessor === 'function'
+      ? (await ctxBuilderPreProcessor(origBuilder)).builder
+      : origBuilder
 
     const { kmoreQueryId } = builder
+    if (! kmoreQueryId) {
+      const errMsg = 'kmoreQueryId should be defined, builder may not be a KmoreQueryBuilder'
+      console.error(errMsg)
+      const err = new Error(errMsg)
+      if (reject) {
+        return reject(err)
+      }
+      throw err
+    }
 
     let getThenProxyRet: Promise<unknown>
 
@@ -41,17 +55,35 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
       && ! Object.hasOwn(builder, KmorePageKey.PagingProcessed)
     ) {
       // pager()
-      getThenProxyRet = resultPagerHandler({ builder, kmore }, createQueryBuilderGetProxy)
+      const opts: PagerOptions = {
+        builder,
+        kmore,
+        ctxBuilderPreProcessor: options.ctxBuilderPreProcessor,
+        ctxBuilderResultPreProcessor: options.ctxBuilderResultPreProcessor,
+        ctxExceptionHandler: options.ctxExceptionHandler,
+      }
+
+      getThenProxyRet = resultPagerHandler(opts, createQueryBuilderGetProxy)
     }
     else {
       // query response or response data
       getThenProxyRet = Reflect.apply(builder.then, builder, []) as Promise<unknown>
     }
 
+    const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
+    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
+
     return processThenRet({
+      ctxBuilderResultPreProcessor,
+      ctxExceptionHandler,
+      input: getThenProxyRet,
       kmore,
       kmoreQueryId,
-      input: getThenProxyRet,
+      kmoreTrxId,
+      rowLockLevel,
+      transactionalProcessed,
+      trxPropagated,
+      trxPropagateOptions,
       done,
       reject,
     })

@@ -2,15 +2,19 @@
 import assert from 'assert'
 
 import type { KmoreBase } from './base.js'
+import { CtxBuilderResultPreProcessor, CtxBuilderResultPreProcessorOptions, CtxExceptionHandler } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { KmoreProxyKey } from './types.js'
 
 
-interface ProcessThenRetOptions {
+interface ProcessThenRetOptions<Resp = unknown> extends Omit<CtxBuilderResultPreProcessorOptions<Resp>, 'response'> {
   kmore: KmoreBase
   kmoreQueryId: symbol
-  input: Promise<unknown>
-  done: undefined | ((data: unknown) => unknown)
+  input: Promise<Resp>
+  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor<Resp> | undefined
+  ctxExceptionHandler: CtxExceptionHandler | undefined
+  transactionalProcessed: boolean | undefined
+  done: undefined | ((data: Resp) => Resp)
   reject: undefined | ((data: unknown) => Error)
 }
 
@@ -18,9 +22,45 @@ export async function processThenRet(
   options: ProcessThenRetOptions,
 ): Promise<unknown> {
 
-  const { kmore, kmoreQueryId, input, done, reject } = options
+  const {
+    ctxBuilderResultPreProcessor,
+    ctxExceptionHandler,
+    input,
+    kmore,
+    kmoreQueryId,
+    kmoreTrxId,
+    rowLockLevel,
+    transactionalProcessed,
+    trxPropagated,
+    trxPropagateOptions,
+    done,
+    reject,
+  } = options
 
-  return input
+  const pm1 = ctxBuilderResultPreProcessor
+    ? input.then((response: unknown) => ctxBuilderResultPreProcessor({
+      kmoreQueryId,
+      kmoreTrxId,
+      response,
+      transactionalProcessed,
+      trxPropagateOptions,
+      trxPropagated,
+      rowLockLevel,
+    }))
+    : input
+  const pm2 = ctxExceptionHandler
+    ? pm1.catch((ex: unknown) => ctxExceptionHandler({
+      kmoreQueryId,
+      kmoreTrxId,
+      transactionalProcessed,
+      trxPropagateOptions,
+      trxPropagated,
+      rowLockLevel,
+      exception: ex,
+    }))
+    : pm1
+
+  return pm2
     .catch((ex: unknown) => processTrxOnEx(kmore, kmoreQueryId, ex))
     .then((resp: unknown) => processThen(resp, done))
     .catch((ex: unknown) => processEx({

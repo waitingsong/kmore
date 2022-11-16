@@ -56,6 +56,9 @@ export async function pager<T = unknown>(
     kmore,
     builder: builderPager,
     thenHandler: proxyGetThen,
+    ctxBuilderPreProcessor: options.ctxBuilderPreProcessor,
+    ctxBuilderResultPreProcessor: options.ctxBuilderResultPreProcessor,
+    ctxExceptionHandler: options.ctxExceptionHandler,
   })
 
   // const builderPagerSql = builderPagerPatched.toQuery()
@@ -218,7 +221,13 @@ function cloneBuilder(
     kmoreQueryId2,
   )
 
-  builderPager = createBuilderProperties(builderPager, caseConvert, kmoreQueryId2, dbDict)
+  builderPager = createBuilderProperties(
+    builderPager,
+    caseConvert,
+    kmoreQueryId2,
+    dbDict,
+    kmore.dbId,
+  )
 
   const trx = kmore.getTrxByKmoreQueryId(kmoreQueryId)
   if (trx) {

@@ -37,8 +37,8 @@ describe(fileShortPath(import.meta.url), () => {
       }
 
       // validate insert result
-      const countRes = await km.refTables.ref_tb_user(ctx).count()
-      const ret = await km.refTables.ref_tb_user(ctx).select('*')
+      const countRes = await km.refTables.ref_tb_user({ ctx }).count()
+      const ret = await km.refTables.ref_tb_user({ ctx }).select('*')
       assert(
         ret.length === 3,
         `Should count be "3", but got ${JSON.stringify(ret)}`,
@@ -48,7 +48,7 @@ describe(fileShortPath(import.meta.url), () => {
         `Should count be "3", but got ${JSON.stringify(ret)}`,
       )
 
-      await ref_tb_user(ctx).select('*')
+      await ref_tb_user({ ctx }).select('*')
         .then((rows) => {
           validateUserRows(rows)
           return rows

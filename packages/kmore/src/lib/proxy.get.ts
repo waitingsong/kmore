@@ -11,6 +11,9 @@ export function createQueryBuilderGetProxy(
     kmore,
     thenHandler,
     resultPagerHandler,
+    ctxBuilderPreProcessor,
+    ctxBuilderResultPreProcessor,
+    ctxExceptionHandler,
   } = options
 
   const ret = new Proxy(options.builder, {
@@ -24,6 +27,9 @@ export function createQueryBuilderGetProxy(
             propKey,
             receiver,
             resultPagerHandler,
+            ctxBuilderPreProcessor,
+            ctxBuilderResultPreProcessor,
+            ctxExceptionHandler,
           })
         default:
           return Reflect.get(target, propKey, receiver)

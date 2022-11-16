@@ -27,7 +27,7 @@ export function validatePageRet(input: PageRawType<UserDTO>, len = 3): void {
   assert(pageSize >= input.length)
 
   const [row] = input
-  console.log({ row })
+  // console.log({ row })
   assert(row)
   assert(row.uid)
   assert(row.name)
@@ -91,7 +91,7 @@ export function validateRet(input: UserDTO[], len = 3): void {
   assert(input.length === len)
 
   const [row] = input
-  console.log({ row })
+  // console.log({ row })
   assert(row)
   assert(row.uid)
   assert(row.name)

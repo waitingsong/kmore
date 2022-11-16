@@ -15,6 +15,8 @@ import {
 import { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
+import { PropagationType } from './propagation.types.js'
+
 
 /**
  * - 0: No paging
@@ -63,14 +65,70 @@ export type DbQueryBuilder<
 }
 
 export type TbQueryBuilder<D extends {}, CaseConvert extends CaseType, TRecord extends {}, Context>
-  = (ctx?: Context) => KmoreQueryBuilder<D, CaseConvert, 0, TRecord, TRecord[]>
+  = (options?: Partial<TbQueryBuilderOptions<Context>>) => KmoreQueryBuilder<D, CaseConvert, 0, TRecord, TRecord[]>
 
+export interface TbQueryBuilderOptions<Context> {
+  ctx: Context
+  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
+  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
+  ctxExceptionHandler: CtxExceptionHandler | undefined
+}
+
+
+export enum QueryBuilderExtKey {
+  caseConvert = 'caseConvert',
+  kmoreQueryId = 'kmoreQueryId',
+  dbDict = 'dbDict',
+  dbId = 'dbId',
+  tablesJoin = '_tablesJoin',
+  pagingType = 'pagingType',
+  transactionalProcessed = 'transactionalProcessed',
+  trxPropagateOptions = 'trxPropagateOptions',
+  trxPropagated = 'trxPropagated',
+  rowLockLevel = 'rowLockLevel',
+}
 interface QueryBuilderExtName<D extends {} = {}> {
   caseConvert: CaseType
   kmoreQueryId: symbol
   dbDict: DbDict<D>
+  dbId: string
   _tablesJoin: string[]
   pagingType?: 'counter' | 'pager'
+  trxPropagateOptions?: TrxPropagateOptions
+  trxPropagated?: boolean
+  /**
+   * Propagation rowlock level
+   * @default {@link RowLockLevel}
+   */
+  rowLockLevel: RowLockLevel | undefined
+  transactionalProcessed: boolean | undefined
+}
+export interface TrxPropagateOptions {
+  dbId: string
+  type: PropagationType
+  path: string
+  className: string
+  funcName: string
+  methodName: string
+  line: number
+  column: number
+  /**
+   * @default {@link RowLockLevel.ForShare}
+   */
+  readRowLockLevel: RowLockLevel
+  /**
+   * @default {@link RowLockLevel.ForUpdate}
+   */
+  writeRowLockLevel: RowLockLevel
+}
+
+/**
+ * Used for `@Transactional()` decorator
+ */
+export enum RowLockLevel {
+  ForShare = 'FOR_SHARE',
+  ForUpdate = 'FOR_UPDATE',
+  None = 'None',
 }
 
 interface QueryBuilderExtMethod<
@@ -727,3 +785,25 @@ interface WhereRaw<
   (condition: boolean): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
 }
 
+
+export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
+export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
+export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
+
+export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
+  kmoreQueryId: symbol
+  kmoreTrxId: symbol | undefined
+  response: Resp
+  transactionalProcessed: boolean | undefined
+  trxPropagateOptions: TrxPropagateOptions | undefined
+  trxPropagated: boolean | undefined
+  /**
+   * Propagation rowlock level
+   * @default {@link RowLockLevel}
+   */
+  rowLockLevel: RowLockLevel | undefined
+}
+
+export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
+  exception: unknown
+}

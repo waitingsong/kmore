@@ -4,7 +4,11 @@ import type { TraceContext, Span } from '@mwcp/otel'
 import { CaseType } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import type { KmoreQueryBuilder } from './builder.types.js'
+import {
+  KmoreQueryBuilder,
+  QueryBuilderExtKey,
+  TrxPropagateOptions,
+} from './builder.types.js'
 
 
 export { CaseType }
@@ -23,13 +27,15 @@ export type KmoreTransaction = Knex.Transaction & {
    */
   trxActionOnEnd: NonNullable<KmoreTransactionConfig['trxActionOnEnd']>,
 
+  [QueryBuilderExtKey.trxPropagateOptions]?: TrxPropagateOptions,
+
   savepoint: (
     id?: PropertyKey,
     config?: KmoreTransactionConfig,
   ) => Promise<KmoreTransaction>,
 }
 export type KmoreTransactionConfig = Knex.TransactionConfig & {
-  kmoreTrxId?: PropertyKey,
+  kmoreTrxId?: PropertyKey | undefined,
   /**
    * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
    *

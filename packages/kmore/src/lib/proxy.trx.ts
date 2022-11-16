@@ -60,6 +60,7 @@ export function trxApplyCommandProxy(
         trx: trx2,
         parentTrx: ctx,
       })
+      assert(trx3.kmoreTrxId !== ctx.kmoreTrxId, 'trx3.kmoreTrxId === ctx.kmoreTrxId')
       return trx3
     },
   })
@@ -131,6 +132,7 @@ function savePointTrx(options: SavePointTrxOptions): KmoreTransaction {
   assert(parentTrx.isTransaction === true, 'parent trx not a transaction when creating savepoint')
   const kmoreTrxId = genKmoreTrxId(parentTrx.kmoreTrxId)
   assert(kmoreTrxId, 'kmoreTrxId must be provided from parent trx when creating savepoint')
+  assert(kmoreTrxId !== parentTrx.kmoreTrxId, 'kmoreTrxId === parentTrx.kmoreTrxId')
 
   assert(trx.isTransaction === true, 'output trx not a transaction when creating savepoint')
   assert(! trx.isCompleted(), 'output trx already completed when creating savepoint')

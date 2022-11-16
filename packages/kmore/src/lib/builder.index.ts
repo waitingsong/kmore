@@ -1,10 +1,19 @@
+/* eslint-disable max-params */
+/* eslint-disable @typescript-eslint/ban-types */
 import assert from 'assert'
 
 import type { KmoreBase } from './base.js'
 import { pager } from './builder.auto-paging.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
-import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
+import type {
+  CtxBuilderPreProcessor,
+  CtxBuilderResultPreProcessor,
+  CtxExceptionHandler,
+  DbQueryBuilder,
+  KmoreQueryBuilder,
+  TbQueryBuilder,
+} from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import { extRefTableFnPropertyAutoPaging } from './proxy.auto-paging.js'
@@ -37,13 +46,25 @@ export function createRefTables<
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   Object.keys(kmore.dict.tables).forEach((refName) => {
     const name = `${prefix}${refName}`
+
+    // @ts-expect-error
+    const queryBuilderCreator: TbQueryBuilder<D, CaseType, {}, Context> = (options) => {
+      const ctx2 = options?.ctx ?? { id: kmore.dbId, instanceId: kmore.instanceId }
+      return extRefTableFnProperty(
+        kmore,
+        refName,
+        caseConvert,
+        ctx2,
+        options?.ctxBuilderPreProcessor,
+        options?.ctxBuilderResultPreProcessor,
+        options?.ctxExceptionHandler,
+      )
+    } // must dynamically!!
+
     Object.defineProperty(rb, name, {
       ...defaultPropDescriptor,
       writable: true,
-      value: (ctx?: Context) => {
-        const ctx2 = ctx ?? { id: kmore.dbId, instanceId: kmore.instanceId }
-        return extRefTableFnProperty(kmore, refName, caseConvert, ctx2)
-      }, // must dynamically!!
+      value: queryBuilderCreator,
     })
 
     Object.defineProperty(rb[name as keyof typeof rb], 'name', {
@@ -61,6 +82,9 @@ function extRefTableFnProperty(
   refName: string,
   caseConvert: CaseType,
   ctx: unknown,
+  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined,
+  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined,
+  ctxExceptionHandler: CtxExceptionHandler | undefined,
 ): KmoreQueryBuilder {
 
   assert(caseConvert, 'caseConvert must be defined')
@@ -79,6 +103,9 @@ function extRefTableFnProperty(
     kmore,
     builder: refTable,
     thenHandler: proxyGetThen,
+    ctxBuilderPreProcessor,
+    ctxBuilderResultPreProcessor,
+    ctxExceptionHandler,
     resultPagerHandler: pager,
   })
 
@@ -99,6 +126,7 @@ function extRefTableFnProperty(
     caseConvert,
     kmoreQueryId,
     kmore.dict,
+    kmore.dbId,
   )
 
   return refTable

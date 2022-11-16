@@ -11,20 +11,26 @@ export function genKmoreTrxId(
     return Symbol(str)
   }
   else if (typeof id === 'string' || typeof id === 'number') {
-    const str = id.toString() + (suffix ? `-${suffix}` : '')
+    const str = id.toString() + Date.now().toString() + (suffix ? `-${suffix}` : '')
     return Symbol(str)
   }
 
   const str = id.toString()
+  let key2 = ''
   if (str.startsWith('Symbol(trx-')) {
     const key = str.match(/Symbol\((trx-\S+)\)/u)?.[1]
     assert(key, 'retrieve key from id failed, input should like "Symbol(trx-1234567890)"')
-    const key2 = `${key}-${Date.now()}` + (suffix ? `-${suffix}` : '')
-    return Symbol(key2)
+    key2 = `${key}-${Date.now()}`
+  }
+  else if (str.startsWith('trx-')) {
+    key2 = str
   }
   else {
-    const key = `trx-${str}` + (suffix ? `-${suffix}` : '')
-    return Symbol(key)
+    key2 = `trx-${str}`
   }
+
+  const key3 = suffix ? `${key2}-${suffix}` : `${key2}-${Date.now()}`
+  assert(key3 !== str, 'result should not equal to the input id')
+  return Symbol(key3)
 }
 

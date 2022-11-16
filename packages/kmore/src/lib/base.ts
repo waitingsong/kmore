@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { KmoreQueryBuilder, PageRawType, PageWrapType } from './builder.types.js'
+import type {
+  CtxBuilderPreProcessor,
+  CtxBuilderResultPreProcessor,
+  CtxExceptionHandler,
+  KmoreQueryBuilder,
+  PageRawType,
+  PageWrapType,
+} from './builder.types.js'
 import {
   CaseType,
   EventCallbacks,
@@ -73,6 +80,9 @@ export interface CreateQueryBuilderGetProxyOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
   thenHandler: (options: ProxyGetHandlerOptions) => KmoreQueryBuilder['then']
+  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
+  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
+  ctxExceptionHandler: CtxExceptionHandler | undefined
   resultPagerHandler?: ResultPagerHandler | undefined
 }
 
@@ -81,11 +91,17 @@ export interface ProxyGetHandlerOptions {
   builder: KmoreQueryBuilder
   propKey: string | symbol
   receiver: unknown
+  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
+  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
+  ctxExceptionHandler: CtxExceptionHandler | undefined
   resultPagerHandler?: ResultPagerHandler | undefined
 }
 export interface PagerOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
+  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
+  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
+  ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 
 type ResultPagerHandler<T = unknown> = (

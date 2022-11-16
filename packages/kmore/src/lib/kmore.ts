@@ -92,7 +92,6 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
   readonly eventCallbacks: EventCallbacks<Context> | undefined
   readonly wrapIdentifierCaseConvert: CaseType
 
-
   constructor(options: KmoreFactoryOpts<D, Context>) {
     super()
 
@@ -156,10 +155,9 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
 
   /**
    * Start a transaction.
-   * @param id - For generation of kmoreTrxId
    */
   async transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction> {
-    const kmoreTrxId = genKmoreTrxId(config?.kmoreTrxId)
+    const kmoreTrxId = config?.kmoreTrxId ?? genKmoreTrxId(config?.kmoreTrxId)
     delete config?.kmoreTrxId
     const trx = await this.dbh.transaction(void 0, config) as KmoreTransaction
 
