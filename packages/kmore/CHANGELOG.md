@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [50.0.0](https://github.com/waitingsong/kmore/compare/v49.0.3...v50.0.0) (2022-11-20)
+
+
+### Features
+
+* **kmore:** massive changes ([ef95f02](https://github.com/waitingsong/kmore/commit/ef95f02cd2719a22c7db1d06111e3dca22814c64))
+* **mwcp:** Declarative transaction via decorator `@Transactional` ([f6444ac](https://github.com/waitingsong/kmore/commit/f6444ac6fad9cb02206b0952c5f1b72838cbc8cd))
+
+
+
+
+
 ## [49.0.3](https://github.com/waitingsong/kmore/compare/v49.0.2...v49.0.3) (2022-11-08)
 
 **Note:** Version bump only for package kmore

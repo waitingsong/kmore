@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [50.0.0](/compare/v49.0.3...v50.0.0) (2022-11-20)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* **kmore:** massive changes ef95f02
+* **mwcp:** Declarative transaction via decorator `@Transactional` f6444ac
+
+
+
+
+
 ## [49.0.3](/compare/v49.0.2...v49.0.3) (2022-11-08)
 
 **Note:** Version bump only for package kmore
