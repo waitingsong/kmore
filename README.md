@@ -2,6 +2,7 @@
 
 A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScript type support.
 Intergrated Tracing of [OpenTelemetry].
+Declarative Transaction via decorator `@Transactional`
 
 
 [![GitHub tag](https://img.shields.io/github/tag/waitingsong/kmore.svg)]()
@@ -17,7 +18,9 @@ Intergrated Tracing of [OpenTelemetry].
 - Type-safe property of tables accessor 
 - Type-safe join table easily
 - Type-safe auto-completion in IDE
-- Auto Paging with one query
+- [Auto Paging with one query](#auto-paging)
+- [Declarative transaction](#declarative-transaction)
+- OpenTelemetry trace
 
 
 ## Installation
@@ -224,6 +227,74 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
 
 
 More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
+
+
+### Declarative Transaction
+
+Limitation:
+- not apply on base clase
+- every result of query builder must be "await"ed
+- transaction propagation current supports `PropagationType.REQUIRED` only
+
+
+Usage:
+- Class decorator
+
+  ```ts
+  import { Init, Inject } from '@midwayjs/core'
+  import { Transactional } from '@mwcp/kmore'
+
+  @Transactional()  // <-- 
+  export class UserRepo {
+    @Inject() dbManager: DbManager<'master', Db>
+
+    ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+    ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+
+    @Init()
+    async init(): Promise<void> {
+      const db = this.dbManager.getDataSource('master')
+      assert(db)
+      this.ref_tb_user = db.camelTables.ref_tb_user
+      this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    }
+
+    async getUsers(): Promise<UserDTO[]> {
+      const users = await this.ref_tb_user()
+      return users
+    }
+
+    // will throw error
+    wrongUsage() {
+      return this.ref_tb_user()
+    }
+  }
+  ```
+
+- Method decorator
+
+  ```ts
+  export class UserRepo {
+    @Inject() dbManager: DbManager<'master', Db>
+
+    ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+    ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+
+    @Init()
+    async init(): Promise<void> {
+      const db = this.dbManager.getDataSource('master')
+      assert(db)
+      this.ref_tb_user = db.camelTables.ref_tb_user
+      this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    }
+
+    @Transactional()  // <--
+    async getUsers(): Promise<UserDTO[]> {
+      const users = await this.ref_tb_user()
+      return users
+    }
+  }
+  ```
 
 
 ### Use instance of knex

@@ -14,9 +14,11 @@ describe(filename, () => {
     const path = '/user/error'
     const resp = await httpRequest
       .get(path)
+      .expect(204)
+
     const ret = resp.body as object
     assert(ret)
-    assert(Object.keys(ret).length === 0)
+    assert(! Object.keys(ret).length)
   })
 
 })

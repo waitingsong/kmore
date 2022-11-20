@@ -31,7 +31,7 @@ export class User2Controller {
     assert(db)
 
     const { ref_tb_user } = db.camelTables
-    const user = await ref_tb_user(this.ctx)
+    const user = await ref_tb_user({ ctx: this.ctx })
       .select('*')
       .where({ uid })
 
@@ -44,7 +44,7 @@ export class User2Controller {
     assert(db)
 
     const { ref_tb_user_ext } = db.camelTables
-    const user = await ref_tb_user_ext(this.ctx)
+    const user = await ref_tb_user_ext({ ctx: this.ctx })
       .select('*')
       .where({ uid })
 
@@ -57,7 +57,7 @@ export class User2Controller {
     assert(db)
 
     const { ref_tb_user } = db.camelTables
-    const user = await ref_tb_user(this.ctx)
+    const user = await ref_tb_user({ ctx: this.ctx })
       .select('fake')
 
     return user

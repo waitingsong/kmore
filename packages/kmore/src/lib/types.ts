@@ -20,6 +20,7 @@ export type KmoreTransaction = Knex.Transaction & {
   kmoreTrxId: symbol,
   /**
    * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
+   * declarative transaction always rollback on end
    *
    * @default rollback
    * @note Error from ONLY builder can be catched, from then() on builder not processed!
@@ -38,6 +39,7 @@ export type KmoreTransactionConfig = Knex.TransactionConfig & {
   kmoreTrxId?: PropertyKey | undefined,
   /**
    * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
+   * declarative transaction always rollback on end
    *
    * @default rollback
    * @note Error from ONLY builder can be catched, from then() on builder not processed!

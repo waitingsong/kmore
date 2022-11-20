@@ -26,6 +26,11 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
       }
       // void else
 
+      if (trx.trxPropagateOptions) {
+        const msg = `[Kmore]: NOT processed transaction trx, middleware auto transaction action: ${trxActionOnEnd} for ${name}: ${kmoreTrxId.toString()}`
+        ctx.logger.warn(msg)
+      }
+
       // eslint-disable-next-line no-await-in-loop
       await kmore.finishTransaction(trx)
 

@@ -2,6 +2,7 @@
 
 基于 [Knex](https://knexjs.org/) 的 SQL 查询生成器工厂，
 提供高级 TypeScript 类型支持，
+声明式事务，
 集成 [OpenTelemetry] 链路追踪。
 
 
@@ -18,7 +19,10 @@
 - 类型安全的表对象操作
 - 类型安全的表连接操作
 - 类型安全的 IDE 编辑器自动完成
-- 一条查询链实现自动分页
+- [一条查询链实现自动分页](#自动分页)
+- [声明式事务](#声明式事务)
+- OpenTelemetry trace
+
 
 ## 安装
 ```sh
@@ -223,6 +227,74 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
 
 
 More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
+
+
+### 声明式事务
+
+限制：
+- not apply on base clase
+- every result of query builder must be "await"ed
+- 事务传播当前仅支持 `PropagationType.REQUIRED`
+
+
+使用：
+- 类装饰器 Class decorator
+
+  ```ts
+  import { Init, Inject } from '@midwayjs/core'
+  import { Transactional } from '@mwcp/kmore'
+
+  @Transactional()  // <-- 
+  export class UserRepo {
+    @Inject() dbManager: DbManager<'master', Db>
+
+    ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+    ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+
+    @Init()
+    async init(): Promise<void> {
+      const db = this.dbManager.getDataSource('master')
+      assert(db)
+      this.ref_tb_user = db.camelTables.ref_tb_user
+      this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    }
+
+    async getUsers(): Promise<UserDTO[]> {
+      const users = await this.ref_tb_user()
+      return users
+    }
+
+    // will throw error
+    wrongUsage() {
+      return this.ref_tb_user()
+    }
+  }
+  ```
+
+- 方法装饰器 Method decorator
+
+  ```ts
+  export class UserRepo {
+    @Inject() dbManager: DbManager<'master', Db>
+
+    ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+    ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+
+    @Init()
+    async init(): Promise<void> {
+      const db = this.dbManager.getDataSource('master')
+      assert(db)
+      this.ref_tb_user = db.camelTables.ref_tb_user
+      this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    }
+
+    @Transactional()  // <--
+    async getUsers(): Promise<UserDTO[]> {
+      const users = await this.ref_tb_user()
+      return users
+    }
+  }
+  ```
 
 
 ### 使用 knex

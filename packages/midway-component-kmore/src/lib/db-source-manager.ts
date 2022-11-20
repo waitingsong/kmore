@@ -129,6 +129,13 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     return inst
   }
 
+  getSpanInfoByKmoreQueryId(kmoreQueryId: symbol): QuerySpanInfo | undefined {
+    return this.queryUidSpanMap.get(kmoreQueryId)
+  }
+
+  getSpanInfoByKmoreTrxId(kmoreTrxId: symbol): QuerySpanInfo | undefined {
+    return this.trxSpanMap.get(kmoreTrxId)
+  }
 
   getName(): string {
     return 'dbSourceManager'
@@ -228,6 +235,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
       ev: event,
       queryUidSpanMap,
       traceSvc,
+    }
+
+    if (event.queryBuilder) {
+      void Object.defineProperty(event.queryBuilder, 'eventProcessed', {
+        value: true,
+      })
     }
 
     switch (event.type) {

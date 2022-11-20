@@ -4,6 +4,7 @@ import { ConfigKey, KmoreSourceConfig, MiddlewareConfig } from './lib/types'
 export { AutoConfiguration as Configuration } from './configuration'
 export * from './lib/index'
 export * from './middleware/db-trx.middleware'
+export * from './decorator/index.decorator'
 
 
 export {
@@ -14,6 +15,9 @@ export {
   KmoreTransactionConfig,
   KnexConfig,
   mergeDoWithInitData,
+  PropagationType,
+  RowLockLevel,
+  TrxPropagateOptions,
 } from 'kmore'
 
 export type { Knex } from 'knex'

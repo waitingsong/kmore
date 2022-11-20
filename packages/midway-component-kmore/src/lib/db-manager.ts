@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import assert from 'node:assert'
-// import { isProxy } from 'node:util/types'
 
 import {
   Inject,
@@ -11,19 +10,31 @@ import {
 } from '@midwayjs/decorator'
 import { TraceService } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
-import { Kmore } from 'kmore'
+import {
+  Kmore,
+  KmoreQueryBuilder,
+  CtxBuilderPreProcessor,
+  CtxBuilderResultPreProcessor,
+  CtxBuilderResultPreProcessorOptions,
+  CtxExceptionHandler,
+  CtxExceptionHandlerOptions,
+} from 'kmore'
 
-import { knexKeys, ProxyOptions, proxyKnex, proxyRef, refTableKeys } from './db-manager.helper'
 import { DbSourceManager } from './db-source-manager'
+import { genCallerKey } from './propagation/trx-status.helper'
+import { proxyKnex, ProxyKnexOptions } from './proxy/db-manager.knex'
+import { proxyRef, ProxyRefOptions } from './proxy/db-manager.ref'
+import { knexKeys, refTableKeys } from './proxy/db-manager.types'
+import { TrxStatusService } from './trx-status.service'
 
 
 @Provide()
 export class DbManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context> {
 
   @Inject() readonly ctx: Ctx
-
-  @Inject() dbSourceManager: DbSourceManager<SourceName, D, Ctx>
-  @Inject() traceSvc: TraceService
+  @Inject() readonly dbSourceManager: DbSourceManager<SourceName, D, Ctx>
+  @Inject() readonly traceSvc: TraceService
+  @Inject() readonly trxStatusSvc: TrxStatusService
 
   getName(): string { return 'dbManager' }
 
@@ -51,11 +62,76 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
       return db
     }
 
-    const db2 = this.createProxy(db, reqCtx)
-    if (db2) {
-      this.instCacheMap.set(dataSourceName, db2)
+    const db3 = this.createProxy(db, reqCtx)
+    this.instCacheMap.set(dataSourceName, db3)
+    return db3
+  }
+
+  protected async builderPreProcessor(builder: KmoreQueryBuilder): ReturnType<CtxBuilderPreProcessor> {
+    const ret = this.builderPropagating(builder)
+    return ret
+  }
+
+  protected async builderPropagating(
+    builder: KmoreQueryBuilder,
+  ): ReturnType<CtxBuilderPreProcessor> {
+
+    const { trxPropagateOptions } = builder
+    if (! trxPropagateOptions) {
+      return { builder }
     }
-    return db2
+
+    if (builder.trxPropagated) {
+      return { builder }
+    }
+
+    const kmore = this.getDataSource(builder.dbId as SourceName)
+    const resp = await this.trxStatusSvc.propagating({ db: kmore, builder })
+    return resp
+  }
+
+  protected async builderResultPreProcessor(
+    options: CtxBuilderResultPreProcessorOptions,
+  ): ReturnType<CtxBuilderResultPreProcessor> {
+
+    if (options.kmoreTrxId && options.trxPropagated && options.trxPropagateOptions) {
+      const { kmoreQueryId, rowLockLevel } = options
+      if (rowLockLevel) {
+        this.trxStatusSvc.updateBuilderSpanRowlockLevelTag(kmoreQueryId, rowLockLevel)
+      }
+
+      const { className, funcName } = options.trxPropagateOptions
+      const callerKey = genCallerKey(className, funcName)
+      assert(callerKey, 'callerKey is empty')
+      const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+      if (tkey !== callerKey) {
+        await this.trxStatusSvc.trxCommitIfEntryTop(callerKey)
+      }
+    }
+
+    return options.response
+  }
+
+  protected async exceptionHandler(
+    options: CtxExceptionHandlerOptions,
+  ): ReturnType<CtxExceptionHandler> {
+
+    if (options.trxPropagated && options.trxPropagateOptions) {
+      const { kmoreQueryId, rowLockLevel } = options
+      if (rowLockLevel) {
+        this.trxStatusSvc.updateBuilderSpanRowlockLevelTag(kmoreQueryId, rowLockLevel)
+      }
+
+      const { className, funcName } = options.trxPropagateOptions
+      const callerKey = genCallerKey(className, funcName)
+      assert(callerKey, 'callerKey is empty')
+      const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+      if (tkey !== callerKey) {
+        await this.trxStatusSvc.trxRollbackEntry(callerKey)
+      }
+    }
+
+    return Promise.reject(options.exception)
   }
 
   protected createProxy(db: Kmore, reqCtx: Ctx): Kmore<any, Ctx> {
@@ -67,29 +143,43 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
 
     const ret = new Proxy(db, {
       get: (target: Kmore, propKey: keyof Kmore) => {
-        const opts: ProxyOptions = {
-          targetProperty: target[propKey],
-          reqCtx,
-          propKey,
-          // @ts-expect-error
-          dbSourceManager: this.dbSourceManager,
-          traceSvc: this.traceSvc,
-          func: target[propKey] as () => unknown,
-        }
+
+        let resp: unknown
 
         if (refTableKeys.has(propKey)) {
-          return proxyRef(opts)
+          const opts: ProxyRefOptions = {
+            ctxBuilderPreProcessor: this.builderPreProcessor.bind(this),
+            ctxBuilderResultPreProcessor: this.builderResultPreProcessor.bind(this),
+            ctxExceptionHandler: this.exceptionHandler.bind(this),
+            // @ts-expect-error
+            dbSourceManager: this.dbSourceManager,
+            reqCtx,
+            targetProperty: target[propKey],
+            traceSvc: this.traceSvc,
+            trxStatusSvc: this.trxStatusSvc,
+          }
+          resp = proxyRef(opts)
+        }
+        else if (knexKeys.has(propKey)) {
+          const opts: ProxyKnexOptions = {
+            // @ts-expect-error
+            dbSourceManager: this.dbSourceManager,
+            propKey,
+            targetProperty: target[propKey],
+            traceSvc: this.traceSvc,
+          }
+          resp = proxyKnex(opts)
+        }
+        else {
+          resp = target[propKey]
         }
 
-        if (this.traceSvc.isStarted && knexKeys.has(propKey)) {
-          return proxyKnex(opts)
-        }
-
-        return target[propKey]
+        return resp
       },
     })
     return ret
   }
 
 }
+
 

@@ -1,7 +1,10 @@
+import { PropagationType, RowLockLevel } from 'kmore'
+
 import {
   DbConfig,
   MiddlewareConfig,
   MiddlewareOptions,
+  KmorePropagationConfig as PropagationConfig,
 } from './types'
 
 
@@ -23,5 +26,21 @@ export const initDbConfig: DbConfig = {
   enableTrace: true,
   traceEvent: true,
   traceResponse: true,
+}
+
+
+export const initPropagationConfig: PropagationConfig = {
+  /**
+   * @default PropagationType.REQUIRED,
+   */
+  propagationType: PropagationType.REQUIRED,
+  /**
+   * @default {@link RowLockLevel.ForShare}
+   */
+  readRowLockLevel: RowLockLevel.ForShare,
+  /**
+   * @default {@link RowLockLevel.ForUpdate}
+   */
+  writeRowLockLevel: RowLockLevel.ForUpdate,
 }
 

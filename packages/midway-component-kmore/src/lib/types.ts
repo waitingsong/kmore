@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
-import type { KmoreFactoryOpts } from 'kmore'
+import type { KmoreFactoryOpts, PropagationType, RowLockLevel } from 'kmore'
 
 
 export type { QuerySpanInfo } from 'kmore'
@@ -11,7 +11,10 @@ export enum ConfigKey {
   middlewareConfig = 'kmoreMiddlewareConfig',
   namespace = 'kmore',
   componentName = 'kmoreComponent',
-  middlewareName = 'kmoreMiddleware'
+  middlewareName = 'kmoreMiddleware',
+  dbSourceManager = 'DbSourceManager',
+  dbManager = 'DbManager',
+  propagationConfig = 'kmorePropagationConfig',
 }
 
 /**
@@ -77,5 +80,26 @@ export enum KmoreAttrNames {
 
   TrxTransacting = 'trx.transacting',
   TrxEndWith = 'trx.end',
+}
+
+
+/**
+ * Transaction propagation config for declaritive transaction
+ */
+export interface KmorePropagationConfig extends TransactionalOptions {
+  /**
+   * @default PropagationType.REQUIRED,
+   */
+  propagationType: PropagationType
+}
+export interface TransactionalOptions {
+  /**
+   * @default {@link RowLockLevel.ForShare}
+   */
+  readRowLockLevel: RowLockLevel
+  /**
+   * @default {@link RowLockLevel.ForUpdate}
+   */
+  writeRowLockLevel: RowLockLevel
 }
 

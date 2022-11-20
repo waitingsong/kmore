@@ -1,8 +1,13 @@
-import { KmoreSourceConfig, MiddlewareConfig } from '../index'
+import {
+  KmorePropagationConfig,
+  KmoreSourceConfig,
+  MiddlewareConfig,
+} from '../index'
 import {
   initDbConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
+  initPropagationConfig,
 } from '../lib/config'
 
 
@@ -20,5 +25,10 @@ export const kmoreMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = 
   options: {
     ...initMiddlewareOptions,
   },
+}
+
+
+export const kmorePropagationConfig: KmorePropagationConfig = {
+  ...initPropagationConfig,
 }
 

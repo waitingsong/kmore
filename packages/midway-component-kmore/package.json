@@ -2,8 +2,9 @@
   "name": "@mwcp/kmore",
   "author": "waiting",
   "version": "49.0.3",
-  "description": "midway component for knex",
+  "description": "midway component for knex, supports declarative transaction and OpenTelemetry",
   "keywords": [
+    "Transactional",
     "midway",
     "IoC",
     "plugin",
