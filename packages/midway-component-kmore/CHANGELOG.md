@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [50.1.0](https://github.com/waitingsong/kmore/compare/v50.0.1...v50.1.0) (2022-11-21)
+
+
+### Features
+
+* **mwcp:** change `Transactional` decorator apply AsyncFunction only ([4363a45](https://github.com/waitingsong/kmore/commit/4363a450242b7a04000f723c42349b371f326af8))
+
+
+
+
+
 ## [50.0.1](https://github.com/waitingsong/kmore/compare/v50.0.0...v50.0.1) (2022-11-21)
 
 
