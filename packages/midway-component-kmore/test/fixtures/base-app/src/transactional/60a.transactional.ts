@@ -50,9 +50,14 @@ export class TrxDecoratorController {
 
     const user2 = await this.db.camelTables.ref_tb_user()
     void user2
-    return 'OK'
+
+    const ret = this._simple()
+    return ret
   }
 
+  protected _simple(): 'OK' {
+    return 'OK'
+  }
 
 }
 

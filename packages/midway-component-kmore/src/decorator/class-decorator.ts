@@ -63,7 +63,11 @@ function wrapClassMethodOnPrototype(
 
     const descriptor = Object.getOwnPropertyDescriptor(prot, key)
     if (typeof descriptor?.value === 'function') {
+      if (descriptor.value.constructor.name !== 'AsyncFunction') { continue }
+
       const targetMethodName = `__decorator_orig_${key}`
+      if (typeof target.prototype[targetMethodName] === 'function') { continue }
+
       Object.defineProperty(target.prototype, targetMethodName, {
         value: descriptor.value,
       })

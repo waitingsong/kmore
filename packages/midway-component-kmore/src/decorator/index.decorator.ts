@@ -42,8 +42,17 @@ export function Transactional(
     }
 
     if (typeof target === 'object') { // Method Decorator
+      assert(target, 'target is undefined')
       assert(propertyKey, 'propertyKey is undefined')
       assert(descriptor, 'descriptor is undefined')
+
+      if (typeof descriptor.value !== 'function') {
+        throw new Error('Only methods can be decorated with @Transactional decorator')
+      }
+
+      if (descriptor.value.constructor.name !== 'AsyncFunction') {
+        return descriptor
+      }
 
       return methodDecoratorPatcher<T>(
         target as {},
