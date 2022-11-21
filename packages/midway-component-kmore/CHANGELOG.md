@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [50.0.1](https://github.com/waitingsong/kmore/compare/v50.0.0...v50.0.1) (2022-11-21)
+
+
+### Bug Fixes
+
+* **mwcp:** webContext.app may undefined ([a218bf1](https://github.com/waitingsong/kmore/commit/a218bf1944d6eb64f0e5844f22c072ef13e9c1ed))
+
+
+
+
+
 # [50.0.0](https://github.com/waitingsong/kmore/compare/v49.0.3...v50.0.0) (2022-11-20)
 
 
