@@ -12,6 +12,7 @@ import {
   Provide,
 } from '@midwayjs/core'
 import type { Context as WebContext } from '@mwcp/share'
+import { PropagationType, RowLockLevel } from 'kmore'
 
 import { KmorePropagationConfig } from '../lib/types'
 
@@ -97,19 +98,28 @@ async function classDecoratorExecuctor(
   const webContext = instance[REQUEST_OBJ_CTX_KEY] as WebContext
   assert(webContext, 'webContext is undefined on this')
 
-  const kmorePropagationConfig = webContext.app.getConfig('kmorePropagationConfig') as KmorePropagationConfig
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const kmorePropagationConfig = webContext?.app?.getConfig
+    ? webContext.app.getConfig('kmorePropagationConfig') as KmorePropagationConfig | undefined
+    : void 0
 
   const className = instance.constructor?.name
   assert(className, 'this.constructor.name is undefined')
 
+  const type = options.propagationType ?? kmorePropagationConfig?.propagationType ?? PropagationType.REQUIRED
+  const readRowLockLevel = options.propagationOptions?.readRowLockLevel
+    ?? kmorePropagationConfig?.readRowLockLevel ?? RowLockLevel.ForShare
+  const writeRowLockLevel = options.propagationOptions?.writeRowLockLevel
+    ?? kmorePropagationConfig?.writeRowLockLevel ?? RowLockLevel.ForUpdate
+
   const opts: TransactionalDecoratorExecutorOptions = {
-    type: options.propagationType ?? kmorePropagationConfig.propagationType,
+    type,
     className,
     funcName: methodName,
     method,
     methodArgs,
-    readRowLockLevel: options.propagationOptions?.readRowLockLevel ?? kmorePropagationConfig.readRowLockLevel,
-    writeRowLockLevel: options.propagationOptions?.writeRowLockLevel ?? kmorePropagationConfig.writeRowLockLevel,
+    readRowLockLevel,
+    writeRowLockLevel,
     webContext,
   }
   const dat = await transactionalDecoratorExecutor(opts)
