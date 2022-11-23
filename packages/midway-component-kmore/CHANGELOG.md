@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [50.2.0](https://github.com/waitingsong/kmore/compare/v50.1.0...v50.2.0) (2022-11-23)
+
+
+### Features
+
+* **mwcp:** add retrieveMethodDecoratorArgs() ([9cf6238](https://github.com/waitingsong/kmore/commit/9cf6238ad65915981a1662400ef4bb68bfec17af))
+* **mwcp:** method decorator args override args by class decorator ([21cf290](https://github.com/waitingsong/kmore/commit/21cf29058268252d9b36137c65cc639a4c496c94))
+
+
+
+
+
 # [50.1.0](https://github.com/waitingsong/kmore/compare/v50.0.1...v50.1.0) (2022-11-21)
 
 

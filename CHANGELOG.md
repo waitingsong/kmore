@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [50.2.0](/compare/v50.1.0...v50.2.0) (2022-11-23)
+
+
+### Features
+
+* **mwcp:** add retrieveMethodDecoratorArgs() 9cf6238
+* **mwcp:** method decorator args override args by class decorator 21cf290
+
+
+
+
+
 # [50.1.0](/compare/v50.0.1...v50.1.0) (2022-11-21)
 
 
