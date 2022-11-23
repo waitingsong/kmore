@@ -1,5 +1,6 @@
 import assert from 'assert'
 
+import { INJECT_CUSTOM_METHOD, getClassMetadata } from '@midwayjs/core'
 import type { Context as WebContext } from '@mwcp/share'
 import { PropagationType } from 'kmore'
 
@@ -107,4 +108,27 @@ function processEx(options: ProcessExOptions): Promise<never> {
             message: ${ex2Msg}`, { cause: error })
       return Promise.reject(ex3)
     })
+}
+
+
+export interface TrxDecoratorMetaData {
+  propertyName: string
+  key: string
+  metadata: DecoratorArgs | undefined
+  impl: boolean
+}
+
+export function retrieveMethodDecoratorArgs(
+  target: unknown,
+  methodName: string,
+): DecoratorArgs | undefined {
+
+  const metaDataArr = getClassMetadata(INJECT_CUSTOM_METHOD, target) as TrxDecoratorMetaData[] | undefined
+  if (! metaDataArr || ! metaDataArr.length) { return }
+
+  for (const row of metaDataArr) {
+    if (row.propertyName === methodName) {
+      return row.metadata
+    }
+  }
 }
