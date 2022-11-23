@@ -11,6 +11,7 @@ import { TransactionalOptions } from '../lib/types'
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
 export const TRX_METHOD_KEY = 'decorator:kmore_trxnal_decorator_key'
+export const decoratorArgsCacheKey = '__decoratorArgsCacheMap'
 
 export interface DecoratorArgs {
   /**

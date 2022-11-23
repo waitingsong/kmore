@@ -4,6 +4,7 @@ import {
   Config as _Config,
   Init,
   Inject,
+  Provide,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
@@ -15,8 +16,11 @@ import {
 import type { Db, UserDTO } from '@/test.model'
 
 
-@Transactional()
+// @Transactional()
+@Provide()
 export class UserService2 {
+
+  name = 'UserService2'
 
   @Inject() dbManager: DbManager<'master', Db>
 
@@ -33,6 +37,18 @@ export class UserService2 {
     this.ref_tb_user = db.camelTables.ref_tb_user
     this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
   }
+
+  @Transactional()
+  async userAll2(): Promise<void> {
+    const users = await this.getUsers()
+    assert(users && users.length === 3)
+
+    await this.getUsers2()
+
+    const users2 = await this.getUsers()
+    assert(users2 && users2.length === 3)
+  }
+
 
   async userAll(): Promise<void> {
     const users = await this.getUsers()

@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import assert from 'node:assert'
 
+// import { createCustomMethodDecorator } from '@midwayjs/core'
+
 import { classDecoratorPatcher } from './class-decorator'
 import {
   DecoratorArgs,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
+  decoratorArgsCacheKey,
 } from './decorator.helper'
 import { methodDecoratorPatcher } from './method-decorator'
 
@@ -30,12 +33,29 @@ export function Transactional(
   propagationType?: DecoratorArgs['propagationType'],
   propagationOptions?: DecoratorArgs['propagationOptions'],
 ): MethodDecorator & ClassDecorator {
+// ): MethodDecorator {
+
+
+  // return createCustomMethodDecorator(TRX_METHOD_KEY, {
+  //   propagationType,
+  //   propagationOptions,
+  // })
 
   const transactionalDecoratorFactory = <T>(
     target: T,
-    propertyKey?: string | symbol,
+    propertyKey?: string,
     descriptor?: TypedPropertyDescriptor<T>,
   ): TypedPropertyDescriptor<T> | void => {
+
+    assert(target, 'target is undefined')
+
+    // @ts-ignore
+    let decoratorArgsCacheMap = target[decoratorArgsCacheKey] as Map<PropertyKey, DecoratorArgs> | undefined
+    if (! decoratorArgsCacheMap) {
+      decoratorArgsCacheMap = new Map()
+      // @ts-ignore
+      target[decoratorArgsCacheKey] = decoratorArgsCacheMap
+    }
 
     if (typeof target === 'function') { // Class Decorator
       return classDecoratorPatcher(target, { propagationType, propagationOptions })
@@ -52,6 +72,11 @@ export function Transactional(
 
       if (descriptor.value.constructor.name !== 'AsyncFunction') {
         return descriptor
+      }
+
+      if (propagationType || propagationOptions) {
+        const metadata: DecoratorArgs = { propagationType, propagationOptions }
+        decoratorArgsCacheMap.set(propertyKey, metadata)
       }
 
       return methodDecoratorPatcher<T>(

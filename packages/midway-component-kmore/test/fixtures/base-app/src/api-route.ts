@@ -2,6 +2,7 @@
 export const apiPrefix = {
   methodDecorator: '/method_decorator',
   classDecorator: '/class_decorator',
+  args: '/args',
 }
 
 export const apiRoute = {

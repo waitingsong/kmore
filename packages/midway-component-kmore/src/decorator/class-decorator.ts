@@ -18,6 +18,7 @@ import { KmorePropagationConfig } from '../lib/types'
 
 import {
   DecoratorArgs,
+  retrieveMethodDecoratorArgs,
   transactionalDecoratorExecutor,
   TransactionalDecoratorExecutorOptions,
   TRX_CLASS_KEY,
@@ -74,7 +75,6 @@ function wrapClassMethodOnPrototype(
       // eslint-disable-next-line no-loop-func
       target.prototype[key] = async function(...args: unknown[]): Promise<unknown> {
         // return target.prototype[targetMethodName].apply(this, args)
-
         const method = target.prototype[targetMethodName].bind(this) as Method
         const resp = await classDecoratorExecuctor(
           this,
@@ -99,6 +99,9 @@ async function classDecoratorExecuctor(
   options: DecoratorArgs,
 ): Promise<unknown> {
 
+  assert(instance, 'instance is required')
+  assert(methodName, 'methodName is required')
+
   const webContext = instance[REQUEST_OBJ_CTX_KEY] as WebContext
   assert(webContext, 'webContext is undefined on this')
 
@@ -110,11 +113,22 @@ async function classDecoratorExecuctor(
   const className = instance.constructor?.name
   assert(className, 'this.constructor.name is undefined')
 
-  const type = options.propagationType ?? kmorePropagationConfig?.propagationType ?? PropagationType.REQUIRED
-  const readRowLockLevel = options.propagationOptions?.readRowLockLevel
-    ?? kmorePropagationConfig?.readRowLockLevel ?? RowLockLevel.ForShare
-  const writeRowLockLevel = options.propagationOptions?.writeRowLockLevel
-    ?? kmorePropagationConfig?.writeRowLockLevel ?? RowLockLevel.ForUpdate
+  const methodMetaDataArgs = retrieveMethodDecoratorArgs(instance, methodName)
+
+  const type = methodMetaDataArgs?.propagationType
+    ?? options.propagationType
+    ?? kmorePropagationConfig?.propagationType
+    ?? PropagationType.REQUIRED
+
+  const readRowLockLevel = methodMetaDataArgs?.propagationOptions?.readRowLockLevel
+    ?? options.propagationOptions?.readRowLockLevel
+    ?? kmorePropagationConfig?.readRowLockLevel
+    ?? RowLockLevel.ForShare
+
+  const writeRowLockLevel = methodMetaDataArgs?.propagationOptions?.writeRowLockLevel
+    ?? options.propagationOptions?.writeRowLockLevel
+    ?? kmorePropagationConfig?.writeRowLockLevel
+    ?? RowLockLevel.ForUpdate
 
   const opts: TransactionalDecoratorExecutorOptions = {
     type,

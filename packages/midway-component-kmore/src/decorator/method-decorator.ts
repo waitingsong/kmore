@@ -27,7 +27,7 @@ import {
 
 export function methodDecoratorPatcher<T>(
   target: {},
-  propertyName: string | symbol,
+  propertyName: string,
   descriptor: TypedPropertyDescriptor<T>,
   metadata: DecoratorArgs,
 ): TypedPropertyDescriptor<T> {
@@ -43,6 +43,8 @@ export function methodDecoratorPatcher<T>(
     },
     target,
   )
+  // const foo = getClassMetadata(INJECT_CUSTOM_METHOD, target)
+  // void foo
   return descriptor
 }
 

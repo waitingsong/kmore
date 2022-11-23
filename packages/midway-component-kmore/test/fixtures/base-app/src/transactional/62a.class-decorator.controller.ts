@@ -37,7 +37,7 @@ export class ClassDecoratorController {
 
   @Get(`/${apiRoute.sibling}`)
   async sibling(): Promise<'OK'> {
-    await this.userSvc.userAll()
+    await this.userSvc.userAll2()
     return 'OK'
   }
 

@@ -19,13 +19,13 @@ import type { Db } from '@/test.model'
 import { apiPrefix, apiRoute } from '../api-route'
 
 
-@Controller(apiPrefix.methodDecorator)
-export class TrxDecoratorController {
+@Controller(apiPrefix.args)
+@Transactional()
+export class TrxDecoratorArgsController {
 
   @Inject() readonly ctx: Context
   @Inject() dbManager: DbManager<'master', Db>
 
-  db: Kmore<Db, Context>
   ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
   ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
 
@@ -33,8 +33,6 @@ export class TrxDecoratorController {
   async init(): Promise<void> {
     const db = this.dbManager.getDataSource('master')
     assert(db)
-
-    this.db = db
     this.ref_tb_user = db.camelTables.ref_tb_user
     this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
   }
@@ -42,18 +40,33 @@ export class TrxDecoratorController {
   @Transactional(PropagationType.REQUIRED)
   @Get(`/${apiRoute.simple}`)
   async simple(): Promise<'OK'> {
-    const trx = await this.db.transaction()
-    assert(trx)
-    await trx.rollback()
 
-    const users = await this.ref_tb_user()
+    const builder = this.ref_tb_user()
+    const { kmoreQueryId, trxPropagated, trxPropagateOptions } = builder
+    assert(kmoreQueryId)
+    assert(! trxPropagated)
+    assert(trxPropagateOptions)
+    assert(trxPropagateOptions.type === PropagationType.REQUIRED)
+
+    const users = await builder.then()
     assert(users && users.length === 3)
+    assert(builder.trxPropagated === true)
 
-    const user2 = await this.db.camelTables.ref_tb_user()
-    void user2
+    await this.simple2()
 
     const ret = this._simple()
     return ret
+  }
+
+  @Transactional(PropagationType.SUPPORTS)
+  async simple2(): Promise<'OK'> {
+    const builder = this.ref_tb_user()
+    const { kmoreQueryId, trxPropagated, trxPropagateOptions } = builder
+    assert(kmoreQueryId)
+    assert(! trxPropagated)
+    assert(trxPropagateOptions)
+    assert(trxPropagateOptions.type === PropagationType.SUPPORTS)
+    return 'OK'
   }
 
   protected _simple(): 'OK' {

@@ -124,6 +124,95 @@ export class TrxStatusService extends TrxStatusServiceBase {
     return key
   }
 
+  async trxCommitIfEntryTop(callerKey: CallerKey): Promise<void> {
+    let tkey = this.retrieveUniqueTopCallerKey(callerKey)
+    if (! tkey) {
+      const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
+
+      if (! tkeyArr.length) {
+        throw new Error(`callerKey "${callerKey}" is not registered or not top level caller`)
+        // return
+      }
+      else if (tkeyArr.length > 1) { // multiple callings
+        this.removeLastKeyFromCallerTreeArray(callerKey)
+        return
+      }
+      tkey = tkeyArr[0]
+      assert(tkey, 'tkey is undefined')
+      if (tkey !== callerKey) { return }
+    }
+
+    if (callerKey !== tkey) {
+      this.removeLastKeyFromCallerTreeArray(callerKey)
+      return
+    }
+
+    const trxs = this.getTrxArrayByEntryKey(tkey)
+    if (! trxs || ! trxs.length) { return }
+
+    if (this.errorMsg) {
+      this.logger.error(`ROLLBACK when commit top entry for key: "${tkey}"`, this.errorMsg)
+      return this.trxRollbackEntry(callerKey)
+    }
+
+    for (let i = trxs.length - 1; i >= 0; i -= 1) {
+      const trx = trxs[i]
+      if (! trx) { continue }
+
+      const { trxPropagateOptions } = trx
+      // eslint-disable-next-line no-await-in-loop
+      await trx.commit()
+      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
+
+      this.traceEnd({
+        op: 'commit',
+        kmoreTrxId: trx.kmoreTrxId,
+        trxPropagateOptions,
+      })
+    }
+    this.cleanAfterTrx(tkey)
+  }
+
+  async trxRollbackEntry(callerKey: CallerKey): Promise<void> {
+    // const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey) ?? callerKey
+    const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
+    let tkey = callerKey
+    if (tkeyArr.length > 0) {
+      const key = tkeyArr.at(-1) // pick last one
+      if (key) {
+        tkey = key
+      }
+    }
+
+    const trxs = this.getTrxArrayByEntryKey(tkey)
+    if (! trxs || ! trxs.length) { return }
+
+    for (let i = 0, len = trxs.length; i < len; i += 1) {
+      const trx = trxs[i]
+      if (! trx) { continue }
+
+      const { trxPropagateOptions } = trx
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await trx.rollback()
+      }
+      catch (ex) {
+        const msg = `ROLLBACK failed for key: "${tkey}". This error will be ignored, continue next trx rollback.`
+        this.logger.error(msg, ex)
+      }
+      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
+
+      this.traceEnd({
+        op: 'rollback',
+        kmoreTrxId: trx.kmoreTrxId,
+        trxPropagateOptions,
+      })
+    }
+
+    this.cleanAfterTrx(tkey)
+  }
+
+
   retrieveTopCallerKeyFromCallStack(limit = 64): CallerKey | undefined {
     const callers = getSimpleCallers(limit)
     if (! callers.length) { return }
@@ -271,94 +360,6 @@ export class TrxStatusService extends TrxStatusServiceBase {
     // this.updateBuilderSpanTag(options.builder) // span not exists this time
     this.updateTrxSpanTag(trxId)
     return ret
-  }
-
-  async trxCommitIfEntryTop(callerKey: CallerKey): Promise<void> {
-    let tkey = this.retrieveUniqueTopCallerKey(callerKey)
-    if (! tkey) {
-      const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
-
-      if (! tkeyArr.length) {
-        throw new Error(`callerKey "${callerKey}" is not registered or not top level caller`)
-        // return
-      }
-      else if (tkeyArr.length > 1) { // multiple callings
-        this.removeLastKeyFromCallerTreeArray(callerKey)
-        return
-      }
-      tkey = tkeyArr[0]
-      assert(tkey, 'tkey is undefined')
-      if (tkey !== callerKey) { return }
-    }
-
-    if (callerKey !== tkey) {
-      this.removeLastKeyFromCallerTreeArray(callerKey)
-      return
-    }
-
-    const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs || ! trxs.length) { return }
-
-    if (this.errorMsg) {
-      this.logger.error(`ROLLBACK when commit top entry for key: "${tkey}"`, this.errorMsg)
-      return this.trxRollbackEntry(callerKey)
-    }
-
-    for (let i = trxs.length - 1; i >= 0; i -= 1) {
-      const trx = trxs[i]
-      if (! trx) { continue }
-
-      const { trxPropagateOptions } = trx
-      // eslint-disable-next-line no-await-in-loop
-      await trx.commit()
-      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
-
-      this.traceEnd({
-        op: 'commit',
-        kmoreTrxId: trx.kmoreTrxId,
-        trxPropagateOptions,
-      })
-    }
-    this.cleanAfterTrx(tkey)
-  }
-
-  async trxRollbackEntry(callerKey: CallerKey): Promise<void> {
-    // const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey) ?? callerKey
-    const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
-    let tkey = callerKey
-    if (tkeyArr.length > 0) {
-      const key = tkeyArr.at(-1) // pick last one
-      if (key) {
-        tkey = key
-      }
-    }
-
-    const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs || ! trxs.length) { return }
-
-    for (let i = 0, len = trxs.length; i < len; i += 1) {
-      const trx = trxs[i]
-      if (! trx) { continue }
-
-      const { trxPropagateOptions } = trx
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        await trx.rollback()
-      }
-      catch (ex) {
-        const msg = `ROLLBACK failed for key: "${tkey}". This error will be ignored, continue next trx rollback.`
-        this.logger.error(msg, ex)
-      }
-      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
-
-      this.traceEnd({
-        op: 'rollback',
-        kmoreTrxId: trx.kmoreTrxId,
-        trxPropagateOptions,
-      })
-    }
-
-    this.cleanAfterTrx(tkey)
   }
 
   isRegistered(key: CallerKey): boolean {
