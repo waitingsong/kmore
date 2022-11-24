@@ -148,7 +148,10 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
 
     const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs || ! trxs.length) { return }
+    if (! trxs || ! trxs.length) {
+      this.cleanAfterTrx(tkey)
+      return
+    }
 
     if (this.errorMsg) {
       this.logger.error(`ROLLBACK when commit top entry for key: "${tkey}"`, this.errorMsg)
@@ -185,7 +188,10 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
 
     const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs || ! trxs.length) { return }
+    if (! trxs || ! trxs.length) {
+      this.cleanAfterTrx(tkey)
+      return
+    }
 
     for (let i = 0, len = trxs.length; i < len; i += 1) {
       const trx = trxs[i]
@@ -342,7 +348,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
       }
     }
 
-    let trxId: symbol
+    let trxId: symbol | undefined
     let ret: PropagatingRet
 
     switch (trxPropagateOptions.type) {
@@ -468,13 +474,13 @@ export class TrxStatusService extends TrxStatusServiceBase {
 
   protected builderLinkTrx(
     options: PropagatingOptions,
-    trx: KmoreTransaction,
+    trx: KmoreTransaction | undefined,
   ): PropagatingRet {
 
-    const builder = linkBuilderWithTrx(options.builder, trx)
+    const builder = trx ? linkBuilderWithTrx(options.builder, trx) : options.builder
     const ret: PropagatingRet = {
       builder,
-      kmoreTrxId: trx.kmoreTrxId,
+      kmoreTrxId: trx?.kmoreTrxId,
     }
     return ret
   }
