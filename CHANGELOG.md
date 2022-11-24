@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [51.0.0](/compare/v50.2.1...v51.0.0) (2022-11-24)
+
+
+### Features
+
+* **mwcp:** propagation type of declarative transaction supports "SUPPORTS" 249d14b
+
+
+
+
+
 ## [50.2.1](/compare/v50.2.0...v50.2.1) (2022-11-24)
 
 

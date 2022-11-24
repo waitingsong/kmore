@@ -1,7 +1,7 @@
 {
   "name": "@mwcp/kmore",
   "author": "waiting",
-  "version": "50.2.1",
+  "version": "51.0.0",
   "description": "midway component for knex, supports declarative transaction and OpenTelemetry",
   "keywords": [
     "Transactional",
@@ -32,14 +32,14 @@
   "dependencies": {
     "@mwcp/otel": "^3.16.0",
     "@waiting/shared-core": "^20.10.1",
-    "kmore": "^50.2.0",
+    "kmore": "^51.0.0",
     "knex": "^2.3.0"
   },
   "devDependencies": {
     "@mwcp/share": "^2.0.7",
     "cross-env": "7",
-    "kmore-cli": "^50.0.0",
-    "kmore-types": "^50.0.0"
+    "kmore-cli": "^51.0.0",
+    "kmore-types": "^51.0.0"
   },
   "engines": {
     "node": ">=16.13.0"
