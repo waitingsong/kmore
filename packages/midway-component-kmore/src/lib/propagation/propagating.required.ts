@@ -1,10 +1,10 @@
 import assert from 'node:assert'
 
-import { Attributes, AttrNames } from '@mwcp/otel'
 import { KmoreTransaction, QueryBuilderExtKey, TrxPropagateOptions } from 'kmore'
 
+import { traceGenTrx } from './propagating.helper'
 import { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base'
-import { genCallerKey, trxTrace } from './trx-status.helper'
+import { genCallerKey } from './trx-status.helper'
 
 
 export async function genTrxRequired(
@@ -23,42 +23,18 @@ export async function genTrxRequired(
   }
   assert(trx, 'trx is undefined')
 
-  if (! trx.trxPropagateOptions) {
+  const trxPropagated = !! trx.trxPropagateOptions
+
+  if (! trxPropagated) {
     Object.defineProperty(trx, QueryBuilderExtKey.trxPropagateOptions, {
-      configurable: false,
-      enumerable: false,
-      writable: false,
       value: trxPropagateOptions,
     })
-  }
-
-  const querySpanInfo = trxStatusSvc.dbSourceManager.getSpanInfoByKmoreTrxId(trx.kmoreTrxId)
-  if (! querySpanInfo) {
-    return trx
-  }
-
-  const event: Attributes = {
-    event: AttrNames.TransactionalStart,
-    kmoreQueryId: builder.kmoreQueryId.toString(),
-  }
-
-  trxTrace({
-    type: 'event',
-    appDir: trxStatusSvc.appDir,
-    span: querySpanInfo.span,
-    traceSvc: trxStatusSvc.traceSvc,
-    trxPropagateOptions,
-    attr: event,
-  })
-
-  if (! trx.trxPropagateOptions) {
-    trxTrace({
-      type: 'tag',
-      appDir: trxStatusSvc.appDir,
-      span: querySpanInfo.span,
-      traceSvc: trxStatusSvc.traceSvc,
+    traceGenTrx(
+      builder.kmoreQueryId,
+      trx,
+      trxStatusSvc,
       trxPropagateOptions,
-    })
+    )
   }
 
   return trx
