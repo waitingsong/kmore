@@ -31,7 +31,7 @@ describe(filename, () => {
       validateRet(resp)
     })
 
-    it.only(apiRoute.sibling, async () => {
+    it(apiRoute.sibling, async () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.sibling}`
 
