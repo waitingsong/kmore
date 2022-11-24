@@ -4,7 +4,6 @@ import {
   Config as _Config,
   Init,
   Inject,
-  Provide,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
@@ -16,8 +15,7 @@ import {
 import type { Db, UserDTO } from '@/test.model'
 
 
-// @Transactional()
-@Provide()
+@Transactional()
 export class UserService2 {
 
   name = 'UserService2'
