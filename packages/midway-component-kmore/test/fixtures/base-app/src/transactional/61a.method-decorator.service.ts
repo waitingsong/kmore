@@ -14,6 +14,7 @@ import {
   Transactional,
 } from '~/index'
 import type { Db, UserDTO } from '@/test.model'
+import { KmoreQueryBuilder } from 'kmore'
 
 
 @Provide()
@@ -37,20 +38,24 @@ export class UserService {
 
   @Transactional()
   async userAll(): Promise<void> {
-    const users = await this.getUsers()
+    const [users, trx] = await this.getUsers()
     assert(users && users.length === 3)
 
-    await this.getUsers2()
+    const [, trx3] = await this.getUsers2()
+    assert(trx === trx3)
 
-    const users2 = await this.getUsers()
+    const [users2, trx2] = await this.getUsers()
     assert(users2 && users2.length === 3)
+    assert(trx === trx2)
   }
 
   @Transactional()
-  async getUsers(): Promise<UserDTO[]> {
-    const users = await this.ref_tb_user()
+  async getUsers(): Promise<[UserDTO[], symbol]> {
+    const builder = this.ref_tb_user()
+    const users = await builder
+    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users)
-    return users
+    return [users, trxId]
   }
 
   @Transactional()
@@ -69,15 +74,18 @@ export class UserService {
   }
 
   @Transactional()
-  async getUsers2(): Promise<UserDTO[]> {
-    const users = await this.db.camelTables.ref_tb_user()
+  async getUsers2(): Promise<[UserDTO[], symbol]> {
+    const builder = this.db.camelTables.ref_tb_user()
+    const users = await builder
+    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users && users.length === 3)
-    return users
+    return [users, trxId]
   }
 
   @Transactional()
   async userAllWithUpdate(): Promise<void> {
-    const [user] = await this.getUsers()
+    const [users, trx] = await this.getUsers()
+    const [user] = users
     assert(user && user.realName !== 'test')
 
     const uid = 1
@@ -85,7 +93,7 @@ export class UserService {
     const user2 = await this.updateUser(uid, realName)
     assert(user2.realName === realName)
 
-    const users3 = await this.getUsers()
+    const [users3, trx3] = await this.getUsers()
     assert(users3 && users3.length === 3)
     users3.forEach(row => {
       if (row.uid === uid) {
@@ -95,6 +103,7 @@ export class UserService {
         assert(row.realName !== realName)
       }
     })
+    assert(trx === trx3)
   }
 
   @Transactional()
@@ -115,23 +124,28 @@ export class UserService {
   }
 
   @Transactional()
-  async delUser(uid: UserDTO['uid']): Promise<UserDTO> {
+  async delUser(uid: UserDTO['uid']): Promise<[UserDTO, symbol]> {
     assert(uid)
 
-    const user = await this.ref_tb_user()
+    const builder = this.ref_tb_user()
+    const user = await builder
       .where({ uid })
       .del()
       .returning('*')
       .then(rows => rows[0])
-
     assert(user)
     assert(user.uid === uid)
-    return user
+
+    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
+    return [user, trxId]
   }
 
   @Transactional()
-  async delUserAll(): Promise<UserDTO> {
-    return this.ref_tb_user().del()
+  async delUserAll(): Promise<[symbol]> {
+    const builder = this.ref_tb_user()
+    await builder.del()
+    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
+    return [trxId]
   }
 
   @Transactional()
@@ -141,7 +155,7 @@ export class UserService {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
 
     const user = await this.getUserByUid(uid)
@@ -153,16 +167,18 @@ export class UserService {
     const user2 = await this.updateUser(uid, realName)
     assert(user2.realName === realName)
 
-    const user3 = await this.getUsers()
+    const [user3, trx3] = await this.getUsers()
     user3.forEach(row => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
     })
+    assert(trx0 === trx3)
 
-    const user4 = await this.delUser(uid)
+    const [user4, trx4] = await this.delUser(uid)
     assert(user4.uid === uid)
     assert(user4.realName === realName)
+    assert(trx0 === trx4)
 
     const total1 = await this.countUserNoTrx()
     assert(
@@ -171,38 +187,44 @@ export class UserService {
       )
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
     const user5 = await this.getUsersNoTrx()
     assert(user5.length === expectTotalNoTrx, user5.length.toString())
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
   }
 
 
   async countUserNoTrx(): Promise<number> {
-    const total = await this.ref_tb_user()
+    const builder = this.ref_tb_user()
+    const total = await builder
       .count({ total: '*' })
       .then(rows => rows[0]?.total)
       .then(resp => resp ? +resp : 0)
 
-    // const users = await this.ref_tb_user().then()
-    // void users
+    const { kmoreQueryId } = builder
+    const trx = this.db.getTrxByKmoreQueryId(kmoreQueryId)
+    assert(! trx, 'trx should be undefined')
 
     return total
   }
 
   // NOTE: .forShare() will not be append with aggregate function!
   @Transactional()
-  async countUser(): Promise<number> {
-    const total = await this.ref_tb_user()
+  async countUser(): Promise<[number, symbol]> {
+    const builder = this.ref_tb_user()
+    const total = await builder
       .count({ total: '*' })
       .then(rows => rows[0]?.total)
       .then(resp => resp ? +resp : 0)
+    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
 
-    return total
+    return [total, trxId]
   }
 
   @Transactional()
@@ -214,14 +236,15 @@ export class UserService {
     assert(total1 > 0, total1.toString())
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === 0, total2.toString())
 
     const user5 = await this.getUsersNoTrx()
     assert(user5.length > 0, user5.length.toString())
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === 0, user6.length.toString())
+    assert(trx2 === trx6)
   }
 
   @Transactional()
@@ -237,7 +260,7 @@ export class UserService {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
     if (total0 === 0) {
       return
@@ -252,29 +275,33 @@ export class UserService {
     const user2 = await this.updateUser(uid, realName)
     assert(user2.realName === realName)
 
-    const user3 = await this.getUsers()
+    const [user3, trx3] = await this.getUsers()
     user3.forEach(row => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
     })
+    assert(trx0 === trx3)
 
-    const user4 = await this.delUser(uid)
+    const [user4, trx4] = await this.delUser(uid)
     assert(user4.uid === uid)
     assert(user4.realName === realName)
+    assert(trx0 === trx4)
 
     const total1 = await this.countUserNoTrx()
     assert(total1 === expectTotalNoTrx, `${total1.toString()}, ${expectTotalNoTrx}`)
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
     const user5 = await this.getUsersNoTrx()
     assert(user5.length === expectTotalNoTrx, user5.length.toString())
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
 
     if (total2 > 0) {
       await this.selfUserUpdateDel(uid + 1, expectTotal - 1, expectTotalNoTrx)
@@ -291,7 +318,7 @@ export class UserService {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
     if (total0 === 0) {
       return
@@ -302,21 +329,24 @@ export class UserService {
     const name = 'rn' + uid.toString()
     assert(user.realName === name, JSON.stringify(user) + ' vs ' + name)
 
-    const user4 = await this.delUser(uid)
+    const [user4, trx4] = await this.delUser(uid)
     assert(user4.uid === uid)
+    assert(trx0 === trx4)
 
     const total1 = await this.countUserNoTrx()
     assert(total1 === expectTotalNoTrx, `${total1.toString()}, ${expectTotalNoTrx}`)
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
     const user5 = await this.getUsersNoTrx()
     assert(user5.length === expectTotalNoTrx, user5.length.toString())
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
 
     if (total2 > 0) {
       // Debug: no await
@@ -334,7 +364,7 @@ export class UserService {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
     if (total0 === 0) {
       return
@@ -345,21 +375,24 @@ export class UserService {
     const name = 'rn' + uid.toString()
     assert(user.realName === name, JSON.stringify(user) + ' vs ' + name)
 
-    const user4 = await this.delUser(uid)
+    const [user4, trx4] = await this.delUser(uid)
     assert(user4.uid === uid)
+    assert(trx0 === trx4)
 
     const total1 = await this.countUserNoTrx()
     assert(total1 === expectTotalNoTrx, `${total1.toString()}, ${expectTotalNoTrx}`)
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
     const user5 = await this.getUsersNoTrx()
     assert(user5.length === expectTotalNoTrx, user5.length.toString())
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
 
     if (total2 > 0) {
       return this.selfReturnPromise(uid + 1, expectTotal - 1, expectTotalNoTrx)
@@ -399,17 +432,29 @@ export class UserService {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
 
-    const user4 = await this.delUser(uid)
+    const [user4, trx4] = await this.delUser(uid)
     assert(user4.uid === uid)
+    assert(trx0 === trx4)
 
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx2 === trx0)
 
     const user5 = await this.getUsersNoTrx()
     assert(user5.length === expectTotalNoTrx, user5.length.toString())
+  }
+
+
+  protected validateBuilderLinkedTrx(builder: KmoreQueryBuilder<Db>): symbol {
+    const { kmoreQueryId } = builder
+    const trx = this.db.getTrxByKmoreQueryId(kmoreQueryId)
+    assert(trx, 'trx not found')
+    const  { kmoreTrxId } = trx
+    assert(kmoreTrxId, 'kmoreTrxId not found')
+    return kmoreTrxId
   }
 }
 

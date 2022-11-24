@@ -122,7 +122,7 @@ export class ClassDecoratorController {
     const users = await this.userSvc0.getUsersNoTrx()
     assert(users.length === 3)
 
-    const users2 = await this.userSvc.getUsers()
+    const [users2] = await this.userSvc.getUsers()
     assert(users2.length === 3)
 
     return 'OK'
@@ -141,7 +141,7 @@ export class ClassDecoratorController {
     const users = await this.userSvc0.getUsersNoTrx()
     assert(users.length === 3)
 
-    const users2 = await this.userSvc.getUsers()
+    const [users2] = await this.userSvc.getUsers()
     assert(users2.length === 3)
 
     return 'OK'

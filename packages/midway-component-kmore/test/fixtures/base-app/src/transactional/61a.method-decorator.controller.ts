@@ -121,8 +121,13 @@ export class TrxDecoratorController {
     const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)
 
-    const users2 = await this.userSvc.getUsers()
+    const [users2, trx2] = await this.userSvc.getUsers()
     assert(users2.length === 3)
+    assert(trx2)
+
+    const [users3, trx3] = await this.userSvc.getUsers()
+    assert(users3.length === 3)
+    assert(trx2 !== trx3)
 
     return 'OK'
   }
@@ -140,8 +145,13 @@ export class TrxDecoratorController {
     const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)
 
-    const users2 = await this.userSvc.getUsers()
+    const [users2, trx2] = await this.userSvc.getUsers()
     assert(users2.length === 3)
+    assert(trx2)
+
+    const [users3, trx3] = await this.userSvc.getUsers()
+    assert(users3.length === 3)
+    assert(trx2 !== trx3)
 
     return 'OK'
   }

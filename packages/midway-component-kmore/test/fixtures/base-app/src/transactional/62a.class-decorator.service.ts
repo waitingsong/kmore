@@ -13,6 +13,7 @@ import {
   Transactional,
 } from '~/index'
 import type { Db, UserDTO } from '@/test.model'
+import { KmoreQueryBuilder } from 'kmore'
 
 
 @Transactional()
@@ -38,30 +39,34 @@ export class UserService2 {
 
   @Transactional()
   async userAll2(): Promise<void> {
-    const users = await this.getUsers()
+    const [users, trx] = await this.getUsers()
     assert(users && users.length === 3)
 
     await this.getUsers2()
 
-    const users2 = await this.getUsers()
+    const [users2, trx2] = await this.getUsers()
     assert(users2 && users2.length === 3)
+    assert(trx === trx2)
   }
 
 
   async userAll(): Promise<void> {
-    const users = await this.getUsers()
+    const [users, trx] = await this.getUsers()
     assert(users && users.length === 3)
 
     await this.getUsers2()
 
-    const users2 = await this.getUsers()
+    const [users2, trx2] = await this.getUsers()
     assert(users2 && users2.length === 3)
+    assert(trx === trx2)
   }
 
-  async getUsers(): Promise<UserDTO[]> {
-    const users = await this.ref_tb_user()
+  async getUsers(): Promise<[UserDTO[], symbol]> {
+    const builder = this.ref_tb_user()
+    const users = await builder
+    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users)
-    return users
+    return [users, trxId]
   }
 
   async getUserByUid(uid: UserDTO['uid']): Promise<UserDTO> {
@@ -80,7 +85,8 @@ export class UserService2 {
   }
 
   async userAllWithUpdate(): Promise<void> {
-    const [user] = await this.getUsers()
+    const [users, trx] = await this.getUsers()
+    const [user] = users
     assert(user && user.realName !== 'test')
 
     const uid = 1
@@ -88,7 +94,7 @@ export class UserService2 {
     const user2 = await this.updateUser(uid, realName)
     assert(user2.realName === realName)
 
-    const users3 = await this.getUsers()
+    const [users3, trx3] = await this.getUsers()
     assert(users3 && users3.length === 3)
     users3.forEach(row => {
       if (row.uid === uid) {
@@ -98,6 +104,7 @@ export class UserService2 {
         assert(row.realName !== realName)
       }
     })
+    assert(trx === trx3)
   }
 
   async updateUser(uid: UserDTO['uid'], realName: UserDTO['realName']): Promise<UserDTO> {
@@ -139,7 +146,7 @@ export class UserService2 {
     expectTotal: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
 
     const user = await this.getUserByUid(uid)
@@ -151,12 +158,13 @@ export class UserService2 {
     const user2 = await this.updateUser(uid, realName)
     assert(user2.realName === realName)
 
-    const user3 = await this.getUsers()
+    const [user3, trx3] = await this.getUsers()
     user3.forEach(row => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
     })
+    assert(trx0 === trx3)
 
     const user4 = await this.delUser(uid)
     assert(user4.uid === uid)
@@ -164,22 +172,26 @@ export class UserService2 {
 
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx3 === trx6)
   }
 
 
   // NOTE: .forShare() will not be append with aggregate function!
-  async countUser(): Promise<number> {
-    const total = await this.ref_tb_user()
+  async countUser(): Promise<[number, symbol]> {
+    const builder = this.ref_tb_user()
+    const trxId = this.validateBuilderLinkedTrx(builder)
+    const total = await builder
       .count({ total: '*' })
       .then(rows => rows[0]?.total)
       .then(resp => resp ? +resp : 0)
 
-    return total
+    return [total, trxId]
   }
 
   async userUpdateDelAll(): Promise<void> {
@@ -187,11 +199,12 @@ export class UserService2 {
     await this.delUserAll()
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === 0, total2.toString())
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === 0, user6.length.toString())
+    assert(trx2 === trx6)
   }
 
   async truncateTbUser(): Promise<void> {
@@ -205,7 +218,7 @@ export class UserService2 {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
     if (total0 === 0) {
       return
@@ -220,23 +233,26 @@ export class UserService2 {
     const user2 = await this.updateUser(uid, realName)
     assert(user2.realName === realName)
 
-    const user3 = await this.getUsers()
+    const [user3, trx3] = await this.getUsers()
     user3.forEach(row => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
     })
+    assert(trx0 === trx3)
 
     const user4 = await this.delUser(uid)
     assert(user4.uid === uid)
     assert(user4.realName === realName)
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
 
     if (total2 > 0) {
       await this.selfUserUpdateDel(uid + 1, expectTotal - 1, expectTotalNoTrx)
@@ -252,7 +268,7 @@ export class UserService2 {
     expectTotalNoTrx: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
     if (total0 === 0) {
       return
@@ -267,11 +283,13 @@ export class UserService2 {
     assert(user4.uid === uid)
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
 
     if (total2 > 0) {
       // Debug: no await
@@ -287,7 +305,7 @@ export class UserService2 {
     expectTotal: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
     if (total0 === 0) {
       return
@@ -302,11 +320,13 @@ export class UserService2 {
     assert(user4.uid === uid)
 
     // NOTE: .forShare() will not be append with aggregate function!
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
 
-    const user6 = await this.getUsers()
+    const [user6, trx6] = await this.getUsers()
     assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(trx0 === trx6)
 
     if (total2 > 0) {
       return this.selfReturnPromise(uid + 1, expectTotal - 1)
@@ -340,14 +360,25 @@ export class UserService2 {
     expectTotal: number,
   ): Promise<void> {
 
-    const total0 = await this.countUser()
+    const [total0, trx0] = await this.countUser()
     assert(total0 === expectTotal)
 
     const user4 = await this.delUser(uid)
     assert(user4.uid === uid)
 
-    const total2 = await this.countUser()
+    const [total2, trx2] = await this.countUser()
     assert(total2 === expectTotal - 1, total2.toString())
+    assert(trx0 === trx2)
+  }
+
+
+  protected validateBuilderLinkedTrx(builder: KmoreQueryBuilder<Db>): symbol {
+    const { kmoreQueryId } = builder
+    const trx = this.db.getTrxByKmoreQueryId(kmoreQueryId)
+    assert(trx, 'trx not found')
+    const  { kmoreTrxId } = trx
+    assert(kmoreTrxId, 'kmoreTrxId not found')
+    return kmoreTrxId
   }
 }
 
