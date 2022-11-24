@@ -234,7 +234,9 @@ More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmo
 Limitation:
 - not apply on base clase
 - apply `AsyncFunction` only, means every result of query builder must be "await"ed
-- transaction propagation current supports `PropagationType.REQUIRED` only
+- transaction propagation current supports only:
+  - `PropagationType.REQUIRED`
+  - `PropagationType.SUPPORTS`
 
 
 Usage:

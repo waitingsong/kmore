@@ -17,6 +17,7 @@ import {
 
 import { DbSourceManager } from './db-source-manager'
 import { genTrxRequired } from './propagation/propagating.required'
+import { genTrxSupports } from './propagation/propagating.supports'
 import {
   CallerKey,
   CallerKeyFileMap,
@@ -356,6 +357,13 @@ export class TrxStatusService extends TrxStatusServiceBase {
         const trx = await genTrxRequired(this, options, trxPropagateOptions)
         ret = this.builderLinkTrx(options, trx)
         trxId = trx.kmoreTrxId
+        break
+      }
+
+      case PropagationType.SUPPORTS: {
+        const trx = await genTrxSupports(this, options, trxPropagateOptions)
+        ret = this.builderLinkTrx(options, trx)
+        trxId = trx?.kmoreTrxId
         break
       }
 

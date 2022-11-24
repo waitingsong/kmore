@@ -11,7 +11,7 @@ describe(filename, () => {
   describe('Should @Transactional decorator work', () => {
     const prefix = apiPrefix.methodDecorator
 
-    it('simple', async () => {
+    it(apiRoute.simple, async () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.simple}`
 

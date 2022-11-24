@@ -234,7 +234,9 @@ More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmo
 限制：
 - 不能应用在基类
 - 类方法必须是 `AsyncFunction`，意味着每个 Query 构造器结果都必须使用 "await"
-- 事务传播当前仅支持 `PropagationType.REQUIRED`
+- 事务传播当前仅支持 
+  - `PropagationType.REQUIRED`
+  - `PropagationType.SUPPORTS`
 
 
 使用：

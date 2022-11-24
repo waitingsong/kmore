@@ -3,6 +3,8 @@ import { relative } from 'node:path'
 
 import { apiRoute, apiPrefix } from '../fixtures/base-app/src/api-route'
 
+import { validateRespOK } from './transacional.helper'
+
 import { initDb } from '@/helper'
 import { testConfig } from '@/root.config'
 
@@ -28,7 +30,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.sibling, async () => {
@@ -39,7 +41,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.update, async () => {
@@ -50,7 +52,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.controllerUpdate, async () => {
@@ -61,7 +63,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
   })
 
@@ -77,7 +79,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.updateDelOneByOne, async () => {
@@ -88,7 +90,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.controllerUpdateDelOneByOne, async () => {
@@ -99,7 +101,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.updateDelAll, async () => {
@@ -110,7 +112,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.selfUpdateDel, async () => {
@@ -121,7 +123,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.selfReturnMissingAwait, async () => {
@@ -132,7 +134,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.selfReturnPromise, async () => {
@@ -143,7 +145,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.throwError, async () => {
@@ -154,7 +156,7 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
 
     it(apiRoute.returnReject, async () => {
@@ -165,14 +167,8 @@ describe(filename, () => {
         .get(url)
         .expect(200)
 
-      validateRet(resp)
+      validateRespOK(resp)
     })
   })
 })
 
-
-function validateRet(resp: any): void {
-  assert(resp)
-  assert(typeof resp.text === 'string')
-  assert(resp.text === 'OK')
-}

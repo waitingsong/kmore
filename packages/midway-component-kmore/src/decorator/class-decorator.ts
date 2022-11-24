@@ -72,8 +72,8 @@ function wrapClassMethodOnPrototype(
       Object.defineProperty(target.prototype, targetMethodName, {
         value: descriptor.value,
       })
-      // eslint-disable-next-line no-loop-func
-      target.prototype[key] = async function(...args: unknown[]): Promise<unknown> {
+
+      const wrappedClassDecoratedMethod = async function(this: unknown, ...args: unknown[]): Promise<unknown> {
         // return target.prototype[targetMethodName].apply(this, args)
         const method = target.prototype[targetMethodName].bind(this) as Method
         const resp = await classDecoratorExecuctor(
@@ -85,6 +85,14 @@ function wrapClassMethodOnPrototype(
         )
         return resp
       }
+      // Object.defineProperty(fn, 'originalMethodName', {
+      //   value: key,
+      // })
+      Object.defineProperty(wrappedClassDecoratedMethod, 'name', {
+        writable: true,
+        value: key,
+      })
+      target.prototype[key] = wrappedClassDecoratedMethod
     }
   }
 
