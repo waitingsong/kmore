@@ -81,7 +81,8 @@ async function aroundFactory(
   const instance = joinPoint.target
   const classMetaData = getClassMetadata(TRX_CLASS_KEY, instance)
   if (classMetaData) {
-    return joinPoint.proceed(...joinPoint.args)
+    const ret = await joinPoint.proceed(...joinPoint.args) // must await for call stack
+    return ret
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
