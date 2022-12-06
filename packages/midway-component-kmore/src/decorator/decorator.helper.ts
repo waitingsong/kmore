@@ -1,7 +1,7 @@
 import assert from 'assert'
 
 import { INJECT_CUSTOM_METHOD, getClassMetadata } from '@midwayjs/core'
-import type { Context as WebContext } from '@mwcp/share'
+import { Context as WebContext, DecoratorMetaData, methodHasDecorated } from '@mwcp/share'
 import { PropagationType } from 'kmore'
 
 import { CallerKey, RegisterTrxPropagateOptions } from '../lib/propagation/trx-status.base'
@@ -12,6 +12,8 @@ import { TransactionalOptions } from '../lib/types'
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
 export const TRX_METHOD_KEY = 'decorator:kmore_trxnal_decorator_key'
 export const decoratorArgsCacheKey = '__decoratorArgsCacheMap'
+export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
+export const methodDecoratorKeyMap = new Map([ [TRX_METHOD_KEY, 'Tansactional'] ])
 
 export interface DecoratorArgs {
   /**
@@ -132,4 +134,23 @@ export function retrieveMethodDecoratorArgs(
       return row.metadata
     }
   }
+}
+
+
+export function checkTrxDecoratorShouldAfterDecoratorKeys(
+  decoratorKeyMap: Map<string, string>, //
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  target: {},
+  propertyKey: string,
+  metadata: DecoratorMetaData | undefined,
+): void {
+
+  const metadataArr: DecoratorMetaData[] | undefined = getClassMetadata(INJECT_CUSTOM_METHOD, target)
+  decoratorKeyMap.forEach((key) => {
+    if (methodHasDecorated(key, propertyKey, metadataArr)) {
+      const msg = `[Kmore] @Transactional() should be used after @Cacheable() on the same method (${propertyKey}
+metadata: ${JSON.stringify(metadata, null, 2)}`
+      console.warn(msg)
+    }
+  })
 }

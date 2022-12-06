@@ -12,7 +12,11 @@ import {
   attachClassMetadata,
   getClassMetadata,
 } from '@midwayjs/core'
-import type { Context as WebContext } from '@mwcp/share'
+import { methodDecoratorKeyMap as cacheMethodDecoratorKeyMap } from '@mwcp/cache'
+import {
+  Context as WebContext,
+  checkMethodHasDecoratorKeys,
+} from '@mwcp/share'
 
 import { KmorePropagationConfig } from '../lib/types'
 
@@ -22,6 +26,7 @@ import {
   TransactionalDecoratorExecutorOptions,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
+  methodDecoratorKeyMap,
 } from './decorator.helper'
 
 
@@ -33,18 +38,29 @@ export function methodDecoratorPatcher<T>(
 ): TypedPropertyDescriptor<T> {
 
   assert(descriptor, 'descriptor is undefined')
+
+  const data = {
+    propertyName,
+    key: TRX_METHOD_KEY,
+    metadata,
+    impl: true,
+  }
+
+  const msgArr = checkMethodHasDecoratorKeys(
+    methodDecoratorKeyMap,
+    cacheMethodDecoratorKeyMap,
+    target,
+    data,
+  )
+  if (msgArr.length) {
+    console.warn(msgArr.join('\n\n'))
+  }
+
   attachClassMetadata(
     INJECT_CUSTOM_METHOD,
-    {
-      propertyName,
-      key: TRX_METHOD_KEY,
-      metadata,
-      impl: true,
-    },
+    data,
     target,
   )
-  // const foo = getClassMetadata(INJECT_CUSTOM_METHOD, target)
-  // void foo
   return descriptor
 }
 

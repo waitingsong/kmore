@@ -1,4 +1,5 @@
 import * as koa from '@midwayjs/koa'
+import * as cache from '@mwcp/cache'
 import * as otel from '@mwcp/otel'
 
 
@@ -10,6 +11,7 @@ const CI = !! (process.env['MIDWAY_SERVER_ENV'] === 'unittest'
 export const useComponents: IComponentInfo[] = [otel]
 if (CI && ! useComponents.includes(koa)) {
   useComponents.push(koa)
+  useComponents.push(cache)
 }
 
 export interface IComponentInfo {

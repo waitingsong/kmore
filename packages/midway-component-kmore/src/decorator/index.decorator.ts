@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import assert from 'node:assert'
 
-// import { createCustomMethodDecorator } from '@midwayjs/core'
-
 import { classDecoratorPatcher } from './class-decorator'
 import {
   DecoratorArgs,
@@ -33,13 +31,6 @@ export function Transactional(
   propagationType?: DecoratorArgs['propagationType'],
   propagationOptions?: DecoratorArgs['propagationOptions'],
 ): MethodDecorator & ClassDecorator {
-// ): MethodDecorator {
-
-
-  // return createCustomMethodDecorator(TRX_METHOD_KEY, {
-  //   propagationType,
-  //   propagationOptions,
-  // })
 
   const transactionalDecoratorFactory = <T>(
     target: T,
@@ -79,11 +70,12 @@ export function Transactional(
         decoratorArgsCacheMap.set(propertyKey, metadata)
       }
 
+      const metadata = { propagationType, propagationOptions }
       return methodDecoratorPatcher<T>(
         target as {},
         propertyKey,
         descriptor,
-        { propagationType, propagationOptions },
+        metadata,
       )
     }
 
