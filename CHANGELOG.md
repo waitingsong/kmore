@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [51.1.0](/compare/v51.0.0...v51.1.0) (2022-12-06)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const 37ffd10
+* **boilerplate:** devDeps version 2e29b42
+
+
+### Features
+
+* **mwcp:** log warn if decorator @Transactional before @Cacheable/CacheEvict 00475dd
+
+
+
+
+
 # [51.0.0](/compare/v50.2.1...v51.0.0) (2022-11-24)
 
 
