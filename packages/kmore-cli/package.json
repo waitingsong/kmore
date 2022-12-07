@@ -39,7 +39,7 @@
     "@waiting/shared-types-dev": "^11.3.0",
     "kmore-types": "^51.0.0",
     "minimist": "^1.2.6",
-    "rxjs": "^7.5.0",
+    "rxjs": "^7.6.0",
     "rxwalker": "^6.0.0",
     "tsconfig-resolver": "^3.0.1"
   },
