@@ -149,7 +149,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
 
     const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs || ! trxs.length) {
+    if (! trxs?.length) {
       this.cleanAfterTrx(tkey)
       return
     }
@@ -189,7 +189,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
 
     const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs || ! trxs.length) {
+    if (! trxs?.length) {
       this.cleanAfterTrx(tkey)
       return
     }
@@ -587,7 +587,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
 
   protected delLastCallerKeyFromCallerTreeMap(entryKey: CallerKey, key: CallerKey): void {
     const arr = this.callerTreeMap.get(entryKey)
-    if (! arr || ! arr.length) { return }
+    if (! arr?.length) { return }
     const pos = arr.lastIndexOf(key)
     if (pos === -1) { return }
     arr.splice(pos, 1)

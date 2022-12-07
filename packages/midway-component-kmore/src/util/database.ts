@@ -16,7 +16,7 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
   for (const [name, kmore] of dbSourceManager.dataSource.entries()) {
     const trxSet = kmore.getTrxSetByCtx(ctx)
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (! trxSet || ! trxSet.size) { continue }
+    if (! trxSet?.size) { continue }
 
     for (const trx of trxSet.values()) {
       const { trxActionOnEnd, kmoreTrxId } = trx

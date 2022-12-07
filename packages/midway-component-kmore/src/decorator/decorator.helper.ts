@@ -127,7 +127,7 @@ export function retrieveMethodDecoratorArgs(
 ): DecoratorArgs | undefined {
 
   const metaDataArr = getClassMetadata(INJECT_CUSTOM_METHOD, target) as TrxDecoratorMetaData[] | undefined
-  if (! metaDataArr || ! metaDataArr.length) { return }
+  if (! metaDataArr?.length) { return }
 
   for (const row of metaDataArr) {
     if (row.propertyName === methodName) {

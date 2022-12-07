@@ -164,7 +164,7 @@ function builderRowLock(
 function builderStatementsHasTypeAggregate(builder: KmoreQueryBuilder): boolean {
   // @ts-expect-error
   const statements = builder._statements as BuilderStatement[] | undefined
-  if (! statements || ! statements.length) {
+  if (! statements?.length) {
     return false
   }
 

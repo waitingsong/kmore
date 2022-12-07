@@ -73,7 +73,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   @Init()
   async init(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (! this.sourceconfig || ! this.sourceconfig.dataSource) {
+    if (! this?.sourceconfig?.dataSource) {
       this.logger.info('dataSourceConfig is not defined')
       return
     }
