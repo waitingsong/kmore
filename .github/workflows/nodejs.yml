@@ -45,6 +45,7 @@ jobs:
 
       - name: Prepare
         run: |
+          pwd
           uname -a
           export DEBIAN_FRONTEND=noninteractive
           apt-get update -qq --yes > /dev/null
@@ -83,7 +84,7 @@ jobs:
         timeout-minutes: 15
         run: |
           chown -R 1001:121 "/github/home/.npm"
-          chmod a+w -R .
+          # chmod a+w -R .
           # DO NOT execute: npm config set unsafe-perm=true
           export cwd=`pwd`
           # .github/workflows/fix.sh
@@ -95,7 +96,8 @@ jobs:
 
       - name: Build
         run: |
-          chmod a+w -R .
+          pwd
+          # chmod a+w -R .
           whoami
           export cwd=`pwd`
           . .scripts/ci/ci-env.sh
