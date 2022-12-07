@@ -41,12 +41,12 @@
     "@waiting/shared-core": "^20.10.1"
   },
   "devDependencies": {
-    "@mwcp/otel": "^3.16.5",
+    "@mwcp/otel": "^3.16.6",
     "cross-env": "7",
     "kmore-cli": "^51.0.0",
     "kmore-types": "^51.0.0",
     "knex": "^2.3.0",
-    "pg": "^8.7.3"
+    "pg": "^8.8.0"
   },
   "engines": {
     "node": ">=16.13.0"

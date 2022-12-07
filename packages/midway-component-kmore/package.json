@@ -30,9 +30,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/cache": "^2.2.1",
-    "@mwcp/otel": "^3.16.5",
-    "@mwcp/share": "^2.3.0",
+    "@mwcp/cache": "^2.5.3",
+    "@mwcp/otel": "^3.16.6",
+    "@mwcp/share": "^2.3.1",
     "@waiting/shared-core": "^20.10.1",
     "kmore": "^51.1.0",
     "knex": "^2.3.0"
