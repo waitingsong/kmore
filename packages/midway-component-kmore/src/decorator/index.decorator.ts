@@ -3,7 +3,7 @@ import assert from 'node:assert'
 
 import { classDecoratorPatcher } from './class-decorator'
 import {
-  DecoratorArgs,
+  TransactionalArgs,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
 } from './decorator.helper'
@@ -11,7 +11,7 @@ import { methodDecoratorPatcher } from './method-decorator'
 
 
 export {
-  DecoratorArgs,
+  TransactionalArgs as DecoratorArgs,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
 }
@@ -27,8 +27,8 @@ export function Transactional(
   /**
    * @default {@link Propagation.REQUIRED}
    */
-  propagationType?: DecoratorArgs['propagationType'],
-  propagationOptions?: DecoratorArgs['propagationOptions'],
+  propagationType?: TransactionalArgs['propagationType'],
+  propagationOptions?: TransactionalArgs['propagationOptions'],
 ): MethodDecorator & ClassDecorator {
 
   const transactionalDecoratorFactory = <T>(
@@ -38,7 +38,6 @@ export function Transactional(
   ): TypedPropertyDescriptor<T> | void => {
 
     assert(target, 'target is undefined')
-
 
     if (typeof target === 'function') { // Class Decorator
       return classDecoratorPatcher(target, { propagationType, propagationOptions })

@@ -16,7 +16,7 @@ export const TRX_METHOD_KEY = 'decorator:kmore_trxnal_decorator_key'
 export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
 export const methodDecoratorKeyMap = new Map([ [TRX_METHOD_KEY, 'Tansactional'] ])
 
-export interface DecoratorArgs {
+export interface TransactionalArgs {
   /**
    * @default {@link PropagationType.REQUIRED}
    */
@@ -151,14 +151,14 @@ async function processEx(options: ProcessExOptions): Promise<never> {
 export interface TrxDecoratorMetaData {
   propertyName: string
   key: string
-  metadata: DecoratorArgs | undefined
+  metadata: TransactionalArgs | undefined
   impl: boolean
 }
 
 export function retrieveMethodDecoratorArgs(
   target: unknown,
   methodName: string,
-): DecoratorArgs | undefined {
+): TransactionalArgs | undefined {
 
   const metaDataArr = getClassMetadata(INJECT_CUSTOM_METHOD, target) as TrxDecoratorMetaData[] | undefined
   if (! metaDataArr?.length) { return }

@@ -21,7 +21,7 @@ import {
 import { KmorePropagationConfig } from '../lib/types'
 
 import {
-  DecoratorArgs,
+  TransactionalArgs,
   transactionalDecoratorExecutor,
   TransactionalDecoratorExecutorOptions,
   TRX_CLASS_KEY,
@@ -34,7 +34,7 @@ export function methodDecoratorPatcher<T>(
   target: {},
   propertyName: string,
   descriptor: TypedPropertyDescriptor<T>,
-  metadata: DecoratorArgs,
+  metadata: TransactionalArgs,
 ): TypedPropertyDescriptor<T> {
 
   assert(descriptor, 'descriptor is undefined')
@@ -130,7 +130,7 @@ interface MetaDataType {
   /** 装饰器所在的实例 */
   target: new (...args: unknown[]) => unknown
   propertyName: string
-  metadata: Partial<DecoratorArgs>
+  metadata: Partial<TransactionalArgs>
 }
 
 // interface CreateActiveSpanCbOptions {

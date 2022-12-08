@@ -17,7 +17,7 @@ import { PropagationType, RowLockLevel } from 'kmore'
 import { KmorePropagationConfig } from '../lib/types'
 
 import {
-  DecoratorArgs,
+  TransactionalArgs,
   retrieveMethodDecoratorArgs,
   transactionalDecoratorExecutor,
   TransactionalDecoratorExecutorOptions,
@@ -28,7 +28,7 @@ import {
 export function classDecoratorPatcher(
   // eslint-disable-next-line @typescript-eslint/ban-types
   target: Function,
-  args: DecoratorArgs,
+  args: TransactionalArgs,
 ): void {
 
   // 将装饰的类，绑定到该装饰器，用于后续能获取到 class
@@ -51,7 +51,7 @@ export function classDecoratorPatcher(
 
 function wrapClassMethodOnPrototype(
   target: any,
-  options: DecoratorArgs,
+  options: TransactionalArgs,
 ): any {
 
   if (! target.prototype) {
@@ -104,7 +104,7 @@ async function classDecoratorExecuctor(
   method: Method,
   methodName: string,
   methodArgs: unknown[],
-  options: DecoratorArgs,
+  options: TransactionalArgs,
 ): Promise<unknown> {
 
   assert(instance, 'instance is required')
