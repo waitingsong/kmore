@@ -6,7 +6,6 @@ import {
   DecoratorArgs,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
-  decoratorArgsCacheKey,
 } from './decorator.helper'
 import { methodDecoratorPatcher } from './method-decorator'
 
@@ -40,13 +39,6 @@ export function Transactional(
 
     assert(target, 'target is undefined')
 
-    // @ts-ignore
-    let decoratorArgsCacheMap = target[decoratorArgsCacheKey] as Map<PropertyKey, DecoratorArgs> | undefined
-    if (! decoratorArgsCacheMap) {
-      decoratorArgsCacheMap = new Map()
-      // @ts-ignore
-      target[decoratorArgsCacheKey] = decoratorArgsCacheMap
-    }
 
     if (typeof target === 'function') { // Class Decorator
       return classDecoratorPatcher(target, { propagationType, propagationOptions })
@@ -63,11 +55,6 @@ export function Transactional(
 
       if (descriptor.value.constructor.name !== 'AsyncFunction') {
         return descriptor
-      }
-
-      if (propagationType || propagationOptions) {
-        const metadata: DecoratorArgs = { propagationType, propagationOptions }
-        decoratorArgsCacheMap.set(propertyKey, metadata)
       }
 
       const metadata = { propagationType, propagationOptions }

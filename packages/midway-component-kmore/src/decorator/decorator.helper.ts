@@ -13,7 +13,6 @@ import { Msg, TransactionalOptions } from '../lib/types'
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
 export const TRX_METHOD_KEY = 'decorator:kmore_trxnal_decorator_key'
-export const decoratorArgsCacheKey = '__decoratorArgsCacheMap'
 export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
 export const methodDecoratorKeyMap = new Map([ [TRX_METHOD_KEY, 'Tansactional'] ])
 
