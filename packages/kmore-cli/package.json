@@ -1,7 +1,7 @@
 {
   "name": "kmore-cli",
   "author": "waiting",
-  "version": "51.1.1",
+  "version": "51.1.3",
   "description": "Command line to generate dicts from ts source files for kmore",
   "keywords": [
     "kmore",
