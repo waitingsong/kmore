@@ -23,6 +23,7 @@ export class UserExtDO {
   uid: number
   age: number
   address: string | number
+  salary: string | number
 }
 
 

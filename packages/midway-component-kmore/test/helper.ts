@@ -64,6 +64,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
         .onUpdate('CASCADE')
       tb.integer(tb_user_ext.age)
       tb.string(tb_user_ext.address, 255)
+      tb.decimal(tb_user_ext.salary, 16, 4)
     })
     .catch((err: Error) => {
       assert(false, err.message)
@@ -186,8 +187,8 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
   // insert
   await ref_tb_user_ext()
     .insert([
-      { uid: 1, age: 10, address: 'address1' },
-      { uid: 2, age: 10, address: 'address1' },
+      { uid: 1, age: 10, address: 'address1', salary: 1000.1234 },
+      { uid: 2, age: 10, address: 'address1', salary: '1000.12' },
     ])
     .returning('*')
     .then((rows) => {
@@ -225,9 +226,13 @@ export function validateUserExtRows(rows: Partial<UserExtDO>[]): void {
     switch (row.uid) {
       case 1:
         assert(row.age === 10, JSON.stringify(row))
+        assert(typeof row.salary === 'string', JSON.stringify(row))
+        assert(row.salary === '1000.1234', JSON.stringify(row))
         break
       case 2:
         assert(row.age === 10, JSON.stringify(row))
+        assert(typeof row.salary === 'string', JSON.stringify(row))
+        assert(row.salary === '1000.1200', JSON.stringify(row))
         break
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
