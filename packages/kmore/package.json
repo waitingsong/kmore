@@ -38,10 +38,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^20.10.1"
+    "@waiting/shared-core": "^20.11.0"
   },
   "devDependencies": {
-    "@mwcp/otel": "^3.16.6",
+    "@mwcp/otel": "^3.16.7",
     "cross-env": "7",
     "kmore-cli": "^51.1.1",
     "kmore-types": "^51.0.0",

@@ -34,11 +34,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^20.10.1",
-    "@waiting/shared-types": "^20.5.0",
+    "@waiting/shared-core": "^20.11.0",
+    "@waiting/shared-types": "^20.11.0",
     "@waiting/shared-types-dev": "^11.3.0",
     "kmore-types": "^51.0.0",
-    "minimist": "^1.2.6",
+    "minimist": "^1.2.7",
     "rxjs": "^7.6.0",
     "rxwalker": "^6.0.0",
     "tsconfig-resolver": "^3.0.1"
