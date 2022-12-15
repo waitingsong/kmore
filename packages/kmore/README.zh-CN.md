@@ -197,6 +197,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     page,     // 当前页号，起始 1
     pageSize, // 每页记录数
   } = users
+  const [ user ] = users
   ```
 
 - WrapType:
@@ -218,6 +219,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     pageSize, // 每页记录数
     rows,     // 查询结果数据
   } = users
+  const [ user ] = users.rows
   ```
 
 

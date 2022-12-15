@@ -202,6 +202,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     page,     // current page number, start from 1
     pageSize, // size of items each page
   } = users
+  const [ user ] = users
   ```
 
 - WrapType:
@@ -223,6 +224,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     pageSize, // size of items each page
     rows,     // response records
   } = users
+  const [ user ] = users.rows
   ```
 
 
