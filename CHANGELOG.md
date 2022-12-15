@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [51.1.4](/compare/v51.1.3...v51.1.4) (2022-12-15)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 ## [51.1.3](/compare/v51.1.2...v51.1.3) (2022-12-14)
 
 
