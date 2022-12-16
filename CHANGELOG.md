@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [51.2.0](/compare/v51.1.4...v51.2.0) (2022-12-16)
+
+
+### Features
+
+* **kmore:** update conversion wrapIdentifier() 8235ac4
+
+
+
+
+
 ## [51.1.4](/compare/v51.1.3...v51.1.4) (2022-12-15)
 
 **Note:** Version bump only for package kmore
