@@ -189,28 +189,38 @@ export function wrapIdentifier(
   queryContext?: QueryContext,
 ): string {
 
-  if (! queryContext) { return origImpl(value) }
+  let ret = ''
 
-  switch (queryContext.wrapIdentifierCaseConvert) {
-    case CaseType.camel: {
-      const ret = origImpl(snakeToCamel(value))
-      return ret
-      break
+  if (queryContext) {
+    switch (queryContext.wrapIdentifierCaseConvert) {
+      case CaseType.camel: {
+        ret = origImpl(snakeToCamel(value))
+        break
+      }
+
+      case CaseType.snake: {
+        ret = origImpl(camelToSnake(value))
+        break
+      }
+
+      case CaseType.pascal: {
+        throw new TypeError('CaseType.pascal for wrapIdentifierCaseConvert not implemented yet')
+      }
+
+      default:
+        ret = origImpl(value)
+        break
     }
-
-    case CaseType.snake: {
-      const ret = origImpl(camelToSnake(value))
-      return ret
-      break
-    }
-
-    case CaseType.pascal: {
-      throw new TypeError('CaseType.pascal for wrapIdentifierCaseConvert not implemented yet')
-    }
-
-    default:
-      return origImpl(value)
   }
+  else {
+    ret = origImpl(value)
+  }
+  if (value === '' && ret === '``') {
+    // fix for mysql when identifier is empty string
+    // e.g. SELECT '' AS foo => SELECT `` AS foo, will be converted to SELECT '' AS foo
+    ret = '\'\''
+  }
+  return ret
 }
 
 
