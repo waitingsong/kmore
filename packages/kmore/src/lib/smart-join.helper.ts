@@ -60,6 +60,8 @@ export function patchWhereColumnAlias(
   const { dbDict } = builder
   assert(dbDict, 'builder.dict undefined')
 
+  const { dbId, kmoreQueryId, caseConvert } = builder
+
   const camelMap = new Map<string, string>()
   aliasMap.forEach((col, alias) => {
     const camelKey = snakeToCamel(alias)
@@ -92,7 +94,17 @@ export function patchWhereColumnAlias(
         return
       }
 
-      console.error(`column not found: ${column}`)
+      // @ts-expect-error
+      const method = builder._method as string
+      const tablesJoin = builder._tablesJoin as string[]
+      console.info(`[Kmore]: patchWhereColumnAlias() column mapping not found: ${column}, will keep original`, {
+        dbId,
+        kmoreQueryId,
+        caseConvert,
+        method,
+        tablesJoin,
+        statement,
+      })
     })
 
   }
