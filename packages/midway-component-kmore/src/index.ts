@@ -8,13 +8,12 @@ export * from './decorator/index.decorator'
 
 
 export {
-  getCurrentTime,
+  CaseType,
   Kmore,
   KmoreEvent,
   KmoreTransaction,
   KmoreTransactionConfig,
   KnexConfig,
-  mergeDoWithInitData,
   PageRawType,
   PageWrapType,
   PagingMeta,
@@ -22,6 +21,8 @@ export {
   PropagationType,
   RowLockLevel,
   TrxPropagateOptions,
+  getCurrentTime,
+  mergeDoWithInitData,
 } from 'kmore'
 
 export type { Knex } from 'knex'
