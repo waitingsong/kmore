@@ -124,9 +124,13 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
      */
     this.wrapIdentifierCaseConvert = options.wrapIdentifierCaseConvert ?? CaseType.snake
 
-    if (this.wrapIdentifierCaseConvert !== CaseType.none
-      && this.config.wrapIdentifier !== wrapIdentifier) {
-      this.config.wrapIdentifier = wrapIdentifier
+    if (! this.config.wrapIdentifier) {
+      if (this.wrapIdentifierCaseConvert === CaseType.none) {
+        this.config.wrapIdentifier = defaultGlobalWrapIdentifier
+      }
+      else {
+        this.config.wrapIdentifier = wrapIdentifier
+      }
     }
 
     this.postProcessResponseSet.add(postProcessResponse)
@@ -317,5 +321,13 @@ export function KmoreFactory<D, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>
 export function createDbh(knexConfig: KnexConfig): Knex {
   const inst = _knex.knex(knexConfig)
   return inst
+}
+
+function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) => string) {
+  const ret = origImpl(value)
+  if (value === '' && ret === '``') {
+    return '\'\''
+  }
+  return ret
 }
 
