@@ -333,18 +333,16 @@ const fnKeys = [
   'END',
 ]
 function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) => string) {
-  const dem2 = '\''
+  // const dem2 = '\''
   // original  IFNULL(user.distotal, 0) as foo
   // from: IFNULL(user => input: `IFNULL(user`  fix to IFNULL(user
   // from: distotal, 0) => input: `distotal, 0)` fix to distotal, 0)
   if (value.includes('(')) {
-    const line = dem2
-    return line
+    return value
   }
 
   if (value.includes(')')) {
-    const line = value
-    return line
+    return value
   }
 
   const upper = value.toUpperCase().trim()
