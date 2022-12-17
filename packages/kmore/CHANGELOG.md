@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [51.3.0](https://github.com/waitingsong/kmore/compare/v51.2.3...v51.3.0) (2022-12-17)
+
+
+### Features
+
+* **kmore:** update defaultGlobalWrapIdentifier() ([4ae8c06](https://github.com/waitingsong/kmore/commit/4ae8c0607884ad4bea9514aeb95485b2e3519504))
+
+
+
+
+
 ## [51.2.3](https://github.com/waitingsong/kmore/compare/v51.2.2...v51.2.3) (2022-12-17)
 
 **Note:** Version bump only for package kmore
