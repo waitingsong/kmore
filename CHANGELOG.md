@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [51.3.1](/compare/v51.3.0...v51.3.1) (2022-12-17)
+
+
+### Bug Fixes
+
+* **kmore:** defaultGlobalWrapIdentifier() 78fcf34
+
+
+
+
+
 # [51.3.0](/compare/v51.2.3...v51.3.0) (2022-12-17)
 
 
