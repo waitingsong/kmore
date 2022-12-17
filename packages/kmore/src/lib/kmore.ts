@@ -323,11 +323,49 @@ export function createDbh(knexConfig: KnexConfig): Knex {
   return inst
 }
 
+
+const fnKeys = [
+  'CASE',
+  'WHEN',
+  'THEN',
+  'ELSE',
+  'ELS',
+  'END',
+]
 function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) => string) {
-  const ret = origImpl(value)
-  if (value === '' && ret === '``') {
+  const dem2 = '\''
+  // original  IFNULL(user.distotal, 0) as foo
+  // from: IFNULL(user => input: `IFNULL(user`  fix to 'IFNULL(user
+  // from: distotal, 0) => input: `distotal, 0)` fix to distotal, 0)'
+  if (value.includes('(')) {
+    const line = dem2 + value
+    return line
+  }
+
+  if (value.includes(')')) {
+    const line = value + dem2
+    return line
+  }
+
+  const upper = value.toUpperCase().trim()
+  const matched = fnKeys.find(key => upper.includes(key))
+  if (matched) {
+    if (upper.startsWith('CASE ')) {
+      const line = dem2 + value
+      return line
+    }
+
+    if (upper.endsWith(' END')) {
+      const line = value + dem2
+      return line
+    }
+  }
+
+  const line = origImpl(value)
+  if (value === '' && line === '``') {
     return '\'\''
   }
-  return ret
+  return line
 }
+
 
