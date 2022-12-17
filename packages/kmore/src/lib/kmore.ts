@@ -335,15 +335,15 @@ const fnKeys = [
 function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) => string) {
   const dem2 = '\''
   // original  IFNULL(user.distotal, 0) as foo
-  // from: IFNULL(user => input: `IFNULL(user`  fix to 'IFNULL(user
-  // from: distotal, 0) => input: `distotal, 0)` fix to distotal, 0)'
+  // from: IFNULL(user => input: `IFNULL(user`  fix to IFNULL(user
+  // from: distotal, 0) => input: `distotal, 0)` fix to distotal, 0)
   if (value.includes('(')) {
-    const line = dem2 + value
+    const line = dem2
     return line
   }
 
   if (value.includes(')')) {
-    const line = value + dem2
+    const line = value
     return line
   }
 
@@ -351,13 +351,11 @@ function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) =>
   const matched = fnKeys.find(key => upper.includes(key))
   if (matched) {
     if (upper.startsWith('CASE ')) {
-      const line = dem2 + value
-      return line
+      return value
     }
 
     if (upper.endsWith(' END')) {
-      const line = value + dem2
-      return line
+      return value
     }
   }
 
