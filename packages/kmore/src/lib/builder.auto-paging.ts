@@ -166,6 +166,7 @@ async function genBuilderForPaging(
   const builderCounter = builder
     .clearCounters()
     .clearGroup()
+    .clearHaving()
     .clearOrder()
     .clearSelect()
     .count({ total: '*' })
