@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [51.3.3](/compare/v51.3.2...v51.3.3) (2022-12-18)
+
+
+### Bug Fixes
+
+* **kmore:** call clearHaving() when auto paging eb3ce47
+
+
+
+
+
 ## [51.3.2](/compare/v51.3.1...v51.3.2) (2022-12-17)
 
 
