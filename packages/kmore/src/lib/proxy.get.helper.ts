@@ -136,6 +136,7 @@ async function processTrxOnEx(
 ): Promise<void> {
 
   assert(kmoreQueryId, 'kmoreQueryId should be set on QueryBuilder')
+  console.error('processTrxOnEx', kmoreQueryId, ex)
 
   const trx = kmore.getTrxByKmoreQueryId(kmoreQueryId)
   if (trx) { // also processed on event `query-error`
