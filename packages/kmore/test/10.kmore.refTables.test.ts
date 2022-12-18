@@ -55,9 +55,19 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tbUser.select('real_name')
         .where('uid', 1)
         .where('real_name', Math.random().toString())
-        .then(rows => rows[0])
+        .then((rows) => {
+          const [row] = rows
+          return row
+        })
+        .then((row) => {
+          return row
+        })
+        .catch((ex) => {
+          console.error(ex)
+          assert(false)
+        })
 
-      assert(! ret)
+      assert(! ret, JSON.stringify(ret))
     })
   })
 
