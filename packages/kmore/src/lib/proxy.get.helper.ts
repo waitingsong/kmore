@@ -38,16 +38,19 @@ export async function processThenRet(
   } = options
 
   const pm1 = ctxBuilderResultPreProcessor
-    ? input.then((response: unknown) => ctxBuilderResultPreProcessor({
-      kmoreQueryId,
-      kmoreTrxId,
-      response,
-      transactionalProcessed,
-      trxPropagateOptions,
-      trxPropagated,
-      rowLockLevel,
-    }))
+    ? input.then((response: unknown) => {
+      return ctxBuilderResultPreProcessor({
+        kmoreQueryId,
+        kmoreTrxId,
+        response,
+        transactionalProcessed,
+        trxPropagateOptions,
+        trxPropagated,
+        rowLockLevel,
+      })
+    })
     : input
+
   const pm2 = ctxExceptionHandler
     ? pm1.catch((ex: unknown) => ctxExceptionHandler({
       kmoreQueryId,

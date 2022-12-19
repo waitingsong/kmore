@@ -102,6 +102,7 @@ export interface QueryContext {
   wrapIdentifierCaseConvert: CaseType
   postProcessResponseCaseConvert: CaseType
   kmoreQueryId: symbol
+  columns: Record<string, string>[]
 }
 
 export interface OnQueryData {

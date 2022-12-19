@@ -34,6 +34,7 @@ export function builderBindEvents(
     wrapIdentifierCaseConvert: kmore.wrapIdentifierCaseConvert,
     postProcessResponseCaseConvert: caseConvert,
     kmoreQueryId,
+    columns: [],
   }
   const opts: CallCbOptionsBase = {
     ctx,
@@ -46,10 +47,16 @@ export function builderBindEvents(
     .queryContext(queryCtxOpts)
     .on(
       'start',
-      (builder: KmoreQueryBuilder) => callCbOnStart({
-        ...opts,
-        builder,
-      }),
+      (builder: KmoreQueryBuilder) => {
+        const columns2 = pickColumnsFromBuilder(builder)
+        if (columns2.length) {
+          columns2.forEach(row => queryCtxOpts.columns.push(row))
+        }
+        return callCbOnStart({
+          ...opts,
+          builder,
+        })
+      },
     )
     .on(
       'query',
@@ -87,3 +94,29 @@ export function builderBindEvents(
 
   return refTable2 as KmoreQueryBuilder
 }
+
+function pickColumnsFromBuilder(builder: KmoreQueryBuilder): Record<string, string>[] {
+  const ret: Record<string, string>[] = []
+
+  // @ts-ignore
+  const statements = builder._statements as { grouping: string, value: unknown }[]
+  if (Array.isArray(statements) && statements.length) {
+    statements.forEach((statement) => {
+      if (statement.grouping !== 'columns') { return }
+
+      const { value } = statement
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (typeof item === 'string') {
+            ret.push({ [item]: item })
+          }
+          else if (typeof item === 'object') {
+            ret.push(item as Record<string, string>)
+          }
+        })
+      }
+    })
+  }
+  return ret
+}
+

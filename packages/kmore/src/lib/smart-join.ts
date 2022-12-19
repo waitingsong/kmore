@@ -36,6 +36,9 @@ export function processJoinTableColumnAlias(
   const pagingFlag = builder[KmorePageKey.PagingBuilderType]
   // conter query is not need to process
   if (! pagingFlag || pagingFlag === 'pager') {
+    Object.defineProperty(aliasObject, 'forSmartJoin', {
+      value: true,
+    })
     void builder.columns(aliasObject)
   }
 

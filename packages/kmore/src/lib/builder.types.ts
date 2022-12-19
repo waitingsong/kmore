@@ -35,7 +35,7 @@ export type KmoreQueryBuilder<
 & QueryBuilderExtMethod<D, CaseConvert, EnablePage, TRecord>
 & QueryBuilder<D, CaseConvert, EnablePage, TRecord, AddPagingMeta<TResult, EnablePage>>
 
-type OmitQueryBuilderKeys = 'select' | 'where' | 'orderBy' | keyof Knex.ChainableInterface
+type OmitQueryBuilderKeys = 'select' | 'where' | 'orderBy' | 'columns' | keyof Knex.ChainableInterface
 
 interface QueryBuilder<
   D extends {} = {},
@@ -50,6 +50,7 @@ interface QueryBuilder<
   select: Select<D, CaseConvert, EnablePage, TRecord, TResult>
   where: Where<D, CaseConvert, EnablePage, TRecord, TResult>
   orderBy: OrderBy<D, CaseConvert, EnablePage, TRecord, TResult>
+  columns: Select<D, CaseConvert, EnablePage, TRecord, TResult>
 }
 
 export type DbQueryBuilder<

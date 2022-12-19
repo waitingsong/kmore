@@ -57,6 +57,57 @@ function parseRespMysql2(res: RespMysql2): string {
 }
 
 
+/**
+ * Convert identifier (field) to snakecase
+ */
+export function wrapIdentifier(
+  value: string,
+  origImpl: (input: string) => string,
+  queryContext?: QueryContext,
+): string {
+
+  let ret = ''
+
+  // do not convert if value is add by  builder.columns(columns)
+  if (isIdentifierInColumns(value, queryContext?.columns)) {
+    ret = origImpl(value)
+    return ret
+  }
+
+  if (queryContext) {
+    switch (queryContext.wrapIdentifierCaseConvert) {
+      case CaseType.camel: {
+        ret = origImpl(snakeToCamel(value))
+        break
+      }
+
+      case CaseType.snake: {
+        ret = origImpl(camelToSnake(value))
+        break
+      }
+
+      case CaseType.pascal: {
+        throw new TypeError('CaseType.pascal for wrapIdentifierCaseConvert not implemented yet')
+      }
+
+      default:
+        ret = origImpl(value)
+        break
+    }
+  }
+  else {
+    ret = origImpl(value)
+  }
+  if (value === '' && ret === '``') {
+    // fix for mysql when identifier is empty string
+    // e.g. SELECT '' AS foo => SELECT `` AS foo, will be converted to SELECT '' AS foo
+    ret = '\'\''
+  }
+  return ret
+}
+
+
+
 export function postProcessResponse<T extends PostProcessInput = PostProcessInput>(
   result: T,
   queryContext?: QueryContext,
@@ -114,7 +165,37 @@ export function postProcessResponseToCamel<T extends PostProcessInput = PostProc
     return ret as PostProcessRespRet<T, CaseType.camel>
   }
   else if (typeof result === 'object' && result) {
-    const ret = genCamelKeysFrom(result)
+    const columns = _queryContext?.columns
+    if (! columns) {
+      const ret = genCamelKeysFrom(result)
+      return ret as PostProcessRespRet<T, CaseType.camel>
+    }
+
+    const resultNotConvertKeys = {}
+    const resultNeedConvertKeys = {}
+
+    Object.entries(result).forEach(([key, value]) => {
+      // do not convert if value is add by  builder.columns(columns)
+      if (isIdentifierInColumns(key, columns)) {
+        Object.defineProperty(resultNotConvertKeys, key, {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value,
+        })
+      }
+      else {
+        Object.defineProperty(resultNeedConvertKeys, key, {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value,
+        })
+      }
+    })
+
+    const reulst2 = genCamelKeysFrom(resultNeedConvertKeys)
+    const ret = Object.assign(resultNotConvertKeys, reulst2)
     return ret as PostProcessRespRet<T, CaseType.camel>
   }
 
@@ -154,7 +235,38 @@ export function postProcessResponseToSnake<T extends PostProcessInput = PostProc
     return ret as PostProcessRespRet<T, CaseType.snake>
   }
   else if (typeof result === 'object' && result) {
-    const ret = genSnakeKeysFrom(result)
+
+    const columns = _queryContext?.columns
+    if (! columns) {
+      const ret = genSnakeKeysFrom(result)
+      return ret as PostProcessRespRet<T, CaseType.snake>
+    }
+
+    const resultNotConvertKeys = {}
+    const resultNeedConvertKeys = {}
+
+    Object.entries(result).forEach(([key, value]) => {
+      // do not convert if value is add by  builder.columns(columns)
+      if (isIdentifierInColumns(key, columns)) {
+        Object.defineProperty(resultNotConvertKeys, key, {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value,
+        })
+      }
+      else {
+        Object.defineProperty(resultNeedConvertKeys, key, {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value,
+        })
+      }
+    })
+
+    const reulst2 = genSnakeKeysFrom(resultNeedConvertKeys)
+    const ret = Object.assign(resultNotConvertKeys, reulst2)
     return ret as PostProcessRespRet<T, CaseType.snake>
   }
 
@@ -178,49 +290,6 @@ export function genSnakeKeysFrom<From extends PostProcessRecord>(
   input: From,
 ): RecordSnakeKeys<From, '_'> {
   return snakeKeys(input)
-}
-
-/**
- * Convert identifier (field) to snakecase
- */
-export function wrapIdentifier(
-  value: string,
-  origImpl: (input: string) => string,
-  queryContext?: QueryContext,
-): string {
-
-  let ret = ''
-
-  if (queryContext) {
-    switch (queryContext.wrapIdentifierCaseConvert) {
-      case CaseType.camel: {
-        ret = origImpl(snakeToCamel(value))
-        break
-      }
-
-      case CaseType.snake: {
-        ret = origImpl(camelToSnake(value))
-        break
-      }
-
-      case CaseType.pascal: {
-        throw new TypeError('CaseType.pascal for wrapIdentifierCaseConvert not implemented yet')
-      }
-
-      default:
-        ret = origImpl(value)
-        break
-    }
-  }
-  else {
-    ret = origImpl(value)
-  }
-  if (value === '' && ret === '``') {
-    // fix for mysql when identifier is empty string
-    // e.g. SELECT '' AS foo => SELECT `` AS foo, will be converted to SELECT '' AS foo
-    ret = '\'\''
-  }
-  return ret
 }
 
 
@@ -257,4 +326,21 @@ export function mergeDoWithInitData<T extends Record<string, unknown> | object>(
     }
   })
   return ret
+}
+
+function isIdentifierInColumns(value: string, columns: Record<string, string>[] | undefined): boolean {
+  if (! columns || ! columns.length) {
+    return false
+  }
+
+  const found = columns.some((row) => {
+    if (row['fromSmartJoin']) {
+      return false
+    }
+    if (typeof row[value] !== 'undefined' && row[value] !== value) {
+      return true
+    }
+    return false
+  })
+  return found
 }
