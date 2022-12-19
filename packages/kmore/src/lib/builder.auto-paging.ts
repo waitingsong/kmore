@@ -78,6 +78,15 @@ function genOutputData<T = unknown>(
   assert(outputMaping, 'outputMaping should be set')
   assert(Object.keys(outputMaping).length, 'outputMaping should not be empty')
 
+  if (input) {
+    if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
+      props.total = input.length
+    }
+  }
+  else if (props.page === 1) {
+    props.total = 0
+  }
+
   const data: PageWrapType<T> = {
     ...props,
     rows: input ?? [],
@@ -105,6 +114,15 @@ function addPaginMetaOnArray<T = unknown>(
 ): PageRawType<T> | undefined {
 
   if (! Array.isArray(input)) { return }
+
+  if (input) {
+    if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
+      props.total = input.length
+    }
+  }
+  else if (props.page === 1) {
+    props.total = 0
+  }
 
   Object.entries(props).forEach(([key, value]) => {
     Object.defineProperty(input, key, {
