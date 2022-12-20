@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [52.0.0](https://github.com/waitingsong/npm-mono-base/compare/v51.3.4...v52.0.0) (2022-12-20)
+
+**Note:** Version bump only for package demo
+
+
+
+
+
 # [51.0.0](https://github.com/waitingsong/npm-mono-base/compare/v50.2.1...v51.0.0) (2022-11-24)
 
 **Note:** Version bump only for package demo

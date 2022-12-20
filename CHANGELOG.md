@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [52.0.0](/compare/v51.3.4...v52.0.0) (2022-12-20)
+
+
+### Features
+
+* **kmore:** do not case convert alias via builder.columns() 4137ddd
+
+
+
+
+
 ## [51.3.4](/compare/v51.3.3...v51.3.4) (2022-12-19)
 
 **Note:** Version bump only for package kmore

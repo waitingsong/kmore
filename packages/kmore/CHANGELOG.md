@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [52.0.0](https://github.com/waitingsong/kmore/compare/v51.3.4...v52.0.0) (2022-12-20)
+
+
+### Features
+
+* **kmore:** do not case convert alias via builder.columns() ([4137ddd](https://github.com/waitingsong/kmore/commit/4137dddf0ca0d9f9a38506fcaa316dba202a40af))
+
+
+
+
+
 ## [51.3.4](https://github.com/waitingsong/kmore/compare/v51.3.3...v51.3.4) (2022-12-19)
 
 **Note:** Version bump only for package kmore
