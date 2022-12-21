@@ -299,8 +299,15 @@ export class TrxStatusService extends TrxStatusServiceBase {
       return builder
     }
 
-    const callerInfo = this.retrieveCallerInfo(distance + 1)
-    if (! callerInfo.className || ! callerInfo.funcName) {
+    let callerInfo: CallerInfo | undefined
+    try {
+      callerInfo = this.retrieveCallerInfo(distance + 1)
+      if (! callerInfo.className || ! callerInfo.funcName) {
+        return builder
+      }
+    }
+    catch (ex) {
+      console.warn('[@mwcp/kmore] retrieveCallerInfo failed', ex)
       return builder
     }
 
