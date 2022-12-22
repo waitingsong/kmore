@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [52.0.2](/compare/v52.0.1...v52.0.2) (2022-12-22)
+
+
+### Performance Improvements
+
+* **mwcp:** update bindBuilderPropagationData() e52416d
+
+
+
+
+
 ## [52.0.1](/compare/v52.0.0...v52.0.1) (2022-12-21)
 
 **Note:** Version bump only for package kmore
