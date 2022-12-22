@@ -299,6 +299,11 @@ export class TrxStatusService extends TrxStatusServiceBase {
       return builder
     }
 
+    const count = this.getPropagationOptionsCount()
+    if (! count) {
+      return builder
+    }
+
     let callerInfo: CallerInfo | undefined
     try {
       callerInfo = this.retrieveCallerInfo(distance + 1)
@@ -523,9 +528,13 @@ export class TrxStatusService extends TrxStatusServiceBase {
     return options?.type
   }
 
-  getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions| undefined {
+  getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions | undefined {
     const options = this.callerKeyPropagationMap.get(key)
     return options
+  }
+
+  getPropagationOptionsCount(): number {
+    return this.callerKeyPropagationMap.size
   }
 
   protected setPropagationOptions(
