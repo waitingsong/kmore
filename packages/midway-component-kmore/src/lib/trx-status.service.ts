@@ -340,9 +340,6 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
     Object.freeze(value)
     void Object.defineProperty(builder, QueryBuilderExtKey.trxPropagateOptions, {
-      configurable: false,
-      enumerable: false,
-      writable: false,
       value,
     })
 
