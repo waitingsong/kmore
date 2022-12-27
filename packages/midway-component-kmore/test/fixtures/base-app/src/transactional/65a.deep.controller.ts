@@ -10,7 +10,6 @@ import type { Context } from '@mwcp/share'
 
 import { Transactional } from '~/index'
 import { apiPrefix, apiRoute } from '../api-route'
-import { UserService2 } from './62a.class-decorator.service'
 import { UserService3 } from './65b.deep.service'
 
 
@@ -18,7 +17,6 @@ import { UserService3 } from './65b.deep.service'
 export class ClassDecoratorDeepController {
 
   @Inject() readonly ctx: Context
-  @Inject() readonly userSvc: UserService2
   @Inject() readonly userSvc3: UserService3
 
   @Transactional()
