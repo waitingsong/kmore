@@ -38,7 +38,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^20.11.0"
+    "@waiting/shared-core": "^20.11.2"
   },
   "devDependencies": {
     "@mwcp/otel": "^3.16.7",
