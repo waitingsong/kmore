@@ -2,6 +2,7 @@
 export const apiPrefix = {
   args: '/args',
   classDecorator: '/class_decorator',
+  classDecoratorDeep: '/class_decorator_deep',
   methodDecorator: '/method_decorator',
   propagationOverride: '/method_propagation_override_class',
 }
