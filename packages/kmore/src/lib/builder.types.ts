@@ -105,6 +105,8 @@ interface QueryBuilderExtName<D extends {} = {}> {
   transactionalProcessed: boolean | undefined
 }
 export interface TrxPropagateOptions {
+  entryKey: string
+  key: string
   dbId: string
   type: PropagationType
   path: string
