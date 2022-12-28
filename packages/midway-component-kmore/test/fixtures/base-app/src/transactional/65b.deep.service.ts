@@ -2,18 +2,14 @@ import assert from 'node:assert/strict'
 
 import {
   Config as _Config,
-  Init,
   Inject,
 } from '@midwayjs/core'
-import type { Context } from '@mwcp/share'
 
 import {
   DbManager,
-  Kmore,
   Transactional,
 } from '~/index'
 import type { Db, UserDTO } from '@/test.model'
-import { KmoreQueryBuilder } from 'kmore'
 import { UserRepo3 } from './65c.deep.repo'
 
 
