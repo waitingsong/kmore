@@ -62,27 +62,44 @@ export async function transactionalDecoratorExecutor(
   }
 
   const { method, methodArgs } = options
-
-  return Promise.resolve({ callerKey, methodArgs, method, svc: trxStatusSvc })
-    .then(async (data) => {
-      const key = data.callerKey
-      const resp = await data.method(...data.methodArgs)
-      return { key, resp, svc: data.svc }
-    })
-    .then(async (data) => {
-      const { resp, key, svc } = data
-      const tkey = svc.retrieveUniqueTopCallerKey(key)
-      if (! tkey || tkey !== key) {
-        return resp
-      }
-      // only top caller can commit
-      return svc.trxCommitIfEntryTop(tkey).then(() => resp)
-    })
-    .catch((error: unknown) => processEx({
+  try {
+    const resp = await method(...methodArgs)
+    const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+    if (! tkey || tkey !== callerKey) {
+      return resp
+    }
+    // only top caller can commit
+    await trxStatusSvc.trxCommitIfEntryTop(tkey)
+    return resp
+  }
+  catch (error) {
+    return processEx({
       callerKey,
       error,
       trxStatusSvc,
-    }))
+    })
+  }
+
+  // return Promise.resolve({ callerKey, methodArgs, method, svc: trxStatusSvc })
+  //   .then(async (data) => {
+  //     const key = data.callerKey
+  //     const resp = await data.method(...data.methodArgs)
+  //     return { key, resp, svc: data.svc }
+  //   })
+  //   .then(async (data) => {
+  //     const { resp, key, svc } = data
+  //     const tkey = svc.retrieveUniqueTopCallerKey(key)
+  //     if (! tkey || tkey !== key) {
+  //       return resp
+  //     }
+  //     // only top caller can commit
+  //     return svc.trxCommitIfEntryTop(tkey).then(() => resp)
+  //   })
+  //   .catch((error: unknown) => processEx({
+  //     callerKey,
+  //     error,
+  //     trxStatusSvc,
+  //   }))
 }
 
 interface ProcessExOptions {
