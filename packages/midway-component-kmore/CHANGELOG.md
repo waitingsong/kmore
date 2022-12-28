@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [52.1.0](https://github.com/waitingsong/kmore/compare/v52.0.3...v52.1.0) (2022-12-28)
+
+
+### Bug Fixes
+
+* **mwcp:** ensue rollback during Insufficient call stacks by getCallerStack ([bcaa2df](https://github.com/waitingsong/kmore/commit/bcaa2dfa5c961648649a066cda9f43f93a743fdd))
+* **mwcp:** entryKey retrieve with transactionalDecoratorExecutor() ([f146757](https://github.com/waitingsong/kmore/commit/f146757dc0822926185393d711cda863460fb2a9))
+
+
+### Features
+
+* **mwcp:** update TrxPropagateOptions within bindBuilderPropagationData() ([d927fdc](https://github.com/waitingsong/kmore/commit/d927fdced205c9bba5e7bc8ec7bceb18023bbbc0))
+
+
+
+
+
 ## [52.0.3](https://github.com/waitingsong/kmore/compare/v52.0.2...v52.0.3) (2022-12-27)
 
 **Note:** Version bump only for package @mwcp/kmore

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [52.1.0](https://github.com/waitingsong/kmore/compare/v52.0.3...v52.1.0) (2022-12-28)
+
+
+### Features
+
+* **kmore:** add properties of TrxPropagateOptions ([5b0b32d](https://github.com/waitingsong/kmore/commit/5b0b32df2d04db5adf923865069d19049cd345f0))
+
+
+
+
+
 ## [52.0.3](https://github.com/waitingsong/kmore/compare/v52.0.2...v52.0.3) (2022-12-27)
 
 **Note:** Version bump only for package kmore

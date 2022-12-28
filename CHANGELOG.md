@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [52.1.0](/compare/v52.0.3...v52.1.0) (2022-12-28)
+
+
+### Bug Fixes
+
+* **mwcp:** ensue rollback during Insufficient call stacks by getCallerStack bcaa2df
+* **mwcp:** entryKey retrieve with transactionalDecoratorExecutor() f146757
+
+
+### Features
+
+* **kmore:** add properties of TrxPropagateOptions 5b0b32d
+* **mwcp:** update TrxPropagateOptions within bindBuilderPropagationData() d927fdc
+
+
+
+
+
 ## [52.0.3](/compare/v52.0.2...v52.0.3) (2022-12-27)
 
 
