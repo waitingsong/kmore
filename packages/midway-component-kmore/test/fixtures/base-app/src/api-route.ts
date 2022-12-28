@@ -4,11 +4,14 @@ export const apiPrefix = {
   classDecorator: '/class_decorator',
   classDecoratorDeep: '/class_decorator_deep',
   classDecoratorDeep2: '/class_decorator_deep_2',
+  crossClassDecorator: '/cross_class_decorator',
   methodDecorator: '/method_decorator',
   propagationOverride: '/method_propagation_override_class',
 }
 
 export const apiRoute = {
+  get: 'get',
+  delete: 'delete',
   controllerUpdate: 'controller_update',
   controllerUpdateDelOneByOne: 'controller_update_delete_one_by_one',
   returnReject: 'return_reject',
