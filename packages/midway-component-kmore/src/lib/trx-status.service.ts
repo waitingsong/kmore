@@ -38,6 +38,7 @@ import {
   linkBuilderWithTrx,
   trxTrace,
 } from './propagation/trx-status.helper'
+import { Msg } from './types'
 
 
 const skipMethodNameSet = new Set([
@@ -90,7 +91,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
       }
       else { // getCallerStack will return insufficient sites if calling self without "await", so not top level caller
         // this.updateCallerTreeMapWithExistsKey(key)
-        const msg = `Insufficient call stacks by getCallerStack, maybe calling self without "await",
+        const msg = `${Msg.insufficientCallstacks}. Maybe calling self without "await",
         Result of Query Builder MUST be "await"ed within Transactional derorator method.
         callerKey: "${key}"
         `

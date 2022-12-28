@@ -8,7 +8,7 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
-import { Transactional } from '~/index'
+import { Msg, Transactional } from '~/index'
 import { apiPrefix, apiRoute } from '../api-route'
 import { UserService } from './61a.method-decorator.service'
 
@@ -86,7 +86,7 @@ export class TrxDecoratorController {
       await this.userSvc.selfMissingAwait(1, 3, 3)
     }
     catch (ex) {
-      console.error('should no error thrown')
+      console.error('should no error thrown, althouth an error is thrown in the method')
       throw ex
     }
     const users = await this.userSvc.getUsersNoTrx()
@@ -101,7 +101,7 @@ export class TrxDecoratorController {
     }
     catch (ex) {
       assert(ex instanceof Error)
-      assert(ex.message.includes('Insufficient call stacks'), ex.message)
+      assert(ex.message.includes(Msg.insufficientCallstacks), ex.message)
     }
     const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)

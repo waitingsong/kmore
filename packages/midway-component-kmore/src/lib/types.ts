@@ -17,6 +17,10 @@ export enum ConfigKey {
   propagationConfig = 'kmorePropagationConfig',
 }
 
+export enum Msg {
+  insufficientCallstacks = 'Insufficient call stacks by getCallerStack',
+}
+
 /**
  * KmoreComponentConfig
  */

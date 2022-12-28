@@ -2,11 +2,13 @@ import assert from 'assert'
 
 import { INJECT_CUSTOM_METHOD, getClassMetadata } from '@midwayjs/core'
 import { Context as WebContext, DecoratorMetaData, methodHasDecorated } from '@mwcp/share'
+import { sleep } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
 
 import { CallerKey, RegisterTrxPropagateOptions } from '../lib/propagation/trx-status.base'
+import { genCallerKey } from '../lib/propagation/trx-status.helper'
 import { TrxStatusService } from '../lib/trx-status.service'
-import { TransactionalOptions } from '../lib/types'
+import { Msg, TransactionalOptions } from '../lib/types'
 
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
@@ -52,14 +54,25 @@ export async function transactionalDecoratorExecutor(
   const trxStatusSvc = await options.webContext.requestContext.getAsync(TrxStatusService)
   assert(trxStatusSvc, 'trxStatusSvc is undefined')
 
-  let callerKey: CallerKey
+  let callerKey: CallerKey | undefined = void 0
   try {
     callerKey = trxStatusSvc.registerPropagation(opts)
   }
   catch (ex) {
-    console.error('[Kmore]: registerPropagation error', ex)
-    return Promise.reject(ex)
+    const prefix = '[Kmore]: registerPropagation error'
+    const msg = ex instanceof Error && ex.message.includes(Msg.insufficientCallstacks)
+      ? `${prefix}. ${Msg.insufficientCallstacks}`
+      : prefix
+    console.error(msg, ex)
+    const error = new Error(msg, { cause: ex })
+    const key = genCallerKey(options.className, options.funcName)
+    await processEx({
+      callerKey: key,
+      error,
+      trxStatusSvc,
+    })
   }
+  assert(callerKey)
 
   const { method, methodArgs } = options
   try {
@@ -68,12 +81,14 @@ export async function transactionalDecoratorExecutor(
     if (! tkey || tkey !== callerKey) {
       return resp
     }
+    // ! delay for commit, prevent from method returning Promise or calling Knex builder without `await`
+    await sleep(0)
     // only top caller can commit
     await trxStatusSvc.trxCommitIfEntryTop(tkey)
     return resp
   }
   catch (error) {
-    return processEx({
+    await processEx({
       callerKey,
       error,
       trxStatusSvc,
@@ -108,26 +123,29 @@ interface ProcessExOptions {
   trxStatusSvc: TrxStatusService
 }
 
-function processEx(options: ProcessExOptions): Promise<never> {
+async function processEx(options: ProcessExOptions): Promise<never> {
   const { callerKey, trxStatusSvc, error } = options
 
   const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
   if (! tkey || tkey !== callerKey) {
-    return Promise.reject(error)
+    throw error
   }
 
-  return trxStatusSvc.trxRollbackEntry(callerKey)
-    .then(() => Promise.reject(error))
-    .catch((ex2: unknown) => {
-      console.error('trxRollbackEntry/trxCommitEntry error', ex2, error)
-      const ex2Msg = ex2 instanceof Error
-        ? ex2.message
-        : typeof ex2 === 'string' ? ex2 : JSON.stringify(ex2)
+  await trxStatusSvc.trxRollbackEntry(callerKey)
+  throw error
 
-      const ex3 = new Error(`trxRollbackEntry error >
-            message: ${ex2Msg}`, { cause: error })
-      return Promise.reject(ex3)
-    })
+  // return trxStatusSvc.trxRollbackEntry(callerKey)
+  //   .then(() => Promise.reject(error))
+  //   .catch((ex2: unknown) => {
+  //     console.error('trxRollbackEntry/trxCommitEntry error', ex2, error)
+  //     const ex2Msg = ex2 instanceof Error
+  //       ? ex2.message
+  //       : typeof ex2 === 'string' ? ex2 : JSON.stringify(ex2)
+
+  //     const ex3 = new Error(`trxRollbackEntry error >
+  //           message: ${ex2Msg}`, { cause: error })
+  //     return Promise.reject(ex3)
+  //   })
 }
 
 
