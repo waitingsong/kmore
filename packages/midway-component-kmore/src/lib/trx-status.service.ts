@@ -326,7 +326,12 @@ export class TrxStatusService extends TrxStatusServiceBase {
     this.validateCallerKeyUnique(key, callerInfo.path)
     this.callerKeyFileMap.set(key, callerInfo.path)
 
+    // const entryKey = this.retrieveFirstAncestorCallerKeyByCallerKey(key) ?? ''
+    const entryKey = this.retrieveTopCallerKeyArrayByCallerKey(key).at(-1) ?? ''
+
     const value: TrxPropagateOptions = {
+      entryKey,
+      key,
       dbId: builder.dbId,
       type: propagatingOptions.type,
       path: callerInfo.path,
