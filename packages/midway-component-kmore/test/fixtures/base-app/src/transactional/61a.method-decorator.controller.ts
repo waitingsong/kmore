@@ -86,8 +86,8 @@ export class TrxDecoratorController {
       await this.userSvc.selfMissingAwait(1, 3, 3)
     }
     catch (ex) {
-      console.error('should no error thrown, althouth an error is thrown in the method')
-      throw ex
+      assert(ex instanceof Error)
+      assert(ex.message.includes(Msg.callerKeyNotRegisteredOrNotEntry), ex.message)
     }
     const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)
