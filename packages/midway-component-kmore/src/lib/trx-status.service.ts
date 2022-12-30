@@ -132,7 +132,10 @@ export class TrxStatusService extends TrxStatusServiceBase {
       const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
 
       if (! tkeyArr.length) {
-        throw new Error(`callerKey "${callerKey}" is not registered or not top level caller`)
+        const msg = `${Msg.callerKeyNotRegisteredOrNotEntry}: "${callerKey}".
+        Maybe calling self without "await", or has been removed with former error.`
+        this.logger.error(msg)
+        throw new Error(msg)
         // return
       }
       else if (tkeyArr.length > 1) { // multiple callings

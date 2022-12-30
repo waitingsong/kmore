@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import assert from 'node:assert'
 
+import { customDecoratorFactory } from '@mwcp/share'
+
 import { classDecoratorPatcher } from './class-decorator'
 import {
+  MethodType,
   TransactionalArgs,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
@@ -17,18 +20,42 @@ export {
 }
 
 
+export function Cacheable<M extends MethodType | undefined = undefined>(
+  /**
+   * @default {@link Propagation.REQUIRED}
+   */
+  propagationType?: TransactionalArgs['propagationType'],
+  propagationOptions?: TransactionalArgs['propagationOptions'],
+  cacheOptions: TransactionalArgs<M>['cacheOptions'] = false,
+): MethodDecorator & ClassDecorator {
+
+  const options: TransactionalArgs<M> = {
+    propagationType,
+    propagationOptions,
+    cacheOptions,
+  }
+
+  return customDecoratorFactory<TransactionalArgs<M>, M>(
+    options,
+    classDecoratorPatcher,
+    methodDecoratorPatcher,
+  )
+}
+
+
 /**
  * 声明式事务装饰器
  * Declarative Transactional Decorator
  * @description default config can be set via `KmorePropagationConfig`
  *  in `src/config/config.{default|prod|local}.ts`
  */
-export function Transactional(
+export function Transactional<M extends MethodType | undefined = undefined>(
   /**
    * @default {@link Propagation.REQUIRED}
    */
   propagationType?: TransactionalArgs['propagationType'],
   propagationOptions?: TransactionalArgs['propagationOptions'],
+  cacheOptions: TransactionalArgs<M>['cacheOptions'] = false,
 ): MethodDecorator & ClassDecorator {
 
   const transactionalDecoratorFactory = <T>(
@@ -40,7 +67,7 @@ export function Transactional(
     assert(target, 'target is undefined')
 
     if (typeof target === 'function') { // Class Decorator
-      return classDecoratorPatcher(target, { propagationType, propagationOptions })
+      return classDecoratorPatcher(target, { propagationType, propagationOptions, cacheOptions })
     }
 
     if (typeof target === 'object') { // Method Decorator
@@ -56,8 +83,8 @@ export function Transactional(
         return descriptor
       }
 
-      const metadata = { propagationType, propagationOptions }
-      return methodDecoratorPatcher<T>(
+      const metadata = { propagationType, propagationOptions, cacheOptions }
+      return methodDecoratorPatcher<T, M>(
         target as {},
         propertyKey,
         descriptor,

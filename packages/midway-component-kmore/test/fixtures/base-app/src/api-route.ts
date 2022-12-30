@@ -1,6 +1,7 @@
 
 export const apiPrefix = {
   args: '/args',
+  cache: '/cache',
   classDecorator: '/class_decorator',
   classDecoratorDeep: '/class_decorator_deep',
   classDecoratorDeep2: '/class_decorator_deep_2',

@@ -1,6 +1,16 @@
 import assert from 'assert'
 
 import { INJECT_CUSTOM_METHOD, getClassMetadata } from '@midwayjs/core'
+import {
+  CacheableArgs,
+  CacheEvictArgs,
+  CacheableDecoratorExecutorOptions,
+  CacheEvictDecoratorExecutorOptions,
+  CachePutDecoratorExecutorOptions,
+  cacheableDecoratorExecutor,
+  cacheEvictDecoratorExecutor,
+  cachePutDecoratorExecutor,
+} from '@mwcp/cache'
 import { Context as WebContext, DecoratorMetaData, methodHasDecorated } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
@@ -16,7 +26,19 @@ export const TRX_METHOD_KEY = 'decorator:kmore_trxnal_decorator_key'
 export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
 export const methodDecoratorKeyMap = new Map([ [TRX_METHOD_KEY, 'Tansactional'] ])
 
-export interface TransactionalArgs {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type MethodType = (...input: any[]) => (any | Promise<any>)
+export interface CacheOptions<M extends MethodType | undefined = undefined>
+  extends CacheableArgs<M>, CacheEvictArgs<M> {
+  // op: 'Cacheable' | 'CacheEvict' | 'CachePut'
+}
+// export type CacheOptions<M extends MethodType | undefined = undefined>
+//   = { cacheable: Partial<CacheableArgs<M>> | boolean }
+//   | { cacheEvict: Partial<CacheEvictArgs<M>> | boolean }
+//   | { cachePut: Partial<CacheableArgs<M>> | boolean }
+
+
+export interface TransactionalArgs<M extends MethodType | undefined = undefined> {
   /**
    * @default {@link PropagationType.REQUIRED}
    */
@@ -25,6 +47,10 @@ export interface TransactionalArgs {
    * @default {@link TransactionalOptions}
    */
   propagationOptions?: Partial<TransactionalOptions> | undefined
+  /**
+   * @default undefined (no cache)
+   */
+  cacheOptions?: (Partial<CacheOptions<M>> & { op: 'Cacheable' | 'CacheEvict' | 'CachePut'}) | false | undefined
 }
 
 
@@ -33,6 +59,7 @@ export interface TransactionalDecoratorExecutorOptions extends RegisterTrxPropag
   methodArgs: unknown[]
   // propagationConfig: KmorePropagationConfig
   webContext: WebContext
+  cacheOptions: TransactionalArgs['cacheOptions']
 }
 
 export async function transactionalDecoratorExecutor(
@@ -73,9 +100,9 @@ export async function transactionalDecoratorExecutor(
   }
   assert(callerKey)
 
-  const { method, methodArgs } = options
   try {
-    const resp = await method(...methodArgs)
+    const resp = await runWithCacheProcess(options)
+
     const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
     if (! tkey || tkey !== callerKey) {
       return resp
@@ -187,4 +214,65 @@ metadata: ${JSON.stringify(metadata, null, 2)}`
       console.warn(msg)
     }
   })
+}
+
+async function runWithCacheProcess(options: TransactionalDecoratorExecutorOptions): Promise<unknown> {
+  const { cacheOptions, method, methodArgs, webContext } = options
+
+  let resp: unknown = void 0
+  if (! cacheOptions) {
+    resp = await method(...methodArgs)
+    return resp
+  }
+
+  const initOpts = {
+    cacheName: `${options.className}.${options.funcName}`,
+    ttl: void 0,
+    key: void 0,
+    condition: void 0,
+  }
+
+  switch (cacheOptions.op) {
+    case 'Cacheable': {
+      const opts: CacheableDecoratorExecutorOptions = {
+        ...initOpts,
+        ...cacheOptions,
+        method,
+        methodArgs,
+        methodResult: void 0,
+        webContext,
+      }
+      resp = await cacheableDecoratorExecutor(opts)
+      break
+    }
+
+    case 'CacheEvict': {
+      const opts: CacheEvictDecoratorExecutorOptions = {
+        beforeInvocation: false,
+        ...initOpts,
+        ...cacheOptions,
+        method,
+        methodArgs,
+        methodResult: void 0,
+        webContext,
+      }
+      resp = await cacheEvictDecoratorExecutor(opts)
+      break
+    }
+
+    case 'CachePut': {
+      const opts: CachePutDecoratorExecutorOptions = {
+        ...initOpts,
+        ...cacheOptions,
+        method,
+        methodArgs,
+        methodResult: void 0,
+        webContext,
+      }
+      resp = await cachePutDecoratorExecutor(opts)
+      break
+    }
+  }
+
+  return resp
 }

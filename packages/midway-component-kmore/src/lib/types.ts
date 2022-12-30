@@ -19,6 +19,7 @@ export enum ConfigKey {
 
 export enum Msg {
   insufficientCallstacks = 'Insufficient call stacks by getCallerStack',
+  callerKeyNotRegisteredOrNotEntry = 'callerKey is not registered or not entry caller',
 }
 
 /**

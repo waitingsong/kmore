@@ -19,7 +19,7 @@ describe(filename, () => {
     await initDb()
   })
 
-  describe('Should @TransactionalProvide propagation work select/update', () => {
+  describe('Should @Transactional propagation work', () => {
     const prefix = apiPrefix.classDecoratorDeep
 
     it(apiRoute.seperateTrx, async () => {

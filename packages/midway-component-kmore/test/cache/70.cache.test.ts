@@ -19,8 +19,8 @@ describe(filename, () => {
     await initDb()
   })
 
-  describe('Should @Transactional propagation work select/update', () => {
-    const prefix = apiPrefix.crossClassDecorator
+  describe('Should @Transactional cache work', () => {
+    const prefix = apiPrefix.cache
 
     it(apiRoute.get, async () => {
       const { httpRequest } = testConfig

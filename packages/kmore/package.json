@@ -41,7 +41,7 @@
     "@waiting/shared-core": "^20.11.2"
   },
   "devDependencies": {
-    "@mwcp/otel": "^3.16.7",
+    "@mwcp/otel": "^3.17.0",
     "cross-env": "7",
     "kmore-cli": "^52.0.3",
     "kmore-types": "^52.0.0",

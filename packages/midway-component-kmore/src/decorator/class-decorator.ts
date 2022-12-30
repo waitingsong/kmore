@@ -22,13 +22,14 @@ import {
   transactionalDecoratorExecutor,
   TransactionalDecoratorExecutorOptions,
   TRX_CLASS_KEY,
+  MethodType,
 } from './decorator.helper'
 
 
-export function classDecoratorPatcher(
+export function classDecoratorPatcher<M extends MethodType | undefined = undefined>(
   // eslint-disable-next-line @typescript-eslint/ban-types
   target: Function,
-  args: TransactionalArgs,
+  args: TransactionalArgs<M> | undefined = {},
 ): void {
 
   // 将装饰的类，绑定到该装饰器，用于后续能获取到 class
@@ -51,7 +52,7 @@ export function classDecoratorPatcher(
 
 function wrapClassMethodOnPrototype(
   target: any,
-  options: TransactionalArgs,
+  options: TransactionalArgs<any>,
 ): any {
 
   if (! target.prototype) {
@@ -104,7 +105,7 @@ async function classDecoratorExecuctor(
   method: Method,
   methodName: string,
   methodArgs: unknown[],
-  options: TransactionalArgs,
+  options: TransactionalArgs<any>,
 ): Promise<unknown> {
 
   assert(instance, 'instance is required')
@@ -147,6 +148,7 @@ async function classDecoratorExecuctor(
     readRowLockLevel,
     writeRowLockLevel,
     webContext,
+    cacheOptions: methodMetaDataArgs?.cacheOptions ?? options.cacheOptions ?? false,
   }
   const dat = await transactionalDecoratorExecutor(opts)
   return dat

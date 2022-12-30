@@ -27,14 +27,15 @@ import {
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
   methodDecoratorKeyMap,
+  MethodType,
 } from './decorator.helper'
 
 
-export function methodDecoratorPatcher<T>(
+export function methodDecoratorPatcher<T, M extends MethodType | undefined = undefined>(
   target: {},
   propertyName: string,
   descriptor: TypedPropertyDescriptor<T>,
-  metadata: TransactionalArgs,
+  metadata: TransactionalArgs<M> | undefined = {},
 ): TypedPropertyDescriptor<T> {
 
   assert(descriptor, 'descriptor is undefined')
@@ -97,7 +98,7 @@ async function aroundFactory(
   const instance = joinPoint.target
   const classMetaData = getClassMetadata(TRX_CLASS_KEY, instance)
   if (classMetaData) {
-    const ret = await joinPoint.proceed(...joinPoint.args) // must await for call stack
+    const ret = await joinPoint.proceed(...joinPoint.args) // must await for correct call stack
     return ret
   }
 
@@ -105,7 +106,7 @@ async function aroundFactory(
   const webContext = instance[REQUEST_OBJ_CTX_KEY] as WebContext
   assert(webContext, 'webContext is undefined')
 
-  const { propagationType, propagationOptions } = metaDataOptions.metadata
+  const { propagationType, propagationOptions, cacheOptions } = metaDataOptions.metadata
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const className = instance.constructor?.name ?? metaDataOptions.target.name
   const funcName = joinPoint.methodName as string
@@ -120,6 +121,7 @@ async function aroundFactory(
     readRowLockLevel: propagationOptions?.readRowLockLevel ?? propagationConfig.readRowLockLevel,
     writeRowLockLevel: propagationOptions?.writeRowLockLevel ?? propagationConfig.writeRowLockLevel,
     webContext,
+    cacheOptions: cacheOptions ?? false,
   }
   // not return directly, https://v8.dev/blog/fast-async#improved-developer-experience
   const dat = await transactionalDecoratorExecutor(opts)
