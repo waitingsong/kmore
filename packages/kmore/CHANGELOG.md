@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [53.0.0](https://github.com/waitingsong/kmore/compare/v52.1.1...v53.0.0) (2022-12-30)
+
+
+### Features
+
+* **mwcp:** cache via @mwcp/cache ([ac53e44](https://github.com/waitingsong/kmore/commit/ac53e44e73fcfa6bcd245b0a9fcbebdfa3f22d41))
+
+
+
+
+
 # [52.1.0](https://github.com/waitingsong/kmore/compare/v52.0.3...v52.1.0) (2022-12-28)
 
 
