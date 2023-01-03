@@ -15,7 +15,7 @@ import {
 import { methodDecoratorKeyMap as cacheMethodDecoratorKeyMap } from '@mwcp/cache'
 import {
   Context as WebContext,
-  checkMethodHasDecoratorKeys,
+  isMethodDecoratoredWith,
 } from '@mwcp/share'
 
 import { KmorePropagationConfig } from '../lib/types'
@@ -47,14 +47,27 @@ export function methodDecoratorPatcher<T, M extends MethodType | undefined = und
     impl: true,
   }
 
-  const msgArr = checkMethodHasDecoratorKeys(
-    methodDecoratorKeyMap,
-    cacheMethodDecoratorKeyMap,
+  const keySet = isMethodDecoratoredWith(
     target,
-    data,
+    propertyName,
+    Array.from(cacheMethodDecoratorKeyMap.keys()),
   )
-  if (msgArr.length) {
-    console.warn(msgArr.join('\n\n'))
+  if (keySet.size) {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const targetName = typeof target.name === 'string' && target.name
+      // @ts-ignore
+      ? target.name as string
+      : target.constructor.name
+    const usingDecoratorName = methodDecoratorKeyMap.get(TRX_METHOD_KEY)
+    assert(usingDecoratorName, `usingDecoratorName is undefined, key: ${TRX_METHOD_KEY}`)
+
+    const msgArr: string[] = Array.from(keySet).map((key) => {
+      const decoratorName = cacheMethodDecoratorKeyMap.get(key)
+      assert(decoratorName, `decoratorName is undefined, key: ${key}`)
+      return `[@mwcp/kmore] @${decoratorName}() should not be combined with @${usingDecoratorName}() for ${targetName}:${propertyName} `
+    })
+    console.warn(msgArr.join('\n'))
   }
 
   attachClassMetadata(
