@@ -29,4 +29,7 @@ export const apiRoute = {
   updateDel: 'update_delete',
   updateDelAll: 'update_delete_all',
   updateDelOneByOne: 'update_delete_one_by_one',
+  cacheableWithClassTransactional: 'cacheable_with_class_transactional',
+  cacheableAfterMethodTransactional: 'cacheable_after_method_transactional',
+  cacheableBeforeMethodTransactional: 'cacheable_before_method_transactional',
 }
