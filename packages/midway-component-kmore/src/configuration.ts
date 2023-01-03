@@ -1,8 +1,10 @@
 import 'tsconfig-paths/register'
+import assert from 'node:assert'
 import { join } from 'node:path'
 
 import { ILifeCycle, MidwayDecoratorService } from '@midwayjs/core'
 import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
+import { CacheManager } from '@mwcp/cache'
 import type { Application, IMidwayContainer } from '@mwcp/share'
 
 import { registerMethodHandler } from './decorator/method-decorator'
@@ -29,8 +31,11 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Inject() decoratorService: MidwayDecoratorService
 
+  @Inject() cacheManager: CacheManager
 
   async onReady(): Promise<void> {
+    assert(this.cacheManager, 'cacheManager is not ready')
+
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
     registerMiddleware(this.app, KmoreMiddleware)
     registerMethodHandler(this.decoratorService, this.propagationConfig)
