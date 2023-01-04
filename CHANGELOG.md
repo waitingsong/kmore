@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [53.0.3](/compare/v53.0.2...v53.0.3) (2023-01-04)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 ## [53.0.2](/compare/v53.0.1...v53.0.2) (2023-01-03)
 
 
