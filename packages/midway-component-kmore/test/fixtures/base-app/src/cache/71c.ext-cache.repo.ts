@@ -100,7 +100,7 @@ export class UserRepo8 {
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(trxId)
     assert(trxPropagateOptions)
-    assert(trxPropagateOptions.entryKey === 'UserService:withCacheable', JSON.stringify(trxPropagateOptions))
+    assert(trxPropagateOptions.entryKey === 'UserService:withCacheableAfter', JSON.stringify(trxPropagateOptions))
     assert(trxPropagateOptions.key === `${this.name}:getUserByUidWithCacheableAfter`, JSON.stringify(trxPropagateOptions))
     return [user, trxId, trxPropagateOptions]
   }

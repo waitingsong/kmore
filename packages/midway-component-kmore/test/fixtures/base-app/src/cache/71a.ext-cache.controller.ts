@@ -19,7 +19,7 @@ export class CacheController {
 
   @Get(`/${apiRoute.cacheableWithClassTransactional}`)
   async withCacheable(): Promise<'OK'> {
-    await this.userSvc.withCacheable()
+    await this.userSvc.withCacheableAfter()
     return 'OK'
   }
 
