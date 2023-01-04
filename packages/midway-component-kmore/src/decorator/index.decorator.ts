@@ -14,6 +14,11 @@ import { methodDecoratorPatcher } from './method-decorator'
 
 
 export {
+  classDecoratorKeyMap,
+  methodDecoratorKeyMap,
+} from './decorator.helper'
+
+export {
   TransactionalArgs as DecoratorArgs,
   TRX_CLASS_KEY,
   TRX_METHOD_KEY,
