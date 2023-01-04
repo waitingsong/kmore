@@ -5,7 +5,7 @@ import {
   Init,
   Inject,
 } from '@midwayjs/core'
-import { Cacheable, CacheConfigKey } from '@mwcp/cache'
+import { Cacheable, } from '@mwcp/cache'
 import type { Context } from '@mwcp/share'
 
 import {
@@ -15,7 +15,6 @@ import {
 } from '~/index'
 import type { Db, UserDTO } from '@/test.model'
 import { KmoreQueryBuilder, TrxPropagateOptions } from 'kmore'
-import { validateMeta } from './70.helper'
 
 
 @Transactional()
@@ -120,7 +119,8 @@ export class UserRepo8 {
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(trxId)
     assert(trxPropagateOptions)
-    assert(trxPropagateOptions.key === `${this.name}:getUserByUid`, JSON.stringify(trxPropagateOptions))
+    assert(trxPropagateOptions.entryKey === 'UserService:withCacheableBefore', JSON.stringify(trxPropagateOptions))
+    assert(trxPropagateOptions.key === `${this.name}:getUserByUidWithCacheableBefore`, JSON.stringify(trxPropagateOptions))
     return [user, trxId, trxPropagateOptions]
   }
 
