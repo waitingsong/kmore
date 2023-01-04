@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [53.1.0](/compare/v53.0.3...v53.1.0) (2023-01-04)
+
+
+### Features
+
+* **mwcp:** export consts 0437e7a
+
+
+
+
+
 ## [53.0.3](/compare/v53.0.2...v53.0.3) (2023-01-04)
 
 **Note:** Version bump only for package kmore

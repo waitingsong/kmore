@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [53.1.0](https://github.com/waitingsong/kmore/compare/v53.0.3...v53.1.0) (2023-01-04)
+
+
+### Features
+
+* **mwcp:** export consts ([0437e7a](https://github.com/waitingsong/kmore/commit/0437e7a3ecb75207416823ab3b11fb921e2d49b9))
+
+
+
+
+
 ## [53.0.3](https://github.com/waitingsong/kmore/compare/v53.0.2...v53.0.3) (2023-01-04)
 
 **Note:** Version bump only for package @mwcp/kmore
