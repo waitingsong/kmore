@@ -14,7 +14,7 @@ import {
 import type { Context as WebContext } from '@mwcp/share'
 import { PropagationType, RowLockLevel } from 'kmore'
 
-import { KmorePropagationConfig } from '../lib/types'
+import { ConfigKey, KmorePropagationConfig } from '../lib/types'
 
 import {
   TransactionalArgs,
@@ -116,7 +116,8 @@ async function classDecoratorExecuctor(
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const kmorePropagationConfig = webContext?.app?.getConfig
-    ? webContext.app.getConfig('kmorePropagationConfig') as KmorePropagationConfig | undefined
+    // ? webContext.app.getConfig('kmorePropagationConfig') as KmorePropagationConfig | undefined
+    ? webContext.app.getConfig(ConfigKey.propagationConfig) as KmorePropagationConfig | undefined
     : void 0
 
   const className = instance.constructor?.name
