@@ -32,7 +32,7 @@
   "dependencies": {
     "@mwcp/cache": "^3.0.0",
     "@mwcp/otel": "^3.17.1",
-    "@mwcp/share": "^2.5.0",
+    "@mwcp/share": "^3.0.0",
     "@waiting/shared-core": "^20.11.2",
     "kmore": "^53.0.1",
     "knex": "^2.3.0"
