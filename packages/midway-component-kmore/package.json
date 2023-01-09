@@ -31,7 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "@mwcp/cache": "^3.0.0",
-    "@mwcp/otel": "^3.17.1",
+    "@mwcp/otel": "^4.0.0",
     "@mwcp/share": "^2.5.0",
     "@waiting/shared-core": "^20.11.2",
     "kmore": "^53.0.1",
