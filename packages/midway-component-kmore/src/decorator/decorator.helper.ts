@@ -31,9 +31,9 @@ import { ConfigKey, KmorePropagationConfig, Msg, TransactionalOptions } from '..
 
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
-export const TRX_METHOD_KEY = 'decorator:kmore_trxnal_decorator_key'
+export const METHOD_KEY_Transactional = 'decorator:kmore_trxnal_decorator_key'
 export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
-export const methodDecoratorKeyMap = new Map([ [TRX_METHOD_KEY, 'Tansactional'] ])
+export const methodDecoratorKeyMap = new Map([ [METHOD_KEY_Transactional, 'Tansactional'] ])
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MethodType = (...input: any[]) => (any | Promise<any>)

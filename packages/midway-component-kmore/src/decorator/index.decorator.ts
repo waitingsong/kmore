@@ -4,7 +4,7 @@ import {
   MethodType,
   TransactionalArgs,
   TRX_CLASS_KEY,
-  TRX_METHOD_KEY,
+  METHOD_KEY_Transactional,
 } from './decorator.helper'
 
 
@@ -16,7 +16,8 @@ export {
 export {
   TransactionalArgs as DecoratorArgs,
   TRX_CLASS_KEY,
-  TRX_METHOD_KEY,
+  METHOD_KEY_Transactional,
+  METHOD_KEY_Transactional as TRX_METHOD_KEY,
 }
 
 
@@ -41,7 +42,7 @@ export function Transactional<M extends MethodType | undefined = undefined>(
     cacheOptions,
   }
   return customDecoratorFactory<TransactionalArgs<M>>({
-    decoratorKey: TRX_METHOD_KEY,
+    decoratorKey: METHOD_KEY_Transactional,
     decoratorArgs: options,
     enableClassDecorator: true,
   })

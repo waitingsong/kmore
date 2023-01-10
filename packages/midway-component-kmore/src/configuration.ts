@@ -13,7 +13,7 @@ import {
 } from '@mwcp/share'
 
 import {
-  TRX_METHOD_KEY,
+  METHOD_KEY_Transactional,
   genDecoratorExecutorOptions,
   transactionalDecoratorExecutor,
 } from './decorator/decorator.helper'
@@ -50,7 +50,7 @@ export class AutoConfiguration implements ILifeCycle {
     // registerMethodHandler(this.decoratorService, this.propagationConfig)
 
     const optsCacheable: RegisterDecoratorHandlerOptions = {
-      decoratorKey: TRX_METHOD_KEY,
+      decoratorKey: METHOD_KEY_Transactional,
       decoratorService: this.decoratorService,
       genDecoratorExecutorOptionsFn: genDecoratorExecutorOptions,
       decoratorExecutor: transactionalDecoratorExecutor,
