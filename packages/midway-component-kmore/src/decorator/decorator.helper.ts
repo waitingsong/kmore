@@ -137,8 +137,12 @@ export function genDecoratorExecutorOptionsCommon<T extends TransactionalArgs = 
   const webContext = instance[REQUEST_OBJ_CTX_KEY]
   assert(webContext, 'webContext is undefined')
 
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const app = webContext.app ?? instance.app
+
   const config = (configArgs
-    ?? webContext.app.getConfig(ConfigKey.propagationConfig)
+    ?? app.getConfig(ConfigKey.propagationConfig)
     ?? initPropagationConfig) as KmorePropagationConfig
   assert(config, 'config is undefined')
 
