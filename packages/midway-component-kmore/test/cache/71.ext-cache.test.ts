@@ -19,7 +19,7 @@ describe(filename, () => {
     await initDb()
   })
 
-  describe('Should @Transactional cache work with method @Cacheable, and got warn log', () => {
+  describe('Should ignore @Cacheable combined with @Transactional', () => {
     const prefix = apiPrefix.cache
 
     it(apiRoute.cacheableWithClassTransactional, async () => {

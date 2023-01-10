@@ -19,7 +19,7 @@ describe(filename, () => {
     await initDb()
   })
 
-  describe('Should @Transactional cache work', () => {
+  describe('Should ignore @Cacheable combined with @Transactional', () => {
     const prefix = apiPrefix.cache
 
     it(apiRoute.get, async () => {

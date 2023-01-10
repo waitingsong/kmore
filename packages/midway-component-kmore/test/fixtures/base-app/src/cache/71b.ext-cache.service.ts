@@ -30,7 +30,6 @@ export class UserService {
     // @ts-ignore
     assert(! ret[CacheConfigKey.CacheMetaType])
 
-    // With uid dut to @Cacheable() is after @Transactional()
     const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableAfter:${uid}`
     const ret2 = await this.repo8.getUserByUidWithCacheableAfter(uid)
     const [user2] = ret2
@@ -47,9 +46,7 @@ export class UserService {
     // @ts-ignore
     assert(! user[CacheConfigKey.CacheMetaType])
 
-    // const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableBefore:${uid}`
-    // Without uid dut to @Cacheable() is before @Transactional() and @Cacheable not use parameter `key`
-    const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableBefore`
+    const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableBefore:${uid}`
     const ret2 = await this.repo8.getUserByUidWithCacheableBefore(uid)
     const [user2] = ret2
     assert(user2 && user2.uid)
