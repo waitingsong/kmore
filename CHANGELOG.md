@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [53.2.0](/compare/v53.1.2...v53.2.0) (2023-01-10)
+
+
+### Features
+
+* **mwcp:** rename const TRX_METHOD_KEY to METHOD_KEY_Transactional c3f86e5
+
+
+
+
+
 ## [53.1.2](/compare/v53.1.1...v53.1.2) (2023-01-10)
 
 **Note:** Version bump only for package kmore
