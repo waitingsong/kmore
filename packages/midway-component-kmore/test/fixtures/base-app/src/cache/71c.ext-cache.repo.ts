@@ -38,57 +38,59 @@ export class UserRepo8 {
     this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
   }
 
-  @Cacheable()
-  async getUsersWitchCacheable(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
-    const { trxPropagateOptions } = builder
-    const users = await builder
-    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
-    assert(users)
-    assert(trxPropagateOptions)
-    assert(trxPropagateOptions.key === `${this.name}:getUsers`, JSON.stringify(trxPropagateOptions))
-    return [users, trxId, trxPropagateOptions]
-  }
+  // @Cacheable()
+  // async getUsersWitchCacheable(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
+  //   const builder = this.ref_tb_user()
+  //   const { trxPropagateOptions } = builder
+  //   const users = await builder
+  //   const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
+  //   assert(users)
+  //   assert(trxPropagateOptions)
+  //   assert(trxPropagateOptions.key === `${this.name}:getUsers`, JSON.stringify(trxPropagateOptions))
+  //   return [users, trxId, trxPropagateOptions]
+  // }
 
 
-  @Transactional<UserRepo8['getUsers']>(void 0, void 0, {
-    op: 'Cacheable',
-  })
-  async getUsers(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
-    const { trxPropagateOptions } = builder
-    const users = await builder
-    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
-    assert(users)
-    assert(trxPropagateOptions)
-    assert(trxPropagateOptions.key === `${this.name}:getUsers`, JSON.stringify(trxPropagateOptions))
-    return [users, trxId, trxPropagateOptions]
-  }
+  // @Transactional<UserRepo8['getUsers']>(void 0, void 0, {
+  //   op: 'Cacheable',
+  // })
+  // async getUsers(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
+  //   const builder = this.ref_tb_user()
+  //   const { trxPropagateOptions } = builder
+  //   const users = await builder
+  //   const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
+  //   assert(users)
+  //   assert(trxPropagateOptions)
+  //   assert(trxPropagateOptions.key === `${this.name}:getUsers`, JSON.stringify(trxPropagateOptions))
+  //   return [users, trxId, trxPropagateOptions]
+  // }
 
-  @Transactional<UserRepo8['getUserByUid']>(void 0, void 0, {
-    op: 'Cacheable',
-    key: input => input[0].toString(),
-  })
-  async getUserByUid(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
-    const { trxPropagateOptions } = builder
-    const user = await builder
-      .where({ uid })
-      .first()
+  // @Transactional<UserRepo8['getUserByUid']>(void 0, void 0, {
+  //   op: 'Cacheable',
+  //   key: input => input[0].toString(),
+  // })
+  // async getUserByUid(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
+  //   const builder = this.ref_tb_user()
+  //   const { trxPropagateOptions } = builder
+  //   const user = await builder
+  //     .where({ uid })
+  //     .first()
 
-    const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
-    assert(trxId)
-    assert(trxPropagateOptions)
-    assert(trxPropagateOptions.key === `${this.name}:getUserByUid`, JSON.stringify(trxPropagateOptions))
-    return [user, trxId, trxPropagateOptions]
-  }
+  //   const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
+  //   assert(trxId)
+  //   assert(trxPropagateOptions)
+  //   assert(trxPropagateOptions.key === `${this.name}:getUserByUid`, JSON.stringify(trxPropagateOptions))
+  //   return [user, trxId, trxPropagateOptions]
+  // }
 
 
   @Transactional<UserRepo8['getUserByUidWithCacheableAfter']>(void 0, void 0, {
     op: 'Cacheable',
     key: input => input[0].toString(),
   })
-  @Cacheable()
+  @Cacheable({
+    key: '2',
+  })
   async getUserByUidWithCacheableAfter(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
     const builder = this.ref_tb_user()
     const { trxPropagateOptions } = builder
@@ -108,6 +110,7 @@ export class UserRepo8 {
   @Transactional<UserRepo8['getUserByUidWithCacheableBefore']>(void 0, void 0, {
     op: 'Cacheable',
     key: input => input[0].toString(),
+    ttl: 30,
   })
   async getUserByUidWithCacheableBefore(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
     const builder = this.ref_tb_user()

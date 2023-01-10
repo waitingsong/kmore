@@ -5,9 +5,18 @@ import { join } from 'node:path'
 import { ILifeCycle, MidwayDecoratorService } from '@midwayjs/core'
 import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
 import { CacheManager } from '@mwcp/cache'
-import type { Application, IMidwayContainer } from '@mwcp/share'
+import {
+  Application,
+  IMidwayContainer,
+  RegisterDecoratorHandlerOptions,
+  registerDecoratorHandler,
+} from '@mwcp/share'
 
-import { registerMethodHandler } from './decorator/method-decorator'
+import {
+  TRX_METHOD_KEY,
+  genDecoratorExecutorOptions,
+  transactionalDecoratorExecutor,
+} from './decorator/decorator.helper'
 import { useComponents } from './imports'
 import { DbSourceManager } from './lib/db-source-manager'
 import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index'
@@ -38,7 +47,19 @@ export class AutoConfiguration implements ILifeCycle {
 
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
     registerMiddleware(this.app, KmoreMiddleware)
-    registerMethodHandler(this.decoratorService, this.propagationConfig)
+    // registerMethodHandler(this.decoratorService, this.propagationConfig)
+
+    const optsCacheable: RegisterDecoratorHandlerOptions = {
+      decoratorKey: TRX_METHOD_KEY,
+      decoratorService: this.decoratorService,
+      genDecoratorExecutorOptionsFn: genDecoratorExecutorOptions,
+      decoratorExecutor: transactionalDecoratorExecutor,
+    }
+    const aroundFactoryOptions = {
+      config: this.propagationConfig,
+    }
+
+    registerDecoratorHandler(optsCacheable, aroundFactoryOptions)
   }
 
   async onStop(_container: IMidwayContainer): Promise<void> {

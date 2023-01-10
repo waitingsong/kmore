@@ -4,7 +4,7 @@ import {
   Config as _Config,
   Inject,
 } from '@midwayjs/core'
-import { CacheManager, CacheConfigKey } from '@mwcp/cache'
+import { CacheManager, CacheConfigKey, initConfig } from '@mwcp/cache'
 
 import {
   Transactional,
@@ -22,20 +22,43 @@ export class UserService {
   @Inject() repo8: UserRepo8
 
   async withCacheableAfter(): Promise<void> {
-    const user = await this.repo8.getUserByUidWithCacheableAfter(1)
-    assert(user)
+    const uid = 1
+
+    const ret = await this.repo8.getUserByUidWithCacheableAfter(uid)
+    const [user] = ret
+    assert(user && user.uid)
+    // @ts-ignore
+    assert(! ret[CacheConfigKey.CacheMetaType])
+
+    // With uid dut to @Cacheable() is after @Transactional()
+    const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableAfter:${uid}`
+    const ret2 = await this.repo8.getUserByUidWithCacheableAfter(uid)
+    const [user2] = ret2
+    assert(user2 && user2.uid)
+    validateMeta(ret2, cacheKey, initConfig.options.ttl)
   }
 
   async withCacheableBefore(): Promise<void> {
-    const user = await this.repo8.getUserByUidWithCacheableBefore(1)
-    assert(user)
+    const uid = 1
+
+    const ret = await this.repo8.getUserByUidWithCacheableBefore(uid)
+    const [user] = ret
+    assert(user && user.uid)
     // @ts-ignore
     assert(! user[CacheConfigKey.CacheMetaType])
 
+    // const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableBefore:${uid}`
+    // Without uid dut to @Cacheable() is before @Transactional() and @Cacheable not use parameter `key`
     const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableBefore`
-    const user2 = await this.repo8.getUserByUidWithCacheableBefore(1)
-    assert(user2)
-    validateMeta(user2, cacheKey, 10)
+    const ret2 = await this.repo8.getUserByUidWithCacheableBefore(uid)
+    const [user2] = ret2
+    assert(user2 && user2.uid)
+    validateMeta(ret2, cacheKey, initConfig.options.ttl)
+
+    const ret3 = await this.repo8.getUserByUidWithCacheableBefore(uid)
+    const [user3] = ret3
+    assert(user3 && user2.uid)
+    validateMeta(ret3, cacheKey, initConfig.options.ttl)
   }
 }
 
