@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
-import { DataSourceManager } from '@midwayjs/core'
 import {
   Config as _Config,
   Init,
@@ -10,7 +9,7 @@ import {
   Provide,
   Scope,
   ScopeEnum,
-} from '@midwayjs/decorator'
+} from '@midwayjs/core'
 import { ILogger } from '@midwayjs/logger'
 import {
   Attributes,
@@ -32,6 +31,7 @@ import {
   getCurrentTime,
 } from 'kmore'
 
+import { AbstractDbSourceManager } from './db-source-manager-base'
 import {
   traceStartEvent,
   TraceQueryEvent,
@@ -46,7 +46,7 @@ import { ConfigKey, KmoreSourceConfig, DbConfig } from './types'
 @Provide()
 @Scope(ScopeEnum.Singleton)
 export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
-  extends DataSourceManager<Kmore | undefined> {
+  extends AbstractDbSourceManager<SourceName, D, Ctx> {
 
   @_Config(ConfigKey.config) private readonly sourceconfig: KmoreSourceConfig<SourceName>
 
@@ -54,21 +54,18 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Inject() baseDir: string
 
-  // kmoreQueryId => QuerySpanInfo
-  readonly queryUidSpanMap = new Map<symbol, QuerySpanInfo>()
-  // kmoreTrxId => QuerySpanInfo
-  readonly trxSpanMap = new Map<symbol, QuerySpanInfo>()
-
-  declare dataSource: Map<SourceName, Kmore<D, Ctx>>
-
-  declare getDataSource: <Db = D>(dataSourceName: SourceName)
-  => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
-
-  declare createInstance: <Db = D>(
-    config: DbConfig<D, Ctx>,
-    clientName: SourceName,
-    options?: CreateInstanceOptions,
-  ) => Promise<Kmore<Db, Ctx> | void>
+  // // kmoreQueryId => QuerySpanInfo
+  // readonly queryUidSpanMap = new Map<symbol, QuerySpanInfo>()
+  // // kmoreTrxId => QuerySpanInfo
+  // readonly trxSpanMap = new Map<symbol, QuerySpanInfo>()
+  // declare dataSource: Map<SourceName, Kmore<D, Ctx>>
+  // declare getDataSource: <Db = D>(dataSourceName: SourceName)
+  // => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
+  // declare createInstance: <Db = D>(
+  //   config: DbConfig<D, Ctx>,
+  //   clientName: SourceName,
+  //   options?: CreateInstanceOptions,
+  // ) => Promise<Kmore<Db, Ctx> | void>
 
   @Init()
   async init(): Promise<void> {

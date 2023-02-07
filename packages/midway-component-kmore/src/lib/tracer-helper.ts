@@ -15,7 +15,7 @@ import {
 } from '@waiting/shared-core'
 import { KmoreEvent, KmoreTransaction, KmoreTransactionConfig } from 'kmore'
 
-import { DbSourceManager } from './db-source-manager'
+import { AbstractDbSourceManager as DbSourceManager } from './db-source-manager-base'
 import { DbConfig, KmoreAttrNames, QuerySpanInfo } from './types'
 
 
