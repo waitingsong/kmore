@@ -6,7 +6,7 @@ import {
   Get,
   Init,
   Inject,
-} from '@midwayjs/decorator'
+} from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
 import {

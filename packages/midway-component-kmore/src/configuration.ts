@@ -2,8 +2,14 @@ import 'tsconfig-paths/register'
 import assert from 'node:assert'
 import { join } from 'node:path'
 
-import { ILifeCycle, MidwayDecoratorService } from '@midwayjs/core'
-import { App, Config, Configuration, Inject } from '@midwayjs/decorator'
+import {
+  App,
+  Config,
+  Configuration,
+  ILifeCycle,
+  Inject,
+  MidwayDecoratorService,
+} from '@midwayjs/core'
 import { CacheManager } from '@mwcp/cache'
 import {
   Application,

@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 // import { isProxy } from 'node:util/types'
 
-import { Inject, Provide } from '@midwayjs/decorator'
+import { Inject, Provide } from '@midwayjs/core'
 import { Attributes, AttrNames, TraceLogger, TraceService } from '@mwcp/otel'
 import { CallerInfo, genISO8601String, getCallerStack } from '@waiting/shared-core'
 import {
