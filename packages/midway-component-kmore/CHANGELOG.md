@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [55.1.0](https://github.com/waitingsong/kmore/compare/v55.0.0...v55.1.0) (2023-02-08)
+
+
+### Features
+
+* **mwcp:** wait 2s before stop ([855f7e8](https://github.com/waitingsong/kmore/commit/855f7e8d7fe5d492a2536f349506d719a6663def))
+
+
+
+
+
 # [55.0.0](https://github.com/waitingsong/kmore/compare/v54.0.0...v55.0.0) (2023-02-07)
 
 **Note:** Version bump only for package @mwcp/kmore
