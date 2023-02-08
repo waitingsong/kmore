@@ -7,7 +7,9 @@ import {
   Config,
   Configuration,
   ILifeCycle,
+  ILogger,
   Inject,
+  Logger,
   MidwayDecoratorService,
 } from '@midwayjs/core'
 import { CacheManager } from '@mwcp/cache'
@@ -17,6 +19,7 @@ import {
   RegisterDecoratorHandlerOptions,
   registerDecoratorHandler,
 } from '@mwcp/share'
+import { sleep } from '@waiting/shared-core'
 
 import {
   METHOD_KEY_Transactional,
@@ -37,6 +40,8 @@ import { KmoreMiddleware } from './middleware/db-trx.middleware'
 export class AutoConfiguration implements ILifeCycle {
 
   @App() readonly app: Application
+
+  @Logger() logger: ILogger
 
   @Config() readonly kmoreSourceConfig: KmoreSourceConfig
 
@@ -69,6 +74,10 @@ export class AutoConfiguration implements ILifeCycle {
   }
 
   async onStop(_container: IMidwayContainer): Promise<void> {
+    const time = 2
+    await sleep(time * 1000)
+    this.logger.info(`[${ConfigKey.componentName}] onStop()`)
+
     // const { timeoutWhenDestroy } = this.kmoreComponentConfig
     const out = 10000
 
@@ -78,6 +87,7 @@ export class AutoConfiguration implements ILifeCycle {
       .catch((ex: Error) => {
         console.error(ex.message)
       })
+    this.logger.info(`[${ConfigKey.componentName}] onStop() doen`)
   }
 }
 
