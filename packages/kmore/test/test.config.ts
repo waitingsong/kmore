@@ -17,6 +17,7 @@ export const config: KnexConfig = {
     user: process.env['POSTGRES_USER'] ? process.env['POSTGRES_USER'] : 'postgres',
     password: process.env['POSTGRES_PASSWORD'] ? process.env['POSTGRES_PASSWORD'] : 'postgres',
     requestTimeout: 3000,
+    statement_timeout: 3000,
   },
   pool: {
     afterCreate: (conn, done) => {
