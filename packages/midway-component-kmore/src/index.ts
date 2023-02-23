@@ -11,6 +11,7 @@ export {
   CaseType,
   Kmore,
   KmoreEvent,
+  KmoreQueryBuilder,
   KmoreTransaction,
   KmoreTransactionConfig,
   KnexConfig,
