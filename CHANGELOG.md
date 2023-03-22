@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [55.1.2](https://github.com/waitingsong/kmore/compare/v55.1.1...v55.1.2) (2023-03-22)
+
+
+### Bug Fixes
+
+* **boilerplate:** define enum without const ([37ffd10](https://github.com/waitingsong/kmore/commit/37ffd10749d0aaa7c3d0ddf8e3c41c7a9bfedc3b))
+* **boilerplate:** devDeps version ([2e29b42](https://github.com/waitingsong/kmore/commit/2e29b42d3eb679cdbced3a0a3d65a9172bd2da34))
+
+
+
+
+
 ## [55.1.1](https://github.com/waitingsong/kmore/compare/v55.1.0...v55.1.1) (2023-02-23)
 
 **Note:** Version bump only for package kmore
