@@ -7,6 +7,9 @@ export class Db2 {
   tb_user: User2
   tb_user_ext: UserExt
 }
+export class Db3 {
+  vi_001_02_user: User
+}
 
 export class User {
   uid: number

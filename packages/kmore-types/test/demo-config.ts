@@ -1,6 +1,6 @@
 import { DbDict, DbDictType } from '../src/index.js'
 
-import { Db, Db2 } from './test3.model.js'
+import { Db, Db2, Db3 } from './test3.model.js'
 
 
 export const expectedDict: DbDict<Db> = {
@@ -162,3 +162,45 @@ export const expectedColsTypeDb: DbDictType<Db> = {
     'tb_user_ext.last_login_time': new Date(),
   },
 }
+
+
+
+export const expectedDict3: DbDict<Db3> = {
+  tables: {
+    vi_001_02_user: 'vi_001_02_user',
+  },
+
+  columns: {
+    vi_001_02_user: {
+      uid: 'uid',
+      name: 'name',
+      ctime: 'ctime',
+    },
+  },
+
+  scoped: {
+    vi_001_02_user: {
+      uid: 'vi_001_02_user.uid',
+      name: 'vi_001_02_user.name',
+      ctime: 'vi_001_02_user.ctime',
+    },
+  },
+
+  alias: {
+    vi_001_02_user: {
+      uid: { vi00102UserUid: 'vi_001_02_user.uid' },
+      name: { vi00102UserName: 'vi_001_02_user.name' },
+      ctime: { vi00102UserCtime: 'vi_001_02_user.ctime' },
+    },
+  },
+
+  camelAlias: {
+    vi_001_02_user: {
+      uid: { uid: 'vi_001_02_user.uid' },
+      name: { name: 'vi_001_02_user.name' },
+      ctime: { ctime: 'vi_001_02_user.ctime' },
+    },
+  },
+}
+
+
