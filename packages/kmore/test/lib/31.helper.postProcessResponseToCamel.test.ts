@@ -19,7 +19,7 @@ describe(fileShortPath(import.meta.url), () => {
       } as const
       const expected = {
         fooBar: 1,
-        foo2: 2,
+        foo_2: 2,
         fooBarz: {
           first_name: 'name',
           lastName: 'foo',
@@ -28,6 +28,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = postProcessResponseToCamel(input, void 0)
       assert(ret.fooBarz.first_name === 'name')
       assert(ret.fooBarz.lastName === 'foo')
+      assert(ret.foo_2)
       assert.deepStrictEqual(ret, expected)
     })
 
