@@ -188,9 +188,9 @@ export const expectedDict3: DbDict<Db3> = {
 
   alias: {
     vi_001_02_user: {
-      uid: { vi00102UserUid: 'vi_001_02_user.uid' },
-      name: { vi00102UserName: 'vi_001_02_user.name' },
-      ctime: { vi00102UserCtime: 'vi_001_02_user.ctime' },
+      uid: { vi_001_02UserUid: 'vi_001_02_user.uid' },
+      name: { vi_001_02UserName: 'vi_001_02_user.name' },
+      ctime: { vi_001_02UserCtime: 'vi_001_02_user.ctime' },
     },
   },
 

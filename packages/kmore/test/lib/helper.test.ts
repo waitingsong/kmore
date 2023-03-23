@@ -19,13 +19,14 @@ describe(fileShortPath(import.meta.url), () => {
       } as const
       const expected = {
         fooBar: 1,
-        foo2: 2,
+        foo_2: 2,
         fooBarz: {
           first_name: 'name',
           lastName: 'foo',
         },
       }
       const ret = genCamelKeysFrom(input)
+      assert(ret.foo_2 === 2)
       assert(ret.fooBarz.first_name === 'name')
       assert(ret.fooBarz.lastName === 'foo')
       assert.deepStrictEqual(ret, expected)
@@ -45,14 +46,14 @@ describe(fileShortPath(import.meta.url), () => {
       }
       const expected = {
         foo_bar: 1,
-        foo_2: 2,
+        foo2: 2,
         foo_barz: {
           first_name: 'name',
           secName: 'secName',
         },
       } as const
       const ret = genSnakeKeysFrom(input)
-      assert(ret.foo_2 === 2)
+      assert(ret.foo2 === 2)
       assert(ret.foo_barz.secName === 'secName')
       assert.deepStrictEqual(ret, expected)
     })
