@@ -27,7 +27,8 @@ export class UserController {
 
   @Get('/:id')
   async user(@Param('id') uid: number): Promise<UserDTO[]> {
-    const db = this.dbManager.getDataSource('master')
+    // unnecessary await, but it's ok and for test `@Trace` on DbManager:getDataSource()
+    const db = await this.dbManager.getDataSource('master')
     assert(db)
 
     const { ref_tb_user } = db.camelTables

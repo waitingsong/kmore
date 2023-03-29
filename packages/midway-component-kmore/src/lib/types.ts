@@ -85,6 +85,10 @@ export enum KmoreAttrNames {
 
   TrxTransacting = 'trx.transacting',
   TrxEndWith = 'trx.end',
+
+  getDataSourceStart = 'getDataSource.start',
+  getDataSourceEndFromCache = 'getDataSource.end.fromCache',
+  getDataSourceEnd = 'getDataSource.end',
 }
 
 

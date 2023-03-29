@@ -8,7 +8,7 @@ import {
   Inject,
   Provide,
 } from '@midwayjs/core'
-import { TraceService } from '@mwcp/otel'
+import { TraceService, Trace } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
 import {
   Kmore,
@@ -48,7 +48,17 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
   }
 
 
+  @Trace('Kmore getDataSource', {
+    startActiveSpan: false,
+  })
   getDataSource<Db = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
+
+    // const event: Attributes = {
+    //   event: KmoreAttrNames.getDataSourceStart,
+    //   time: genISO8601String(),
+    // }
+    // this.traceSvc.addEvent(void 0, event)
+
     const cacheInst = this.instCacheMap.get(dataSourceName)
     if (cacheInst) {
       return cacheInst

@@ -81,6 +81,12 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     cacheDataSource = true,
   ): Promise<Kmore<Db, Ctx> | undefined> {
 
+    // const event: Attributes = {
+    //   event: KmoreAttrNames.TrxBeginStart,
+    //   time: genISO8601String(),
+    // }
+    // traceSvc.addEvent(span, event)
+
     const cacheInst = cacheDataSource ? this.getDataSource<Db>(dataSourceName) : null
     if (cacheDataSource && cacheInst) {
       return cacheInst
