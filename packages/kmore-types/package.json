@@ -30,7 +30,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types-dev": "^12.1.0"
+    "@waiting/shared-types-dev": "^13.0.0"
   },
   "devDependencies": {
     "cross-env": "7"

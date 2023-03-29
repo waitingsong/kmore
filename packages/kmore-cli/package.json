@@ -35,7 +35,7 @@
   "dependencies": {
     "@waiting/shared-core": "^21.0.0",
     "@waiting/shared-types": "^21.0.0",
-    "@waiting/shared-types-dev": "^12.1.0",
+    "@waiting/shared-types-dev": "^13.0.0",
     "kmore-types": "^55.2.0",
     "minimist": "^1.2.7",
     "rxjs": "^7.8.0",
