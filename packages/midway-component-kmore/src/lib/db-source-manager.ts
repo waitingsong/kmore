@@ -54,19 +54,6 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Inject() baseDir: string
 
-  // // kmoreQueryId => QuerySpanInfo
-  // readonly queryUidSpanMap = new Map<symbol, QuerySpanInfo>()
-  // // kmoreTrxId => QuerySpanInfo
-  // readonly trxSpanMap = new Map<symbol, QuerySpanInfo>()
-  // declare dataSource: Map<SourceName, Kmore<D, Ctx>>
-  // declare getDataSource: <Db = D>(dataSourceName: SourceName)
-  // => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
-  // declare createInstance: <Db = D>(
-  //   config: DbConfig<D, Ctx>,
-  //   clientName: SourceName,
-  //   options?: CreateInstanceOptions,
-  // ) => Promise<Kmore<Db, Ctx> | void>
-
   @Init()
   async init(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
