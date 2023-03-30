@@ -1,14 +1,14 @@
 {
-  "name": "kmore",
+  "name": "npm-mono-base",
   "version": "1.0.0",
-  "description": "A SQL query builder based on knex with powerful TypeScript type support",
+  "description": "",
   "private": true,
   "devDependencies": {
     "@commitlint/cli": "17",
     "@commitlint/config-conventional": "17",
     "@midwayjs/cli": "^2.0.15",
-    "@midwayjs/mock": "^3.10.6",
-    "@midwayjs/web": "^3.10.6",
+    "@midwayjs/mock": "^3.11.0",
+    "@midwayjs/web": "^3.11.0",
     "@rollup/plugin-commonjs": "24",
     "@rollup/plugin-node-resolve": "15",
     "@types/mocha": "10",
@@ -31,7 +31,7 @@
     "rxjs": "^7.8.0",
     "rxrunscript": "^11.0.1",
     "ts-node": "^10.9.1",
-    "tsc-alias": "^1.8.4",
+    "tsc-alias": "^1.8.5",
     "tsconfig-paths": "4",
     "typescript": "^5.0.2",
     "zx": "7"
