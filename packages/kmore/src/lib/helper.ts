@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import assert from 'node:assert'
+
 import {
   camelToSnake,
   camelKeys,
@@ -161,45 +164,59 @@ export function postProcessResponseToCamel<T extends PostProcessInput = PostProc
 ): PostProcessRespRet<T, CaseType.camel> {
 
   if (Array.isArray(result)) {
-    const ret = result.map(row => postProcessResponseToCamel(row, _queryContext))
+    const ret = result.map((row: PostProcessPlain | PostProcessRecord) => {
+      const data = postProcessResponseToCamel(row, _queryContext)
+      return data
+    })
     return ret as PostProcessRespRet<T, CaseType.camel>
   }
   else if (typeof result === 'object' && result) {
-    const columns = _queryContext?.columns
-    if (! columns) {
-      const ret = genCamelKeysFrom(result)
-      return ret as PostProcessRespRet<T, CaseType.camel>
-    }
-
-    const resultNotConvertKeys = {}
-    const resultNeedConvertKeys = {}
-
-    Object.entries(result).forEach(([key, value]) => {
-      // do not convert if value is add by  builder.columns(columns)
-      if (isIdentifierInColumns(key, columns)) {
-        Object.defineProperty(resultNotConvertKeys, key, {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value,
-        })
-      }
-      else {
-        Object.defineProperty(resultNeedConvertKeys, key, {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value,
-        })
-      }
-    })
-
-    const reulst2 = genCamelKeysFrom(resultNeedConvertKeys)
-    const ret = Object.assign(resultNotConvertKeys, reulst2)
-    return ret as PostProcessRespRet<T, CaseType.camel>
+    const ret = _elementKeyToCamel(result, _queryContext)
+    return ret
   }
 
   return result as PostProcessRespRet<T, CaseType.camel>
+}
+
+function _elementKeyToCamel<T extends PostProcessRecord>(
+  row: T,
+  _queryContext?: QueryContext,
+): PostProcessRespRet<T, CaseType.camel> {
+
+  assert(typeof row === 'object' && row, 'row should be object')
+
+  const columns = _queryContext?.columns
+  if (! columns) {
+    const ret = genCamelKeysFrom(row)
+    return ret as PostProcessRespRet<T, CaseType.camel>
+  }
+
+  const resultNotConvertKeys = {}
+  const resultNeedConvertKeys = {}
+
+  Object.entries(row).forEach(([key, value]) => {
+    // do not convert if value is add by  builder.columns(columns)
+    if (isIdentifierInColumns(key, columns)) {
+      Object.defineProperty(resultNotConvertKeys, key, {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value,
+      })
+    }
+    else {
+      Object.defineProperty(resultNeedConvertKeys, key, {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value,
+      })
+    }
+  })
+
+  const reulst2 = genCamelKeysFrom(resultNeedConvertKeys)
+  const ret = Object.assign(resultNotConvertKeys, reulst2)
+  return ret as PostProcessRespRet<T, CaseType.camel>
 }
 
 /**

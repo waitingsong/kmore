@@ -92,17 +92,15 @@ function genOutputData<T = unknown>(
     rows: input ?? [],
   }
 
-  if (outputMaping) {
-    Object.entries(outputMaping).forEach(([key, key2]) => {
-      if (! Object.hasOwn(props, key)) { return }
-      // @ts-ignore
-      const value = props[key] as unknown
-      Object.defineProperty(data, key2, {
-        ...defaultPropDescriptor,
-        value,
-      })
+  Object.entries(outputMaping).forEach(([key, key2]) => {
+    if (! Object.hasOwn(props, key)) { return }
+    // @ts-ignore
+    const value = props[key] as unknown
+    Object.defineProperty(data, key2, {
+      ...defaultPropDescriptor,
+      value,
     })
-  }
+  })
 
   return data
 }
@@ -115,7 +113,7 @@ function addPaginMetaOnArray<T = unknown>(
 
   if (! Array.isArray(input)) { return }
 
-  if (input) {
+  if (input.length) {
     if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
       props.total = input.length
     }
@@ -128,6 +126,7 @@ function addPaginMetaOnArray<T = unknown>(
     Object.defineProperty(input, key, {
       ...defaultPropDescriptor,
       enumerable: false,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       value,
     })
   })
@@ -158,6 +157,7 @@ async function genBuilderForPaging(
   )
 
   // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const pagingOptions: _PagingOptions = builder[KmorePageKey.PagingOptions]
   assert(pagingOptions, 'pagingOptions should be set')
   void Object.defineProperty(builder, KmorePageKey.PagingProcessed, {

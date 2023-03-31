@@ -104,7 +104,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
       ...initialConfig,
       ...options.config,
     }
-    config.pool = { ...initialConfig.pool, ...options.config?.pool }
+    config.pool = { ...initialConfig.pool, ...options.config.pool }
     this.config = config
 
     // assert(options.dict, 'options.dict must be defined')

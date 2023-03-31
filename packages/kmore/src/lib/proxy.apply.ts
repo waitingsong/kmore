@@ -21,7 +21,7 @@ export function builderApplyTransactingProxy(
     ): KmoreQueryBuilder => {
 
       const [trx] = args
-      assert(trx?.isTransaction === true, 'trx must be a transaction')
+      assert(trx.isTransaction === true, 'trx must be a transaction')
       const { kmoreTrxId } = trx
       assert(kmoreTrxId, 'trx.kmoreTrxId must be provided when .transacting(trx)')
 

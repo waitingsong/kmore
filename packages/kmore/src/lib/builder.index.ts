@@ -37,7 +37,7 @@ export function createRefTables<
 
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  if (! kmore?.dict?.tables || ! Object.keys(kmore.dict?.tables)?.length) {
+  if (! kmore.dict?.tables || ! Object.keys(kmore.dict.tables).length) {
     console.info('Kmore:createRefTables() kmore.dict or kmore.dict.tables empty')
     return rb
   }
