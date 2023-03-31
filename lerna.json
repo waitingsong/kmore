@@ -1,10 +1,10 @@
 {
-  "version": "55.2.2",
+  "version": "55.2.3",
   "packages": [
     "packages/*"
   ],
   "ignore": [
-    "demo",	
+    "demo",
     "@mwcp/demo"
   ],
   "command": {
