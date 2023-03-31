@@ -277,8 +277,10 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     queryContext?: QueryContext,
   ): unknown {
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     let ret = result
     for (const fn of this.postProcessResponseSet) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       ret = fn(ret, queryContext)
     }
     return ret

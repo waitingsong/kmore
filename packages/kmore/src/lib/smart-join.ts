@@ -15,6 +15,7 @@ export function processJoinTableColumnAlias(
   }
 
   const { dbDict } = builder
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (! dbDict || Object.keys(dbDict).length < 2) {
     return builder
   }

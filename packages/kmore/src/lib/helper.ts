@@ -54,6 +54,7 @@ interface RespMysql2 extends Array<unknown> {
   length: 2
 }
 function parseRespMysql2(res: RespMysql2): string {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/prefer-optional-chain
   return res && res[0] && res[0][0] && res[0][0].currenttime
     ? res[0][0].currenttime
     : ''
@@ -119,6 +120,7 @@ export function postProcessResponse<T extends PostProcessInput = PostProcessInpu
   if (! queryContext) { return result }
 
   const caseConvert = queryContext.postProcessResponseCaseConvert
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (! caseConvert) { return result }
 
   switch (caseConvert) {
@@ -357,7 +359,7 @@ export function mergeDoWithInitData<T extends Record<string, unknown> | object>(
 }
 
 function isIdentifierInColumns(value: string, columns: Record<string, string>[] | undefined): boolean {
-  if (! columns || ! columns.length) {
+  if (! columns?.length) {
     return false
   }
 

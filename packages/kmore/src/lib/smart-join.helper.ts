@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'assert'
 
 import { snakeToCamel } from '@waiting/shared-core'
@@ -15,6 +17,7 @@ export function genColumnMaping(
 
   tablesJoin.forEach((tableName: string) => {
     // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const scopedCols = dbDict.scoped[tableName]
     if (typeof scopedCols === 'object') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

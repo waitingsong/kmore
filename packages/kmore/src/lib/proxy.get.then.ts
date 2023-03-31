@@ -37,6 +37,7 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
       : origBuilder
 
     const { kmoreQueryId } = builder
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (! kmoreQueryId) {
       const errMsg = 'kmoreQueryId should be defined, builder may not be a KmoreQueryBuilder'
       console.error(errMsg)
@@ -51,6 +52,7 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
 
     if (resultPagerHandler && Object.hasOwn(builder, KmorePageKey.PagingOptions)
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       && builder[KmorePageKey.PagingOptions]?.enable === true
       && ! Object.hasOwn(builder, KmorePageKey.PagingProcessed)
     ) {

@@ -20,6 +20,7 @@ export function trxApplyCommandProxy(
       kmore.trxIdQueryMap.delete(ctx.kmoreTrxId)
       kmore.trxMap.delete(ctx.kmoreTrxId)
       if (ctx.isCompleted()) { return }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return Reflect.apply(target, ctx, args)
     },
   })
@@ -35,6 +36,7 @@ export function trxApplyCommandProxy(
       kmore.trxIdQueryMap.delete(ctx.kmoreTrxId)
       kmore.trxMap.delete(ctx.kmoreTrxId)
       if (ctx.isCompleted()) { return }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return Reflect.apply(target, ctx, args)
     },
   })
