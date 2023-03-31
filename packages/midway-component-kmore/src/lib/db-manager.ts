@@ -48,8 +48,9 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
   }
 
 
-  @Trace('Kmore getDataSource', {
+  @Trace<DbManager['getDataSource']>({
     startActiveSpan: false,
+    spanName: ([dataSourceName]) => `dbManager.getDataSource(${dataSourceName})`,
   })
   getDataSource<Db = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
 
