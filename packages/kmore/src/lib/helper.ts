@@ -191,28 +191,7 @@ function _elementKeyToCamel<T extends PostProcessRecord>(
     return ret as PostProcessRespRet<T, CaseType.camel>
   }
 
-  const resultNotConvertKeys = {}
-  const resultNeedConvertKeys = {}
-
-  Object.entries(row).forEach(([key, value]) => {
-    // do not convert if value is add by  builder.columns(columns)
-    if (isIdentifierInColumns(key, columns)) {
-      Object.defineProperty(resultNotConvertKeys, key, {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value,
-      })
-    }
-    else {
-      Object.defineProperty(resultNeedConvertKeys, key, {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value,
-      })
-    }
-  })
+  const { resultNotConvertKeys, resultNeedConvertKeys } = genResultKeysData(row, columns)
 
   const reulst2 = genCamelKeysFrom(resultNeedConvertKeys)
   const ret = Object.assign(resultNotConvertKeys, reulst2)
@@ -248,47 +227,79 @@ export function postProcessResponseToSnake<T extends PostProcessInput = PostProc
 ): PostProcessRespRet<T, CaseType.snake> {
 
   if (Array.isArray(result)) {
-    const ret = result.map(row => postProcessResponseToSnake(row, _queryContext))
+    const ret = result.map((row: PostProcessPlain | PostProcessRecord) => {
+      const data = postProcessResponseToSnake(row, _queryContext)
+      return data
+    })
     return ret as PostProcessRespRet<T, CaseType.snake>
   }
   else if (typeof result === 'object' && result) {
-
-    const columns = _queryContext?.columns
-    if (! columns) {
-      const ret = genSnakeKeysFrom(result)
-      return ret as PostProcessRespRet<T, CaseType.snake>
-    }
-
-    const resultNotConvertKeys = {}
-    const resultNeedConvertKeys = {}
-
-    Object.entries(result).forEach(([key, value]) => {
-      // do not convert if value is add by  builder.columns(columns)
-      if (isIdentifierInColumns(key, columns)) {
-        Object.defineProperty(resultNotConvertKeys, key, {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value,
-        })
-      }
-      else {
-        Object.defineProperty(resultNeedConvertKeys, key, {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value,
-        })
-      }
-    })
-
-    const reulst2 = genSnakeKeysFrom(resultNeedConvertKeys)
-    const ret = Object.assign(resultNotConvertKeys, reulst2)
-    return ret as PostProcessRespRet<T, CaseType.snake>
+    const ret = _elementKeyToSnake(result, _queryContext)
+    return ret
   }
 
   return result as PostProcessRespRet<T, CaseType.snake>
 }
+
+function _elementKeyToSnake<T extends PostProcessRecord>(
+  row: T,
+  _queryContext?: QueryContext,
+): PostProcessRespRet<T, CaseType.snake> {
+
+  assert(typeof row === 'object' && row, 'row should be object')
+
+  const columns = _queryContext?.columns
+  if (! columns) {
+    const ret = genSnakeKeysFrom(row)
+    return ret as PostProcessRespRet<T, CaseType.snake>
+  }
+
+  const { resultNotConvertKeys, resultNeedConvertKeys } = genResultKeysData(row, columns)
+
+  const reulst2 = genSnakeKeysFrom(resultNeedConvertKeys)
+  const ret = Object.assign(resultNotConvertKeys, reulst2)
+  return ret as PostProcessRespRet<T, CaseType.snake>
+}
+
+function genResultKeysData<T extends PostProcessRecord>(
+  row: T,
+  columns: Record<string, string>[],
+): {
+    resultNotConvertKeys: Record<string, unknown>,
+    resultNeedConvertKeys: Record<string, unknown>,
+  } {
+
+  assert(typeof row === 'object' && row, 'row should be object')
+
+  const resultNotConvertKeys = {}
+  const resultNeedConvertKeys = {}
+
+  Object.entries(row).forEach(([key, value]) => {
+    // do not convert if value is add by  builder.columns(columns)
+    if (isIdentifierInColumns(key, columns)) {
+      Object.defineProperty(resultNotConvertKeys, key, {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value,
+      })
+    }
+    else {
+      Object.defineProperty(resultNeedConvertKeys, key, {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value,
+      })
+    }
+  })
+
+  return {
+    resultNotConvertKeys,
+    resultNeedConvertKeys,
+  }
+}
+
 
 
 export function genCamelKeysFrom<From extends PostProcessRecord>(
