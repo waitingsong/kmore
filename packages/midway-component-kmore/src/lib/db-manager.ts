@@ -8,7 +8,7 @@ import {
   Inject,
   Provide,
 } from '@midwayjs/core'
-import { TraceService, Trace } from '@mwcp/otel'
+import { TraceService, SpanKind, Trace } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
 import {
   Kmore,
@@ -49,8 +49,9 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
 
 
   @Trace<DbManager['getDataSource']>({
+    spanName: ([dataSourceName]) => `dbManager.getDataSource():${dataSourceName}`,
     startActiveSpan: false,
-    spanName: ([dataSourceName]) => `dbManager.getDataSource(${dataSourceName})`,
+    kind: SpanKind.INTERNAL,
   })
   getDataSource<Db = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
 
