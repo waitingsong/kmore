@@ -13,7 +13,7 @@ import {
   MidwayDecoratorService,
 } from '@midwayjs/core'
 import { CacheManager } from '@mwcp/cache'
-import { OtelComponent } from '@mwcp/otel'
+import { TraceInit } from '@mwcp/otel'
 import {
   Application,
   IMidwayContainer,
@@ -54,12 +54,9 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Inject() cacheManager: CacheManager
 
+  @TraceInit(`INIT ${ConfigKey.componentName}.onReady`)
   async onReady(container: IMidwayContainer): Promise<void> {
-    const otel = await container.getAsync(OtelComponent)
-    otel.addAppInitEvent({
-      event: `${ConfigKey.componentName}.onReady.begin`,
-    })
-
+    void container
     assert(this.cacheManager, 'cacheManager is not ready')
 
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
@@ -77,9 +74,6 @@ export class AutoConfiguration implements ILifeCycle {
     }
 
     registerDecoratorHandler(optsCacheable, aroundFactoryOptions)
-    otel.addAppInitEvent({
-      event: `${ConfigKey.componentName}.onReady.end`,
-    })
   }
 
   async onStop(container: IMidwayContainer): Promise<void> {
