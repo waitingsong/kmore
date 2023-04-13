@@ -54,7 +54,7 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Inject() cacheManager: CacheManager
 
-  @TraceInit(`INIT ${ConfigKey.namespace}.onReady`)
+  @TraceInit(`INIT ${ConfigKey.componentName}.onReady`)
   async onReady(container: IMidwayContainer): Promise<void> {
     void container
     assert(this.cacheManager, 'cacheManager is not ready')
@@ -80,7 +80,7 @@ export class AutoConfiguration implements ILifeCycle {
     void container
     const time = 2
     await sleep(time * 1000)
-    this.logger.info(`[${ConfigKey.namespace}] onStop()`)
+    this.logger.info(`[${ConfigKey.componentName}] onStop()`)
 
     // const { timeoutWhenDestroy } = this.kmoreComponentConfig
     const out = 10000
@@ -91,7 +91,7 @@ export class AutoConfiguration implements ILifeCycle {
       .catch((ex: Error) => {
         console.error(ex.message)
       })
-    this.logger.info(`[${ConfigKey.namespace}] onStop() doen`)
+    this.logger.info(`[${ConfigKey.componentName}] onStop() doen`)
   }
 }
 
