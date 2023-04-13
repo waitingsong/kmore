@@ -33,7 +33,7 @@
     "@mwcp/cache": "7 - 10",
     "@mwcp/otel": "6 - 9",
     "@mwcp/share": "5 - 8",
-    "@waiting/shared-core": "^21.0.0",
+    "@waiting/shared-core": "^21.1.0",
     "kmore": "^55.2.3",
     "knex": "^2.4.2"
   },
