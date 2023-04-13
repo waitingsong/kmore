@@ -55,7 +55,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Inject() baseDir: string
 
-  @TraceInit(`${ConfigKey.componentName}.DbSourceManager.init()`)
+  @TraceInit(`${ConfigKey.namespace}.DbSourceManager.init()`)
   @Init()
   async init(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -93,6 +93,9 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   /**
    * 创建单个实例
    */
+  @TraceInit<DbSourceManager['_createDataSource']>({
+    spanName: ([, dataSourceName]) => `${ConfigKey.namespace}.DbSourceManager._createDataSouce():${dataSourceName}`,
+  })
   protected async _createDataSource(
     config: DbConfig,
     dataSourceName: SourceName,
