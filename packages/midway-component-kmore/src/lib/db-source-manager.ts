@@ -18,6 +18,7 @@ import {
   Span,
   SpanKind,
   TraceContext,
+  TraceInit,
   TraceService,
 } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
@@ -54,6 +55,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
 
   @Inject() baseDir: string
 
+  @TraceInit(`${ConfigKey.componentName}.DbSourceManager.init()`)
   @Init()
   async init(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
