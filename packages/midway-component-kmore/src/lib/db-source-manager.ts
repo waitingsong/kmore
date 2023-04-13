@@ -73,7 +73,6 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     return dbConfig
   }
 
-
   /**
    * 创建单个实例
    */
@@ -83,16 +82,22 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     cacheDataSource = true,
   ): Promise<Kmore<Db, Ctx> | undefined> {
 
-    // const event: Attributes = {
-    //   event: KmoreAttrNames.TrxBeginStart,
-    //   time: genISO8601String(),
-    // }
-    // traceSvc.addEvent(span, event)
-
     const cacheInst = cacheDataSource ? this.getDataSource<Db>(dataSourceName) : null
     if (cacheDataSource && cacheInst) {
       return cacheInst
     }
+    const inst = await this._createDataSource(config, dataSourceName, cacheDataSource)
+    return inst
+  }
+
+  /**
+   * 创建单个实例
+   */
+  protected async _createDataSource(
+    config: DbConfig,
+    dataSourceName: SourceName,
+    cacheDataSource = true,
+  ): Promise<Kmore | undefined> {
 
     const globalEventCbs: EventCallbacks = {
       start: (event: KmoreEvent, ctx?: Ctx) => this.cbOnStart(config, event, ctx),
@@ -100,13 +105,13 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
       queryResponse: (event: KmoreEvent, ctx?: Ctx) => this.cbOnResp(config, event, ctx),
       queryError: (event: KmoreEvent, ctx?: Ctx) => this.cbOnError(config, event, ctx),
     }
-    const opts: KmoreFactoryOpts<Db, Ctx> = {
+    const opts: KmoreFactoryOpts<unknown> = {
       dbId: dataSourceName,
       ...config,
       eventCallbacks: globalEventCbs,
     }
 
-    const inst = KmoreFactory<Db, Ctx>(opts)
+    const inst = KmoreFactory(opts)
     if (cacheDataSource) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (! this.sourceconfig.dataSource[dataSourceName]) {
