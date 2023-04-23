@@ -95,6 +95,25 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
    */
   @TraceInit<DbSourceManager['_createDataSource']>({
     spanName: ([, dataSourceName]) => `INIT ${ConfigKey.namespace}.DbSourceManager._createDataSouce():${dataSourceName}`,
+    before: (options, { otelComponent, traceSpan }) => {
+      if (! options[0].traceInitConnection) { return }
+
+      if (otelComponent?.addAppInitEvent && traceSpan) {
+        const config: DbConfig = {
+          ...options[0],
+        }
+        delete config.dict
+        delete config.eventCallbacks
+
+        const input: Attributes = {
+          event: 'createDataSource.before',
+          config: JSON.stringify(config),
+          cacheDataSource: options[2],
+          dataSourceName: options[1],
+        }
+        otelComponent.addEvent(traceSpan, input)
+      }
+    },
   })
   protected async _createDataSource(
     config: DbConfig,

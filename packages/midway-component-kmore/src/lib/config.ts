@@ -25,6 +25,7 @@ export const initDbConfig: DbConfig = {
   config: {},
   sampleThrottleMs: 3000,
   enableTrace: true,
+  traceInitConnection: false,
   traceEvent: true,
   traceResponse: true,
 }

@@ -55,6 +55,11 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
    */
   traceEvent?: boolean
   /**
+   * Tracing database connection (including connection secret!)
+   * @default false
+   */
+  traceInitConnection?: boolean
+  /**
    * Tracing query response (respRaw.response),
    * @default true
    * @description tracing if true of if query cost > sampleThrottleMs
