@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [55.3.0](https://github.com/waitingsong/kmore/compare/v55.2.7...v55.3.0) (2023-04-23)
+
+
+### Features
+
+* **mwcp:** bump deps version and refactor decorator `Transactional` ([791d228](https://github.com/waitingsong/kmore/commit/791d22891e6ed6153aade56edcef061fb552b399))
+
+
+
+
+
 ## [55.2.7](https://github.com/waitingsong/kmore/compare/v55.2.6...v55.2.7) (2023-04-13)
 
 **Note:** Version bump only for package @mwcp/kmore
