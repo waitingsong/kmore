@@ -65,7 +65,10 @@ export class TrxDecoratorArgsController {
     assert(kmoreQueryId)
     assert(! trxPropagated)
     assert(trxPropagateOptions)
-    assert(trxPropagateOptions.type === PropagationType.SUPPORTS)
+    assert(
+      trxPropagateOptions.type === PropagationType.SUPPORTS,
+      `Expect ${PropagationType.SUPPORTS}, but got ${trxPropagateOptions.type}`
+    )
     return 'OK'
   }
 

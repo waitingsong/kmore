@@ -29,7 +29,7 @@ describe(filename, () => {
 
     const resp1 = await httpRequest
       .get(urlUpdate)
-      .expect(204)
+      .expect(500)
 
     const resp2 = await httpRequest
       .get(urlGet)

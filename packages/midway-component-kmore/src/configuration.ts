@@ -17,7 +17,7 @@ import { TraceInit } from '@mwcp/otel'
 import {
   Application,
   IMidwayContainer,
-  RegisterDecoratorHandlerOptions,
+  RegisterDecoratorHandlerParam,
   registerDecoratorHandler,
 } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
@@ -54,25 +54,25 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Inject() cacheManager: CacheManager
 
-  @TraceInit(`INIT ${ConfigKey.namespace}.onReady`)
+  @TraceInit({ namespace: ConfigKey.namespace })
   async onReady(container: IMidwayContainer): Promise<void> {
     void container
     assert(this.cacheManager, 'cacheManager is not ready')
 
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
     registerMiddleware(this.app, KmoreMiddleware)
-    // registerMethodHandler(this.decoratorService, this.propagationConfig)
 
-    const optsCacheable: RegisterDecoratorHandlerOptions = {
+    const optsCacheable: RegisterDecoratorHandlerParam = {
       decoratorKey: METHOD_KEY_Transactional,
       decoratorService: this.decoratorService,
-      genDecoratorExecutorOptionsFn: genDecoratorExecutorOptions,
-      decoratorExecutor: transactionalDecoratorExecutor,
+      fnDecoratorExecutorAsync: transactionalDecoratorExecutor,
+      fnDecoratorExecutorSync: 'bypass',
+      fnGenDecoratorExecutorParam: genDecoratorExecutorOptions,
     }
     const aroundFactoryOptions = {
+      webApp: this.app,
       config: this.propagationConfig,
     }
-
     registerDecoratorHandler(optsCacheable, aroundFactoryOptions)
   }
 
@@ -80,7 +80,7 @@ export class AutoConfiguration implements ILifeCycle {
     void container
     const time = 2
     await sleep(time * 1000)
-    this.logger.info(`[${ConfigKey.namespace}] onStop()`)
+    this.logger.info(`[${ConfigKey.componentName}] onStop()`)
 
     // const { timeoutWhenDestroy } = this.kmoreComponentConfig
     const out = 10000
@@ -91,7 +91,7 @@ export class AutoConfiguration implements ILifeCycle {
       .catch((ex: Error) => {
         console.error(ex.message)
       })
-    this.logger.info(`[${ConfigKey.namespace}] onStop() doen`)
+    this.logger.info(`[${ConfigKey.componentName}] onStop() doen`)
   }
 }
 

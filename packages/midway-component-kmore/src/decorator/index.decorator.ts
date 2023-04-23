@@ -1,4 +1,18 @@
-import { customDecoratorFactory } from '@mwcp/share'
+import { assert } from 'console'
+
+import {
+  CacheableArgs,
+  METHOD_KEY_CacheEvict,
+  METHOD_KEY_CachePut,
+  METHOD_KEY_Cacheable,
+  cacheableClassIgnoreIfMethodDecortaorKeys,
+  cacheableMethodIgnoreIfMethodDecortaorKeys,
+} from '@mwcp/cache'
+import {
+  CustomDecoratorFactoryParam,
+  customDecoratorFactory,
+  regCustomDecorator,
+} from '@mwcp/share'
 
 import {
   MethodType,
@@ -34,17 +48,56 @@ export function Transactional<M extends MethodType | undefined = undefined>(
   propagationType?: TransactionalArgs['propagationType'],
   propagationOptions?: TransactionalArgs['propagationOptions'],
   cacheOptions: TransactionalArgs<M>['cacheOptions'] = false,
-): MethodDecorator & ClassDecorator {
+) {
 
-  const options: TransactionalArgs<M> = {
-    propagationType,
-    propagationOptions,
-    cacheOptions,
+  const options: Partial<TransactionalArgs<M>> = {
+    // propagationType,
+    // propagationOptions,
+    // cacheOptions,
   }
-  return customDecoratorFactory<TransactionalArgs<M>>({
+  // !!
+  if (propagationType) {
+    options.propagationType = propagationType
+  }
+  if (propagationOptions) {
+    options.propagationOptions = propagationOptions
+  }
+  if (cacheOptions) {
+    options.cacheOptions = cacheOptions
+  }
+
+  const opts: CustomDecoratorFactoryParam<TransactionalArgs<M>> = {
     decoratorKey: METHOD_KEY_Transactional,
     decoratorArgs: options,
     enableClassDecorator: true,
-  })
+  }
+  if (cacheOptions) {
+    let dkey = ''
+    switch (cacheOptions.op) {
+      case 'Cacheable':
+        dkey = METHOD_KEY_Cacheable
+        break
+      case 'CacheEvict':
+        dkey = METHOD_KEY_CacheEvict
+        break
+      case 'CachePut':
+        dkey = METHOD_KEY_CachePut
+        break
+    }
+    assert(dkey, `invalid cacheOptions.op: ${cacheOptions.op}`)
 
+    opts.before = (target, propertyName, descriptor) => {
+      const opts2: CustomDecoratorFactoryParam<CacheableArgs<M>> = {
+        decoratorKey: dkey,
+        decoratorArgs: cacheOptions,
+        enableClassDecorator: false,
+        classIgnoreIfMethodDecortaorKeys: cacheableClassIgnoreIfMethodDecortaorKeys,
+        methodIgnoreIfMethodDecortaorKeys: cacheableMethodIgnoreIfMethodDecortaorKeys,
+      }
+      regCustomDecorator(target, propertyName, descriptor, opts2)
+    }
+  }
+
+  return customDecoratorFactory<TransactionalArgs<M>>(opts)
 }
+

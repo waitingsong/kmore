@@ -1,29 +1,20 @@
 import assert from 'assert'
 
-import {
-  REQUEST_OBJ_CTX_KEY,
-  getClassMetadata,
-} from '@midwayjs/core'
-import {
+import type {
   CacheableArgs,
   CacheEvictArgs,
-  METHOD_KEY_Cacheable,
-  METHOD_KEY_CacheEvict,
-  METHOD_KEY_CachePut,
-  cacheableDecoratorExecutor,
-  cacheEvictDecoratorExecutor,
-  cachePutDecoratorExecutor,
-  genDecoratorExecutorOptionsCommon as cacheGenDecoratorExecutorOptionsCommon,
 } from '@mwcp/cache'
 import {
-  AroundFactoryOptions,
   Context as WebContext,
-  DecoratorExecutorOptionsBase,
+  DecoratorExecutorParamBase,
+  DecoratorMetaDataPayload,
+  DecoratorMetaData,
+  deepmerge,
 } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
-import { PropagationType, RowLockLevel } from 'kmore'
+import { PropagationType } from 'kmore'
 
-import { initPropagationConfig, initTransactionalOptons } from '../lib/config'
+import { initTransactionalOptons } from '../lib/config'
 import { CallerKey, RegisterTrxPropagateOptions } from '../lib/propagation/trx-status.base'
 import { genCallerKey } from '../lib/propagation/trx-status.helper'
 import { TrxStatusService } from '../lib/trx-status.service'
@@ -69,105 +60,52 @@ export interface TransactionalDecoratorExecutorOptions extends RegisterTrxPropag
   cacheOptions: TransactionalArgs['cacheOptions']
 }
 
-export interface TrxDecoratorMetaData {
-  propertyName: string
-  key: string
-  metadata: TransactionalArgs | undefined
-  impl: boolean
-}
+export type TrxDecoratorMetaData = DecoratorMetaData<TransactionalArgs>
 
-export interface TrxDecoratorExecutorOptions<T extends TransactionalArgs = TransactionalArgs>
-  extends DecoratorExecutorOptionsBase<T> {
-
-  config: KmorePropagationConfig | undefined
+export interface TrxDecoratorExecutorOptions extends DecoratorExecutorParamBase<TransactionalArgs> {
+  config: KmorePropagationConfig
+  // trxStatusService: TrxStatusServiceBase
 }
 
 
-export function genDecoratorExecutorOptions<TDecoratorArgs extends TransactionalArgs = TransactionalArgs>(
-  options: AroundFactoryOptions<TDecoratorArgs>,
-): TrxDecoratorExecutorOptions<TDecoratorArgs> {
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { decoratorKey, joinPoint, aopCallbackInputOptions, config } = options
-  assert(config, 'config is undefined')
-
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  assert(joinPoint.proceed, 'joinPoint.proceed is undefined')
-  assert(typeof joinPoint.proceed === 'function', 'joinPoint.proceed is not funtion')
-
-  // 装饰器所在的实例
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const instance = joinPoint.target
-  const funcName = joinPoint.methodName as string
-  assert(funcName, 'funcName is undefined')
-
-  const ret = genDecoratorExecutorOptionsCommon({
-    decoratorKey,
-    config: config as KmorePropagationConfig,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    instance,
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    method: joinPoint.proceed,
-    methodName: funcName,
-    methodArgs: joinPoint.args,
-    argsFromClassDecorator: void 0,
-    argsFromMethodDecorator: aopCallbackInputOptions.metadata,
-  })
-
-  return ret
-}
-
-
-export function genDecoratorExecutorOptionsCommon<T extends TransactionalArgs = TransactionalArgs>(
-  options: TrxDecoratorExecutorOptions<T>,
-): TrxDecoratorExecutorOptions<T> {
+export function genDecoratorExecutorOptions(
+  options: DecoratorExecutorParamBase<TransactionalArgs>,
+): TrxDecoratorExecutorOptions {
 
   const {
     decoratorKey,
-    argsFromMethodDecorator,
-    config: configArgs,
     instance,
     method,
     methodName,
     methodArgs,
+    mergedDecoratorParam,
+    webApp,
   } = options
-  assert(instance, 'options.instance is undefined')
+
+  assert(webApp, 'webApp is undefined')
   assert(typeof method === 'function', 'options.method is not funtion')
 
-  const webContext = instance[REQUEST_OBJ_CTX_KEY]
-  assert(webContext, 'webContext is undefined')
-
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const app = webContext.app ?? instance.app
-
-  const config = (configArgs
-    ?? app.getConfig(ConfigKey.propagationConfig)
-    ?? initPropagationConfig) as KmorePropagationConfig
-  assert(config, 'config is undefined')
-
-  const className = instance.constructor.name
-  assert(className, 'instance.constructor.name is undefined')
-  assert(methodName, 'methodName is undefined')
-
-  const args = {
-    decoratorType: argsFromMethodDecorator?.decoratedType ?? 'method',
-    propagationType: argsFromMethodDecorator?.propagationType ?? PropagationType.REQUIRED,
+  const initArgs = {
+    propagationType: PropagationType.REQUIRED,
     propagationOptions: {
       ...initTransactionalOptons,
-      ...argsFromMethodDecorator?.propagationOptions,
     },
-    cacheOptions: argsFromMethodDecorator?.cacheOptions,
+    cacheOptions: false,
   }
 
-  const argsFromClassDecorator = getClassMetadata<T>(decoratorKey, instance)
+  const args = deepmerge.all([
+    initArgs,
+    mergedDecoratorParam ?? {},
+  ]) as DecoratorMetaDataPayload<TransactionalArgs>
 
-  const ret: TrxDecoratorExecutorOptions<T> = {
-    decoratorKey,
-    argsFromClassDecorator,
-    // @ts-ignore
-    argsFromMethodDecorator: args,
+  const config = webApp.getConfig(ConfigKey.propagationConfig) as KmorePropagationConfig
+  assert(config, 'propagationConfig is undefined')
+
+  const ret: TrxDecoratorExecutorOptions = {
+    ...options,
     config,
+    decoratorKey,
+    mergedDecoratorParam: args,
     instance,
     method,
     methodArgs,
@@ -178,39 +116,39 @@ export function genDecoratorExecutorOptionsCommon<T extends TransactionalArgs = 
 
 
 export async function transactionalDecoratorExecutor(
-  options: TrxDecoratorExecutorOptions<TransactionalArgs>,
+  options: TrxDecoratorExecutorOptions,
 ): Promise<unknown> {
 
-  const webContext = options.instance[REQUEST_OBJ_CTX_KEY]
+  const {
+    instanceName,
+    mergedDecoratorParam,
+    methodName,
+    webContext,
+  } = options
+  // const webContext = options.instance[REQUEST_OBJ_CTX_KEY]
   assert(webContext, 'webContext is undefined')
 
   const trxStatusSvc = await webContext.requestContext.getAsync(TrxStatusService)
   assert(trxStatusSvc, 'trxStatusSvc is undefined')
 
-  const {
-    argsFromClassDecorator,
-    argsFromMethodDecorator,
-    instance,
-  } = options
 
-  const type = argsFromMethodDecorator?.propagationType
-    ?? argsFromClassDecorator?.propagationType
-    ?? PropagationType.REQUIRED
+  assert(mergedDecoratorParam)
+  assert(mergedDecoratorParam.propagationOptions)
 
-  const readRowLockLevel = argsFromMethodDecorator?.propagationOptions?.readRowLockLevel
-    ?? argsFromClassDecorator?.propagationOptions?.readRowLockLevel
-    ?? RowLockLevel.ForShare
-  const writeRowLockLevel = argsFromMethodDecorator?.propagationOptions?.writeRowLockLevel
-    ?? argsFromClassDecorator?.propagationOptions?.writeRowLockLevel
-    ?? RowLockLevel.ForUpdate
+  const type = mergedDecoratorParam.propagationType
+  assert(type, 'propagationType is undefined')
 
-  const className = instance.constructor.name
+  const { readRowLockLevel, writeRowLockLevel } = mergedDecoratorParam.propagationOptions
+  assert(readRowLockLevel, 'readRowLockLevel is undefined')
+  assert(writeRowLockLevel, 'writeRowLockLevel is undefined')
+
+  const className = instanceName
   assert(className, 'instance.constructor.name is undefined')
 
   const opts: RegisterTrxPropagateOptions = {
     type,
     className,
-    funcName: options.methodName,
+    funcName: methodName,
     readRowLockLevel,
     writeRowLockLevel,
   }
@@ -239,7 +177,8 @@ export async function transactionalDecoratorExecutor(
   assert(callerKey)
 
   try {
-    const resp = await runWithCacheProcess(options)
+    const { method, methodArgs } = options
+    const resp = await method(...methodArgs)
 
     const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
     if (! tkey || tkey !== callerKey) {
@@ -279,89 +218,3 @@ async function processEx(options: ProcessExOptions): Promise<never> {
   throw error
 }
 
-async function runWithCacheProcess(
-  options: TrxDecoratorExecutorOptions<TransactionalArgs>,
-  // options0: TransactionalDecoratorExecutorOptions,
-): Promise<unknown> {
-
-  const {
-    // cacheOptions,
-    argsFromClassDecorator,
-    argsFromMethodDecorator,
-    instance,
-    method,
-    methodArgs,
-    methodName,
-  } = options
-
-  assert(instance, 'instance undefined')
-
-  const cacheOptions = argsFromClassDecorator?.cacheOptions
-    || argsFromMethodDecorator?.cacheOptions
-    ? {
-      ...argsFromClassDecorator?.cacheOptions,
-      ...argsFromMethodDecorator?.cacheOptions,
-    }
-    : void 0
-
-  let resp: unknown = void 0
-  if (! cacheOptions) {
-    resp = await method(...methodArgs)
-    return resp
-  }
-
-  const className = instance.constructor.name
-  assert(className, 'instance.constructor.name is undefined')
-
-  if (! cacheOptions.cacheName) {
-    cacheOptions.cacheName = `${className}.${methodName}`
-  }
-
-  const input = {
-    ...options,
-    argsFromClassDecorator: void 0,
-    argsFromMethodDecorator: cacheOptions,
-    config: void 0,
-  }
-
-  switch (cacheOptions.op) {
-    case 'Cacheable': {
-      const opts = cacheGenDecoratorExecutorOptionsCommon<CacheableArgs>({
-        ...input,
-        decoratorKey: METHOD_KEY_Cacheable,
-        // config?: unknown;
-        // /** 装饰器所在类实例 */
-        // instance: InstanceOfDecorator;
-        // method: Method;
-        // methodArgs: unknown[];
-        // methodName: string;
-        // methodResult?: unknown;
-      })
-      resp = await cacheableDecoratorExecutor(opts)
-      break
-    }
-
-    case 'CacheEvict': {
-      const opts = cacheGenDecoratorExecutorOptionsCommon<CacheEvictArgs>({
-        ...input,
-        decoratorKey: METHOD_KEY_CacheEvict,
-      })
-      resp = await cacheEvictDecoratorExecutor(opts)
-      break
-    }
-
-    case 'CachePut': {
-      const opts = cacheGenDecoratorExecutorOptionsCommon<CacheableArgs>({
-        ...input,
-        decoratorKey: METHOD_KEY_CachePut,
-      })
-      resp = await cachePutDecoratorExecutor(opts)
-      break
-    }
-
-    default:
-      throw new TypeError('cacheOptions.op is undefined')
-  }
-
-  return resp
-}

@@ -56,7 +56,8 @@ export class UserService {
     const cacheKey = `${this.repo6.name}.getUsers`
     const ret2 = await this.repo6.getUsers()
     const [users4, trx4, trxPropagateOptions4] = ret2
-    assert(users4 && users4.length === 2)
+    assert(users4)
+    assert(users4 && users4.length === 2, `Epect users4.length == 2, but ${users4.length}`)
     assert(trx === trx4)
     assert(
       trxPropagateOptions.entryKey === trxPropagateOptions4.entryKey,
