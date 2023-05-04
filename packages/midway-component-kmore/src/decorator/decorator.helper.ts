@@ -133,8 +133,8 @@ export async function transactionalDecoratorExecutor(
   assert(trxStatusSvc, 'trxStatusSvc is undefined')
 
 
-  assert(mergedDecoratorParam)
-  assert(mergedDecoratorParam.propagationOptions)
+  assert(mergedDecoratorParam, 'mergedDecoratorParam is undefined')
+  assert(mergedDecoratorParam.propagationOptions, 'propagationOptions is undefined')
 
   const type = mergedDecoratorParam.propagationType
   assert(type, 'propagationType is undefined')
