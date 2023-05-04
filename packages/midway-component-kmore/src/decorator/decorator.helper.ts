@@ -127,6 +127,7 @@ export async function transactionalDecoratorExecutor(
   } = options
   // const webContext = options.instance[REQUEST_OBJ_CTX_KEY]
   assert(webContext, 'webContext is undefined')
+  assert(webContext.requestContext, 'webContext.requestContext is undefined')
 
   const trxStatusSvc = await webContext.requestContext.getAsync(TrxStatusService)
   assert(trxStatusSvc, 'trxStatusSvc is undefined')
