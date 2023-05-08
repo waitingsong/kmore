@@ -43,7 +43,7 @@
     "kmore-types": "^55.2.1"
   },
   "engines": {
-    "node": ">=16.13.0"
+    "node": ">=16.13.0 <=19.9.0"
   },
   "files": [
     "README.*.md",
