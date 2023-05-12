@@ -807,6 +807,7 @@ export class TrxStatusService extends AbstractTrxStatusService {
       map.delete(callerKey)
     }
     this.delPropagationOptions(regContext, callerKey)
+    this.delErrorMsg(regContext)
   }
 
   protected getCallerTreeMap(regContext: RegisterTrxContext): CallerTreeMap | undefined {
