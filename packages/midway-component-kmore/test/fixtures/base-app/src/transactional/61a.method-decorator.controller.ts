@@ -11,6 +11,7 @@ import type { Context } from '@mwcp/share'
 import { Msg, Transactional } from '~/index'
 import { apiPrefix, apiRoute } from '../api-route'
 import { UserService } from './61a.method-decorator.service'
+import { sleep } from '@waiting/shared-core'
 
 
 @Controller(apiPrefix.methodDecorator)
@@ -89,8 +90,9 @@ export class TrxDecoratorController {
       assert(ex instanceof Error)
       assert(ex.message.includes(Msg.callerKeyNotRegisteredOrNotEntry), ex.message)
     }
+    await sleep(1000)
     const users = await this.userSvc.getUsersNoTrx()
-    assert(users.length === 3)
+    assert(users.length === 3, `users.length: ${users.length} vs expect: 3`)
     return 'OK'
   }
 

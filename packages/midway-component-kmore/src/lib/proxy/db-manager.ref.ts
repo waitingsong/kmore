@@ -20,6 +20,7 @@ import {
 } from 'kmore'
 
 import { DbSourceManager } from '../db-source-manager'
+import { RegisterTrxContext } from '../propagation/trx-status.abstract'
 import { TrxStatusService } from '../trx-status.service'
 import { KmoreAttrNames } from '../types'
 
@@ -31,6 +32,7 @@ export interface ProxyRefOptions {
   ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
   ctxExceptionHandler: CtxExceptionHandler | undefined
   dbSourceManager: DbSourceManager
+  regContext: RegisterTrxContext
   reqCtx: unknown
   targetProperty: Dbqb | (Kmore[keyof Kmore])
   traceSvc: TraceService
@@ -39,6 +41,7 @@ export interface ProxyRefOptions {
 export function proxyRef(options: ProxyRefOptions): Dbqb {
   const {
     dbSourceManager,
+    regContext,
     reqCtx,
     targetProperty,
     traceSvc,
@@ -47,6 +50,8 @@ export function proxyRef(options: ProxyRefOptions): Dbqb {
     ctxBuilderResultPreProcessor,
     ctxExceptionHandler,
   } = options
+
+  assert(regContext, 'regContext is empty')
   assert(targetProperty, 'targetProperty is empty')
 
   const ret = new Proxy(targetProperty, {
@@ -62,6 +67,7 @@ export function proxyRef(options: ProxyRefOptions): Dbqb {
         {
           dbSourceManager,
           propKey,
+          regContext,
           reqCtx,
           targetProperty: target,
           traceSvc,
@@ -90,6 +96,7 @@ function proxyRefTableFn(
   const {
     dbSourceManager,
     propKey,
+    regContext,
     reqCtx,
     targetProperty: target,
     traceSvc,
@@ -160,7 +167,7 @@ function proxyRefTableFn(
     traceSvc,
   }
   const builder2 = proxyBuilder(opts)
-  const builder3 = trxStatusSvc.bindBuilderPropagationData(builder2, 2)
+  const builder3 = trxStatusSvc.bindBuilderPropagationData(regContext, builder2, 2)
   return builder3
 }
 

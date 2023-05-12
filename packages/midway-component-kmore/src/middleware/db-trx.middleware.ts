@@ -1,7 +1,7 @@
 import { Middleware } from '@midwayjs/core'
 import type { Context, IMiddleware, NextFunction } from '@mwcp/share'
 
-import { ConfigKey } from '../lib/index'
+import { ConfigKey, TrxStatusService } from '../lib/index'
 import { rollbackAndCleanCtxTransactions } from '../util/database'
 
 
@@ -41,6 +41,8 @@ async function middleware(
   }
   finally {
     await rollbackAndCleanCtxTransactions(ctx)
+    const trxStatusSvc = await ctx.app.getApplicationContext().getAsync(TrxStatusService)
+    trxStatusSvc.cleanAfterRequestFinished(ctx)
   }
 }
 

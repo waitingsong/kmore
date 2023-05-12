@@ -1,18 +1,18 @@
-import { KmoreTransaction, QueryBuilderExtKey, TrxPropagateOptions } from 'kmore'
+import { KmoreTransaction, QueryBuilderExtKey } from 'kmore'
 
 import { traceGenTrx } from './propagating.helper'
-import { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base'
+import { AbstractTrxStatusService, PropagatingOptions, TrxPropagateOptions } from './trx-status.abstract'
 
 
 export async function genTrxSupports(
-  trxStatusSvc: TrxStatusServiceBase,
+  trxStatusSvc: AbstractTrxStatusService,
   options: PropagatingOptions,
   trxPropagateOptions: TrxPropagateOptions,
 ): Promise<KmoreTransaction | undefined> {
 
-  const { db, builder } = options
+  const { db, builder, regContext } = options
 
-  const trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(db)
+  const trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(regContext, db)
   if (! trx) { return }
 
   const trxPropagated = !! trx.trxPropagateOptions

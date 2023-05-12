@@ -136,6 +136,17 @@ describe(filename, () => {
 
       validateRespOK(resp)
     })
+    // after apiRoute.selfReturnMissingAwait
+    it(apiRoute.updateDelOneByOne, async () => {
+      const { httpRequest } = testConfig
+      const url = `${prefix}/${apiRoute.updateDelOneByOne}`
+
+      const resp = await httpRequest
+        .get(url)
+        .expect(200)
+
+      validateRespOK(resp)
+    })
 
     it(apiRoute.selfReturnPromise, async () => {
       const { httpRequest } = testConfig
