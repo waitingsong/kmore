@@ -139,6 +139,8 @@ export async function transactionalDecoratorExecutor(
     ?? await webApp.getApplicationContext().getAsync(TrxStatusService)
   assert(trxStatusSvc, 'trxStatusSvc is undefined')
 
+  // singleton scope if webContext.requestContext is not undefined
+  // otherwise, request scope
   const regContext = webContext?.requestContext
     ? webContext
     : webApp
