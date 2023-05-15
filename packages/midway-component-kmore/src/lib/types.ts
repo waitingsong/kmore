@@ -15,6 +15,7 @@ export enum ConfigKey {
   dbSourceManager = 'DbSourceManager',
   dbManager = 'DbManager',
   propagationConfig = 'kmorePropagationConfig',
+  trxStatusService = 'trxStatusService',
 }
 
 export enum Msg {

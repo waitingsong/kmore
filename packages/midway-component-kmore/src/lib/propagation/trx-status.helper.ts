@@ -1,21 +1,21 @@
 import assert from 'node:assert'
 import { relative } from 'node:path'
 
-import { Attributes, AttrNames, Span, TraceService } from '@mwcp/otel'
+import { AbstractOtelComponent, Attributes, AttrNames, Span } from '@mwcp/otel'
 import { getStackCallerSites } from '@waiting/shared-core'
 import {
   KmoreQueryBuilder,
   KmoreTransaction,
   QueryBuilderExtKey,
   RowLockLevel,
-  TrxPropagateOptions,
 } from 'kmore'
 
 import type {
   TrxCallerInfo,
   CallerKey,
   RegisterTrxPropagateOptions,
-} from './trx-status.base'
+  TrxPropagateOptions,
+} from './trx-status.abstract'
 
 
 export function genCallerKey(className: string, funcName: string): CallerKey {
@@ -32,21 +32,24 @@ export function genCallerKey(className: string, funcName: string): CallerKey {
 export interface TrxTraceOptions {
   type: 'event' | 'tag'
   appDir: string
-  traceSvc: TraceService
-  /** will rootSpan if undefined  */
-  span: Span | undefined
-  trxPropagateOptions?: TrxPropagateOptions | RegisterTrxPropagateOptions
+  otel: AbstractOtelComponent
+  span: Span | undefined | false
+  trxPropagateOptions?: TrxPropagateOptions | RegisterTrxPropagateOptions | undefined
   attr?: Attributes
 }
 export function trxTrace(options: TrxTraceOptions): void {
   const {
     type,
     appDir,
-    traceSvc,
+    otel,
     span,
     trxPropagateOptions,
     attr,
   } = options
+
+  // @ts-expect-error
+  const currSpan = span ?? (trxPropagateOptions?.span as Span | undefined)
+  if (! currSpan) { return }
 
   let attrs: Attributes = {}
   if (trxPropagateOptions) {
@@ -70,10 +73,10 @@ export function trxTrace(options: TrxTraceOptions): void {
   }
 
   if (type === 'event') {
-    traceSvc.addEvent(span, attrs)
+    otel.addEvent(currSpan, attrs)
   }
   else {
-    traceSvc.setAttributesLater(span, attrs)
+    otel.setAttributesLater(currSpan, attrs)
   }
 }
 
