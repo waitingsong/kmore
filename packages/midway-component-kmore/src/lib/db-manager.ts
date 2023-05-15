@@ -98,7 +98,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const kmore = this.getDataSource(builder.dbId as SourceName)
-    const resp = await this.trxStatusSvc.propagating({ db: kmore, builder })
+    const resp = await this.trxStatusSvc.propagating({ db: kmore, builder, regContext: this.ctx })
     return resp
   }
 
@@ -163,6 +163,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
             ctxExceptionHandler: this.exceptionHandler.bind(this),
             // @ts-expect-error
             dbSourceManager: this.dbSourceManager,
+            regContext: this.ctx,
             reqCtx,
             targetProperty: target[propKey],
             traceSvc: this.traceSvc,
@@ -175,6 +176,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
             // @ts-expect-error
             dbSourceManager: this.dbSourceManager,
             propKey,
+            regContext: this.ctx,
             targetProperty: target[propKey],
             traceSvc: this.traceSvc,
           }

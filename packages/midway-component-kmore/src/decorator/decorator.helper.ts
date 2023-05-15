@@ -4,6 +4,7 @@ import type {
   CacheableArgs,
   CacheEvictArgs,
 } from '@mwcp/cache'
+import { OtelComponent, TraceService } from '@mwcp/otel'
 import {
   Context as WebContext,
   DecoratorExecutorParamBase,
@@ -15,7 +16,7 @@ import { sleep } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
 
 import { initTransactionalOptons } from '../lib/config'
-import { CallerKey, RegisterTrxPropagateOptions } from '../lib/propagation/trx-status.base'
+import { CallerKey, RegisterTrxContext, RegisterTrxPropagateOptions } from '../lib/propagation/trx-status.abstract'
 import { genCallerKey } from '../lib/propagation/trx-status.helper'
 import { TrxStatusService } from '../lib/trx-status.service'
 import { ConfigKey, KmorePropagationConfig, Msg, TransactionalOptions } from '../lib/types'
@@ -56,7 +57,7 @@ export interface TransactionalDecoratorExecutorOptions extends RegisterTrxPropag
   method: Method
   methodArgs: unknown[]
   // propagationConfig: KmorePropagationConfig
-  webContext: WebContext
+  webContext: WebContext | undefined
   cacheOptions: TransactionalArgs['cacheOptions']
 }
 
@@ -102,6 +103,7 @@ export function genDecoratorExecutorOptions(
   assert(config, 'propagationConfig is undefined')
 
   const ret: TrxDecoratorExecutorOptions = {
+    span: void 0,
     ...options,
     config,
     decoratorKey,
@@ -123,15 +125,41 @@ export async function transactionalDecoratorExecutor(
     instanceName,
     mergedDecoratorParam,
     methodName,
+    webApp,
     webContext,
   } = options
-  // const webContext = options.instance[REQUEST_OBJ_CTX_KEY]
-  assert(webContext, 'webContext is undefined')
-  assert(webContext.requestContext, 'webContext.requestContext is undefined')
 
-  const trxStatusSvc = await webContext.requestContext.getAsync(TrxStatusService)
+  let { span } = options
+
+  // const webContext = options.instance[REQUEST_OBJ_CTX_KEY]
+  // assert(webContext.requestContext, 'webContext.requestContext is undefined')
+
+  // @ts-ignore
+  const trxStatusSvc = (webApp[`_${ConfigKey.trxStatusService}`] as TrxStatusService | undefined)
+    ?? await webApp.getApplicationContext().getAsync(TrxStatusService)
   assert(trxStatusSvc, 'trxStatusSvc is undefined')
 
+  const regContext = webContext?.requestContext
+    ? webContext
+    : webApp
+  assert(regContext, 'regContext is undefined')
+
+
+  if (typeof span === 'undefined') { // skip false
+    span = trxStatusSvc.getTrxRootSpan(regContext)
+  }
+  if (typeof span === 'undefined') { // skip false
+    if (webContext?.requestContext) {
+      const traceSvc = await webContext.requestContext.getAsync(TraceService)
+      if (traceSvc.isStarted) {
+        span = traceSvc.rootSpan
+      }
+    }
+    else {
+      const otel = await webApp.getApplicationContext().getAsync(OtelComponent)
+      span = otel.getGlobalCurrentSpan()
+    }
+  }
 
   assert(mergedDecoratorParam, 'mergedDecoratorParam is undefined')
   assert(mergedDecoratorParam.propagationOptions, 'propagationOptions is undefined')
@@ -152,6 +180,8 @@ export async function transactionalDecoratorExecutor(
     funcName: methodName,
     readRowLockLevel,
     writeRowLockLevel,
+    regContext,
+    span,
   }
   assert(opts.type, 'opts.type propagationType is undefined')
   assert(opts.readRowLockLevel, 'opts.readRowLockLevel is undefined')
@@ -170,6 +200,7 @@ export async function transactionalDecoratorExecutor(
     const error = new Error(msg, { cause: ex })
     const key = genCallerKey(opts.className, opts.funcName)
     await processEx({
+      regContext,
       callerKey: key,
       error,
       trxStatusSvc,
@@ -181,18 +212,19 @@ export async function transactionalDecoratorExecutor(
     const { method, methodArgs } = options
     const resp = await method(...methodArgs)
 
-    const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+    const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(regContext, callerKey)
     if (! tkey || tkey !== callerKey) {
       return resp
     }
     // ! delay for commit, prevent from method returning Promise or calling Knex builder without `await`
     await sleep(0)
     // only top caller can commit
-    await trxStatusSvc.trxCommitIfEntryTop(tkey)
+    await trxStatusSvc.trxCommitIfEntryTop(regContext, tkey)
     return resp
   }
   catch (error) {
     await processEx({
+      regContext,
       callerKey,
       error,
       trxStatusSvc,
@@ -203,19 +235,20 @@ export async function transactionalDecoratorExecutor(
 }
 
 interface ProcessExOptions {
+  regContext: RegisterTrxContext
   callerKey: CallerKey
   error: unknown
   trxStatusSvc: TrxStatusService
 }
 async function processEx(options: ProcessExOptions): Promise<never> {
-  const { callerKey, trxStatusSvc, error } = options
+  const { callerKey, trxStatusSvc, error, regContext } = options
 
-  const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+  const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(regContext, callerKey)
   if (! tkey || tkey !== callerKey) {
     throw error
   }
 
-  await trxStatusSvc.trxRollbackEntry(callerKey)
+  await trxStatusSvc.trxRollbackEntry(regContext, callerKey)
   throw error
 }
 

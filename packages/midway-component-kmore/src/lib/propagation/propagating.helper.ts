@@ -1,14 +1,14 @@
 import { Attributes, AttrNames } from '@mwcp/otel'
-import { KmoreTransaction, TrxPropagateOptions } from 'kmore'
+import { KmoreTransaction } from 'kmore'
 
-import { TrxStatusServiceBase } from './trx-status.base'
+import { AbstractTrxStatusService, TrxPropagateOptions } from './trx-status.abstract'
 import { trxTrace } from './trx-status.helper'
 
 
 export function traceGenTrx(
   kmoreQueryId: symbol,
   trx: KmoreTransaction,
-  trxStatusSvc: TrxStatusServiceBase,
+  trxStatusSvc: AbstractTrxStatusService,
   trxPropagateOptions: TrxPropagateOptions,
 ): void {
 
@@ -23,8 +23,8 @@ export function traceGenTrx(
   trxTrace({
     type: 'event',
     appDir: trxStatusSvc.appDir,
+    otel: trxStatusSvc.otel,
     span: querySpanInfo.span,
-    traceSvc: trxStatusSvc.traceSvc,
     trxPropagateOptions,
     attr: event,
   })
@@ -33,7 +33,7 @@ export function traceGenTrx(
     type: 'tag',
     appDir: trxStatusSvc.appDir,
     span: querySpanInfo.span,
-    traceSvc: trxStatusSvc.traceSvc,
+    otel: trxStatusSvc.otel,
     trxPropagateOptions,
   })
 

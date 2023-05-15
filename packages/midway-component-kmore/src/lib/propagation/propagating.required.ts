@@ -3,23 +3,23 @@ import assert from 'node:assert'
 import { KmoreTransaction, QueryBuilderExtKey, TrxPropagateOptions } from 'kmore'
 
 import { traceGenTrx } from './propagating.helper'
-import { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base'
+import { PropagatingOptions, AbstractTrxStatusService } from './trx-status.abstract'
 import { genCallerKey } from './trx-status.helper'
 
 
 export async function genTrxRequired(
-  trxStatusSvc: TrxStatusServiceBase,
+  trxStatusSvc: AbstractTrxStatusService,
   options: PropagatingOptions,
   trxPropagateOptions: TrxPropagateOptions,
 ): Promise<KmoreTransaction> {
 
-  const { db, builder } = options
+  const { db, builder, regContext } = options
 
   const key = genCallerKey(trxPropagateOptions.className, trxPropagateOptions.funcName)
-  let trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(db)
+  let trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(regContext, db)
   if (! trx) {
-    const pkey = trxStatusSvc.retrieveTopCallerKeyArrayByCallerKey(key).at(-1) ?? key
-    trx = await trxStatusSvc.startNewTrx(db, pkey)
+    const pkey = trxStatusSvc.retrieveTopCallerKeyArrayByCallerKey(regContext, key).at(-1) ?? key
+    trx = await trxStatusSvc.startNewTrx(regContext, db, pkey)
   }
   assert(trx, 'trx is undefined')
 

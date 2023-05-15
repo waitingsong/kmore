@@ -29,7 +29,7 @@ import {
 } from './decorator/decorator.helper'
 import { useComponents } from './imports'
 import { DbSourceManager } from './lib/db-source-manager'
-import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index'
+import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig, TrxStatusService } from './lib/index'
 import { KmoreMiddleware } from './middleware/db-trx.middleware'
 
 
@@ -58,6 +58,10 @@ export class AutoConfiguration implements ILifeCycle {
   async onReady(container: IMidwayContainer): Promise<void> {
     void container
     assert(this.cacheManager, 'cacheManager is not ready')
+
+    const trxStatusSvc = await container.getAsync(TrxStatusService)
+    // @ts-ignore
+    this.app[`_${ConfigKey.trxStatusService}`] = trxStatusSvc
 
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
     registerMiddleware(this.app, KmoreMiddleware)
@@ -91,6 +95,12 @@ export class AutoConfiguration implements ILifeCycle {
       .catch((ex: Error) => {
         console.error(ex.message)
       })
+
+    const trxStatusSvc = await container.getAsync(TrxStatusService)
+    trxStatusSvc.cleanAfterRequestFinished(this.app)
+    // @ts-ignore
+    this.app[`_${ConfigKey.trxStatusService}`] = null
+
     this.logger.info(`[${ConfigKey.componentName}] onStop() doen`)
   }
 }

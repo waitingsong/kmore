@@ -1,8 +1,8 @@
 import assert from 'node:assert'
 // import { isProxy } from 'node:util/types'
 
-import { Inject, Provide } from '@midwayjs/core'
-import { Attributes, AttrNames, TraceLogger, TraceService } from '@mwcp/otel'
+import { Inject, Singleton } from '@midwayjs/core'
+import { Attributes, AttrNames, TraceAppLogger, OtelComponent, Span } from '@mwcp/otel'
 import { CallerInfo, genISO8601String, getCallerStack } from '@waiting/shared-core'
 import {
   genKmoreTrxId,
@@ -20,18 +20,22 @@ import { genTrxRequired } from './propagation/propagating.required'
 import { genTrxSupports } from './propagation/propagating.supports'
 import {
   CallerKey,
-  CallerKeyFileMap,
-  CallerKeyPropagationMap,
-  CallerTreeMap,
-  EntryCallerKeyTrxMap,
   FilePath,
   PropagatingOptions,
   PropagatingRet,
   RegisterTrxPropagateOptions,
   TraceEndOptions,
   TransactionalEntryType,
-  TrxStatusServiceBase,
-} from './propagation/trx-status.base'
+  AbstractTrxStatusService,
+  CallerKeyPropagationMapIndex,
+  DbIdTrxIdMapIndex,
+  EntryCallerKeyTrxMapIndex,
+  CallerKeyFileMapIndex,
+  RegisterTrxContext,
+  CallerTreeMapIndex,
+  CallerTreeMap,
+  CallerKeyArray,
+} from './propagation/trx-status.abstract'
 import {
   genCallerKey,
   getSimpleCallers,
@@ -50,23 +54,25 @@ const skipMethodNameSet = new Set([
 ])
 
 /**
- * Declaritive transaction status manager
+ * Singleton Declaritive transaction status manager
  */
-@Provide()
-export class TrxStatusService extends TrxStatusServiceBase {
+@Singleton()
+export class TrxStatusService extends AbstractTrxStatusService {
 
   @Inject() readonly appDir: string
   @Inject() readonly dbSourceManager: DbSourceManager
-  @Inject() readonly logger: TraceLogger
-  @Inject() readonly traceSvc: TraceService
+  // @Inject() readonly logger: TraceLogger
+  @Inject() readonly logger: TraceAppLogger
+  @Inject() readonly otel: OtelComponent
 
-  errorMsg = ''
+  readonly errorMsgMapIndex = new WeakMap<RegisterTrxContext, string>()
 
-  protected readonly callerKeyFileMap: CallerKeyFileMap = new Map()
-  protected readonly callerKeyPropagationMap: CallerKeyPropagationMap = new Map()
-  protected readonly dbIdTrxIdMap: Map<string, symbol[]> = new Map()
-  protected readonly entryCallerKeyTrxMap: EntryCallerKeyTrxMap = new Map()
-  protected readonly callerTreeMap: CallerTreeMap = new Map()
+  protected readonly callerKeyFileMapIndex: CallerKeyFileMapIndex = new Map()
+  protected readonly callerKeyPropagationMapIndex: CallerKeyPropagationMapIndex = new Map()
+  protected readonly callerTreeMapIndex: CallerTreeMapIndex = new Map()
+  protected readonly dbIdTrxIdMapIndex: DbIdTrxIdMapIndex = new Map()
+  protected readonly entryCallerKeyTrxMapIndex: EntryCallerKeyTrxMapIndex = new Map()
+  protected readonly trxRootSpanWeakMap = new WeakMap<RegisterTrxContext, Span>()
 
   getName(): string { return 'trxStatusService' }
 
@@ -78,16 +84,23 @@ export class TrxStatusService extends TrxStatusServiceBase {
       [AttrNames.TrxPropagationWriteRowLockLevel]: options.writeRowLockLevel,
     }
 
+    const { regContext, span } = options
+    assert(regContext, 'regContext is undefined')
+
+    if (span) {
+      this.setTrxRootSpan(regContext, span)
+    }
+
     const key = genCallerKey(options.className, options.funcName)
-    const tkey = this.retrieveTopCallerKeyFromCallStack()
-    const type = this.getPropagationType(key)
+    const tkey = this.retrieveTopCallerKeyFromCallStack(regContext)
+    const type = this.getPropagationType(regContext, key)
     if (type) {
       assert(
         type === options.type,
         `callerKey "${key}" has registered propagation "${type}", but want to register different "${options.type}"`,
       )
       if (tkey) { // has ancestor caller that registered
-        this.updateCallerTreeMap(tkey, key)
+        this.updateCallerTreeMap(regContext, tkey, key)
       }
       else { // getCallerStack will return insufficient sites if calling self without "await", so not top level caller
         // this.updateCallerTreeMapWithExistsKey(key)
@@ -95,21 +108,22 @@ export class TrxStatusService extends TrxStatusServiceBase {
         Result of Query Builder MUST be "await"ed within Transactional derorator method.
         callerKey: "${key}\n"
         `
-        this.errorMsg = msg
+        this.setErrorMsg(regContext, msg)
         const err = new Error(msg)
-        this.traceSvc.setRootSpanWithError(err)
+        span && this.otel.setSpanWithError(void 0, span, err)
         throw err
       }
       event[AttrNames.TransactionalEntryType] = TransactionalEntryType.sub
     }
     else {
       this.setPropagationOptions(key, options)
+
       if (tkey) { // has ancestor caller that registered
-        this.updateCallerTreeMap(tkey, key)
+        this.updateCallerTreeMap(regContext, tkey, key)
         event[AttrNames.TransactionalEntryType] = TransactionalEntryType.sub
       }
       else { // top level caller
-        this.updateCallerTreeMap(key, void 0)
+        this.updateCallerTreeMap(regContext, key, void 0)
         event[AttrNames.TransactionalEntryType] = TransactionalEntryType.top
       }
     }
@@ -117,29 +131,30 @@ export class TrxStatusService extends TrxStatusServiceBase {
     trxTrace({
       type: 'event',
       appDir: this.appDir,
-      span: void 0,
-      traceSvc: this.traceSvc,
-      trxPropagateOptions: options,
       attr: event,
+      otel: this.otel,
+      span,
+      trxPropagateOptions: options,
     })
 
     return key
   }
 
-  async trxCommitIfEntryTop(callerKey: CallerKey): Promise<void> {
-    let tkey = this.retrieveUniqueTopCallerKey(callerKey)
+  async trxCommitIfEntryTop(regContext: RegisterTrxContext, callerKey: CallerKey): Promise<void> {
+    let tkey = this.retrieveUniqueTopCallerKey(regContext, callerKey)
     if (! tkey) {
-      const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
+      const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(regContext, callerKey)
 
       if (! tkeyArr.length) {
         const msg = `${Msg.callerKeyNotRegisteredOrNotEntry}: "${callerKey}".
         Maybe calling async function without "await", or has been removed with former error.\n`
-        this.logger.error(msg)
+        const span = this.getTrxRootSpan(regContext)
+        this.logger.error(msg, span)
         throw new Error(msg)
         // return
       }
       else if (tkeyArr.length > 1) { // multiple callings
-        this.removeLastKeyFromCallerTreeArray(callerKey)
+        this.removeLastKeyFromCallerTreeArray(regContext, callerKey)
         return
       }
       tkey = tkeyArr[0]
@@ -148,19 +163,22 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
 
     if (callerKey !== tkey) {
-      this.removeLastKeyFromCallerTreeArray(callerKey)
+      this.removeLastKeyFromCallerTreeArray(regContext, callerKey)
       return
     }
 
-    const trxs = this.getTrxArrayByEntryKey(tkey)
+    const trxs = this.getTrxArrayByEntryKey(regContext, tkey)
     if (! trxs?.length) {
-      this.cleanAfterTrx(tkey)
+      this.cleanAfterTrx(regContext, tkey)
       return
     }
 
-    if (this.errorMsg) {
-      this.logger.error(`ROLLBACK when commit top entry for key: "${tkey}"`, this.errorMsg)
-      return this.trxRollbackEntry(callerKey)
+    const span = this.getTrxRootSpan(regContext)
+
+    const errorMsg = this.getErrorMsg(regContext)
+    if (errorMsg) {
+      this.logger.error(`ROLLBACK when commit top entry for key: "${tkey}"`, span, errorMsg)
+      return this.trxRollbackEntry(regContext, callerKey)
     }
 
     for (let i = trxs.length - 1; i >= 0; i -= 1) {
@@ -170,20 +188,21 @@ export class TrxStatusService extends TrxStatusServiceBase {
       const { trxPropagateOptions } = trx
       // eslint-disable-next-line no-await-in-loop
       await trx.commit()
-      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
+      this.removeTrxIdFromDbIdMap(regContext, trx.dbId, trx.kmoreTrxId)
 
       this.traceEnd({
         op: 'commit',
         kmoreTrxId: trx.kmoreTrxId,
+        span,
         trxPropagateOptions,
       })
     }
-    this.cleanAfterTrx(tkey)
+    this.cleanAfterTrx(regContext, tkey)
   }
 
-  async trxRollbackEntry(callerKey: CallerKey): Promise<void> {
+  async trxRollbackEntry(regContext: RegisterTrxContext, callerKey: CallerKey): Promise<void> {
     // const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey) ?? callerKey
-    const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
+    const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(regContext, callerKey)
     let tkey = callerKey
     if (tkeyArr.length > 0) {
       const key = tkeyArr.at(-1) // pick last one
@@ -192,11 +211,13 @@ export class TrxStatusService extends TrxStatusServiceBase {
       }
     }
 
-    const trxs = this.getTrxArrayByEntryKey(tkey)
+    const trxs = this.getTrxArrayByEntryKey(regContext, tkey)
     if (! trxs?.length) {
-      this.cleanAfterTrx(tkey)
+      this.cleanAfterTrx(regContext, tkey)
       return
     }
+
+    const span = this.getTrxRootSpan(regContext)
 
     for (let i = 0, len = trxs.length; i < len; i += 1) {
       const trx = trxs[i]
@@ -209,24 +230,31 @@ export class TrxStatusService extends TrxStatusServiceBase {
       }
       catch (ex) {
         const msg = `ROLLBACK failed for key: "${tkey}". This error will be ignored, continue next trx rollback.`
-        this.logger.error(msg, ex)
+        this.logger.error(msg, span, ex)
       }
-      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
+      this.removeTrxIdFromDbIdMap(regContext, trx.dbId, trx.kmoreTrxId)
 
       this.traceEnd({
         op: 'rollback',
         kmoreTrxId: trx.kmoreTrxId,
+        span,
         trxPropagateOptions,
       })
     }
 
-    this.cleanAfterTrx(tkey)
+    this.cleanAfterTrx(regContext, tkey)
   }
 
 
-  retrieveTopCallerKeyFromCallStack(limit = 64): CallerKey | undefined {
+  retrieveTopCallerKeyFromCallStack(
+    regContext: RegisterTrxContext,
+    limit = 64,
+  ): CallerKey | undefined {
+
     const callers = getSimpleCallers(limit)
     if (! callers.length) { return }
+
+    assert(regContext, 'regContext is undefined')
 
     for (let i = callers.length - 1; i > 1; i -= 1) {
       const caller = callers[i]
@@ -237,17 +265,18 @@ export class TrxStatusService extends TrxStatusServiceBase {
       if (skipMethodNameSet.has(caller.methodName)) { continue }
 
       const key = genCallerKey(caller.className, caller.funcName)
-      if (this.isRegistered(key)) {
+      if (this.isRegistered(regContext, key)) {
         return key
       }
     }
   }
 
-  retrieveFirstAncestorCallerKeyByCallerKey(key: CallerKey): CallerKey | undefined {
-    if (! this.callerTreeMap.size) { return }
+  retrieveFirstAncestorCallerKeyByCallerKey(regContext: RegisterTrxContext, key: CallerKey): CallerKey | undefined {
+    const map = this.getCallerTreeMap(regContext)
+    if (! map?.size) { return }
 
     let ret: CallerKey | undefined
-    for (const [pkey, arr] of this.callerTreeMap.entries()) {
+    for (const [pkey, arr] of map.entries()) {
       if (arr.includes(key)) {
         ret = pkey
       }
@@ -255,13 +284,15 @@ export class TrxStatusService extends TrxStatusServiceBase {
     return ret
   }
 
-  retrieveTopCallerKeyArrayByCallerKey(key: CallerKey): CallerKey[] {
+  retrieveTopCallerKeyArrayByCallerKey(regContext: RegisterTrxContext, key: CallerKey): CallerKey[] {
     const ret: CallerKey[] = []
-    if (! this.callerTreeMap.size) {
+
+    const map = this.getCallerTreeMap(regContext)
+    if (! map?.size) {
       return ret
     }
 
-    for (const [tkey, arr] of this.callerTreeMap.entries()) {
+    for (const [tkey, arr] of map.entries()) {
       if (! arr.includes(key)) { continue }
 
       arr.forEach((kk) => {
@@ -273,11 +304,12 @@ export class TrxStatusService extends TrxStatusServiceBase {
     return ret
   }
 
-  retrieveUniqueTopCallerKey(key: CallerKey): CallerKey | undefined {
-    if (! this.callerTreeMap.size) { return }
+  retrieveUniqueTopCallerKey(regContext: RegisterTrxContext, key: CallerKey): CallerKey | undefined {
+    const map = this.getCallerTreeMap(regContext)
+    if (! map?.size) { return }
 
     let ret: CallerKey | undefined
-    for (const [tkey, arr] of this.callerTreeMap.entries()) {
+    for (const [tkey, arr] of map.entries()) {
       if (! arr.includes(key)) { continue }
 
       for (const kk of arr) {
@@ -295,15 +327,18 @@ export class TrxStatusService extends TrxStatusServiceBase {
 
 
   bindBuilderPropagationData(
+    regContext: RegisterTrxContext,
     builder: KmoreQueryBuilder,
     distance = 0,
   ): KmoreQueryBuilder {
+
+    assert(regContext, 'regContext is required')
 
     if (builder.trxPropagated) {
       return builder
     }
 
-    const count = this.getPropagationOptionsCount()
+    const count = this.getPropagationOptionsCount(regContext)
     if (! count) {
       return builder
     }
@@ -321,17 +356,17 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
 
     const key = genCallerKey(callerInfo.className, callerInfo.funcName)
-    const propagatingOptions = this.getPropagationOptions(key)
+    const propagatingOptions = this.getPropagationOptions(regContext, key)
     if (! propagatingOptions?.type) {
       return builder
     }
     const { readRowLockLevel, writeRowLockLevel } = propagatingOptions
 
-    this.validateCallerKeyUnique(key, callerInfo.path)
-    this.callerKeyFileMap.set(key, callerInfo.path)
+    this.validateCallerKeyUnique(regContext, key, callerInfo.path)
+    this.setFilePathToCallerKeyFileMapIndex(regContext, key, callerInfo.path)
 
     // const entryKey = this.retrieveFirstAncestorCallerKeyByCallerKey(key) ?? ''
-    const entryKey = this.retrieveTopCallerKeyArrayByCallerKey(key).at(-1) ?? ''
+    const entryKey = this.retrieveTopCallerKeyArrayByCallerKey(regContext, key).at(-1) ?? ''
 
     const value: TrxPropagateOptions = {
       entryKey,
@@ -394,8 +429,16 @@ export class TrxStatusService extends TrxStatusServiceBase {
     return ret
   }
 
-  isRegistered(key: CallerKey): boolean {
-    return this.callerKeyPropagationMap.has(key)
+  isRegistered(
+    regContext: RegisterTrxContext,
+    key: CallerKey,
+  ): boolean {
+
+    assert(regContext, 'regContext is required')
+    const map = this.callerKeyPropagationMapIndex.get(regContext)
+    if (! map) { return false }
+    const ret = map.has(key)
+    return ret
   }
 
   retrieveCallerInfo(distance = 0): CallerInfo {
@@ -403,8 +446,8 @@ export class TrxStatusService extends TrxStatusServiceBase {
     return callerInfo
   }
 
-  pickActiveTrx(db: Kmore): KmoreTransaction | undefined {
-    const trxId = this.getActiveTrxId(db.dbId)
+  pickActiveTrx(regContext: RegisterTrxContext, db: Kmore): KmoreTransaction | undefined {
+    const trxId = this.getActiveTrxId(regContext, db.dbId)
     if (trxId) {
       const trx = db.getTrxByKmoreTrxId(trxId)
       assert(trx, `trxId "${trxId.toString()}" not found in dbId "${db.dbId}"`)
@@ -412,7 +455,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
   }
 
-  async startNewTrx(db: Kmore, callerKey: CallerKey): Promise<KmoreTransaction> {
+  async startNewTrx(regContext: RegisterTrxContext, db: Kmore, callerKey: CallerKey): Promise<KmoreTransaction> {
     const kmoreTrxId = genKmoreTrxId('trx-', callerKey)
     assert(kmoreTrxId, `kmoreTrxId is undefined for callerKey "${callerKey}"`)
 
@@ -422,8 +465,8 @@ export class TrxStatusService extends TrxStatusServiceBase {
       `trx.kmoreTrxId "${trx.kmoreTrxId.toString()}" not equal to kmoreTrxId "${kmoreTrxId.toString()}"`,
     )
     try {
-      this.updateEntryCallerKeyTrxMap(callerKey, trx)
-      this.setActiveTrxId(db.dbId, trx.kmoreTrxId)
+      this.updateEntryCallerKeyTrxMap(regContext, callerKey, trx)
+      this.setActiveTrxId(regContext, db.dbId, trx.kmoreTrxId)
     }
     catch (ex) {
       await trx.rollback()
@@ -441,18 +484,101 @@ export class TrxStatusService extends TrxStatusServiceBase {
       trxTrace({
         type: 'tag',
         appDir: this.appDir,
-        span: querySpanInfo.span,
-        traceSvc: this.traceSvc,
         attr,
+        span: querySpanInfo.span,
+        otel: this.otel,
       })
     }
   }
 
 
+  getFilePathFromCallerKeyFileMapIndex(
+    regContext: RegisterTrxContext,
+    key: CallerKey,
+  ): string {
+
+    const map = this.callerKeyFileMapIndex.get(regContext)
+    if (! map) { return '' }
+    return map.get(key) ?? ''
+  }
+
+  setFilePathToCallerKeyFileMapIndex(
+    regContext: RegisterTrxContext,
+    key: CallerKey,
+    filePath: string,
+  ): void {
+
+    let map = this.callerKeyFileMapIndex.get(regContext)
+    if (! map) {
+      map = new Map()
+      this.callerKeyFileMapIndex.set(regContext, map)
+    }
+    map.set(key, filePath)
+  }
+
+
+  getPropagationOptions(
+    regContext: RegisterTrxContext,
+    key: CallerKey,
+  ): RegisterTrxPropagateOptions | undefined {
+
+    const map = this.callerKeyPropagationMapIndex.get(regContext)
+    if (! map) { return }
+    const ret = map.get(key)
+    return ret
+  }
+
+  setPropagationOptions(
+    key: CallerKey,
+    options: RegisterTrxPropagateOptions,
+  ): void {
+
+    const { regContext } = options
+    assert(regContext, 'regContext is required')
+
+    let map = this.callerKeyPropagationMapIndex.get(regContext)
+    if (! map) {
+      map = new Map()
+      this.callerKeyPropagationMapIndex.set(regContext, map)
+    }
+    map.set(key, options)
+  }
+
+  delPropagationOptions(
+    regContext: RegisterTrxContext,
+    key: CallerKey,
+  ): void {
+
+    const map = this.callerKeyPropagationMapIndex.get(regContext)
+    if (! map) { return }
+    map.delete(key)
+  }
+
+  getTrxRootSpan(regContext: RegisterTrxContext): Span | undefined {
+    return this.trxRootSpanWeakMap.get(regContext)
+  }
+
+  setTrxRootSpan(regContext: RegisterTrxContext, span: Span): void {
+    this.trxRootSpanWeakMap.set(regContext, span)
+  }
+
+  cleanAfterRequestFinished(regContext: RegisterTrxContext): void {
+    this.callerKeyFileMapIndex.delete(regContext)
+    this.callerKeyPropagationMapIndex.delete(regContext)
+    this.callerTreeMapIndex.delete(regContext)
+    this.entryCallerKeyTrxMapIndex.delete(regContext)
+    this.errorMsgMapIndex.delete(regContext)
+    this.trxRootSpanWeakMap.delete(regContext)
+  }
+
+  override delTrxRootSpan(regContext: RegisterTrxContext): void {
+    this.trxRootSpanWeakMap.delete(regContext)
+  }
+
   /* --------- protected methods --------- */
 
   protected traceEnd(options: TraceEndOptions): void {
-    const { kmoreTrxId, op, trxPropagateOptions } = options
+    const { kmoreTrxId, op, trxPropagateOptions, span } = options
     if (! trxPropagateOptions) { return }
 
     const attr: Attributes = {
@@ -463,27 +589,35 @@ export class TrxStatusService extends TrxStatusServiceBase {
     trxTrace({
       type: 'event',
       appDir: this.appDir,
-      span: void 0,
-      traceSvc: this.traceSvc,
-      trxPropagateOptions,
       attr,
+      otel: this.otel,
+      span,
+      trxPropagateOptions,
     })
   }
 
-  protected getActiveTrxId(dbId: string): symbol | undefined {
-    return this.dbIdTrxIdMap.get(dbId)?.at(-1)
+  protected getActiveTrxId(regContext: RegisterTrxContext, dbId: string): symbol | undefined {
+    const map = this.dbIdTrxIdMapIndex.get(regContext)
+    if (! map) { return }
+    return map.get(dbId)?.at(-1)
   }
 
   /**
-   * Append new trxId to dbIdTrxIdMap,
+   * Append new trxId to dbIdTrxIdMapIndex,
    * - If exists at last, skip append
    * - If exists in other position, throw Error
    */
-  protected setActiveTrxId(dbId: string, trxId: symbol): void {
-    let arr = this.dbIdTrxIdMap.get(dbId)
+  protected setActiveTrxId(regContext: RegisterTrxContext, dbId: string, trxId: symbol): void {
+    let map = this.dbIdTrxIdMapIndex.get(regContext)
+    if (! map) {
+      map = new Map()
+      this.dbIdTrxIdMapIndex.set(regContext, map)
+    }
+
+    let arr = map.get(dbId)
     if (! arr) {
       arr = []
-      this.dbIdTrxIdMap.set(dbId, arr)
+      map.set(dbId, arr)
     }
 
     if (arr.at(-1) === trxId) {
@@ -522,41 +656,31 @@ export class TrxStatusService extends TrxStatusServiceBase {
       trxTrace({
         type: 'tag',
         appDir: this.appDir,
+        otel: this.otel,
         span: querySpanInfo.span,
-        traceSvc: this.traceSvc,
         attr,
       })
     }
   }
 
-  protected getPropagationType(key: CallerKey): PropagationType | undefined {
-    const options = this.callerKeyPropagationMap.get(key)
+  protected getPropagationType(regContext: RegisterTrxContext, key: CallerKey): PropagationType | undefined {
+    const options = this.getPropagationOptions(regContext, key)
     return options?.type
   }
 
-  getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions | undefined {
-    const options = this.callerKeyPropagationMap.get(key)
-    return options
+  getPropagationOptionsCount(regContext: RegisterTrxContext): number {
+    const map = this.callerKeyPropagationMapIndex.get(regContext)
+    if (! map) { return 0 }
+    return map.size
   }
 
-  getPropagationOptionsCount(): number {
-    return this.callerKeyPropagationMap.size
-  }
-
-  protected setPropagationOptions(
+  protected validateCallerKeyUnique(
+    regContext: RegisterTrxContext,
     key: CallerKey,
-    options: RegisterTrxPropagateOptions,
+    path: FilePath,
   ): void {
 
-    this.callerKeyPropagationMap.set(key, options)
-  }
-
-  protected delPropagationOptions(key: CallerKey): void {
-    this.callerKeyPropagationMap.delete(key)
-  }
-
-  protected validateCallerKeyUnique(key: CallerKey, path: FilePath): void {
-    const ret = this.callerKeyFileMap.get(key)
+    const ret = this.getFilePathFromCallerKeyFileMapIndex(regContext, key)
     if (! ret) { return }
     assert(ret === path, `callerKey "${key}" must unique in all project, but in files:
       - ${path}
@@ -564,40 +688,56 @@ export class TrxStatusService extends TrxStatusServiceBase {
       Should use different className or funcName`)
   }
 
-  protected getTrxArrayByEntryKey(key: CallerKey): KmoreTransaction[] | undefined {
-    return this.entryCallerKeyTrxMap.get(key)
+  protected getTrxArrayByEntryKey(regContext: RegisterTrxContext, key: CallerKey): KmoreTransaction[] | undefined {
+    const map = this.entryCallerKeyTrxMapIndex.get(regContext)
+    if (! map) { return }
+    return map.get(key)
   }
 
-  protected updateEntryCallerKeyTrxMap(key: CallerKey, trx: KmoreTransaction): void {
-    let arr = this.getTrxArrayByEntryKey(key)
+  protected updateEntryCallerKeyTrxMap(regContext: RegisterTrxContext, key: CallerKey, trx: KmoreTransaction): void {
+    let map = this.entryCallerKeyTrxMapIndex.get(regContext)
+    if (! map) {
+      map = new Map()
+      this.entryCallerKeyTrxMapIndex.set(regContext, map)
+    }
+
+    let arr = this.getTrxArrayByEntryKey(regContext, key)
     if (! arr) {
       arr = []
-      this.entryCallerKeyTrxMap.set(key, arr)
+      map.set(key, arr)
     }
     arr.push(trx)
   }
 
 
-  // protected getCallerKeysArrayByEntryKey(entryKey: CallerKey): CallerKeyArray | undefined {
-  //   return this.callerTreeMap.get(entryKey)
-  // }
+  protected updateCallerTreeMap(
+    regContext: RegisterTrxContext,
+    entryKey: CallerKey,
+    value: CallerKey | undefined,
+  ): void {
 
-  protected updateCallerTreeMap(entryKey: CallerKey, value: CallerKey | undefined): void {
     assert(entryKey, 'entryKey is undefined')
-    let arr = this.callerTreeMap.get(entryKey)
-    if (! arr) {
-      arr = [entryKey]
-      this.callerTreeMap.set(entryKey, arr)
+
+    let callerKeys = this.getCallerKeyArray(regContext, entryKey)
+    if (! callerKeys) {
+      callerKeys = [entryKey]
+      this.setCallerKeyArray(regContext, entryKey, callerKeys)
     }
-    if (arr.length > 1024) {
+
+    if (callerKeys.length > 1024) {
       throw new Error(`callerTreeMap entryKey "${entryKey}" length > 1024, maybe circular reference`)
     }
-    value && arr.push(value)
+    value && callerKeys.push(value)
   }
 
-  protected updateCallerTreeMapWithExistsKey(entryKey: CallerKey): void {
+  protected updateCallerTreeMapWithExistsKey(regContext: RegisterTrxContext, entryKey: CallerKey): void {
     assert(entryKey, 'entryKey is undefined')
-    const arr = this.callerTreeMap.get(entryKey)
+    const map = this.getCallerTreeMap(regContext)
+    if (! map) {
+      throw new Error('callerTreeMapIndex not exists for regContext ')
+    }
+
+    const arr = map.get(entryKey)
     if (! arr) {
       throw new Error(`entryKey "${entryKey}" not exists in callerTreeMap, but should exists for multiple entry`)
     }
@@ -607,8 +747,18 @@ export class TrxStatusService extends TrxStatusServiceBase {
     arr.push(entryKey)
   }
 
-  protected delLastCallerKeyFromCallerTreeMap(entryKey: CallerKey, key: CallerKey): void {
-    const arr = this.callerTreeMap.get(entryKey)
+  protected delLastCallerKeyFromCallerTreeMap(
+    regContext: RegisterTrxContext,
+    entryKey: CallerKey,
+    key: CallerKey,
+  ): void {
+
+    const map = this.callerTreeMapIndex.get(regContext)
+    if (! map) {
+      throw new Error('callerTreeMapIndex not exists for regContext ')
+    }
+
+    const arr = map.get(entryKey)
     if (! arr?.length) { return }
     const pos = arr.lastIndexOf(key)
     if (pos === -1) { return }
@@ -616,9 +766,13 @@ export class TrxStatusService extends TrxStatusServiceBase {
   }
 
 
-  protected removeTrxIdFromDbIdMap(dbId: string, trxId: symbol): void {
-    const trxIds = this.dbIdTrxIdMap.get(dbId)
+  protected removeTrxIdFromDbIdMap(regContext: RegisterTrxContext, dbId: string, trxId: symbol): void {
+    const map = this.dbIdTrxIdMapIndex.get(regContext)
+    if (! map) { return }
+
+    const trxIds = map.get(dbId)
     if (! trxIds) { return }
+
     const index = trxIds.indexOf(trxId)
     if (index === -1) { return }
     trxIds.splice(index, 1)
@@ -627,10 +781,11 @@ export class TrxStatusService extends TrxStatusServiceBase {
   /**
    * If key is not the last one, throw error
    */
-  protected removeLastKeyFromCallerTreeArray(key: CallerKey): void {
-    if (! this.callerTreeMap.size) { return }
+  protected removeLastKeyFromCallerTreeArray(regContext: RegisterTrxContext, key: CallerKey): void {
+    const map = this.callerTreeMapIndex.get(regContext)
+    if (! map) { return }
 
-    for (const [tkey, arr] of this.callerTreeMap.entries()) {
+    for (const [tkey, arr] of map.entries()) {
       if (! arr.includes(key)) { continue }
       const lastKey = arr.at(-1)
       assert(lastKey, 'callerTreeMap lastKey is undefined, during trx commit/rollback')
@@ -646,12 +801,52 @@ export class TrxStatusService extends TrxStatusServiceBase {
     }
   }
 
-  protected cleanAfterTrx(callerKey: CallerKey): void {
-    this.entryCallerKeyTrxMap.delete(callerKey)
-    this.callerTreeMap.delete(callerKey)
-    this.delPropagationOptions(callerKey)
+  protected cleanAfterTrx(regContext: RegisterTrxContext, callerKey: CallerKey): void {
+    const map = this.entryCallerKeyTrxMapIndex.get(regContext)
+    if (map) {
+      map.delete(callerKey)
+    }
+    this.delPropagationOptions(regContext, callerKey)
   }
 
+  protected getCallerTreeMap(regContext: RegisterTrxContext): CallerTreeMap | undefined {
+    return this.callerTreeMapIndex.get(regContext)
+  }
+
+  protected getCallerKeyArray(regContext: RegisterTrxContext, callerKey: CallerKey): CallerKeyArray | undefined {
+    const map = this.getCallerTreeMap(regContext)
+    if (! map) { return }
+    return map.get(callerKey)
+  }
+
+  protected setCallerKeyArray(
+    regContext: RegisterTrxContext,
+    callerKey: CallerKey,
+    keys: CallerKeyArray,
+  ): void {
+
+    assert(Array.isArray(keys), 'keys must be array')
+
+    let map = this.getCallerTreeMap(regContext)
+    if (! map) {
+      map = new Map()
+      this.callerTreeMapIndex.set(regContext, map)
+    }
+    map.set(callerKey, keys)
+  }
+
+  protected getErrorMsg(regContext: RegisterTrxContext): string | undefined {
+    const str = this.errorMsgMapIndex.get(regContext)
+    return str
+  }
+
+  protected setErrorMsg(regContext: RegisterTrxContext, str: string): void {
+    this.errorMsgMapIndex.set(regContext, str)
+  }
+
+  protected delErrorMsg(regContext: RegisterTrxContext): void {
+    this.errorMsgMapIndex.delete(regContext)
+  }
 
 }
 
