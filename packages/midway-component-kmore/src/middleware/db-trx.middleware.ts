@@ -36,7 +36,7 @@ async function middleware(
     await next()
   }
   catch (ex) {
-    console.warn('error in kmore middleware', ex)
+    console.error('Error catched by kmore middleware: >> ', ex)
     throw ex
   }
   finally {
