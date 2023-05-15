@@ -91,9 +91,9 @@ export class TrxStatusService extends TrxStatusServiceBase {
       }
       else { // getCallerStack will return insufficient sites if calling self without "await", so not top level caller
         // this.updateCallerTreeMapWithExistsKey(key)
-        const msg = `${Msg.insufficientCallstacks}. Maybe calling self without "await",
+        const msg = `${Msg.insufficientCallstacks}. Maybe calling async function without "await",
         Result of Query Builder MUST be "await"ed within Transactional derorator method.
-        callerKey: "${key}"
+        callerKey: "${key}\n"
         `
         this.errorMsg = msg
         const err = new Error(msg)
@@ -133,7 +133,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
 
       if (! tkeyArr.length) {
         const msg = `${Msg.callerKeyNotRegisteredOrNotEntry}: "${callerKey}".
-        Maybe calling self without "await", or has been removed with former error.`
+        Maybe calling async function without "await", or has been removed with former error.\n`
         this.logger.error(msg)
         throw new Error(msg)
         // return
