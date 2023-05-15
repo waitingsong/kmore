@@ -51,6 +51,7 @@ const skipMethodNameSet = new Set([
   'registerPropagation',
   'retrieveTopCallerKeyFromCallStack',
   'transactionalDecoratorExector',
+  'Object:around',
 ])
 
 /**
