@@ -8,6 +8,7 @@ export const apiPrefix = {
   crossClassDecorator: '/cross_class_decorator',
   methodDecorator: '/method_decorator',
   propagationOverride: '/method_propagation_override_class',
+  singletonDecorator: '/singleton_decorator',
 }
 
 export const apiRoute = {
