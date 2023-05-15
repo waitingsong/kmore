@@ -815,17 +815,17 @@ export class TrxStatusService extends AbstractTrxStatusService {
     this.delPropagationOptions(regContext, callerKey)
     this.delErrorMsg(regContext)
 
-    const map2 = this.callerTreeMapIndex.get(regContext)
-    void map2
-    this.delLastCallerKeyFromCallerTreeMap(regContext, callerKey, callerKey)
-    void map2
+    // const map2 = this.callerTreeMapIndex.get(regContext)
+    // void map2
+    // this.delLastCallerKeyFromCallerTreeMap(regContext, callerKey, callerKey)
+    // void map2
 
-    if (map2) {
-      const arr = map2.get(callerKey)
-      if (arr?.length === 0) {
-        map2.delete(callerKey)
-      }
-    }
+    // if (map2) {
+    //   const arr = map2.get(callerKey)
+    //   if (arr?.length === 0) {
+    //     map2.delete(callerKey)
+    //   }
+    // }
   }
 
   protected getCallerTreeMap(regContext: RegisterTrxContext): CallerTreeMap | undefined {
