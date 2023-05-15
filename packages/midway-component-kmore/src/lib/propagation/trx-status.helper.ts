@@ -21,7 +21,11 @@ import type {
 export function genCallerKey(className: string, funcName: string): CallerKey {
   assert(className, 'className is undefined')
   assert(funcName, 'funcName is undefined')
-  const key = `${className}:${funcName}`
+  const name1 = className.trim()
+  const name2 = funcName.trim()
+  assert(name1, 'className is empty')
+  assert(name2, 'funcName is empty')
+  const key = `${name1}:${name2}`
   return key as CallerKey
 }
 
