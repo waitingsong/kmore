@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [55.4.0](https://github.com/waitingsong/kmore/compare/v55.3.3...v55.4.0) (2023-05-15)
+
+
+### Features
+
+* **mwcp:** trim within genCallerKey() ([f56c6a7](https://github.com/waitingsong/kmore/commit/f56c6a7541288d838ba637fd056a85e696329101))
+
+
+
+
+
 ## [55.3.3](https://github.com/waitingsong/kmore/compare/v55.3.2...v55.3.3) (2023-05-08)
 
 **Note:** Version bump only for package kmore
