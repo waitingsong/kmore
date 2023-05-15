@@ -752,6 +752,7 @@ export class TrxStatusService extends AbstractTrxStatusService {
     regContext: RegisterTrxContext,
     entryKey: CallerKey,
     key: CallerKey,
+    removeArrayIfEmpty = true,
   ): void {
 
     const map = this.callerTreeMapIndex.get(regContext)
@@ -764,6 +765,10 @@ export class TrxStatusService extends AbstractTrxStatusService {
     const pos = arr.lastIndexOf(key)
     if (pos === -1) { return }
     arr.splice(pos, 1)
+
+    if (removeArrayIfEmpty && ! arr.length) {
+      map.delete(entryKey)
+    }
   }
 
 
@@ -809,6 +814,18 @@ export class TrxStatusService extends AbstractTrxStatusService {
     }
     this.delPropagationOptions(regContext, callerKey)
     this.delErrorMsg(regContext)
+
+    const map2 = this.callerTreeMapIndex.get(regContext)
+    void map2
+    this.delLastCallerKeyFromCallerTreeMap(regContext, callerKey, callerKey)
+    void map2
+
+    if (map2) {
+      const arr = map2.get(callerKey)
+      if (arr?.length === 0) {
+        map2.delete(callerKey)
+      }
+    }
   }
 
   protected getCallerTreeMap(regContext: RegisterTrxContext): CallerTreeMap | undefined {
