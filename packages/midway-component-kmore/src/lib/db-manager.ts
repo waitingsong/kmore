@@ -137,7 +137,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
       assert(callerKey, 'callerKey is empty')
       // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
       // if (tkey !== callerKey) {
-      await this.trxStatusSvc.trxRollbackEntry(callerKey)
+      await this.trxStatusSvc.trxRollbackEntry(this.ctx, callerKey)
       // }
     }
 
