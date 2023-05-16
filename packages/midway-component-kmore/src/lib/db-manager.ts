@@ -112,13 +112,11 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
         this.trxStatusSvc.updateBuilderSpanRowlockLevelTag(kmoreQueryId, rowLockLevel)
       }
 
-      const { className, funcName } = options.trxPropagateOptions
-      const callerKey = genCallerKey(className, funcName)
-      assert(callerKey, 'callerKey is empty')
-      const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
-      if (tkey !== callerKey) {
-        await this.trxStatusSvc.trxCommitIfEntryTop(callerKey)
-      }
+      // const { className, funcName } = options.trxPropagateOptions
+      // const callerKey = genCallerKey(className, funcName)
+      // assert(callerKey, 'callerKey is empty')
+
+      // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
     }
 
     return options.response
