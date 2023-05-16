@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [55.5.0](https://github.com/waitingsong/kmore/compare/v55.4.0...v55.5.0) (2023-05-16)
+
+
+### Features
+
+* **mwcp:** rollback transaction for all entry within DbManager.exceptionHandler() ([0c27480](https://github.com/waitingsong/kmore/commit/0c274801f7ad0a72b14f73d6cb930ada045bddd4))
+
+
+### Performance Improvements
+
+* **mwcp:** do not commit transaction within DbManager.builderResultPreProcessor() ([83d4bd3](https://github.com/waitingsong/kmore/commit/83d4bd33bcb958b6efe112e235fe6e9db7e16711))
+
+
+
+
+
 # [55.4.0](https://github.com/waitingsong/kmore/compare/v55.3.3...v55.4.0) (2023-05-15)
 
 
