@@ -116,11 +116,11 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
       const callerKey = genCallerKey(className, funcName)
       assert(callerKey, 'callerKey is empty')
 
-      const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(this.ctx, callerKey)
-      assert(tkey, `tkey is empty during builderResultPreProcessor for callerKey: "${callerKey}"`)
-      if (tkey !== callerKey) {
-        await this.trxStatusSvc.trxCommitIfEntryTop(this.ctx, callerKey)
-      }
+      // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(this.ctx, callerKey)
+      // assert(tkey, `tkey is empty during builderResultPreProcessor for callerKey: "${callerKey}"`)
+      // if (tkey !== callerKey) {
+      await this.trxStatusSvc.trxCommitIfEntryTop(this.ctx, callerKey)
+      // }
     }
 
     return options.response
