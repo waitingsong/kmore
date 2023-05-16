@@ -135,10 +135,10 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
       const { className, funcName } = options.trxPropagateOptions
       const callerKey = genCallerKey(className, funcName)
       assert(callerKey, 'callerKey is empty')
-      const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
-      if (tkey !== callerKey) {
-        await this.trxStatusSvc.trxRollbackEntry(callerKey)
-      }
+      // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+      // if (tkey !== callerKey) {
+      await this.trxStatusSvc.trxRollbackEntry(callerKey)
+      // }
     }
 
     return Promise.reject(options.exception)
