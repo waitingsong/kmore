@@ -80,6 +80,7 @@ export function TraceQueryEvent(
   const input: Attributes = {
     event: AttrNames.QueryStart,
     kUid,
+    bindings: data?.bindings ? JSON.stringify(data.bindings, null, 2) : void 0,
     time: genISO8601String(),
   }
   traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
@@ -103,7 +104,7 @@ export function TraceQueryEvent(
       queryUid,
       trxId: trxId ?? '',
       [SemanticAttributes.DB_STATEMENT]: data?.sql ?? '',
-      bindings: data?.bindings ? JSON.stringify(data.bindings, null, 2) : void 0,
+      // bindings: data?.bindings ? JSON.stringify(data.bindings, null, 2) : void 0,
     }
     traceSvc.setAttributes(span, attrs)
     done()
@@ -132,9 +133,9 @@ export function TraceQueryRespEvent(
       [AttrNames.QueryRowCount]: respRaw.response.rowCount ?? 0,
       [AttrNames.QueryCost]: cost,
     }
-    if (traceResponse) {
-      tags[AttrNames.QueryResponse] = JSON.stringify(respRaw.response.rows, null, 2)
-    }
+    // if (traceResponse) {
+    //   tags[AttrNames.QueryResponse] = JSON.stringify(respRaw.response.rows, null, 2)
+    // }
     traceSvc.setAttributes(span, tags)
   }
 
@@ -143,6 +144,12 @@ export function TraceQueryRespEvent(
     time: genISO8601String(),
     [AttrNames.QueryCost]: cost,
   }
+  if (respRaw?.response) {
+    input[AttrNames.QueryRowCount] = respRaw.response.rowCount ?? 0
+    if (traceResponse) {
+      input[AttrNames.QueryResponse] = JSON.stringify(respRaw.response.rows, null, 2)
+    }
+  }
 
   if (typeof sampleThrottleMs === 'number' && sampleThrottleMs > 0 && cost > sampleThrottleMs) {
     const tags: Attributes = {
@@ -150,7 +157,7 @@ export function TraceQueryRespEvent(
       [AttrNames.LogLevel]: 'warn',
     }
     if (! traceResponse && respRaw) {
-      tags[AttrNames.QueryResponse] = JSON.stringify(respRaw.response?.rows, null, 2)
+      input[AttrNames.QueryResponse] = JSON.stringify(respRaw.response?.rows, null, 2)
     }
     traceSvc.setAttributes(span, tags)
   }
