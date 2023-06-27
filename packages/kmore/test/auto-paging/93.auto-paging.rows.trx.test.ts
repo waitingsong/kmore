@@ -68,8 +68,8 @@ describe(fileShortPath(import.meta.url), () => {
       const ret12 = await tables.ref_tb_user()
         .transacting(trx)
         .autoPaging()
-        .then()
         .first()
+        .then()
       validatePagerRet(ret12, len)
 
       const ret20 = await tables.ref_tb_user()
