@@ -41,7 +41,7 @@ describe(fileShortPath(import.meta.url), () => {
         scoped.tb_user_ext.uid,
       )
         .columns(cols)
-        .then(rows => rows[0])
+        .first()
 
       console.log({ ret })
       assert(ret)
@@ -69,7 +69,7 @@ describe(fileShortPath(import.meta.url), () => {
       )
         .select('name')
         .columns(cols)
-        .then(rows => rows[0])
+        .first()
 
       assert(ret && Object.keys(ret).length === 3)
       assert(ret && typeof ret.name === 'string')

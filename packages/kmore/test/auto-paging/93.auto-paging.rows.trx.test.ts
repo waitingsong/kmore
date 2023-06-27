@@ -69,7 +69,7 @@ describe(fileShortPath(import.meta.url), () => {
         .transacting(trx)
         .autoPaging()
         .then()
-        .then(rows => rows)
+        .first()
       validatePagerRet(ret12, len)
 
       const ret20 = await tables.ref_tb_user()
@@ -307,7 +307,7 @@ async function deleteRow(
     .transacting(trx)
     .where({ uid })
     .del('*')
-    .then(rows => rows[0])
+    .first()
 
   assert(affectedRow)
   assert(affectedRow?.uid === uid)

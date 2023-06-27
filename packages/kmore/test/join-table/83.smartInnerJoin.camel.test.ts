@@ -29,7 +29,7 @@ describe(fileShortPath(import.meta.url), () => {
         .select('*')
         .where({ uid })
         // .where(km.dict.scoped.tb_user.uid, 1)
-        .then(rows => rows[0])
+        .first()
 
       assert(ret)
       assert(ret.address === 'address1')

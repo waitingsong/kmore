@@ -44,7 +44,7 @@ describe(fileShortPath(import.meta.url), () => {
       const tbUser = km.camelTables.ref_tb_user()
       const ret = await tbUser.select('realName')
         .where('uid', 1)
-        .then(rows => rows[0])
+        .first()
 
       assert(ret)
       assert(ret.realName === 'rn1')
@@ -55,7 +55,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tbUser.select('realName')
         .where('uid', 1)
         .where('realName', Math.random().toString())
-        .then(rows => rows[0])
+        .first()
 
       assert(! ret)
     })

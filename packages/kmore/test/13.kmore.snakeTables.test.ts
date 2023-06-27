@@ -44,7 +44,7 @@ describe(fileShortPath(import.meta.url), () => {
       const tbUser = km.snakeTables.ref_tb_user()
       const ret = await tbUser.select('real_name')
         .where('uid', 1)
-        .then(rows => rows[0])
+        .first()
 
       assert(ret)
       assert(ret.real_name === 'rn1')
@@ -55,7 +55,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tbUser.select('real_name')
         .where('uid', 1)
         .where('real_name', Math.random().toString())
-        .then(rows => rows[0])
+        .first()
 
       assert(! ret)
     })
