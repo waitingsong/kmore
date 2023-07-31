@@ -33,7 +33,7 @@
     "@mwcp/cache": "8 - 13",
     "@mwcp/otel": "7 - 12",
     "@mwcp/share": "5 - 8",
-    "@waiting/shared-core": "^21.2.1",
+    "@waiting/shared-core": "^21.3.0",
     "kmore": "^55.5.3",
     "knex": "^2.4.2"
   },
@@ -47,6 +47,8 @@
   },
   "files": [
     "README.*.md",
+    "tsconfig.json",
+    "tsconfig.base.json",
     "bin/*.js",
     "dist"
   ],
@@ -70,8 +72,8 @@
     "pretest": "npm run build",
     "pretest:local": "npm run build",
     "start": "node bootstrap.js",
-    "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false",
-    "test:local": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --parallel=false",
+    "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha ",
+    "test:local": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha ",
     "tsc": "tsc -b"
   }
 }
