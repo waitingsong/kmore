@@ -62,7 +62,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && npm run tsc && tsc-alias && npm run rp",
+    "build": "npm run tsc && tsc-alias && npm run rp",
     "clean": "npm run clean:lock & npm run clean:cache & rm -rf dist/*",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",
     "clean:lock": "rm package-lock.json -f",
