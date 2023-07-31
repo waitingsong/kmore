@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [55.6.0](https://github.com/waitingsong/kmore/compare/v55.5.3...v55.6.0) (2023-07-31)
+
+
+### Features
+
+* support nodejs v20+ ([5ce6cac](https://github.com/waitingsong/kmore/commit/5ce6cacefb6efda26c32006746d3eab95badd154))
+
+
+
+
+
 ## [55.5.3](https://github.com/waitingsong/kmore/compare/v55.5.2...v55.5.3) (2023-06-27)
 
 **Note:** Version bump only for package kmore-cli
