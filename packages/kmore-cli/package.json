@@ -33,9 +33,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^21.2.1",
-    "@waiting/shared-types": "^21.2.0",
-    "@waiting/shared-types-dev": "^13.0.0",
+    "@waiting/shared-core": "^21.3.0",
+    "@waiting/shared-types": "^21.3.0",
+    "@waiting/shared-types-dev": "^14.1.0",
     "kmore-types": "^55.3.3",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.0",
@@ -47,12 +47,13 @@
     "rxrunscript": "^11.0.1"
   },
   "engines": {
-    "node": ">=16.13.0 <=19.9.0"
+    "node": ">=16.13.0"
   },
   "files": [
     "README.*.md",
-    "tsconfig.json",
     "Dockerfile",
+    "tsconfig.json",
+    "tsconfig.base.json",
     "src/**/*.ts",
     "bin/*.js",
     "dist"
@@ -65,15 +66,16 @@
     "clean": "npm run clean:lock & npm run clean:cache & rm -rf dist/*",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",
     "clean:lock": "rm package-lock.json -f",
-    "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json c8 mocha --loader=ts-node/esm --parallel=false",
+    "cov": "cross-env TS_NODE_PROJECT=test/tsconfig.json c8 mocha --parallel=false",
     "lint": "eslint --fix --cache {src,test}/**/*.ts",
     "lint:nofix": "eslint --cache {src,test}/**/*.ts",
     "purge": "npm run clean && rm node_modules -rf",
     "rp": "rollup -c rollup.config.js --context this",
+    "prepack": "rm -f dist/tsconfig.tsbuildinfo",
     "pretest": "npm run build",
     "pretest:local": "npm run build",
-    "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha --loader=ts-node/esm",
-    "test:local": "cross-env TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha --loader=ts-node/esm --parallel=false",
+    "test": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha",
+    "test:local": "cross-env TS_NODE_PROJECT=test/tsconfig.json ../../node_modules/.bin/mocha",
     "tsc": "tsc -b "
   }
 }
