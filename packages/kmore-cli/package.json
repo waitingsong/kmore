@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "cross-env": "7",
-    "rxrunscript": "^11.0.1"
+    "zx": "7"
   },
   "engines": {
     "node": ">=16.13.0"

@@ -10,7 +10,7 @@ import {
 } from '@waiting/shared-core'
 import { firstValueFrom } from 'rxjs'
 import { tap, finalize, delay, defaultIfEmpty } from 'rxjs/operators'
-import { run } from 'rxrunscript'
+import { $ } from 'zx'
 
 import { runCmd, RunCmdArgs } from '../src/index.js'
 
@@ -28,11 +28,11 @@ describe(fileShortPath(import.meta.url), () => {
   const jsPaths: string[] = ['demo1.d.ts']
 
   beforeEach(async () => {
-    await firstValueFrom(run(`git restore ${demoPath}`))
+    await $`git restore ${demoPath}`
   })
   after(async () => {
     await rm(demoPath, { recursive: true })
-    await firstValueFrom(run(`git restore ${demoPath}`))
+    await $`git restore test/demo`
   })
 
   describe('Should cmd gen work', () => {
