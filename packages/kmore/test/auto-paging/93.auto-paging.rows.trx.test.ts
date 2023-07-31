@@ -68,7 +68,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret12 = await tables.ref_tb_user()
         .transacting(trx)
         .autoPaging()
-        .first()
+        // .first() // not support first() with autoPaging()
         .then()
       validatePagerRet(ret12, len)
 
@@ -194,7 +194,7 @@ describe(fileShortPath(import.meta.url), () => {
 
 
 
-function validatePagerRet(input: PageRawType<UserDTO>, len = 3): void {
+function validatePagerRet(input: PageRawType<UserDTO> | undefined, len = 3): void {
   assert(input)
 
   assert(Object.hasOwn(input, 'total'))
@@ -307,7 +307,7 @@ async function deleteRow(
     .transacting(trx)
     .where({ uid })
     .del('*')
-    .first()
+    .then(rows => rows[0])
 
   assert(affectedRow)
   assert(affectedRow?.uid === uid)
