@@ -1,3 +1,4 @@
+import { $ } from 'zx'
 
 /**
  * @see https://mochajs.org/#root-hook-plugins
@@ -19,6 +20,7 @@ export const mochaHooks = async () => {
     },
 
     afterAll: async () => {
+      await $`git restore test/demo`
       return
     },
   }

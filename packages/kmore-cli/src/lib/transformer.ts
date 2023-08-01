@@ -1,17 +1,16 @@
 import assert from 'node:assert'
+import { readFile } from 'node:fs/promises'
+// import { resolve } from 'node:path'
 
-import {
-  pathResolve,
-  readFileLineRx,
-} from '@waiting/shared-core'
+import { pathResolve } from '@waiting/shared-core'
 import {
   TransFormOptions,
   createSourceFile,
   transformCallExpressionToLiteralType,
 } from '@waiting/shared-types-dev'
 import { CallerFuncNameSet } from 'kmore-types'
-import { from as ofrom, of, Observable, iif, defer } from 'rxjs'
-import { map, mergeMap, filter, reduce, take, catchError, defaultIfEmpty } from 'rxjs/operators'
+import { from as ofrom, of, Observable, iif, tap, lastValueFrom } from 'rxjs'
+import { map, mergeMap, filter } from 'rxjs/operators'
 import { walk, EntryType } from 'rxwalker'
 // eslint-disable-next-line import/named
 import { CacheStrategy, TsConfigResolverOptions, tsconfigResolver } from 'tsconfig-resolver'
@@ -26,63 +25,60 @@ import { FilePath, Options } from './types.js'
  * for testing.
  * no path value emitted if no file generated.
  */
-export function buildSource(options: Options): Observable<FilePath> {
+export async function buildSource(options: Options): Promise<Set<FilePath>> {
   const opts: Required<Options> = {
     ...initOptions,
     ...options,
   }
 
-  const tsConfig$ = defer(async () => {
-    if (typeof opts.path === 'string') {
-      opts.path = opts.path.replace(/\\/ug, '/')
-    }
-    else if (Array.isArray(opts.path)) {
-      opts.path = opts.path.map(str => str.replace(/\\/ug, '/'))
-    }
+  if (typeof opts.path === 'string') {
+    opts.path = opts.path.replace(/\\/ug, '/')
+  }
+  else if (Array.isArray(opts.path)) {
+    opts.path = opts.path.map(str => str.replace(/\\/ug, '/'))
+  }
 
-    if (opts.project) {
-      const project = opts.project.replace(/\\/ug, '/')
-      if (project.startsWith('.') || ! project.includes('/')) {
-        opts.project = `${process.cwd()}/${project}`
-      }
+  if (opts.project) {
+    const project = opts.project.replace(/\\/ug, '/')
+    if (project.startsWith('.') || ! project.includes('/')) {
+      opts.project = `${process.cwd()}/${project}`
     }
-    else {
-      const tsopts: TsConfigResolverOptions = {
-        cache: CacheStrategy.Directory,
-      }
-      if (typeof opts.path === 'string' && opts.path) {
-        tsopts.cwd = pathResolve(opts.path)
-      }
-      const tt = await tsconfigResolver(tsopts)
-      if (! tt.path) {
-        throw new Error('Parameter options.p (path of tsconfig.json) is empty and none tsconfig.json found')
-      }
-      opts.project = tt.path.replace(/\\/ug, '/')
-      // console.log('used tsConfigFilePath', opts.project)
+  }
+  else {
+    const tsopts: TsConfigResolverOptions = {
+      cache: CacheStrategy.Directory,
     }
-    return opts
-  })
-  // const walk$ = walkDir(opts)
-  const walk$ = tsConfig$.pipe(
-    mergeMap(walkDir),
-  )
-  const build$ = walk$.pipe(
-    mergeMap(path => buildFile(
+    if (typeof opts.path === 'string' && opts.path) {
+      tsopts.cwd = pathResolve(opts.path)
+    }
+    const tt = await tsconfigResolver(tsopts)
+    if (! tt.path) {
+      throw new Error('Parameter options.p (path of tsconfig.json) is empty and none tsconfig.json found')
+    }
+    opts.project = tt.path.replace(/\\/ug, '/')
+    // console.log('used tsConfigFilePath', opts.project)
+  }
+
+  const ret = new Set<FilePath>()
+  const paths = await walkDir(opts)
+  for (const path of paths) {
+    // eslint-disable-next-line no-await-in-loop
+    const file = await buildFile(
       path,
       opts.project,
       options.format,
       opts.callerFuncNames,
-    ), opts.concurrent),
-    // defaultIfEmpty(''),
-  )
+    )
+    ret.add(file.trim())
+  }
 
-  return build$
+  return ret
 }
 
 /**
  * Scan and output files which are .ts type and containing keywords of Options['callerFuncNames']
  */
-export function walkDir(options: Options): Observable<FilePath> {
+export async function walkDir(options: Options): Promise<Set<FilePath>> {
   const opts: Required<Options> = {
     ...initOptions,
     ...options,
@@ -95,6 +91,8 @@ export function walkDir(options: Options): Observable<FilePath> {
   } = opts
   const maxDepth = 99
   const matchFuncNameSet = globalCallerFuncNameSet
+
+  const ret = new Set<FilePath>()
 
   const dir$: Observable<string> = iif(
     () => {
@@ -122,29 +120,25 @@ export function walkDir(options: Options): Observable<FilePath> {
       ev => ev.type === EntryType.file && ev.path.endsWith('.ts') && ! ev.path.endsWith('.d.ts'),
     ),
     map(ev => ev.path),
-    mergeMap((path) => {
-      const flag$ = ifFileContentContainsCallerFuncNames(matchFuncNameSet, maxScanLines, path)
-      return flag$.pipe(
-        map((contains) => {
-          return contains ? path : ''
-        }),
-      )
+    mergeMap(async (path) => {
+      const exists = await ifFileContentContainsCallerFuncNames(matchFuncNameSet, maxScanLines, path)
+      if (exists) {
+        return path
+      }
+      return ''
     }, concurrent),
     filter(path => path.length > 0),
-  )
-
-  const ret$ = path$.pipe(
-    reduce((acc: string[], val: string) => {
-      const path = pathResolve(val)
-      if (! acc.includes(path)) {
-        acc.push(path)
+    tap((path) => {
+      const tmp = pathResolve(path)
+      if (! ret.has(tmp)) {
+        ret.add(tmp)
       }
-      return acc
-    }, []),
-    mergeMap(paths => ofrom(paths)),
+    }),
   )
 
-  return ret$
+  await lastValueFrom(path$)
+
+  return ret
 }
 
 
@@ -222,33 +216,17 @@ function ifPathContainsKey(path: FilePath, keys: string | string[]): boolean {
   return false
 }
 
-function ifFileContentContainsCallerFuncNames(
+async function ifFileContentContainsCallerFuncNames(
   matchFuncNameSet: CallerFuncNameSet,
   maxLines: number,
   path: FilePath,
-): Observable<boolean> {
+): Promise<boolean> {
 
-  const line$ = readFileLineRx(path)
-  const scan$ = line$.pipe(
-    take(maxLines >= 0 ? maxLines : 200),
-    map((content) => {
-      return hasContainsCallerFuncNames(matchFuncNameSet, content)
-    }),
-    filter(exists => !! exists),
-    catchError(() => of(false)),
-    defaultIfEmpty(false),
-  )
+  void maxLines
 
-  // const notExists$ = of(false)
-  // const ret$ = concat(scan$, notExists$).pipe(
-  //   take(1),
-  //   // tap((exists) => {
-  //   //   // eslint-disable-next-line no-console
-  //   //   console.info(exists)
-  //   // }),
-  // )
-
-  return scan$
+  const content = await readFile(path, 'utf-8')
+  const ret = hasContainsCallerFuncNames(matchFuncNameSet, content)
+  return ret
 }
 
 function hasContainsCallerFuncNames(

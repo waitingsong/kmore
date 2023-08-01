@@ -1,15 +1,13 @@
 import assert from 'node:assert/strict'
-import { accessSync, copyFileSync } from 'node:fs'
-import { rm } from 'node:fs/promises'
+import { stat, cp, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import {
   fileShortPath,
   genCurrentDirname,
   pathResolve,
+  sleep,
 } from '@waiting/shared-core'
-import { firstValueFrom } from 'rxjs'
-import { tap, finalize, delay, defaultIfEmpty } from 'rxjs/operators'
 import { $ } from 'zx'
 
 import { runCmd, RunCmdArgs } from '../src/index.js'
@@ -22,13 +20,16 @@ const __dirname = genCurrentDirname(import.meta.url)
 describe(fileShortPath(import.meta.url), () => {
   const tsConfigFilePath = join(__dirname, 'demo/tsconfig.json')
   const tsConfigFilePathCjs = join(__dirname, 'demo/tsconfig.cjs.json')
-  const tsDemo1 = join(__dirname, 'demo/demo1.ts')
-  const jsDemo1 = join(__dirname, 'demo/demo1.js')
+  const demo1Ts = 'demo/demo1.ts'
+  const demo1Js = 'demo/demo1.js'
+  const tsDemo1 = join(__dirname, demo1Ts)
+  const jsDemo1 = join(__dirname, demo1Js)
   const demoPath = `${__dirname}/demo`
   const jsPaths: string[] = ['demo1.d.ts']
 
   beforeEach(async () => {
-    await $`git restore ${demoPath}`
+    await sleep(100)
+    await $`git restore test/demo`
   })
   after(async () => {
     await rm(demoPath, { recursive: true })
@@ -36,7 +37,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should cmd gen work', () => {
-    it('with --path test/demo', (done) => {
+    it('with --path test/demo', async () => {
       const args: RunCmdArgs = {
         cmd: 'gen',
         debug: true,
@@ -47,25 +48,22 @@ describe(fileShortPath(import.meta.url), () => {
       const targetJs = `${jsDemo1}.${Math.random()}.js`
       jsPaths.push(targetJs)
 
-      runCmd(args)
-        .pipe(
-          defaultIfEmpty(''),
-          tap({
-            async next(path) {
-              copyFileSync(jsDemo1, targetJs)
-              accessSync(targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
-            },
-          }),
-          delay(200),
-          finalize(done),
-        )
-        .subscribe()
+      const data = await runCmd(args)
+      console.log({ data })
+      assert(Array.isArray(data))
+      assert(data.length)
 
-      return
+      for (const path of data) {
+        await cp(jsDemo1, targetJs)
+        const fileStat = await stat(targetJs)
+        assert(fileStat.isFile(), `fileStat.isFile() ${targetJs}`)
+        await assertsDemo1(path, tsDemo1, targetJs)
+
+        await rm(targetJs, { force: true })
+      }
     })
 
-    it('with --path absolute test/demo', (done) => {
+    it('with --path absolute test/demo', async () => {
       const dir = join(__dirname, 'demo')
       const args: RunCmdArgs = {
         cmd: 'gen',
@@ -77,24 +75,18 @@ describe(fileShortPath(import.meta.url), () => {
       const targetJs = `${jsDemo1}.${Math.random()}.js`
       jsPaths.push(targetJs)
 
-      runCmd(args)
-        .pipe(
-          defaultIfEmpty(''),
-          tap({
-            async next(path) {
-              copyFileSync(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
-            },
-          }),
-          delay(200),
-          finalize(done),
-        )
-        .subscribe()
+      const data = await runCmd(args)
+      assert(Array.isArray(data))
+      assert(data.length)
+      for (const path of data) {
+        await cp(jsDemo1, targetJs)
+        await assertsDemo1(path, tsDemo1, targetJs)
 
-      return
+        await rm(targetJs, { force: true })
+      }
     })
 
-    it('ESM with --path test/demo --project <tsConfigFilePath>', (done) => {
+    it('ESM with --path test/demo --project <tsConfigFilePath>', async () => {
       const args: RunCmdArgs = {
         cmd: 'gen',
         debug: false,
@@ -106,24 +98,18 @@ describe(fileShortPath(import.meta.url), () => {
       const targetJs = `${jsDemo1}.${Math.random()}.js`
       jsPaths.push(targetJs)
 
-      runCmd(args)
-        .pipe(
-          defaultIfEmpty(''),
-          tap({
-            async next(path) {
-              copyFileSync(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
-            },
-          }),
-          delay(200),
-          finalize(done),
-        )
-        .subscribe()
+      const data = await runCmd(args)
+      assert(Array.isArray(data))
+      assert(data.length)
+      for (const path of data) {
+        await cp(jsDemo1, targetJs)
+        await assertsDemo1(path, tsDemo1, targetJs)
 
-      return
+        await rm(targetJs, { force: true })
+      }
     })
 
-    it('CJS with --path test/demo --project <tsConfigFilePath>', (done) => {
+    it('CJS with --path test/demo --project <tsConfigFilePath>', async () => {
       const args: RunCmdArgs = {
         cmd: 'gen',
         debug: false,
@@ -136,24 +122,18 @@ describe(fileShortPath(import.meta.url), () => {
       const targetJs = `${jsDemo1}.${Math.random()}.cjs`
       jsPaths.push(targetJs)
 
-      runCmd(args)
-        .pipe(
-          defaultIfEmpty(''),
-          tap({
-            async next(path) {
-              copyFileSync(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
-            },
-          }),
-          delay(200),
-          finalize(done),
-        )
-        .subscribe()
+      const data = await runCmd(args)
+      assert(Array.isArray(data))
+      assert(data.length)
+      for (const path of data) {
+        await cp(jsDemo1, targetJs)
+        await assertsDemo1(path, tsDemo1, targetJs)
 
-      return
+        await rm(targetJs, { force: true })
+      }
     })
 
-    it('with --path absolute test/demo --project <tsConfigFilePath>', (done) => {
+    it('with --path absolute test/demo --project <tsConfigFilePath>', async () => {
       const dir = join(__dirname, 'demo')
       const args: RunCmdArgs = {
         cmd: 'gen',
@@ -166,21 +146,15 @@ describe(fileShortPath(import.meta.url), () => {
       const targetJs = `${jsDemo1}.${Math.random()}.js`
       jsPaths.push(targetJs)
 
-      runCmd(args)
-        .pipe(
-          defaultIfEmpty(''),
-          tap({
-            async next(path) {
-              copyFileSync(jsDemo1, targetJs)
-              await assertsDemo1(path, tsDemo1, targetJs)
-            },
-          }),
-          delay(200),
-          finalize(done),
-        )
-        .subscribe()
+      const data = await runCmd(args)
+      assert(Array.isArray(data))
+      assert(data.length)
+      for (const path of data) {
+        await cp(jsDemo1, targetJs)
+        await assertsDemo1(path, tsDemo1, targetJs)
 
-      return
+        await rm(targetJs, { force: true })
+      }
     })
   })
 })
@@ -194,14 +168,28 @@ async function assertsDemo1(
 
   console.log({ path, jsPath, tsPath })
 
-  assert(path.includes('test/demo/'))
+  const line = path.replace(/\\+/ug, '/')
+  assert(line.includes('test/demo/'), `line: ${line}`)
   assert(path.includes('.ts'))
   assert(! path.includes('d.ts'))
-  assert(pathResolve(path) === tsPath)
+  const expectPath = pathResolve(tsPath)
+  assert(expectPath === tsPath, `expectPath: ${expectPath}, tsPath: ${tsPath}`)
 
-  accessSync(path)
-  accessSync(jsPath)
-  accessSync(tsPath)
+  try {
+    await $`ls -l test/demo`
+  }
+  catch (ex) {
+    console.info({ ex })
+  }
+
+  const pathStat = await stat(path)
+  assert(pathStat.isFile(), `pathStat.isFile() ${path}`)
+
+  const jsPathStat = await stat(jsPath)
+  assert(jsPathStat.isFile(), `jsPathStat.isFile() ${jsPath}`)
+
+  const tsPathStat = await stat(tsPath)
+  assert(tsPathStat.isFile(), `tsPathStat.isFile() ${tsPath}`)
 
   let mods = {
     dict1: null,
@@ -209,9 +197,11 @@ async function assertsDemo1(
   }
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    mods = await import(jsPath)
+    const p1 = 'file://' + jsPath.replace(/\\+/ug, '/')
+    mods = await import(p1)
   }
   catch (ex) {
+    console.error('jsPath:', jsPath)
     assert(false, (ex as Error).message)
     return
   }

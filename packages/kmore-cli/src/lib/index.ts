@@ -1,25 +1,27 @@
-import { Observable } from 'rxjs'
-
 import { buildSource } from './transformer.js'
 import { RunCmdArgs, Options, FilePath } from './types.js'
 
 
-export function runCmd(args: RunCmdArgs): Observable<FilePath> {
+export async function runCmd(args: RunCmdArgs): Promise<FilePath[]> {
   const { cmd, options, debug } = args
 
   debug && console.info(options)
   switch (cmd) {
-    case 'gen':
-      return gen(options)
+    case 'gen': {
+      const resp = await gen(options)
+      return [...resp]
+    }
 
     default:
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`invalid cmd: "${cmd}"`)
   }
+
 }
 
 
-function gen(options: Options): Observable<FilePath> {
-  return buildSource(options)
+async function gen(options: Options): Promise<Set<FilePath>> {
+  const ret = await buildSource(options)
+  return ret
 }
 

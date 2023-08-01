@@ -34,22 +34,8 @@ if (args.cmd) {
     args.options = parseCliOpts(args.cmd, ps)
     args.debug && console.info(args)
 
-    runCmd(args).subscribe({
-      next: data => console.info(data),
-      error: (err: Error) => {
-        if (err.message) {
-          console.info(err.message)
-        }
-        else {
-          console.info(err)
-        }
-
-        return err.message.includes('-h')
-          ? process.exit(0)
-          : process.exit(1)
-      },
-    })
-
+    const data = await runCmd(args)
+    console.info(data)
   }
 }
 else {

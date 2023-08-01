@@ -43,8 +43,7 @@
     "tsconfig-resolver": "^3.0.1"
   },
   "devDependencies": {
-    "cross-env": "7",
-    "zx": "7"
+    "cross-env": "7"
   },
   "engines": {
     "node": ">=16.13.0"
