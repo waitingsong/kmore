@@ -12,7 +12,7 @@ import {
   transformCallExpressionToLiteralType,
   TransFormOptions,
 } from '@waiting/shared-types-dev'
-import { run } from 'rxrunscript'
+import { $ } from 'zx'
 
 import { expectedDict, expectedDict2 } from '../demo-config.js'
 
@@ -20,8 +20,10 @@ import { expectedDict, expectedDict2 } from '../demo-config.js'
 const __dirname = genCurrentDirname(import.meta.url)
 
 describe(fileShortPath(import.meta.url), () => {
-  const path1 = join(__dirname, 'demo1.ts')
-  const path3 = join(__dirname, 'demo3.ts')
+  const name1 = 'demo1.ts'
+  const name3 = 'demo3.ts'
+  const path1 = join(__dirname, name1)
+  const path3 = join(__dirname, name3)
   const tsConfigFilePath = join(__dirname, '../../tsconfig.json')
   const defaultOpts = {
     needle: 'genDbDict',
@@ -31,10 +33,10 @@ describe(fileShortPath(import.meta.url), () => {
   }
 
   beforeEach(async () => {
-    await run(`git restore ${path1} ${path3}`).toPromise()
+    await $`git restore test/literal/${name1} test/literal/${name3}`
   })
   after(async () => {
-    await run(`git restore ${path1} ${path3}`).toPromise()
+    await $`git restore test/literal/${name1} test/literal/${name3}`
   })
 
   describe('Should transform works', () => {
