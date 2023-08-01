@@ -30,12 +30,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/cache": "8 - 13",
-    "@mwcp/otel": "7 - 12",
-    "@mwcp/share": "5 - 8",
+    "@mwcp/cache": "11 - 13",
+    "@mwcp/otel": "10 - 12",
+    "@mwcp/share": "6 - 8",
     "@waiting/shared-core": "^21.3.0",
     "kmore": "^55.6.0",
-    "knex": "^2.4.2"
+    "knex": "^2.5.1"
   },
   "devDependencies": {
     "cross-env": "7",
