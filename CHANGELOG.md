@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [56.0.0](https://github.com/waitingsong/kmore/compare/v55.6.0...v56.0.0) (2023-08-01)
+
+
+### Features
+
+* **kmore-cli:** use Promise instead of Observable ([cc9fef6](https://github.com/waitingsong/kmore/commit/cc9fef6e4b661aa5b78f1556cf07cd1439f64c43))
+
+
+
+
+
 # [55.6.0](https://github.com/waitingsong/kmore/compare/v55.5.3...v55.6.0) (2023-07-31)
 
 
