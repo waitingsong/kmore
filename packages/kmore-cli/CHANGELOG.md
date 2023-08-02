@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [56.0.1](https://github.com/waitingsong/kmore/compare/v56.0.0...v56.0.1) (2023-08-02)
+
+
+### Bug Fixes
+
+* **kmore-cli:** path resolve in transformer.ts ([a12ca83](https://github.com/waitingsong/kmore/commit/a12ca83df3375591fe5b469c71db29b8469504f4))
+
+
+
+
+
 # [56.0.0](https://github.com/waitingsong/kmore/compare/v55.6.0...v56.0.0) (2023-08-01)
 
 
