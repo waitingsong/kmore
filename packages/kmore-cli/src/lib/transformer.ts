@@ -69,7 +69,8 @@ export async function buildSource(options: Options): Promise<Set<FilePath>> {
       options.format,
       opts.callerFuncNames,
     )
-    ret.add(file.trim())
+    const file2 = file.trim()
+    file2 && ret.add(file2)
   }
 
   return ret
@@ -127,10 +128,10 @@ export async function walkDir(options: Options): Promise<Set<FilePath>> {
       }
       return ''
     }, concurrent),
-    filter(path => path.length > 0),
+    // filter(path => path.length > 0),
     tap((path) => {
-      const tmp = pathResolve(path)
-      if (! ret.has(tmp)) {
+      if (path.length) {
+        const tmp = pathResolve(path)
         ret.add(tmp)
       }
     }),
