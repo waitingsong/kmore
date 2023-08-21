@@ -38,7 +38,6 @@
     "knex": "^2.5.1"
   },
   "devDependencies": {
-    "cross-env": "7",
     "kmore-cli": "^56.0.1",
     "kmore-types": "^56.0.0"
   },
