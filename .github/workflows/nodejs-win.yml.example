@@ -31,9 +31,9 @@ jobs:
         with:
           path: |
             node_modules
-            node_modules/.cache/nx
+            # node_modules/.cache/nx
             package-lock.json
-            packages/*/.eslintcache
+            # packages/*/.eslintcache
             packages/*/.tsbuildinfo
             packages/*/.vscode
             packages/*/dist
@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           export cwd=`pwd`
-          npm i --no-audit -g autocannon c8 lerna rollup zx
+          npm i --no-audit -g autocannon c8 lerna rollup tsx zx
           # npm run purge
           npm i
         env:
