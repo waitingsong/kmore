@@ -1,7 +1,7 @@
 {
   "name": "kmore-types",
   "author": "waiting",
-  "version": "56.0.0",
+  "version": "56.0.2",
   "description": "Retrieve types info from ts file",
   "keywords": [
     "kmore",
@@ -31,8 +31,6 @@
   "license": "MIT",
   "dependencies": {
     "@waiting/shared-types-dev": "^14.1.1"
-  },
-  "devDependencies": {
   },
   "engines": {
     "node": ">=16.13.0"
