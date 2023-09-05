@@ -9,16 +9,8 @@ import { $ } from 'zx'
  *  - In both modes, run before each test
  */
 export const mochaHooks = async () => {
-  // avoid run multi times
-  if (! process.env['mochaRootHookFlag']) {
-    process.env['mochaRootHookFlag'] = 'true'
-  }
 
   return {
-    beforeAll: async () => {
-      return
-    },
-
     afterAll: async () => {
       await $`git restore test/demo`
       return
