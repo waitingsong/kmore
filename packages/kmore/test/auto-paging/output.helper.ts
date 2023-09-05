@@ -5,7 +5,7 @@ import { fileShortPath } from '@waiting/shared-core'
 import { PagingOptions, KmoreFactory, PageRawType, PagingMeta, PageWrapType } from '../../src/index.js'
 import { config, dbDict } from '../test.config.js'
 
-import type { UserDTO } from '@/test.model.js'
+import type { UserDTO } from '#@/test.model.js'
 
 
 

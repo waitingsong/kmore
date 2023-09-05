@@ -7,7 +7,7 @@ import { config, dbDict } from '../test.config.js'
 
 import { validatePageRet, validatePageRetPartial, validateRet } from './util.js'
 
-import type { UserDTO } from '@/test.model.js'
+import type { UserDTO } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { PageRawType } from '../../src/index.js'
 import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
 
-import type { UserDTO } from '@/test.model.js'
+import type { UserDTO } from '#@/test.model.js'
 
 
 export function validatePageRet(input: PageRawType<UserDTO>, len = 3): void {

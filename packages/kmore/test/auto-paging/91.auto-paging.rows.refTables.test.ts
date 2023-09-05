@@ -6,7 +6,7 @@ import { KmoreFactory, PageRawType } from '../../src/index.js'
 import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
 import { config, dbDict } from '../test.config.js'
 
-import type { UserDo, UserDTO } from '@/test.model.js'
+import type { UserDo, UserDTO } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
