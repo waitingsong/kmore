@@ -1,0 +1,174 @@
+import assert from 'assert/strict'
+
+import { fileShortPath } from '@waiting/shared-core'
+import { Equals, FormatIntersect, KeyFromValue } from '@waiting/shared-types'
+
+import { DbDict } from '../src/lib/dict.js'
+import {
+  DbScopedTablesCols,
+  DbTablesCols,
+  DbTables,
+  DbTablesAliasCols,
+  TableAliasCols,
+  PickDupKeysFromTables,
+} from '../src/lib/types.js'
+
+import { Db, Db2 } from './test3.model.js'
+
+
+describe(fileShortPath(import.meta.url), () => {
+
+  describe('Should DbTableNames works', () => {
+    it('normal', () => {
+      type Foo = DbTables<Db>
+      const foo: Foo = {
+        tb_user: 'tb_user',
+        tb_user_ext: 'tb_user_ext',
+      }
+      assert(foo)
+    })
+  })
+
+  describe('Should DbTablesColNames works', () => {
+    it('normal', () => {
+      type Foo = DbTablesCols<Db>
+      const foo: Foo = {
+        tb_user: {
+          uid: 'uid',
+          name: 'name',
+          ctime: 'ctime',
+        },
+        tb_user_ext: {
+          uid: 'uid',
+          age: 'age',
+          address: 'address',
+        },
+      }
+      assert(foo)
+    })
+  })
+
+
+  describe('Should TableAliasCols works', () => {
+    it('with TbName', () => {
+      type Foo = TableAliasCols<Db['tb_user'], 'tb_user_more'>
+      const foo: Foo = {
+        tbUserMoreUid: 'tb_user_more.uid',
+        tbUserMoreName: 'tb_user_more.name',
+        tbUserMoreCtime: 'tb_user_more.ctime',
+      }
+      assert(foo)
+    })
+  })
+
+  describe('Should DbTablesAliasCols works', () => {
+    it('normal', () => {
+      type Foo = DbTablesAliasCols<Db>
+      const foo: Foo = {
+        tb_user: {
+          tbUserUid: 'tb_user.uid',
+          tbUserName: 'tb_user.name',
+          tbUserCtime: 'tb_user.ctime',
+        },
+        tb_user_ext: {
+          tbUserExtUid: 'tb_user_ext.uid',
+          tbUserExtAge: 'tb_user_ext.age',
+          tbUserExtAddress: 'tb_user_ext.address',
+        },
+      }
+      assert(foo)
+    })
+  })
+
+
+  describe('Should PickDupKeysFromTables works', () => {
+    it('normal', () => {
+      type K1 = 'tb_user'
+      type K2 = 'tb_user_ext'
+      type Foo = PickDupKeysFromTables<Db[K1], Db[K2]>
+      type T1 = 'uid'
+
+      const t1: Equals<Foo, T1> = true
+    })
+
+    it('more', () => {
+      type K1 = 'tb_user'
+      type Foo = PickDupKeysFromTables<Db[K1], Db[K1]>
+      type T1 = 'uid' | 'ctime' | 'name'
+
+      const t1: Equals<Foo, T1> = true
+    })
+  })
+
+
+  describe('Should DbScopedTablesColsNames works', () => {
+    it('normal', () => {
+      type Foo = DbScopedTablesCols<Db>
+      const foo: Foo = {
+        tb_user: {
+          uid: 'tb_user.uid',
+          name: 'tb_user.name',
+          ctime: 'tb_user.ctime',
+        },
+        tb_user_ext: {
+          uid: 'tb_user_ext.uid',
+          age: 'tb_user_ext.age',
+          address: 'tb_user_ext.address',
+        },
+      }
+      assert(foo)
+    })
+  })
+
+
+  describe('Should DbDict works', () => {
+    it('normal', () => {
+      type Foo = DbDict<Db>
+      const foo: Foo = {
+        tables: {
+          tb_user: 'tb_user',
+          tb_user_ext: 'tb_user_ext',
+        },
+        columns: {
+          tb_user: {
+            uid: 'uid',
+            name: 'name',
+            ctime: 'ctime',
+          },
+          tb_user_ext: {
+            uid: 'uid',
+            age: 'age',
+            address: 'address',
+          },
+        },
+        aliasColumns: {
+          tb_user: {
+            tbUserUid: 'tb_user.uid',
+            tbUserName: 'tb_user.name',
+            tbUserCtime: 'tb_user.ctime',
+          },
+          tb_user_ext: {
+            tbUserExtUid: 'tb_user_ext.uid',
+            tbUserExtAge: 'tb_user_ext.age',
+            tbUserExtAddress: 'tb_user_ext.address',
+          },
+        },
+        scopedColumns: {
+          tb_user: {
+            uid: 'tb_user.uid',
+            name: 'tb_user.name',
+            ctime: 'tb_user.ctime',
+          },
+          tb_user_ext: {
+            uid: 'tb_user_ext.uid',
+            age: 'tb_user_ext.age',
+            address: 'tb_user_ext.address',
+          },
+        },
+      }
+      assert(foo)
+    })
+  })
+
+})
+

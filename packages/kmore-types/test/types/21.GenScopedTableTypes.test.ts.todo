@@ -1,0 +1,54 @@
+/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import assert from 'assert/strict'
+import { basename } from '@waiting/shared-core'
+import { Equals } from '@waiting/shared-types'
+
+import { GenScopedTableType } from '../../src/lib/types'
+
+import { Db, Db2 } from '../test3.model'
+
+
+const filename = basename(__filename)
+
+describe(filename, () => {
+
+  describe('Should GenScopedTableTypes works', () => {
+    it('normal', () => {
+      type K1 = 'tb_user'
+      type Foo = GenScopedTableType<K1, 'uid', Db[K1]>
+      interface T1 {
+        'tb_user.uid': number
+      }
+
+      const t1: Equals<Foo, T1> = true
+    })
+
+    it('keys', () => {
+      type K1 = 'tb_user'
+      type Foo = GenScopedTableType<K1, 'uid' | 'ctime', Db[K1]>
+      interface T1 {
+        'tb_user.uid': number
+        'tb_user.ctime': Date | string
+      }
+
+      const t1: Equals<Foo, T1> = true
+    })
+
+    it('names and keys', () => {
+      type K1 = 'tb_user'
+      type K2 = 'tb_user_ext'
+      type Foo = GenScopedTableType<K1 | K2, 'uid' | 'ctime', Db[K1]>
+      interface T1 {
+        'tb_user.uid': number
+        'tb_user.ctime': Date | string
+        'tb_user_ext.uid': number
+        'tb_user_ext.ctime': Date | string
+      }
+
+      const t1: Equals<Foo, T1> = true
+    })
+  })
+
+})
+

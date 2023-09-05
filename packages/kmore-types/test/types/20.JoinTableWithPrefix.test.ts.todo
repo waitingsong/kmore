@@ -1,0 +1,60 @@
+/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import assert from 'assert/strict'
+import { basename } from '@waiting/shared-core'
+import { Equals, FormatIntersect, KeyFromValue } from '@waiting/shared-types'
+
+import { Db, Db2 } from '../test3.model'
+
+import { JoinTableWithPrefix } from '../../src/lib/types'
+
+
+const filename = basename(__filename)
+
+describe(filename, () => {
+
+  describe('Should JoinTableWithPrefix works', () => {
+    it('normal', () => {
+      type K1 = 'tb_user'
+      type K2 = 'tb_user_ext'
+      type Foo = FormatIntersect<JoinTableWithPrefix<Db[K1], Db[K2], K1 | K2>>
+      interface T1 {
+        name: string
+        age: number
+        address: string
+        ctime: Date | string
+        'tb_user.uid': number
+        'tb_user_ext.uid': number
+      }
+
+      const t1: Equals<Foo, T1> = true
+    })
+
+    it('self', () => {
+      type K1 = 'tb_user'
+      type Foo = FormatIntersect<JoinTableWithPrefix<Db[K1], Db[K1], K1>>
+      interface T1 {
+        'tb_user.uid': number
+        'tb_user.name': string
+        'tb_user.ctime': Date | string
+      }
+
+      const t1: Equals<Foo, T1> = true
+    })
+
+    it('self with prefix', () => {
+      type K1 = 'tb_user'
+      type K2 = 'tb_user_ext'
+      type Foo = FormatIntersect<JoinTableWithPrefix<Db[K1], Db[K1], K2>>
+      interface T1 {
+        'tb_user_ext.uid': number
+        'tb_user_ext.name': string
+        'tb_user_ext.ctime': string | Date
+      }
+
+      const t1: Equals<Foo, T1> = true
+    })
+  })
+
+})
+
