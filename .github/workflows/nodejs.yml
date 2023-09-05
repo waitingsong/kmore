@@ -23,26 +23,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Cache
-        uses: actions/cache@v3
-        id: cache-lerna
-        env:
-          cache-name: cache-lerna
-        with:
-          path: |
-            node_modules
-            # node_modules/.cache/nx
-            package-lock.json
-            # packages/*/.eslintcache
-            packages/*/.tsbuildinfo
-            packages/*/.vscode
-            packages/*/dist
-            packages/*/node_modules
-            packages/*/package-lock.json
-          key: ${{ runner.OS }}-build-${{ env.cache-name }}-${{ github.ref }}-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-${{ github.ref }}-${{ matrix.node }}-
-
       - name: Prepare
         run: |
           pwd
