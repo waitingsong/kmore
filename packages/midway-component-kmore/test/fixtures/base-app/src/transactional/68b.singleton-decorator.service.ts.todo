@@ -4,7 +4,7 @@ import {
   Config as _Config,
   Init,
   Inject,
-  Provide,
+  Singleton,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 import { KmoreQueryBuilder } from 'kmore'
@@ -17,8 +17,8 @@ import {
 import type { Db, UserDTO } from '../../../../test.model.js'
 
 
-@Provide()
-export class UserService {
+@Singleton()
+export class SingletonUserService {
 
   @Inject() dbManager: DbManager<'master', Db>
 
@@ -156,7 +156,7 @@ export class UserService {
   ): Promise<void> {
 
     const [total0, trx0] = await this.countUser()
-    assert(total0 === expectTotal)
+    assert(total0 === expectTotal, `total0: ${total0} vs expect: ${expectTotal}`)
 
     const user = await this.getUserByUid(uid)
     assert(user, 'user not found')
@@ -165,7 +165,7 @@ export class UserService {
 
     const realName = 'test' + Math.random().toString()
     const user2 = await this.updateUser(uid, realName)
-    assert(user2.realName === realName)
+    assert(user2.realName === realName, `${user2.realName} vs expect: ${realName}`)
 
     const [user3, trx3] = await this.getUsers()
     user3.forEach((row) => {
@@ -355,6 +355,7 @@ export class UserService {
     else {
       return
     }
+    console.log('selfMissingAwait', { uid, expectTotal, expectTotalNoTrx })
   }
 
   @Transactional()

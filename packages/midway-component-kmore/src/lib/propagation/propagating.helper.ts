@@ -1,8 +1,8 @@
 import { Attributes, AttrNames } from '@mwcp/otel'
 import { KmoreTransaction, TrxPropagateOptions } from 'kmore'
 
-import { TrxStatusServiceBase } from './trx-status.base'
-import { trxTrace } from './trx-status.helper'
+import { TrxStatusServiceBase } from './trx-status.base.js'
+import { trxTrace } from './trx-status.helper.js'
 
 
 export function traceGenTrx(

@@ -4,7 +4,7 @@ import { KmoreFactory, Kmore, getCurrentTime, EnumClient, KmoreFactoryOpts } fro
 import type { Knex } from 'knex'
 
 
-import { knexConfig as config, dbDict } from './config.unittest'
+import { knexConfig as config, dbDict } from './config.unittest.js'
 import { Db, UserDO, UserDTO, UserExtDO } from './test.model.js'
 
 
@@ -40,6 +40,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
   const { dict } = km
   assert(dict.tables && Object.keys(dict.tables).length > 0)
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const time = await getCurrentTime(km.dbh, config.client)
   assert(time)
   console.info(`CurrrentTime: ${time}`)
@@ -55,6 +56,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
       tb.timestamp(tb_user.ctime, { useTz: false })
     })
     .createTable(tables.tb_user_ext, (tb) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       config.client === EnumClient.mysql || config.client === EnumClient.mysql2
         ? tb.integer(tb_user_ext.uid).unsigned().primary()
         : tb.integer(tb_user_ext.uid).primary()

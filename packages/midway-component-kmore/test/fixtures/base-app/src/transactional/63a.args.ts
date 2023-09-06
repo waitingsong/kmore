@@ -9,14 +9,15 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
+
 import {
   DbManager,
   Kmore,
   PropagationType,
   Transactional,
-} from '~/index'
-import type { Db } from '@/test.model'
-import { apiPrefix, apiRoute } from '../api-route'
+} from '../../../../../dist/index.js'
+import type { Db } from '../../../../test.model.js'
+import { apiPrefix, apiRoute } from '../api-route.js'
 
 
 @Controller(apiPrefix.args)
@@ -67,7 +68,7 @@ export class TrxDecoratorArgsController {
     assert(trxPropagateOptions)
     assert(
       trxPropagateOptions.type === PropagationType.SUPPORTS,
-      `Expect ${PropagationType.SUPPORTS}, but got ${trxPropagateOptions.type}`
+      `Expect ${PropagationType.SUPPORTS}, but got ${trxPropagateOptions.type}`,
     )
     return 'OK'
   }

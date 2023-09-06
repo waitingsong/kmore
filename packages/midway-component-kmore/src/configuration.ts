@@ -1,11 +1,11 @@
-import 'tsconfig-paths/register'
 import assert from 'node:assert'
-import { join } from 'node:path'
 
 import {
   App,
   Config,
   Configuration,
+  MidwayEnvironmentService,
+  MidwayInformationService,
   ILifeCycle,
   ILogger,
   Inject,
@@ -19,30 +19,43 @@ import {
   IMidwayContainer,
   RegisterDecoratorHandlerParam,
   registerDecoratorHandler,
+  registerMiddleware,
 } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
 
+
+import * as DefulatConfig from './config/config.default.js'
+import * as LocalConfig from './config/config.local.js'
+import * as UnittestConfig from './config/config.unittest.js'
 import {
   METHOD_KEY_Transactional,
   genDecoratorExecutorOptions,
   transactionalDecoratorExecutor,
-} from './decorator/decorator.helper'
-import { useComponents } from './imports'
-import { DbSourceManager } from './lib/db-source-manager'
-import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index'
-import { KmoreMiddleware } from './middleware/db-trx.middleware'
+} from './decorator/decorator.helper.js'
+import { useComponents } from './imports.js'
+import { DbSourceManager } from './lib/db-source-manager.js'
+import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
+import { KmoreMiddleware } from './middleware/index.middleware.js'
 
 
 @Configuration({
   namespace: ConfigKey.namespace,
-  importConfigs: [join(__dirname, 'config')],
+  importConfigs: [
+    {
+      default: DefulatConfig,
+      local: LocalConfig,
+      unittest: UnittestConfig,
+    },
+  ],
   imports: useComponents,
 })
 export class AutoConfiguration implements ILifeCycle {
 
   @App() readonly app: Application
 
-  @Logger() logger: ILogger
+  @Inject() protected readonly environmentService: MidwayEnvironmentService
+  @Inject() protected readonly informationService: MidwayInformationService
+  @Logger() protected readonly logger: ILogger
 
   @Config() readonly kmoreSourceConfig: KmoreSourceConfig
 
@@ -95,26 +108,3 @@ export class AutoConfiguration implements ILifeCycle {
   }
 }
 
-
-function registerMiddleware(
-  app: Application,
-  middleware: { name: string },
-  postion: 'first' | 'last' = 'last',
-): void {
-
-  const mwNames = app.getMiddleware().getNames()
-  if (mwNames.includes(middleware.name)) {
-    return
-  }
-
-  switch (postion) {
-    case 'first':
-      // @ts-ignore
-      app.getMiddleware().insertFirst(middleware)
-      break
-    case 'last':
-      // @ts-ignore
-      app.getMiddleware().insertLast(middleware)
-      break
-  }
-}

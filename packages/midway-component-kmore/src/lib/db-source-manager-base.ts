@@ -16,7 +16,7 @@ import {
   QuerySpanInfo,
 } from 'kmore'
 
-import { DbConfig } from './types'
+import { DbConfig } from './types.js'
 
 
 export abstract class AbstractDbSourceManager

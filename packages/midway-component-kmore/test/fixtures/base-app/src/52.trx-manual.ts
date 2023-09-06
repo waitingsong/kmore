@@ -9,13 +9,13 @@ import {
   Param,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
+import { KmoreTransaction } from 'kmore'
 
 import {
   DbManager,
   Kmore,
-} from '~/index'
-import type { Db } from '@/test.model'
-import { KmoreTransaction } from 'kmore'
+} from '../../../../dist/index.js'
+import type { Db } from '../../../test.model.js'
 
 
 @Controller('/trx_manual')
@@ -45,7 +45,7 @@ export class TrxController {
     const currCtime2 = await this.ref_tb_user()
       .transacting(trx)
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime2)
 
@@ -62,7 +62,7 @@ export class TrxController {
     const currCtime2 = await this.ref_tb_user()
       .transacting(trx)
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime2)
 
@@ -74,7 +74,7 @@ export class TrxController {
   protected async update(uid: number, trx: KmoreTransaction): Promise<void> {
     const currCtime = await this.ref_tb_user()
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
@@ -85,12 +85,12 @@ export class TrxController {
       .update({
         ctime: newTime,
       })
-      .where({uid})
+      .where({ uid })
 
     const currCtime2 = await this.ref_tb_user()
       .transacting(trx)
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime2)
 

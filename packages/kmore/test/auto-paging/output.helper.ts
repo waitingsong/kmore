@@ -1,12 +1,7 @@
 import assert from 'node:assert/strict'
 
-import { fileShortPath } from '@waiting/shared-core'
-
-import { PagingOptions, KmoreFactory, PageRawType, PagingMeta, PageWrapType } from '../../src/index.js'
-import { config, dbDict } from '../test.config.js'
-
+import { PageRawType, PagingMeta, PageWrapType } from '##/index.js'
 import type { UserDTO } from '#@/test.model.js'
-
 
 
 export function validateOptionsPageWrapRet(input: PageWrapType<UserDTO>, expect: PagingMeta): void {

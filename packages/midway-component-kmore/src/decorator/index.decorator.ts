@@ -19,13 +19,13 @@ import {
   TransactionalArgs,
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
-} from './decorator.helper'
+} from './decorator.helper.js'
 
 
 export {
   classDecoratorKeyMap,
   methodDecoratorKeyMap,
-} from './decorator.helper'
+} from './decorator.helper.js'
 
 export {
   TransactionalArgs as DecoratorArgs,

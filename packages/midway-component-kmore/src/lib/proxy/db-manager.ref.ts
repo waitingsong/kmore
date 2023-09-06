@@ -19,11 +19,11 @@ import {
   TbQueryBuilderOptions,
 } from 'kmore'
 
-import { DbSourceManager } from '../db-source-manager'
-import { TrxStatusService } from '../trx-status.service'
-import { KmoreAttrNames } from '../types'
+import { DbSourceManager } from '../db-source-manager.js'
+import { TrxStatusService } from '../trx-status.service.js'
+import { KmoreAttrNames } from '../types.js'
 
-import { BuilderKeys, builderKeys, Dbqb } from './db-manager.types'
+import { BuilderKeys, builderKeys, Dbqb } from './db-manager.types.js'
 
 
 export interface ProxyRefOptions {
@@ -32,6 +32,7 @@ export interface ProxyRefOptions {
   ctxExceptionHandler: CtxExceptionHandler | undefined
   dbSourceManager: DbSourceManager
   reqCtx: unknown
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   targetProperty: Dbqb | (Kmore[keyof Kmore])
   traceSvc: TraceService
   trxStatusSvc: TrxStatusService

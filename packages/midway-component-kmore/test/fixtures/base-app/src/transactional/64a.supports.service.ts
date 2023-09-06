@@ -6,14 +6,14 @@ import {
   Inject,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
+import { KmoreQueryBuilder, PropagationType, TrxPropagateOptions } from 'kmore'
 
 import {
   DbManager,
   Kmore,
   Transactional,
-} from '~/index'
-import type { Db, UserDTO } from '@/test.model'
-import { KmoreQueryBuilder, PropagationType, TrxPropagateOptions } from 'kmore'
+} from '../../../../../dist/index.js'
+import type { Db, UserDTO } from '../../../../test.model.js'
 
 
 @Transactional()
@@ -84,7 +84,7 @@ export class PropagationOverrideService {
     assert(users)
 
     const { trxPropagateOptions, trxPropagated } = builder
-    return { users, trxId, trxPropagateOptions, trxPropagated: !!trxPropagated }
+    return { users, trxId, trxPropagateOptions, trxPropagated: !! trxPropagated }
   }
 
   @Transactional(PropagationType.SUPPORTS)
@@ -98,7 +98,7 @@ export class PropagationOverrideService {
     assert(users)
 
     const { trxPropagateOptions, trxPropagated } = builder
-    return { users, trxId, trxPropagateOptions, trxPropagated: !!trxPropagated }
+    return { users, trxId, trxPropagateOptions, trxPropagated: !! trxPropagated }
   }
 
 
@@ -107,7 +107,7 @@ export class PropagationOverrideService {
     const trx = this.db.getTrxByKmoreQueryId(kmoreQueryId)
     if (check) {
       assert(trx, 'trx not found')
-      const  { kmoreTrxId } = trx
+      const { kmoreTrxId } = trx
       assert(kmoreTrxId, 'kmoreTrxId not found')
       return kmoreTrxId
     }

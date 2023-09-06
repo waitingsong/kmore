@@ -6,7 +6,7 @@ import {
   MiddlewareOptions,
   KmorePropagationConfig as PropagationConfig,
   TransactionalOptions,
-} from './types'
+} from './types.js'
 
 
 // export const initialConfig: Readonly<KmoreSourceConfig> = {

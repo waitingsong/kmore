@@ -6,11 +6,10 @@ import {
 } from '@midwayjs/core'
 import { CacheManager, CacheConfigKey, initConfig } from '@mwcp/cache'
 
-import {
-  Transactional,
-} from '~/index'
-import { UserRepo8 } from './71c.ext-cache.repo'
-import { validateMeta } from './70.helper'
+import { Transactional } from '../../../../../dist/index.js'
+
+import { validateMeta } from './70.helper.js'
+import { UserRepo8 } from './71c.ext-cache.repo.js'
 
 
 @Transactional()

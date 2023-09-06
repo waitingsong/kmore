@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 
-import { genDbDict } from 'kmore-types'
+import { DbDict, genDbDict } from 'kmore-types'
 
 import { KnexConfig } from '../src/index.js'
 
@@ -28,7 +28,7 @@ export const config: KnexConfig = {
   debug: false,
 }
 
-export const dbDict = genDbDict<Db>()
+export const dbDict: DbDict<Db> = genDbDict<Db>()
 
 assert(dbDict && Object.keys(dbDict.tables).length > 0)
 assert(Object.keys(dbDict.columns.tb_user).length > 0)

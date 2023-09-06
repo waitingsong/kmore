@@ -16,7 +16,7 @@ import {
   TrxPropagateOptions,
 } from 'kmore'
 
-import { DbSourceManager } from '../db-source-manager'
+import { DbSourceManager } from '../db-source-manager.js'
 
 
 /**

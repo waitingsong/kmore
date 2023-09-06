@@ -9,13 +9,13 @@ import {
   Param,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
+import { KmoreTransaction } from 'kmore'
 
 import {
   DbManager,
   Kmore,
-} from '~/index'
-import type { Db, UserDTO } from '@/test.model'
-import { KmoreTransaction } from 'kmore'
+} from '../../../../dist/index.js'
+import type { Db, UserDTO } from '../../../test.model.js'
 
 
 @Controller('/middle_trx_auto_action')
@@ -62,7 +62,7 @@ export class UserController {
   protected async update(uid: number, trx: KmoreTransaction): Promise<void> {
     const currCtime = await this.ref_tb_user()
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
@@ -73,12 +73,12 @@ export class UserController {
       .update({
         ctime: newTime,
       })
-      .where({uid})
+      .where({ uid })
 
     const currCtime2 = await this.ref_tb_user()
       .transacting(trx)
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime2)
 

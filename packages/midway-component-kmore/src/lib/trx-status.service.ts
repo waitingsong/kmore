@@ -15,9 +15,9 @@ import {
   TrxPropagateOptions,
 } from 'kmore'
 
-import { DbSourceManager } from './db-source-manager'
-import { genTrxRequired } from './propagation/propagating.required'
-import { genTrxSupports } from './propagation/propagating.supports'
+import { DbSourceManager } from './db-source-manager.js'
+import { genTrxRequired } from './propagation/propagating.required.js'
+import { genTrxSupports } from './propagation/propagating.supports.js'
 import {
   CallerKey,
   CallerKeyFileMap,
@@ -31,14 +31,14 @@ import {
   TraceEndOptions,
   TransactionalEntryType,
   TrxStatusServiceBase,
-} from './propagation/trx-status.base'
+} from './propagation/trx-status.base.js'
 import {
   genCallerKey,
   getSimpleCallers,
   linkBuilderWithTrx,
   trxTrace,
-} from './propagation/trx-status.helper'
-import { Msg } from './types'
+} from './propagation/trx-status.helper.js'
+import { Msg } from './types.js'
 
 
 const skipMethodNameSet = new Set([
@@ -64,7 +64,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
 
   protected readonly callerKeyFileMap: CallerKeyFileMap = new Map()
   protected readonly callerKeyPropagationMap: CallerKeyPropagationMap = new Map()
-  protected readonly dbIdTrxIdMap: Map<string, symbol[]> = new Map()
+  protected readonly dbIdTrxIdMap = new Map<string, symbol[]>()
   protected readonly entryCallerKeyTrxMap: EntryCallerKeyTrxMap = new Map()
   protected readonly callerTreeMap: CallerTreeMap = new Map()
 

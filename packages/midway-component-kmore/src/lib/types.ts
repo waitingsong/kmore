@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { BaseConfig } from '@mwcp/share'
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
 import type { KmoreFactoryOpts, PropagationType, RowLockLevel } from 'kmore'
 
@@ -18,19 +19,16 @@ export enum ConfigKey {
 }
 
 export enum Msg {
+  hello = 'hello world',
   insufficientCallstacks = 'Insufficient call stacks by getCallerStack',
   callerKeyNotRegisteredOrNotEntry = 'callerKey is not registered or not entry caller',
 }
 
-/**
- * KmoreComponentConfig
- */
-// export interface Config {
-//   /**
-//    * @default 10_000
-//    */
-//   timeoutWhenDestroy?: number
-// }
+
+export interface Config<SourceName extends string = string>
+  extends BaseConfig, KmoreSourceConfig<SourceName> {
+  // void 0
+}
 
 export interface MiddlewareOptions {
   debug: boolean

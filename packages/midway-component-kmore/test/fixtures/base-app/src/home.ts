@@ -6,7 +6,7 @@ import {
 import type { Context } from '@mwcp/share'
 
 import {
-  Config,
+  DbConfig as Config,
   ConfigKey,
   MiddlewareConfig,
 } from '../../../../dist/lib/types.js'

@@ -138,7 +138,8 @@ export interface OnQueryRespRaw <T = unknown> {
   timeout?: boolean
 }
 export interface QueryResponse <T = unknown> {
-  _parsers: unknown[] | unknown
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  _parsers: unknown[] | any
   _types: unknown
   command: string // 'SELECT', 'DROP'
   fields: Record<string, string | number>[]

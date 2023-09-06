@@ -13,8 +13,8 @@ import {
   ConfigKey,
   DbManager,
   MiddlewareConfig,
-} from '~/index'
-import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model'
+} from '../../../../dist/index.js'
+import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model.js'
 
 
 @Controller('/user')
@@ -28,6 +28,7 @@ export class UserController {
   @Get('/:id')
   async user(@Param('id') uid: number): Promise<UserDTO[]> {
     // unnecessary await, but it's ok and for test `@Trace` on DbManager:getDataSource()
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     const db = await this.dbManager.getDataSource('master')
     assert(db)
 

@@ -448,7 +448,7 @@ type CurlyCurlyToAny<T> = T extends unknown // distribute
     ? any
     : T
   : never
-interface Dict<T = any> { [k: string]: T }
+type Dict<T = any> = Record<string, T>
 // If T can't be assigned to TBase fallback to an alternate type TAlt
 type IncompatibleToAlt<T, TBase, TAlt> = T extends TBase ? T : TAlt
 // Retain the association of original keys with aliased keys at type level

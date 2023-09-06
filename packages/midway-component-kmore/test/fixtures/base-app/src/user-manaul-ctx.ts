@@ -13,8 +13,8 @@ import {
   ConfigKey,
   DbManager,
   MiddlewareConfig,
-} from '~/index'
-import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model'
+} from '../../../../dist/index.js'
+import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model.js'
 
 
 @Controller('/user2')

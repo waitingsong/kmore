@@ -14,8 +14,8 @@ import {
   DbManager,
   Kmore,
   MiddlewareConfig,
-} from '~/index'
-import { Db, UserDTO } from '../../../test.model'
+} from '../../../../dist/index.js'
+import { Db, UserDTO } from '../../../test.model.js'
 
 
 @Controller('/user')

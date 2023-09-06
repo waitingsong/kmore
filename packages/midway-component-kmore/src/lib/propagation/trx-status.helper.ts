@@ -15,7 +15,7 @@ import type {
   TrxCallerInfo,
   CallerKey,
   RegisterTrxPropagateOptions,
-} from './trx-status.base'
+} from './trx-status.base.js'
 
 
 export function genCallerKey(className: string, funcName: string): CallerKey {

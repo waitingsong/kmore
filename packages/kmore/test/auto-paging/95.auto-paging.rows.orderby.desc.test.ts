@@ -2,9 +2,6 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, PageRawType } from '../../src/index.js'
-import { config, dbDict } from '../test.config.js'
-
 import {
   validatePageRet,
   validatePageRetPartial,
@@ -13,6 +10,8 @@ import {
   validateRowsOrderPartical,
 } from './util.js'
 
+import { KmoreFactory, PageRawType } from '##/index.js'
+import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
 
 

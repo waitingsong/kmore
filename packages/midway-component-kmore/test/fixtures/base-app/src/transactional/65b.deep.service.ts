@@ -5,12 +5,14 @@ import {
   Inject,
 } from '@midwayjs/core'
 
+
 import {
   DbManager,
   Transactional,
-} from '~/index'
-import type { Db, UserDTO } from '@/test.model'
-import { UserRepo3 } from './65c.deep.repo'
+} from '../../../../../dist/index.js'
+import type { Db, UserDTO } from '../../../../test.model.js'
+
+import { UserRepo3 } from './65c.deep.repo.js'
 
 
 @Transactional()

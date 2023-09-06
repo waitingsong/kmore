@@ -1,4 +1,3 @@
-import * as info from '@midwayjs/info'
 import * as koa from '@midwayjs/koa'
 import * as cache from '@mwcp/cache'
 import * as otel from '@mwcp/otel'

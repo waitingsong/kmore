@@ -14,11 +14,11 @@ import {
 import { sleep } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
 
-import { initTransactionalOptons } from '../lib/config'
-import { CallerKey, RegisterTrxPropagateOptions } from '../lib/propagation/trx-status.base'
-import { genCallerKey } from '../lib/propagation/trx-status.helper'
-import { TrxStatusService } from '../lib/trx-status.service'
-import { ConfigKey, KmorePropagationConfig, Msg, TransactionalOptions } from '../lib/types'
+import { initTransactionalOptons } from '##/lib/config.js'
+import { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
+import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
+import { TrxStatusService } from '##/lib/trx-status.service.js'
+import { ConfigKey, KmorePropagationConfig, Msg, TransactionalOptions } from '##/lib/types.js'
 
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
@@ -26,7 +26,7 @@ export const METHOD_KEY_Transactional = 'decorator:kmore_trxnal_decorator_key'
 export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
 export const methodDecoratorKeyMap = new Map([ [METHOD_KEY_Transactional, 'Tansactional'] ])
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
 export type MethodType = (...input: any[]) => (any | Promise<any>)
 export interface CacheOptions<M extends MethodType | undefined = undefined>
   extends CacheableArgs<M>, CacheEvictArgs<M> {

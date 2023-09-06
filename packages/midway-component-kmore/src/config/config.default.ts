@@ -1,17 +1,17 @@
 import {
-  KmorePropagationConfig,
-  KmoreSourceConfig,
-  MiddlewareConfig,
-} from '../index'
-import {
   initDbConfig,
   initialMiddlewareConfig,
   initMiddlewareOptions,
   initPropagationConfig,
-} from '../lib/config'
+} from '##/lib/config.js'
+import {
+  KmorePropagationConfig,
+  Config,
+  MiddlewareConfig,
+} from '##/lib/index.js'
 
 
-export const kmoreConfig: KmoreSourceConfig = {
+export const kmoreConfig: Config = {
   dataSource: {},
   default: {
     ...initDbConfig,

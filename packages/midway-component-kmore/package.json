@@ -86,7 +86,7 @@
     "pretest": "npm run build",
     "rp": "rollup -c rollup.config.js --context this",
     "start": "cross-env NODE_ENV=production node ./bootstrap.js",
-    "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false",
+    "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false -r=test/root.hooks.ts",
     "tsc": "tsc -b"
   }
 }

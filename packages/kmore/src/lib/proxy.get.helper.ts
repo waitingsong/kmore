@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'assert'
 
@@ -65,6 +66,7 @@ export async function processThenRet(
 
   return pm2
     .catch((ex: unknown) => processTrxOnEx(kmore, kmoreQueryId, ex))
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     .then((resp: unknown) => processThen(resp, done))
     .catch((ex: unknown) => processEx({
       ex,
@@ -92,7 +94,7 @@ export async function processThenRet(
 function processThen(
   resp: unknown,
   cb: ((data: unknown) => any) | undefined,
-): Promise<unknown> | unknown {
+): Promise<unknown> | any {
 
   if (resp && typeof resp === 'object'
     && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)

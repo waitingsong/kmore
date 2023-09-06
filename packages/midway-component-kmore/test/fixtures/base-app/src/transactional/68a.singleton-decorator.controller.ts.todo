@@ -7,20 +7,19 @@ import {
   Inject,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
+import { sleep } from '@waiting/shared-core'
 
-import { Transactional } from '../../../../../dist/index.js'
+import { Msg, Transactional } from '../../../../../dist/index.js'
 import { apiPrefix, apiRoute } from '../api-route.js'
 
-import { UserService } from './61a.method-decorator.service.js'
-import { UserService2 } from './62a.class-decorator.service.js'
+import { SingletonUserService as UserService } from './68b.singleton-decorator.service.js'
 
 
-@Controller(apiPrefix.classDecorator)
-export class ClassDecoratorController {
+@Controller(apiPrefix.singletonDecorator)
+export class SingletonDecoratorController {
 
   @Inject() readonly ctx: Context
-  @Inject() readonly userSvc: UserService2
-  @Inject() readonly userSvc0: UserService
+  @Inject() readonly userSvc: UserService
 
   @Transactional()
   @Get(`/${apiRoute.controllerUpdate}`)
@@ -38,7 +37,7 @@ export class ClassDecoratorController {
 
   @Get(`/${apiRoute.sibling}`)
   async sibling(): Promise<'OK'> {
-    await this.userSvc.userAll2()
+    await this.userSvc.userAll()
     return 'OK'
   }
 
@@ -50,23 +49,24 @@ export class ClassDecoratorController {
 
   @Get(`/${apiRoute.updateDel}`)
   async updateDel(): Promise<'OK'> {
-    await this.userSvc.userUpdateDel(1, 3)
+    await this.userSvc.userUpdateDel(1, 3, 3)
     return 'OK'
   }
 
   @Get(`/${apiRoute.updateDelOneByOne}`)
   async siblingUpdateDelOneByOne(): Promise<'OK'> {
-    await this.userSvc.userUpdateDel(1, 3)
-    await this.userSvc.userUpdateDel(2, 2)
-    await this.userSvc.userUpdateDel(3, 1)
+    await this.userSvc.userUpdateDel(1, 3, 3)
+    await this.userSvc.userUpdateDel(2, 2, 2)
+    await this.userSvc.userUpdateDel(3, 1, 1)
     return 'OK'
   }
 
+  @Transactional()
   @Get(`/${apiRoute.controllerUpdateDelOneByOne}`)
   async controllerSiblingUpdateDelOneByOne(): Promise<'OK'> {
-    await this.userSvc.userUpdateDel(1, 3)
-    await this.userSvc.userUpdateDel(2, 2)
-    await this.userSvc.userUpdateDel(3, 1)
+    await this.userSvc.userUpdateDel(1, 3, 3)
+    await this.userSvc.userUpdateDel(2, 2, 3)
+    await this.userSvc.userUpdateDel(3, 1, 3)
     return 'OK'
   }
 
@@ -88,24 +88,25 @@ export class ClassDecoratorController {
       await this.userSvc.selfMissingAwait(1, 3, 3)
     }
     catch (ex) {
-      console.error('should no error thrown')
-      throw ex
+      assert(ex instanceof Error)
+      assert(ex.message.includes(Msg.callerKeyNotRegisteredOrNotEntry), ex.message)
     }
-    const users = await this.userSvc0.getUsersNoTrx()
-    assert(users.length === 3)
+    await sleep(1000)
+    const users = await this.userSvc.getUsersNoTrx()
+    assert(users.length === 3, `users.length: ${users.length} vs expect: 3`)
     return 'OK'
   }
 
   @Get(`/${apiRoute.selfReturnPromise}`)
   async selfReturnPromise(): Promise<'OK'> {
     try {
-      await this.userSvc.selfReturnPromise(1, 3)
+      await this.userSvc.selfReturnPromise(1, 3, 3)
     }
     catch (ex) {
       assert(ex instanceof Error)
-      assert(ex.message.includes('Insufficient call stacks'), ex.message)
+      assert(ex.message.includes(Msg.insufficientCallstacks), ex.message)
     }
-    const users = await this.userSvc0.getUsersNoTrx()
+    const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)
     return 'OK'
   }
@@ -113,18 +114,23 @@ export class ClassDecoratorController {
   @Get(`/${apiRoute.throwError}`)
   async throwError(): Promise<'OK'> {
     try {
-      await this.userSvc.throwError(1, 3)
+      await this.userSvc.throwError(1, 3, 3)
     }
     catch (ex) {
       assert(ex instanceof Error)
       assert(ex.message.includes('test error for throwError'))
     }
 
-    const users = await this.userSvc0.getUsersNoTrx()
+    const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)
 
-    const [users2] = await this.userSvc.getUsers()
+    const [users2, trx2] = await this.userSvc.getUsers()
     assert(users2.length === 3)
+    assert(trx2)
+
+    const [users3, trx3] = await this.userSvc.getUsers()
+    assert(users3.length === 3)
+    assert(trx2 !== trx3)
 
     return 'OK'
   }
@@ -132,18 +138,23 @@ export class ClassDecoratorController {
   @Get(`/${apiRoute.returnReject}`)
   async returnReject(): Promise<'OK'> {
     try {
-      await this.userSvc.throwError(1, 3)
+      await this.userSvc.throwError(1, 3, 3)
     }
     catch (ex) {
       assert(ex instanceof Error)
       assert(ex.message.includes('test error for throwError'))
     }
 
-    const users = await this.userSvc0.getUsersNoTrx()
+    const users = await this.userSvc.getUsersNoTrx()
     assert(users.length === 3)
 
-    const [users2] = await this.userSvc.getUsers()
+    const [users2, trx2] = await this.userSvc.getUsers()
     assert(users2.length === 3)
+    assert(trx2)
+
+    const [users3, trx3] = await this.userSvc.getUsers()
+    assert(users3.length === 3)
+    assert(trx2 !== trx3)
 
     return 'OK'
   }

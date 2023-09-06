@@ -8,9 +8,10 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
-import { Msg, Transactional } from '~/index'
-import { apiPrefix, apiRoute } from '../api-route'
-import { UserService } from './61a.method-decorator.service'
+import { Msg, Transactional } from '../../../../../dist/index.js'
+import { apiPrefix, apiRoute } from '../api-route.js'
+
+import { UserService } from './61a.method-decorator.service.js'
 
 
 @Controller(apiPrefix.methodDecorator)

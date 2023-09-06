@@ -20,12 +20,13 @@ import {
   CtxExceptionHandlerOptions,
 } from 'kmore'
 
-import { DbSourceManager } from './db-source-manager'
-import { genCallerKey } from './propagation/trx-status.helper'
-import { proxyKnex, ProxyKnexOptions } from './proxy/db-manager.knex'
-import { proxyRef, ProxyRefOptions } from './proxy/db-manager.ref'
-import { knexKeys, refTableKeys } from './proxy/db-manager.types'
-import { TrxStatusService } from './trx-status.service'
+import { DbSourceManager } from './db-source-manager.js'
+import { genCallerKey } from './propagation/trx-status.helper.js'
+import { proxyKnex, ProxyKnexOptions } from './proxy/db-manager.knex.js'
+import { proxyRef, ProxyRefOptions } from './proxy/db-manager.ref.js'
+import { knexKeys, refTableKeys } from './proxy/db-manager.types.js'
+import { TrxStatusService } from './trx-status.service.js'
+import { ConfigKey } from './types.js'
 
 
 @Provide()
@@ -38,7 +39,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
 
   getName(): string { return 'dbManager' }
 
-  instCacheMap: Map<SourceName, Kmore<any, Ctx>> = new Map()
+  instCacheMap = new Map<SourceName, Kmore<any, Ctx>>()
 
   /**
    * Check the data source is connected
@@ -67,7 +68,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     }
 
     const db = this.dbSourceManager.getDataSource<Db>(dataSourceName)
-    assert(db, `db is empty: ${dataSourceName}`)
+    assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
 
     const reqCtx: Ctx | undefined = this.ctx
     if (! reqCtx) {

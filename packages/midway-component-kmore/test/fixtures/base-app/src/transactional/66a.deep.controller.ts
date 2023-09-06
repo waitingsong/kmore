@@ -1,5 +1,3 @@
-import assert from 'node:assert'
-
 import {
   Config as _Config,
   Controller,
@@ -8,10 +6,11 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
-import { Transactional } from '~/index'
-import { apiPrefix, apiRoute } from '../api-route'
-import { UserService2 } from './62a.class-decorator.service'
-import { UserService3 } from './65b.deep.service'
+import { Transactional } from '../../../../../dist/index.js'
+import { apiPrefix, apiRoute } from '../api-route.js'
+
+import { UserService2 } from './62a.class-decorator.service.js'
+import { UserService3 } from './65b.deep.service.js'
 
 
 @Controller(apiPrefix.classDecoratorDeep2)

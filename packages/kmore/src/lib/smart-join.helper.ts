@@ -53,7 +53,7 @@ export function splitScopedColumn(input: string): [string, string] {
 
 export function patchWhereColumnAlias(
   builder: KmoreQueryBuilder,
-  aliasMap: Map<string, string> = new Map(),
+  aliasMap = new Map<string, string>(),
 ): KmoreQueryBuilder {
 
   if (! aliasMap.size) {

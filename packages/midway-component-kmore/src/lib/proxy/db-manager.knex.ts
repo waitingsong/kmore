@@ -14,16 +14,17 @@ import {
   QuerySpanInfo,
 } from 'kmore'
 
-import { DbSourceManager } from '../db-source-manager'
-import { traceCommitRollbackTrx, TraceCommitRollbackTrxOptions } from '../tracer-helper'
-import { KmoreAttrNames } from '../types'
+import { DbSourceManager } from '../db-source-manager.js'
+import { traceCommitRollbackTrx, TraceCommitRollbackTrxOptions } from '../tracer-helper.js'
+import { KmoreAttrNames } from '../types.js'
 
-import { BuilderKeys, Dbqb } from './db-manager.types'
+import { BuilderKeys, Dbqb } from './db-manager.types.js'
 
 
 export interface ProxyKnexOptions {
   dbSourceManager: DbSourceManager
   propKey: string
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   targetProperty: Dbqb | (Kmore[keyof Kmore])
   traceSvc: TraceService
 }

@@ -1,14 +1,12 @@
 import assert from 'node:assert/strict'
-import { relative } from 'node:path'
 
-import { UserDTO } from './test.model'
+import { fileShortPath } from '@waiting/shared-core'
 
-import { testConfig } from '@/root.config'
+import { testConfig } from '#@/root.config.js'
+import { UserDTO } from '#@/test.model.js'
 
 
-const filename = relative(process.cwd(), __filename).replace(/\\/ug, '/')
-
-describe(filename, () => {
+describe(fileShortPath(import.meta.url), () => {
 
   const path = '/user/'
 

@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict'
+
 import { fileShortPath } from '@waiting/shared-core'
 
 import { validateRespOK } from './transacional.helper.js'
@@ -8,7 +10,6 @@ import { testConfig } from '#@/root.config.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
-
   beforeEach(async () => {
     await initDb()
   })
@@ -17,7 +18,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should @Transactional propagation work select/update', () => {
-    const prefix = apiPrefix.methodDecorator
+    const prefix = apiPrefix.singletonDecorator
 
     it(apiRoute.seperateTrx, async () => {
       const { httpRequest } = testConfig
@@ -126,6 +127,17 @@ describe(fileShortPath(import.meta.url), () => {
     it(apiRoute.selfReturnMissingAwait, async () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.selfReturnMissingAwait}`
+
+      const resp = await httpRequest
+        .get(url)
+        .expect(200)
+
+      validateRespOK(resp)
+    })
+    // after apiRoute.selfReturnMissingAwait
+    it(apiRoute.updateDelOneByOne, async () => {
+      const { httpRequest } = testConfig
+      const url = `${prefix}/${apiRoute.updateDelOneByOne}`
 
       const resp = await httpRequest
         .get(url)

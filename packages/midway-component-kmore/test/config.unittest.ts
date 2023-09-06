@@ -4,8 +4,6 @@ import type { Context } from '@mwcp/share'
 import { EventCallbacks } from 'kmore'
 import { genDbDict } from 'kmore-types'
 
-import { Db } from './test.model'
-
 import {
   initialMiddlewareConfig,
   initMiddlewareOptions,
@@ -15,7 +13,8 @@ import {
   KmoreEvent,
   KmoreSourceConfig,
   initDbConfig,
-} from '~/index'
+} from '##/index.js'
+import { Db } from '#@/test.model.js'
 
 
 export const mwConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {

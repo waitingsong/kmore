@@ -1,9 +1,8 @@
 import { TraceService } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
 
-import { DbSourceManager } from '../lib/db-source-manager'
-
-import { traceFinishTrx, TraceFinishTrxOptions } from '~/lib/tracer-helper'
+import { DbSourceManager } from '##/lib/db-source-manager.js'
+import { traceFinishTrx, TraceFinishTrxOptions } from '##/lib/tracer-helper.js'
 
 
 /**

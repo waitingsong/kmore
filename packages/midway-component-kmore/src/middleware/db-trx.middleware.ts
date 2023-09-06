@@ -1,8 +1,8 @@
 import { Middleware } from '@midwayjs/core'
 import type { Context, IMiddleware, NextFunction } from '@mwcp/share'
 
-import { ConfigKey } from '../lib/index'
-import { rollbackAndCleanCtxTransactions } from '../util/database'
+import { ConfigKey } from '##/lib/index.js'
+import { rollbackAndCleanCtxTransactions } from '##/util/database.js'
 
 
 @Middleware()

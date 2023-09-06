@@ -14,10 +14,11 @@ import {
   Kmore,
   PropagationType,
   Transactional,
-} from '~/index'
-import type { Db } from '@/test.model'
-import { apiPrefix, apiRoute } from '../api-route'
-import { PropagationOverrideService } from './64a.supports.service'
+} from '../../../../../dist/index.js'
+import type { Db } from '../../../../test.model.js'
+import { apiPrefix, apiRoute } from '../api-route.js'
+
+import { PropagationOverrideService } from './64a.supports.service.js'
 
 
 @Controller(apiPrefix.propagationOverride)

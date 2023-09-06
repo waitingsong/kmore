@@ -5,12 +5,11 @@ import {
   Inject,
 } from '@midwayjs/core'
 
-import {
-  Transactional, TrxPropagateOptions,
-} from '~/index'
-import type { UserDTO } from '@/test.model'
-import { UserRepo4 } from './67c.cross.repo'
-import { UserRepo5 } from './67d.cross.repo'
+import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
+import type { UserDTO } from '../../../../test.model.js'
+
+import { UserRepo4 } from './67c.cross.repo.js'
+import { UserRepo5 } from './67d.cross.repo.js'
 
 
 @Transactional()

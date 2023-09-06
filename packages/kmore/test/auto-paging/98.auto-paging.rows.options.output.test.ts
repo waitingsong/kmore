@@ -2,11 +2,10 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { PagingOptions, KmoreFactory, PageRawType, PagingMeta, PageWrapType } from '../../src/index.js'
-import { config, dbDict } from '../test.config.js'
-
 import { validateOptionsPageRet, validateOptionsPageWrapRet } from './output.helper.js'
 
+import { PagingOptions, KmoreFactory, PagingMeta } from '##/index.js'
+import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
 
 

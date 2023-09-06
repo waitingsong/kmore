@@ -6,8 +6,9 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
-import { apiPrefix, apiRoute } from '../api-route'
-import { UserService } from './71b.ext-cache.service'
+import { apiPrefix, apiRoute } from '../api-route.js'
+
+import { UserService } from './71b.ext-cache.service.js'
 
 
 @Controller(apiPrefix.cache)

@@ -5,16 +5,16 @@ import {
   Init,
   Inject,
 } from '@midwayjs/core'
-import { Cacheable, } from '@mwcp/cache'
+import { Cacheable } from '@mwcp/cache'
 import type { Context } from '@mwcp/share'
+import { KmoreQueryBuilder, TrxPropagateOptions } from 'kmore'
 
 import {
   DbManager,
   Kmore,
   Transactional,
-} from '~/index'
-import type { Db, UserDTO } from '@/test.model'
-import { KmoreQueryBuilder, TrxPropagateOptions } from 'kmore'
+} from '../../../../../dist/index.js'
+import type { Db, UserDTO } from '../../../../test.model.js'
 
 
 @Transactional()
@@ -138,7 +138,7 @@ export class UserRepo8 {
     const { kmoreQueryId } = builder
     const trx = this.db.getTrxByKmoreQueryId(kmoreQueryId)
     assert(trx, 'trx not found')
-    const  { kmoreTrxId } = trx
+    const { kmoreTrxId } = trx
     assert(kmoreTrxId, 'kmoreTrxId not found')
     return kmoreTrxId
   }

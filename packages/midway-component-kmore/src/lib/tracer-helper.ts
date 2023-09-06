@@ -15,8 +15,8 @@ import {
 } from '@waiting/shared-core'
 import { KmoreEvent, KmoreTransaction, KmoreTransactionConfig } from 'kmore'
 
-import { AbstractDbSourceManager as DbSourceManager } from './db-source-manager-base'
-import { DbConfig, KmoreAttrNames, QuerySpanInfo } from './types'
+import { AbstractDbSourceManager as DbSourceManager } from './db-source-manager-base.js'
+import { DbConfig, KmoreAttrNames, QuerySpanInfo } from './types.js'
 
 
 export interface TraceEventOptions {

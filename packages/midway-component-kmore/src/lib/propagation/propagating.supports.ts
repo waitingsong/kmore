@@ -1,7 +1,7 @@
 import { KmoreTransaction, QueryBuilderExtKey, TrxPropagateOptions } from 'kmore'
 
-import { traceGenTrx } from './propagating.helper'
-import { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base'
+import { traceGenTrx } from './propagating.helper.js'
+import { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base.js'
 
 
 export async function genTrxSupports(

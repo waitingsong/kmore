@@ -6,14 +6,14 @@ import {
   Inject,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
+import { KmoreQueryBuilder } from 'kmore'
 
 import {
   DbManager,
   Kmore,
   Transactional,
-} from '~/index'
-import type { Db, UserDTO } from '@/test.model'
-import { KmoreQueryBuilder } from 'kmore'
+} from '../../../../../dist/index.js'
+import type { Db, UserDTO } from '../../../../test.model.js'
 
 
 @Transactional()
@@ -96,7 +96,7 @@ export class UserService2 {
 
     const [users3, trx3] = await this.getUsers()
     assert(users3 && users3.length === 3)
-    users3.forEach(row => {
+    users3.forEach((row) => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
@@ -159,7 +159,7 @@ export class UserService2 {
     assert(user2.realName === realName)
 
     const [user3, trx3] = await this.getUsers()
-    user3.forEach(row => {
+    user3.forEach((row) => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
@@ -177,7 +177,7 @@ export class UserService2 {
     assert(trx0 === trx2)
 
     const [user6, trx6] = await this.getUsers()
-    assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(user6.length === expectTotal - 1, user6.length.toString())
     assert(trx3 === trx6)
   }
 
@@ -234,7 +234,7 @@ export class UserService2 {
     assert(user2.realName === realName)
 
     const [user3, trx3] = await this.getUsers()
-    user3.forEach(row => {
+    user3.forEach((row) => {
       if (row.uid === uid) {
         assert(row.realName === realName)
       }
@@ -251,7 +251,7 @@ export class UserService2 {
     assert(trx0 === trx2)
 
     const [user6, trx6] = await this.getUsers()
-    assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(user6.length === expectTotal - 1, user6.length.toString())
     assert(trx0 === trx6)
 
     if (total2 > 0) {
@@ -288,7 +288,7 @@ export class UserService2 {
     assert(trx0 === trx2)
 
     const [user6, trx6] = await this.getUsers()
-    assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(user6.length === expectTotal - 1, user6.length.toString())
     assert(trx0 === trx6)
 
     if (total2 > 0) {
@@ -325,7 +325,7 @@ export class UserService2 {
     assert(trx0 === trx2)
 
     const [user6, trx6] = await this.getUsers()
-    assert(user6.length === expectTotal - 1 , user6.length.toString())
+    assert(user6.length === expectTotal - 1, user6.length.toString())
     assert(trx0 === trx6)
 
     if (total2 > 0) {
@@ -376,7 +376,7 @@ export class UserService2 {
     const { kmoreQueryId } = builder
     const trx = this.db.getTrxByKmoreQueryId(kmoreQueryId)
     assert(trx, 'trx not found')
-    const  { kmoreTrxId } = trx
+    const { kmoreTrxId } = trx
     assert(kmoreTrxId, 'kmoreTrxId not found')
     return kmoreTrxId
   }

@@ -6,13 +6,12 @@ import {
 } from '@midwayjs/core'
 import { CacheConfigKey, CacheManager } from '@mwcp/cache'
 
-import {
-  Transactional, TrxPropagateOptions,
-} from '~/index'
-import type { UserDTO } from '@/test.model'
-import { UserRepo6 } from './70c.cache.repo'
-import { UserRepo7 } from './70d.cache.repo'
-import { validateMeta } from './70.helper'
+import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
+import type { UserDTO } from '../../../../test.model.js'
+
+import { validateMeta } from './70.helper.js'
+import { UserRepo6 } from './70c.cache.repo.js'
+import { UserRepo7 } from './70d.cache.repo.js'
 
 
 @Transactional()
@@ -43,7 +42,7 @@ export class UserService {
   }
 
   async delete(): Promise<void> {
-    this.cacheManager.reset()
+    await this.cacheManager.reset()
 
     const ret = await this.repo6.getUsers()
     const [users, trx, trxPropagateOptions] = ret

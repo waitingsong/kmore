@@ -8,10 +8,9 @@ import {
   KmoreFactory,
   KmoreTransaction,
   PageRawType,
-} from '../../src/index.js'
-import { initPagingMeta } from '../../src/lib/proxy.auto-paging.js'
-import { config, dbDict } from '../test.config.js'
-
+} from '##/index.js'
+import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
+import { config, dbDict } from '#@/test.config.js'
 import type { Db, UserDTO } from '#@/test.model.js'
 
 

@@ -32,7 +32,7 @@ import {
   getCurrentTime,
 } from 'kmore'
 
-import { AbstractDbSourceManager } from './db-source-manager-base'
+import { AbstractDbSourceManager } from './db-source-manager-base.js'
 import {
   traceStartEvent,
   TraceQueryEvent,
@@ -40,8 +40,8 @@ import {
   TraceQueryExceptionEvent,
   TraceStartEventOptions,
   TraceEventOptions,
-} from './tracer-helper'
-import { ConfigKey, KmoreSourceConfig, DbConfig } from './types'
+} from './tracer-helper.js'
+import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
 
 
 @Provide()

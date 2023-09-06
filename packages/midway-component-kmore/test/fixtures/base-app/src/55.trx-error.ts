@@ -9,13 +9,13 @@ import {
   Param,
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
+import { KmoreTransaction } from 'kmore'
 
 import {
   DbManager,
   Kmore,
-} from '~/index'
-import type { Db, UserDTO } from '@/test.model'
-import { KmoreTransaction } from 'kmore'
+} from '../../../../dist/index.js'
+import type { Db } from '../../../test.model.js'
 
 
 @Controller('/trx_error')
@@ -40,7 +40,7 @@ export class TrxController {
   async rollback(@Param('id') uid: number): Promise<'OK'> {
     const currCtime = await this.ref_tb_user()
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
@@ -53,7 +53,7 @@ export class TrxController {
       await this.ref_tb_user()
         .transacting(trx) // trx closed early
         .select('ctime')
-        .where({uid})
+        .where({ uid })
         .then(rows => rows[0]?.ctime)
     }
     catch (ex) {
@@ -72,7 +72,7 @@ export class TrxController {
   async commit(@Param('id') uid: number): Promise<'OK'> {
     const currCtime = await this.ref_tb_user()
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
@@ -85,7 +85,7 @@ export class TrxController {
       await this.ref_tb_user()
         .transacting(trx) // trx closed early
         .select('ctime')
-        .where({uid})
+        .where({ uid })
         .then(rows => rows[0]?.ctime)
     }
     catch (ex) {
@@ -103,7 +103,7 @@ export class TrxController {
   protected async update(uid: number, trx: KmoreTransaction): Promise<void> {
     const currCtime = await this.ref_tb_user()
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
@@ -114,12 +114,12 @@ export class TrxController {
       .update({
         ctime: newTime,
       })
-      .where({uid})
+      .where({ uid })
 
     const currCtime2 = await this.ref_tb_user()
       .transacting(trx)
       .select('ctime')
-      .where({uid})
+      .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime2)
 
