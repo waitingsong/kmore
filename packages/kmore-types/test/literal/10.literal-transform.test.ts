@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
-import { pathToFileURL } from 'node:url'
 
 import {
   fileShortPath,
@@ -8,6 +8,7 @@ import {
   genCurrentDirname,
 } from '@waiting/shared-core'
 import {
+  CallExpressionPosKey,
   createSourceFile,
   transformCallExpressionToLiteralType,
   TransFormOptions,
@@ -69,7 +70,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(arr.length === 1)
       assert.deepStrictEqual(arr[0], expectedDict)
 
-      let posKey = 'dict:6:14'
+      let posKey: CallExpressionPosKey = 'dict:6:14'
       let obj = ret.fromPosKey(posKey)
       assert.deepStrictEqual(obj, expectedDict)
 
@@ -115,7 +116,7 @@ describe(fileShortPath(import.meta.url), () => {
       const [obj2] = arr2
       assert.deepStrictEqual(obj2, expectedDict2)
 
-      let posKey = 'dict1:6:14'
+      let posKey: CallExpressionPosKey = 'dict1:6:14'
       assert.deepStrictEqual(ret.fromPosKey(posKey), expectedDict)
       posKey = 'dict2:7:14'
       assert.deepStrictEqual(ret.fromPosKey(posKey), expectedDict2)
