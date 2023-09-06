@@ -3,9 +3,7 @@ import { CallerFuncNameSet } from 'kmore-types'
 
 export type CmdType = 'gen'
 
-export interface InputOptions {
-  [prop: string]: string | number
-}
+export type InputOptions = Record<string, string | number>
 
 export interface RunCmdArgs {
   cmd: CmdType | undefined
