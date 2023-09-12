@@ -22,6 +22,9 @@ Declarative Transaction via decorator `@Transactional`
 - [Declarative transaction](#declarative-transaction)
 - OpenTelemetry trace
 
+## Note
+
+ESM build only, requires `@midwayjs >= 3.12` and set `"type": "module"` in `packages.json`
 
 ## Installation
 ```sh
@@ -48,8 +51,7 @@ Edit the `package.json`
 {
   "script": {
     "build": "tsc -b && npm run db:gen",
-    "db:gen": "kmore gen --path src/ test/",
-    "db:gen-cjs": "kmore gen --path src/ test/ --format cjs"
+    "db:gen": "kmore gen --path src/ test/"
   },
 }
 ```

@@ -23,6 +23,9 @@
 - [声明式事务](#声明式事务)
 - OpenTelemetry trace
 
+## Note
+
+ESM build only, requires `@midwayjs >= 3.12` and set `"type": "module"` in `packages.json`
 
 ## 安装
 ```sh

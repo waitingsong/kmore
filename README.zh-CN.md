@@ -23,6 +23,11 @@
 - [声明式事务](#声明式事务)
 - OpenTelemetry trace
 
+## 安装全局依赖
+```sh
+npm i -g c8 lerna rollup tsx zx
+```
+
 
 ## 安装
 ```sh

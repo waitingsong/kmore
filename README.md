@@ -22,10 +22,11 @@ Declarative Transaction via decorator `@Transactional`
 - [Declarative transaction](#declarative-transaction)
 - OpenTelemetry trace
 
-## 安装全局依赖
+## Install global dependencies
 ```sh
-npm i -g c8 lerna rollup tsx
+npm i -g c8 lerna rollup tsx zx
 ```
+
 ## Installation
 ```sh
 npm i kmore && npm i -D kmore-cli
