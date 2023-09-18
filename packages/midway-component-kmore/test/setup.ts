@@ -1,6 +1,6 @@
 // https://mochajs.org/#global-fixtures
 // https://mochajs.org/#root-hook-plugins
-import assert from 'node:assert'
+import assert from 'node:assert/strict'
 
 import { createApp, close, createHttpRequest } from '@midwayjs/mock'
 import { Application } from '@mwcp/share'
@@ -10,6 +10,12 @@ import { kmoreConfig } from './config.unittest.js'
 import { TestConfig, testConfig } from './root.config.js'
 
 import { ConfigKey } from '##/index.js'
+
+
+const globalConfig = {
+  keys: Math.random().toString(),
+  [ConfigKey.config]: kmoreConfig,
+}
 
 
 let app: Application
@@ -30,8 +36,12 @@ export async function mochaGlobalTeardown(this: Suite) {
  * Update testConfig in place
  */
 async function createAppInstance(): Promise<Application> {
+  const opts = {
+    globalConfig,
+  }
+
   try {
-    app = await createApp(testConfig.testAppDir) as Application
+    app = await createApp(testConfig.testAppDir, opts) as Application
   }
   catch (ex) {
     console.error('createApp error:', ex)
@@ -39,10 +49,6 @@ async function createAppInstance(): Promise<Application> {
   }
 
   assert(app, 'app not exists')
-  // const globalConfig = {
-  //   keys: Math.random().toString(),
-  // }
-  // app.addConfigObject(globalConfig)
 
   const middlewares = app.getMiddleware().getNames()
   console.info({ middlewares })
