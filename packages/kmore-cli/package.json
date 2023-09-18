@@ -22,10 +22,7 @@
     "#@/*": "./test/*"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "bugs": {
@@ -38,15 +35,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^21.5.0",
-    "@waiting/shared-types": "^21.5.0",
+    "@waiting/shared-core": "^22.0.0",
+    "@waiting/shared-types": "^22.0.0",
     "@waiting/shared-types-dev": "^14.3.3",
     "kmore-types": "^57.0.1",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.0",
     "rxwalker": "^6.0.0",
     "tsconfig-resolver": "^3.0.1",
-    "tsx": "^3.12.8"
+    "tsx": "^3.12.10"
   },
   "engines": {
     "node": ">=18.12.0"
@@ -69,7 +66,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run tsc && tsc-alias && npm run rp",
+    "build": "npm run tsc && tsc-alias",
     "clean": "npm run clean:lock && npm run clean:dist && npm run clean:log",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",
     "clean:dist": "npm run clean:cache && rm -rf dist/*",
