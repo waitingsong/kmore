@@ -1,7 +1,7 @@
 {
   "name": "kmore",
   "author": "waiting",
-  "version": "58.0.1",
+  "version": "58.0.2",
   "description": "A SQL query builder based on knex with powerful TypeScript type support",
   "keywords": [
     "knex",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@mwcp/otel": "19 - 20",
-    "kmore-cli": "^58.0.1",
+    "kmore-cli": "^58.0.2",
     "kmore-types": "^58.0.1",
     "knex": "^2.5.1",
     "pg": "^8.11.3"
