@@ -39,12 +39,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/cache": "19 - 20",
-    "@mwcp/otel": "19 - 20",
-    "@mwcp/share": "19 - 20",
-    "@waiting/shared-core": "^22.0.0",
+    "@mwcp/cache": "20 - 22",
+    "@mwcp/otel": "20 - 22",
+    "@mwcp/share": "20 - 22",
+    "@waiting/shared-core": "^23.0.0",
     "kmore": "^58.0.2",
-    "knex": "^2.5.1"
+    "knex": "^3.1.0"
   },
   "devDependencies": {
     "kmore-cli": "^58.0.2",
@@ -52,7 +52,7 @@
   },
   "engines": {
     "node": ">=18.12.0",
-    "@midwayjs/core": ">=3.12.0"
+    "@midwayjs/core": ">=3.14.0"
   },
   "files": [
     "README.*.md",
@@ -85,7 +85,7 @@
     "predev": "npm run build",
     "pretest": "npm run build",
     "start": "cross-env NODE_ENV=production node ./bootstrap.js",
-    "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false -r=test/root.hooks.ts",
+    "test": "cross-env MIDWAY_SERVER_ENV=unittest TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false",
     "tsc": "tsc -b"
   }
 }

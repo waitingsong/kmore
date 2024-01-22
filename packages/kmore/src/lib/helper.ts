@@ -19,7 +19,7 @@ export async function getCurrentTime(
   clientType: KnexConfig['client'],
 ): Promise<string> {
 
-  if (typeof clientType === 'string' && clientType) {
+  if (clientType) {
     const res = await dbh.raw('SELECT CURRENT_TIMESTAMP AS currenttime;')
 
     switch (clientType) {
@@ -32,7 +32,7 @@ export async function getCurrentTime(
         return parseRespMysql2(res as RespMysql2)
 
       default:
-        console.warn(`[Kmore] Unsupported client value: '${clientType}' for getCurrentTime(). `)
+        console.warn(`[Kmore] Unsupported client value: '${clientType.toString()}' for getCurrentTime(). `)
         return ''
     }
   }

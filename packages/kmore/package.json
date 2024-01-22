@@ -22,7 +22,7 @@
   "types": "dist/index.d.ts",
   "imports": {
     "#package.json": "./package.json",
-    "##/*": "./dist/*",
+    "##/*": "./src/*",
     "#@/*": "./test/*"
   },
   "exports": {
@@ -39,13 +39,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^22.0.0"
+    "@waiting/shared-core": "^23.0.0"
   },
   "devDependencies": {
-    "@mwcp/otel": "19 - 20",
+    "@mwcp/otel": "20 - 22",
     "kmore-cli": "^58.0.2",
     "kmore-types": "^58.0.1",
-    "knex": "^2.5.1",
+    "knex": "^3.1.0",
     "pg": "^8.11.3"
   },
   "engines": {
@@ -69,7 +69,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run tsc && tsc-alias",
+    "build": "npm run tsc && tsc-alias && npm run rp",
     "clean": "npm run clean:lock && npm run clean:dist && npm run clean:log",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",
     "clean:dist": "npm run clean:cache && rm -rf dist/*",

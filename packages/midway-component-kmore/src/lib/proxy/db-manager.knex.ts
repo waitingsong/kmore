@@ -30,6 +30,7 @@ export interface ProxyKnexOptions {
 }
 export function proxyKnex(options: ProxyKnexOptions): ProxyKnexOptions['targetProperty'] {
   switch (options.propKey) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     case BuilderKeys.transaction: {
       if (options.traceSvc.isStarted) {
         return knexTransactionTracing(options)

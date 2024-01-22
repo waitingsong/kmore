@@ -18,7 +18,7 @@
   "types": "dist/index.d.ts",
   "imports": {
     "#package.json": "./package.json",
-    "##/*": "./dist/*",
+    "##/*": "./src/*",
     "#@/*": "./test/*"
   },
   "exports": {
@@ -35,15 +35,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^22.0.0",
-    "@waiting/shared-types": "^22.0.0",
-    "@waiting/shared-types-dev": "^14.3.3",
+    "@waiting/shared-core": "^23.0.0",
+    "@waiting/shared-types": "^23.0.0",
+    "@waiting/shared-types-dev": "^16.0.0",
     "kmore-types": "^58.0.1",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.0",
     "rxwalker": "^7.0.0",
     "tsconfig-resolver": "^3.0.1",
-    "tsx": "^3.12.10"
+    "tsx": "^4.7.0"
   },
   "engines": {
     "node": ">=18.12.0"
@@ -77,7 +77,7 @@
     "lint:nofix": "eslint --cache {src,test}/**/*.ts",
     "pretest": "npm run build",
     "rp": "tsx bin-hashbang.js",
-    "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false -r=test/root.hooks.ts",
+    "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false",
     "tsc": "tsc -b"
   }
 }
