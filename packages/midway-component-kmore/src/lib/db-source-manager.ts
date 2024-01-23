@@ -172,7 +172,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
       return !! time
     }
     catch (ex) {
-      this.logger.error('[KmoreDbSourceManager]: checkConnected()', ex)
+      this.logger.error('[KmoreDbSourceManager]: checkConnected(). error ignored', ex)
     }
     return false
   }
