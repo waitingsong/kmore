@@ -7,7 +7,7 @@ import {
   validatePageRetPartial,
   validateRet,
   validateRowsOrder,
-  validateRowsOrderPartical,
+  validateRowsOrderPartial,
 } from './util.js'
 
 import { KmoreFactory } from '##/index.js'
@@ -100,7 +100,7 @@ describe(fileShortPath(import.meta.url), () => {
         .select('uid', 'realName')
         .orderBy('uid', ord)
       validatePageRetPartial(ret30, colkeys)
-      validateRowsOrderPartical(ret30, ord)
+      validateRowsOrderPartial(ret30, ord)
 
       const ret31 = await tables.ref_tb_user()
         .autoPaging()
@@ -108,14 +108,14 @@ describe(fileShortPath(import.meta.url), () => {
         .orderBy('uid', ord)
         .then()
       validatePageRetPartial(ret31, colkeys)
-      validateRowsOrderPartical(ret31, ord)
+      validateRowsOrderPartial(ret31, ord)
 
       const ret32 = await tables.ref_tb_user()
         .select('uid', 'realName')
         .autoPaging()
         .orderBy('uid', ord)
       validatePageRetPartial(ret32, colkeys)
-      validateRowsOrderPartical(ret32, ord)
+      validateRowsOrderPartial(ret32, ord)
 
       const ret33 = await tables.ref_tb_user()
         .select('uid', 'realName')
@@ -123,14 +123,14 @@ describe(fileShortPath(import.meta.url), () => {
         .orderBy('uid', ord)
         .then()
       validatePageRetPartial(ret33, colkeys)
-      validateRowsOrderPartical(ret33, ord)
+      validateRowsOrderPartial(ret33, ord)
 
       const ret40 = await tables.ref_tb_user()
         .autoPaging()
         .select(colkeys)
         .orderBy('uid', ord)
       validatePageRetPartial(ret40, colkeys)
-      validateRowsOrderPartical(ret40, ord)
+      validateRowsOrderPartial(ret40, ord)
 
       const ret41 = await tables.ref_tb_user()
         .autoPaging()
@@ -138,14 +138,14 @@ describe(fileShortPath(import.meta.url), () => {
         .orderBy('uid', ord)
         .then()
       validatePageRetPartial(ret41, colkeys)
-      validateRowsOrderPartical(ret41, ord)
+      validateRowsOrderPartial(ret41, ord)
 
       const ret42 = await tables.ref_tb_user()
         .select(colkeys)
         .autoPaging()
         .orderBy('uid', ord)
       validatePageRetPartial(ret42, colkeys)
-      validateRowsOrderPartical(ret42, ord)
+      validateRowsOrderPartial(ret42, ord)
 
       const ret43 = await tables.ref_tb_user()
         .select(colkeys)
@@ -153,7 +153,7 @@ describe(fileShortPath(import.meta.url), () => {
         .orderBy('uid', ord)
         .then()
       validatePageRetPartial(ret43, colkeys)
-      validateRowsOrderPartical(ret43, ord)
+      validateRowsOrderPartial(ret43, ord)
     })
 
     it('where', async () => {

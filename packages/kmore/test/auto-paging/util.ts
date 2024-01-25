@@ -114,7 +114,7 @@ export function validateRowsOrder(input: PageRawType<UserDTO>, ord: 'asc' | 'des
 
 }
 
-export function validateRowsOrderPartical(input: PageRawType<Partial<UserDTO>>, ord: 'asc' | 'desc'): void {
+export function validateRowsOrderPartial(input: PageRawType<Partial<UserDTO>>, ord: 'asc' | 'desc'): void {
   assert(input)
   const len = input.length
   assert(len > 1, 'should input.length > 1')
