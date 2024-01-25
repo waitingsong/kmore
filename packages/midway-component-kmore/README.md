@@ -118,7 +118,7 @@ await km.dbh.schema
 
 #### Snake style
 ```ts
-// auto generated accessort tb_user() and tb_user_detail()
+// auto generated accessor tb_user() and tb_user_detail()
 const { ref_tb_user, ref_tb_user_detail } = km.refTables
 
 await ref_tb_user()
@@ -141,7 +141,7 @@ const affectedRows = await ref_tb_user_detail()
 ```ts
 import { RecordCamelKeys } from '@waiting/shared-types'
 
-// auto generated accessort tb_user() and tb_user_detail() 
+// auto generated accessor tb_user() and tb_user_detail() 
 const { ref_tb_user, ref_tb_user_detail } = km.camelTables
 
 interface UserDO {
