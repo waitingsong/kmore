@@ -12,6 +12,7 @@ import {
 
 
 export const kmoreConfig: Config = {
+  enableDefaultRoute: false,
   dataSource: {},
   default: {
     ...initDbConfig,

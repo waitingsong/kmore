@@ -14,7 +14,7 @@ import {
 import { sleep } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
 
-import { initTransactionalOptons } from '##/lib/config.js'
+import { initTransactionalOptions } from '##/lib/config.js'
 import { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
 import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
 import { TrxStatusService } from '##/lib/trx-status.service.js'
@@ -88,7 +88,7 @@ export function genDecoratorExecutorOptions(
   const initArgs = {
     propagationType: PropagationType.REQUIRED,
     propagationOptions: {
-      ...initTransactionalOptons,
+      ...initTransactionalOptions,
     },
     cacheOptions: false,
   }

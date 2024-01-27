@@ -5,6 +5,7 @@ import { EventCallbacks } from 'kmore'
 import { genDbDict } from 'kmore-types'
 
 import {
+  Config,
   initialMiddlewareConfig,
   initMiddlewareOptions,
   MiddlewareConfig,
@@ -15,6 +16,7 @@ import {
   initDbConfig,
 } from '##/index.js'
 import { Db } from '#@/test.model.js'
+
 
 
 export const mwConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {
@@ -62,7 +64,8 @@ export const master: DbConfig<Db> = {
   eventCallbacks: eventCbs,
   traceInitConnection: true,
 }
-export const kmoreConfig: KmoreSourceConfig<'master'> = {
+export const kmoreConfig: Config<'master'> = {
+  enableDefaultRoute: true,
   dataSource: {
     master,
   },

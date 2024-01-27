@@ -30,7 +30,7 @@ export const initDbConfig: DbConfig = {
   traceResponse: true,
 }
 
-export const initTransactionalOptons: TransactionalOptions = {
+export const initTransactionalOptions: TransactionalOptions = {
   /**
    * @default {@link RowLockLevel.ForShare}
    */
@@ -46,6 +46,6 @@ export const initPropagationConfig: PropagationConfig = {
    * @default PropagationType.REQUIRED,
    */
   propagationType: PropagationType.REQUIRED,
-  ...initTransactionalOptons,
+  ...initTransactionalOptions,
 }
 
