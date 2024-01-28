@@ -100,6 +100,7 @@ export class AutoConfiguration implements ILifeCycle {
     registerDecoratorHandler(optsCacheable, aroundFactoryOptions)
   }
 
+  @TraceInit({ namespace: ConfigKey.namespace })
   async onStop(container: IMidwayContainer): Promise<void> {
     void container
     const time = 2
