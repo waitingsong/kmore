@@ -2,15 +2,16 @@ import assert from 'node:assert'
 
 import {
   App,
-  Config,
+  Config as _Config,
   Configuration,
-  MidwayEnvironmentService,
-  MidwayInformationService,
   ILifeCycle,
   ILogger,
   Inject,
   Logger,
   MidwayDecoratorService,
+  MidwayEnvironmentService,
+  MidwayInformationService,
+  MidwayWebRouterService,
 } from '@midwayjs/core'
 import { CacheManager } from '@mwcp/cache'
 import { TraceInit } from '@mwcp/otel'
@@ -20,11 +21,12 @@ import {
   RegisterDecoratorHandlerParam,
   registerDecoratorHandler,
   registerMiddleware,
+  deleteRouter,
 } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
 
 
-import * as DefulatConfig from './config/config.default.js'
+import * as DefaultConfig from './config/config.default.js'
 import * as LocalConfig from './config/config.local.js'
 import * as UnittestConfig from './config/config.unittest.js'
 import {
@@ -34,7 +36,7 @@ import {
 } from './decorator/decorator.helper.js'
 import { useComponents } from './imports.js'
 import { DbSourceManager } from './lib/db-source-manager.js'
-import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
+import { Config, ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
 import { KmoreMiddleware } from './middleware/index.middleware.js'
 
 
@@ -42,7 +44,7 @@ import { KmoreMiddleware } from './middleware/index.middleware.js'
   namespace: ConfigKey.namespace,
   importConfigs: [
     {
-      default: DefulatConfig,
+      default: DefaultConfig,
       local: LocalConfig,
       unittest: UnittestConfig,
     },
@@ -55,17 +57,26 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Inject() protected readonly environmentService: MidwayEnvironmentService
   @Inject() protected readonly informationService: MidwayInformationService
+  @Inject() protected readonly webRouterService: MidwayWebRouterService
+
   @Logger() protected readonly logger: ILogger
 
-  @Config() readonly kmoreSourceConfig: KmoreSourceConfig
+  @_Config(ConfigKey.config) readonly config: Config
+  @_Config() readonly kmoreSourceConfig: KmoreSourceConfig
 
-  @Config(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
+  @_Config(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
 
   @Inject() readonly dbSManager: DbSourceManager
 
   @Inject() decoratorService: MidwayDecoratorService
 
   @Inject() cacheManager: CacheManager
+
+  async onConfigLoad(): Promise<void> {
+    if (! this.config.enableDefaultRoute) {
+      await deleteRouter(`/_${ConfigKey.namespace}`, this.webRouterService)
+    }
+  }
 
   @TraceInit({ namespace: ConfigKey.namespace })
   async onReady(container: IMidwayContainer): Promise<void> {

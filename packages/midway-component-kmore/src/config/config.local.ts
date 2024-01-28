@@ -2,6 +2,10 @@ import { initDbConfig } from '##/lib/config.js'
 import { Config } from '##/lib/index.js'
 
 
+export const keys = 123456
+export const koa = {
+  port: 7001,
+}
 export const kmoreConfig: Config = {
   enableDefaultRoute: true,
   dataSource: {},

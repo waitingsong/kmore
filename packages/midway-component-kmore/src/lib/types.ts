@@ -27,7 +27,11 @@ export enum Msg {
 
 export interface Config<SourceName extends string = string>
   extends BaseConfig, KmoreSourceConfig<SourceName> {
-  // void 0
+
+  /**
+   * @default false
+   */
+  enableDefaultRoute: boolean
 }
 
 export interface MiddlewareOptions {

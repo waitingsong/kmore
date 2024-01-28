@@ -12,12 +12,12 @@ import {
 
 
 export const kmoreConfig: Config = {
+  enableDefaultRoute: false,
   dataSource: {},
   default: {
     ...initDbConfig,
   },
 }
-
 
 export const kmoreMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {
   ...initialMiddlewareConfig,
