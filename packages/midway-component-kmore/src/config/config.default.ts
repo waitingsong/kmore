@@ -19,7 +19,6 @@ export const kmoreConfig: Config = {
   },
 }
 
-
 export const kmoreMiddlewareConfig: Readonly<Omit<MiddlewareConfig, 'match'>> = {
   ...initialMiddlewareConfig,
   ignore: [],

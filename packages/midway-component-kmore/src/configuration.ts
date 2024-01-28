@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import {
   App,
-  Config,
+  Config as _Config,
   Configuration,
   ILifeCycle,
   ILogger,
@@ -36,7 +36,7 @@ import {
 } from './decorator/decorator.helper.js'
 import { useComponents } from './imports.js'
 import { DbSourceManager } from './lib/db-source-manager.js'
-import { ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
+import { Config, ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
 import { KmoreMiddleware } from './middleware/index.middleware.js'
 
 
@@ -58,11 +58,13 @@ export class AutoConfiguration implements ILifeCycle {
   @Inject() protected readonly environmentService: MidwayEnvironmentService
   @Inject() protected readonly informationService: MidwayInformationService
   @Inject() protected readonly webRouterService: MidwayWebRouterService
+
   @Logger() protected readonly logger: ILogger
 
-  @Config() readonly kmoreSourceConfig: KmoreSourceConfig
+  @_Config(ConfigKey.config) readonly config: Config
+  @_Config() readonly kmoreSourceConfig: KmoreSourceConfig
 
-  @Config(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
+  @_Config(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
 
   @Inject() readonly dbSManager: DbSourceManager
 
