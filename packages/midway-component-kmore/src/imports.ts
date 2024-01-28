@@ -16,8 +16,8 @@ export const useComponents: IComponentInfo[] = [otel]
 if (CI) {
   useComponents.push(koa)
   useComponents.push(info)
-  useComponents.push(cache)
   useComponents.push(swagger)
+  useComponents.push(cache)
 }
 
 export interface IComponentInfo {
