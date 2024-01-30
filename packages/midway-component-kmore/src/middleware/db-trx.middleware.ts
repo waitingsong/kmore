@@ -35,10 +35,10 @@ async function middleware(
   try {
     await next()
   }
-  catch (ex) {
-    console.warn('error in kmore middleware', ex)
-    throw ex
-  }
+  // catch (ex) {
+  //   console.warn('error inner kmore middleware', ex)
+  //   throw ex
+  // }
   finally {
     await rollbackAndCleanCtxTransactions(ctx)
   }
