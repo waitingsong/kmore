@@ -116,7 +116,7 @@ export class AutoConfiguration implements ILifeCycle {
       .catch((ex: Error) => {
         console.error(ex.message)
       })
-    this.logger.info(`[${ConfigKey.componentName}] onStop() doen`)
+    this.logger.info(`[${ConfigKey.componentName}] onStop() done`)
   }
 }
 
