@@ -410,22 +410,22 @@ interface OrderBy<
 
   (
     columnName: keyof TRecord | QueryBuilder,
-    order?: 'asc' | 'desc',
-    nulls?: 'first' | 'last'
+    order?: 'asc' | 'desc' | undefined,
+    nulls?: 'first' | 'last' | undefined
   ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
 
   (
     columnName: string | QueryBuilder,
-    order?: string,
-    nulls?: string
+    order?: string | undefined,
+    nulls?: string | undefined
   ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
 
   (
     columnDefs: (| keyof TRecord
     | Readonly<{
       column: keyof TRecord | QueryBuilder,
-      order?: 'asc' | 'desc',
-      nulls?: 'first' | 'last',
+      order?: 'asc' | 'desc' | undefined,
+      nulls?: 'first' | 'last' | undefined,
     }>)[]
   ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
 
@@ -433,8 +433,8 @@ interface OrderBy<
     columnDefs: (| string
     | Readonly<{
       column: string | QueryBuilder,
-      order?: string,
-      nulls?: string,
+      order?: string | undefined,
+      nulls?: string | undefined,
     }>)[]
   ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
 }
