@@ -8,6 +8,7 @@ import {
   DictAlias,
   DictScoped,
   DictCamelAlias,
+  DictCamelColumns,
 } from './types.js'
 
 
@@ -36,6 +37,21 @@ export interface DbDict<D> {
    * ```
    */
   columns: DictColumns<D>
+
+  /**
+   * @returns
+   * ```ts
+   * type {
+   *   tb_user: {
+   *     uid: 'uid'
+   *     userName: 'userName'
+   *   },
+   *
+   *   tb_user_ext: {},
+   * }
+   * ```
+   */
+  camelColumns: DictCamelColumns<D>
 
   /**
    * @returns
@@ -92,7 +108,48 @@ export interface DbDict<D> {
  */
 export function genDbDict<D>(): DbDict<D> {
   const needle = 'genDbDict'
-  const ret = computeCallExpressionToLiteralObj(needle)
-  return ret as DbDict<D>
+  const ret = computeCallExpressionToLiteralObj(needle) as DbDict<D>
+  const camelColumns = genCamelColumnsFromCamelAlias(ret.camelAlias)
+  Object.defineProperty(ret, 'camelColumns', {
+    enumerable: true,
+    writable: true,
+    value: camelColumns,
+  })
+  return ret
 }
 
+function genCamelColumnsFromCamelAlias<D>(data: DbDict<D>['camelAlias']): DbDict<D>['camelColumns'] {
+  const ret = {} as DbDict<D>['camelColumns']
+  Object.keys(data).forEach((tbName) => {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const cols = data[tbName]
+    if (typeof cols === 'object') {
+      Object.defineProperty(ret, tbName, {
+        enumerable: true,
+        writable: true,
+        value: {},
+      })
+
+      Object.keys(cols as Record<string, unknown>).forEach((col) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        const row = cols[col]
+        if (typeof row === 'object') {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+          const firstKey = Object.keys(row)[0]
+          if (typeof firstKey === 'string' && firstKey.length > 0) {
+            // @ts-ignore
+            Object.defineProperty(ret[tbName], firstKey, {
+              enumerable: true,
+              writable: true,
+              value: firstKey,
+            })
+          }
+        }
+      })
+    }
+
+  })
+
+  return ret
+}

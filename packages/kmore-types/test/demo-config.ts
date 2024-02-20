@@ -23,6 +23,20 @@ export const expectedDict: DbDict<Db> = {
     },
   },
 
+  camelColumns: {
+    tb_user: {
+      uid: 'uid',
+      name: 'name',
+      ctime: 'ctime',
+    },
+    tb_user_ext: {
+      uid: 'uid',
+      age: 'age',
+      address: 'address',
+      lastLoginTime: 'lastLoginTime',
+    },
+  },
+
   scoped: {
     tb_user: {
       uid: 'tb_user.uid',
@@ -85,6 +99,21 @@ export const expectedDict2: DbDict<Db2> = {
       age: 'age',
       address: 'address',
       last_login_time: 'last_login_time',
+    },
+  },
+
+  camelColumns: {
+    tb_user: {
+      uid: 'uid',
+      name: 'name',
+      ctime: 'ctime',
+      pwd: 'pwd',
+    },
+    tb_user_ext: {
+      uid: 'uid',
+      age: 'age',
+      address: 'address',
+      lastLoginTime: 'lastLoginTime',
     },
   },
 
@@ -171,6 +200,14 @@ export const expectedDict3: DbDict<Db3> = {
   },
 
   columns: {
+    vi_001_02_user: {
+      uid: 'uid',
+      name: 'name',
+      ctime: 'ctime',
+    },
+  },
+
+  camelColumns: {
     vi_001_02_user: {
       uid: 'uid',
       name: 'name',

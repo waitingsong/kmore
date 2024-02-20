@@ -21,7 +21,7 @@ export type DictTables<D> = {
  * ```ts
  * type {
  *   tb_user: {
- *     uid: 'uid'
+ *     user_id: 'user_id'
  *     name: 'name'
  *   },
  *   tb_user_ext: {},
@@ -30,6 +30,22 @@ export type DictTables<D> = {
  */
 export type DictColumns<D> = {
   [TbName in keyof D]: Columns<D[TbName]>
+}
+
+/**
+ * @returns
+ * ```ts
+ * type {
+ *   tb_user: {
+ *     userId: 'userId'
+ *     name: 'name'
+ *   },
+ *   tb_user_ext: {},
+ * }
+ * ```
+ */
+export type DictCamelColumns<D> = {
+  [TbName in keyof D]: CamelColumns<D[TbName]>
 }
 
 /**
@@ -71,6 +87,17 @@ export type DictCamelAlias<D> = {
 
 export type Columns<T> = {
   [F in keyof T]: F
+}
+/**
+ * ```ts
+ * {
+ *  uid: 'uid'
+ *  userName: 'userName'
+ * }
+ * ```
+ */
+export type CamelColumns<T> = {
+  [F in keyof T as `${SnakeToCamel<F & string>}`]: SnakeToCamel<F & string>
 }
 /**
  * ```ts
