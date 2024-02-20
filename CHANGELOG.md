@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [59.3.0](https://github.com/waitingsong/kmore/compare/v59.2.1...v59.3.0) (2024-02-20)
+
+
+### Features
+
+* **kmore-types:** add property camelColumns of DbDict ([7d0d200](https://github.com/waitingsong/kmore/commit/7d0d20028f4813a5127b863fa0ecad4836225f9b))
+
+
+
+
+
 ## [59.2.1](https://github.com/waitingsong/kmore/compare/v59.2.0...v59.2.1) (2024-02-07)
 
 **Note:** Version bump only for package npm-mono-base
