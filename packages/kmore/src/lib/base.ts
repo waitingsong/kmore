@@ -14,6 +14,7 @@ import {
   KmoreTransactionConfig,
   QueryContext,
   TrxIdQueryMap,
+  WrapIdentifierIgnoreRule,
 } from './types.js'
 
 
@@ -24,6 +25,10 @@ export abstract class KmoreBase<Context = any> {
   readonly abstract eventCallbacks: EventCallbacks<Context> | undefined
   readonly abstract instanceId: string | symbol
   readonly abstract wrapIdentifierCaseConvert: CaseType
+  /**
+   * Rules ignoring table identifier case conversion,
+   */
+  readonly abstract wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
   /**
    * kmoreTrxId => Set(kmoreQueryId)

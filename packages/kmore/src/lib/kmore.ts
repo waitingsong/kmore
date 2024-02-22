@@ -12,7 +12,12 @@ import { KmoreBase } from './base.js'
 import { createRefTables } from './builder.index.js'
 import { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
-import { PostProcessInput, postProcessResponse, wrapIdentifier } from './helper.js'
+import {
+  PostProcessInput,
+  defaultWrapIdentifierIgnoreRule,
+  postProcessResponse,
+  wrapIdentifier,
+} from './helper.js'
 import { createTrxProperties } from './proxy.trx.js'
 import {
   CaseType,
@@ -22,6 +27,7 @@ import {
   KnexConfig,
   QueryContext,
   TrxIdQueryMap,
+  WrapIdentifierIgnoreRule,
 } from './types.js'
 import { genKmoreTrxId } from './util.js'
 
@@ -91,6 +97,11 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
   readonly instanceId: string | symbol
   readonly eventCallbacks: EventCallbacks<Context> | undefined
   readonly wrapIdentifierCaseConvert: CaseType
+  /**
+   * Rules ignoring table identifier case conversion,
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  readonly wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
   constructor(options: KmoreFactoryOpts<D, Context>) {
     super()
@@ -119,10 +130,12 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     }
 
     /**
-     * Table identifier case convertion,
+     * Table identifier case conversion,
      * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
      */
     this.wrapIdentifierCaseConvert = options.wrapIdentifierCaseConvert ?? CaseType.snake
+
+    this.wrapIdentifierIgnoreRule = options.wrapIdentifierIgnoreRule ?? defaultWrapIdentifierIgnoreRule
 
     if (! this.config.wrapIdentifier) {
       if (this.wrapIdentifierCaseConvert === CaseType.none) {
@@ -301,12 +314,19 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    */
   eventCallbacks?: EventCallbacks<Ctx> | undefined
   /**
-   * Table identifier case convertion,
+   * Table identifier case conversion,
    * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
    * @default CaseType.snake
    * @docs https://knexjs.org/guide/#wrapidentifier
    */
   wrapIdentifierCaseConvert?: CaseType | undefined
+
+  /**
+   * Rules ignoring table identifier case conversion,
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  wrapIdentifierIgnoreRule?: WrapIdentifierIgnoreRule | undefined
+
   /**
    * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
    * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**

@@ -68,6 +68,8 @@ export enum SmartKey {
   crossJoin = 'smartCrossJoin',
 }
 
+export type WrapIdentifierIgnoreRule = (string | RegExp)[]
+
 
 export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'unknown'
 
@@ -100,6 +102,10 @@ export interface KmoreEvent <T = unknown> {
 
 export interface QueryContext {
   wrapIdentifierCaseConvert: CaseType
+  /**
+   * Rules ignoring table identifier case conversion,
+   */
+  wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule | undefined
   postProcessResponseCaseConvert: CaseType
   kmoreQueryId: symbol
   columns: Record<string, string>[]

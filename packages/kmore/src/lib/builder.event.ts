@@ -32,6 +32,7 @@ export function builderBindEvents(
 
   const queryCtxOpts: QueryContext = {
     wrapIdentifierCaseConvert: kmore.wrapIdentifierCaseConvert,
+    wrapIdentifierIgnoreRule: kmore.wrapIdentifierIgnoreRule,
     postProcessResponseCaseConvert: caseConvert,
     kmoreQueryId,
     columns: [],

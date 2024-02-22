@@ -11,7 +11,13 @@ import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/sha
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Knex } from 'knex'
 
-import { CaseType, EnumClient, KnexConfig, QueryContext } from './types.js'
+import {
+  CaseType,
+  EnumClient,
+  KnexConfig,
+  QueryContext,
+  WrapIdentifierIgnoreRule,
+} from './types.js'
 
 
 export async function getCurrentTime(
@@ -60,9 +66,20 @@ function parseRespMysql2(res: RespMysql2): string {
     : ''
 }
 
+export const defaultWrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule = [
+  'now()',
+  'CURRENT_DATE',
+  'CURRENT_TIME',
+  'CURRENT_TIMESTAMP',
+  // /\bCURRENT_DATE\b/u,
+  // /\bCURRENT_TIMESTAMP\b/u,
+  // /\bDATE_TRUNC(/u,
+  // /\bINTERVAL\b/u,
+]
+
 
 /**
- * Convert identifier (field) to snakecase
+ * Convert identifier (field) to snake/camel case
  */
 export function wrapIdentifier(
   value: string,
@@ -78,7 +95,29 @@ export function wrapIdentifier(
     return ret
   }
 
+  if (value === '*') {
+    return origImpl(value)
+  }
+
   if (queryContext) {
+    const { wrapIdentifierIgnoreRule } = queryContext
+    if (wrapIdentifierIgnoreRule?.length) {
+      const flag = wrapIdentifierIgnoreRule.some((rule) => {
+        if (typeof rule === 'string') {
+          return rule === value
+        }
+        else if (rule instanceof RegExp) {
+          return rule.test(value)
+        }
+        else {
+          return false
+        }
+      })
+      if (flag) {
+        return value
+      }
+    }
+
     switch (queryContext.wrapIdentifierCaseConvert) {
       case CaseType.camel: {
         ret = origImpl(snakeToCamel(value))
