@@ -4,7 +4,10 @@ import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
 import type { KmoreFactoryOpts, PropagationType, RowLockLevel } from 'kmore'
 
 
-export type { QuerySpanInfo } from 'kmore'
+export type {
+  QuerySpanInfo,
+  WrapIdentifierIgnoreRule,
+} from 'kmore'
 
 
 export enum ConfigKey {
