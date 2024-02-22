@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [59.4.0](https://github.com/waitingsong/kmore/compare/v59.3.0...v59.4.0) (2024-02-22)
+
+
+### Features
+
+* **kmove:** add wrapIdentifierIgnoreRule of config ([2897e21](https://github.com/waitingsong/kmore/commit/2897e21d43f1113292ac9c8b310e04513cc9c1ad))
+
+
+
+
+
 # [59.3.0](https://github.com/waitingsong/kmore/compare/v59.2.1...v59.3.0) (2024-02-20)
 
 **Note:** Version bump only for package kmore
