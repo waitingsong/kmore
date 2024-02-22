@@ -19,7 +19,7 @@ export type KmoreTransaction = Knex.Transaction & {
   hrtime: bigint,
   kmoreTrxId: symbol,
   /**
-   * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
+   * Auto transaction action (rollback|commit|none) on builder error (Rejection or Exception),
    * declarative transaction always rollback on end
    *
    * @default rollback

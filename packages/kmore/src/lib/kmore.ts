@@ -50,7 +50,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
   * Use under typescript development only.
   *
   * @example ```ts
-  * const km = kmoreFactore<Db>({})
+  * const km = kmoreFactory<Db>({})
   * type DbModel = typeof km.DbModel
   * type Uid = DbModel['tb_user']['uid']  // equal to number
   * ```
@@ -62,7 +62,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
   * Use under typescript development only.
   *
   * @example ```ts
-  * const km = kmoreFactore<Db>({})
+  * const km = kmoreFactory<Db>({})
   * type Dict = typeof kmore['Dict']
   * type Uid = Dict['columns']['tb_user']['alias']['tbUserUid'] // equal to literal 'tb_user.uid'
   * ```
