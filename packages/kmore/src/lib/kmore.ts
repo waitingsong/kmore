@@ -35,19 +35,19 @@ import { genKmoreTrxId } from './util.js'
 export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
 
   /**
-   * Original table names, without case convertion.
+   * Original table names, without case conversion.
    */
   readonly refTables: DbQueryBuilder<Context, D, 'ref_', CaseType.none>
 
   /**
-   * Create a table reference function property with camel case convertion.
+   * Create a table reference function property with camel case conversion.
    */
   readonly camelTables: DbQueryBuilder<Context, D, 'ref_', CaseType.camel>
 
   // readonly pascalTables: DbQueryBuilder<D, 'ref_', CaseType.pascal>
 
   /**
-   * Create a table reference function property with snake case convertion.
+   * Create a table reference function property with snake case conversion.
    */
   readonly snakeTables: DbQueryBuilder<Context, D, 'ref_', CaseType.snake>
 
@@ -328,7 +328,7 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
   wrapIdentifierIgnoreRule?: WrapIdentifierIgnoreRule | undefined
 
   /**
-   * Atuo trsaction action (rollback|commit|none) on error (Rejection or Exception),
+   * Auto transaction action (rollback|commit|none) on error (Rejection or Exception),
    * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
    * @default rollback
    */

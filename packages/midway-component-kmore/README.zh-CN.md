@@ -231,7 +231,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
   ```
 
 
-More examples of auto paging see [auto-paing](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
+More examples of auto paging see [auto-paging](https://github.com/waitingsong/kmore/blob/main/packages/kmore/test/auto-paging/)
 
 
 ### 声明式事务
