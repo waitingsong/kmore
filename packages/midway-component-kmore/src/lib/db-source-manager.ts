@@ -49,7 +49,7 @@ import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
 export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
   extends AbstractDbSourceManager<SourceName, D, Ctx> {
 
-  @_Config(ConfigKey.config) private readonly sourceconfig: KmoreSourceConfig<SourceName>
+  @_Config(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
 
   @_Logger() private readonly logger: ILogger
 
@@ -59,17 +59,17 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   @Init()
   async init(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (! this?.sourceconfig?.dataSource) {
+    if (! this?.sourceConfig?.dataSource) {
       this.logger.info('dataSourceConfig is not defined')
       return
     }
     // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
-    await this.initDataSource(this.sourceconfig, this.baseDir)
+    await this.initDataSource(this.sourceConfig, this.baseDir)
   }
 
   getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
     assert(dbId)
-    const dbConfig = this.sourceconfig.dataSource[dbId]
+    const dbConfig = this.sourceConfig.dataSource[dbId]
     return dbConfig
   }
 
@@ -136,8 +136,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
     const inst = KmoreFactory(opts)
     if (cacheDataSource) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (! this.sourceconfig.dataSource[dataSourceName]) {
-        this.sourceconfig.dataSource[dataSourceName] = config
+      if (! this.sourceConfig.dataSource[dataSourceName]) {
+        this.sourceConfig.dataSource[dataSourceName] = config
       }
     }
 
