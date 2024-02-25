@@ -5,8 +5,8 @@ import {
   METHOD_KEY_CacheEvict,
   METHOD_KEY_CachePut,
   METHOD_KEY_Cacheable,
-  cacheableClassIgnoreIfMethodDecortaorKeys,
-  cacheableMethodIgnoreIfMethodDecortaorKeys,
+  cacheableClassIgnoreIfMethodDecoratorKeys,
+  cacheableMethodIgnoreIfMethodDecoratorKeys,
 } from '@mwcp/cache'
 import {
   CustomDecoratorFactoryParam,
@@ -91,8 +91,8 @@ export function Transactional<M extends MethodType | undefined = undefined>(
         decoratorKey: dkey,
         decoratorArgs: cacheOptions,
         enableClassDecorator: false,
-        classIgnoreIfMethodDecortaorKeys: cacheableClassIgnoreIfMethodDecortaorKeys,
-        methodIgnoreIfMethodDecortaorKeys: cacheableMethodIgnoreIfMethodDecortaorKeys,
+        classIgnoreIfMethodDecoratorKeys: cacheableClassIgnoreIfMethodDecoratorKeys,
+        methodIgnoreIfMethodDecoratorKeys: cacheableMethodIgnoreIfMethodDecoratorKeys,
       }
       regCustomDecorator(target, propertyName, descriptor, opts2)
     }
