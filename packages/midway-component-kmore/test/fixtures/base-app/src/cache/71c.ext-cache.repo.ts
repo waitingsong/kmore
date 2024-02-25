@@ -85,7 +85,7 @@ export class UserRepo8 {
 
 
   // @Cacheable key 2 will be ignored with cache config
-  // CustomDecoratorFactoryParam['methodIgnoreIfMethodDecortaorKeys'] = [METHOD_KEY_Transactional]
+  // CustomDecoratorFactoryParam['methodIgnoreIfMethodDecoratorKeys'] = [METHOD_KEY_Transactional]
   // from @mwcp/cache
   @Transactional<UserRepo8['getUserByUidWithCacheableAfter']>(void 0, void 0, {
     op: 'Cacheable',
@@ -101,6 +101,7 @@ export class UserRepo8 {
       .where({ uid })
       .first()
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(trxId)
     assert(trxPropagateOptions)
@@ -110,7 +111,7 @@ export class UserRepo8 {
   }
 
   // @Cacheable will be ignored with config
-  // CustomDecoratorFactoryParam['methodIgnoreIfMethodDecortaorKeys'] = [METHOD_KEY_Transactional]
+  // CustomDecoratorFactoryParam['methodIgnoreIfMethodDecoratorKeys'] = [METHOD_KEY_Transactional]
   // from @mwcp/cache
   @Cacheable()
   @Transactional<UserRepo8['getUserByUidWithCacheableBefore']>(void 0, void 0, {
@@ -125,6 +126,7 @@ export class UserRepo8 {
       .where({ uid })
       .first()
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(trxId)
     assert(trxPropagateOptions)

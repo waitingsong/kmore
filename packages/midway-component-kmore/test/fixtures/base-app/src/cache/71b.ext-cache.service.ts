@@ -4,7 +4,7 @@ import {
   Config as _Config,
   Inject,
 } from '@midwayjs/core'
-import { CacheManager, CacheConfigKey, initConfig } from '@mwcp/cache'
+import { CacheConfigKey, initCacheManagerOptions } from '@mwcp/cache'
 
 import { Transactional } from '../../../../../dist/index.js'
 
@@ -17,7 +17,6 @@ export class UserService {
 
   name = 'UserService'
 
-  @Inject() cacheManager: CacheManager
   @Inject() repo8: UserRepo8
 
   async withCacheableAfter(): Promise<void> {
@@ -33,7 +32,7 @@ export class UserService {
     const ret2 = await this.repo8.getUserByUidWithCacheableAfter(uid)
     const [user2] = ret2
     assert(user2 && user2.uid)
-    validateMeta(ret2, cacheKey, initConfig.options.ttl)
+    validateMeta(ret2, cacheKey, initCacheManagerOptions.options.ttl)
   }
 
   async withCacheableBefore(): Promise<void> {
@@ -49,12 +48,12 @@ export class UserService {
     const ret2 = await this.repo8.getUserByUidWithCacheableBefore(uid)
     const [user2] = ret2
     assert(user2 && user2.uid)
-    validateMeta(ret2, cacheKey, initConfig.options.ttl)
+    validateMeta(ret2, cacheKey, initCacheManagerOptions.options.ttl)
 
     const ret3 = await this.repo8.getUserByUidWithCacheableBefore(uid)
     const [user3] = ret3
     assert(user3 && user2.uid)
-    validateMeta(ret3, cacheKey, initConfig.options.ttl)
+    validateMeta(ret3, cacheKey, initCacheManagerOptions.options.ttl)
   }
 }
 

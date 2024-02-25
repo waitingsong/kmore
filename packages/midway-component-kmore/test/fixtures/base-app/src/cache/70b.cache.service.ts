@@ -3,8 +3,9 @@ import assert from 'node:assert/strict'
 import {
   Config as _Config,
   Inject,
+  InjectClient,
 } from '@midwayjs/core'
-import { CacheConfigKey, CacheManager } from '@mwcp/cache'
+import { CacheConfigKey, CachingFactory, MidwayCache } from '@mwcp/cache'
 
 import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
 import type { UserDTO } from '../../../../test.model.js'
@@ -19,7 +20,7 @@ export class UserService {
 
   name = 'UserService'
 
-  @Inject() cacheManager: CacheManager
+  @InjectClient(CachingFactory, 'default') cache: MidwayCache
   @Inject() repo6: UserRepo6
   @Inject() repo7: UserRepo7
 
@@ -42,7 +43,7 @@ export class UserService {
   }
 
   async delete(): Promise<void> {
-    await this.cacheManager.reset()
+    await this.cache.reset()
 
     const ret = await this.repo6.getUsers()
     const [users, trx, trxPropagateOptions] = ret
@@ -56,7 +57,7 @@ export class UserService {
     const ret2 = await this.repo6.getUsers()
     const [users4, trx4, trxPropagateOptions4] = ret2
     assert(users4)
-    assert(users4 && users4.length === 2, `Epect users4.length == 2, but ${users4.length}`)
+    assert(users4 && users4.length === 2, `Expect users4.length == 2, but ${users4.length}`)
     assert(trx === trx4)
     assert(
       trxPropagateOptions.entryKey === trxPropagateOptions4.entryKey,
@@ -108,8 +109,8 @@ export class UserService {
     const ret = await this.repo6.getUsers2(expectTotal)
     // @ts-ignore
     assert(! ret[CacheConfigKey.CacheMetaType])
-    const reta = await this.repo6.getUsers2(expectTotal)
-    validateMeta(reta, cacheKey6, 10)
+    const ret0 = await this.repo6.getUsers2(expectTotal)
+    validateMeta(ret0, cacheKey6, 10)
 
     const ret7 = await this.repo7.getUsers2(expectTotal)
     // @ts-ignore
