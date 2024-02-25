@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [59.5.0](https://github.com/waitingsong/kmore/compare/v59.4.1...v59.5.0) (2024-02-25)
+
+
+### Bug Fixes
+
+* **mwcp:** var typo fix from @mwcp/cache ([63637e7](https://github.com/waitingsong/kmore/commit/63637e7341f189571473dc331837274722710110))
+
+
+### Features
+
+* **mwcp:** bump deps version ([d20dc69](https://github.com/waitingsong/kmore/commit/d20dc6926648712defec47ffbbfb5b0f26ff57dd))
+
+
+
+
+
 ## [59.4.1](https://github.com/waitingsong/kmore/compare/v59.4.0...v59.4.1) (2024-02-24)
 
 **Note:** Version bump only for package npm-mono-base
