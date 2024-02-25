@@ -7,13 +7,14 @@ import {
   ILifeCycle,
   ILogger,
   Inject,
+  InjectClient,
   Logger,
   MidwayDecoratorService,
   MidwayEnvironmentService,
   MidwayInformationService,
   MidwayWebRouterService,
 } from '@midwayjs/core'
-import { CacheManager } from '@mwcp/cache'
+import { CachingFactory, MidwayUnionCache } from '@mwcp/cache'
 import { TraceInit } from '@mwcp/otel'
 import {
   Application,
@@ -70,7 +71,7 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Inject() decoratorService: MidwayDecoratorService
 
-  @Inject() cacheManager: CacheManager
+  @InjectClient(CachingFactory, 'default') readonly cache: MidwayUnionCache
 
   async onConfigLoad(): Promise<void> {
     if (! this.config.enableDefaultRoute) {
@@ -81,7 +82,7 @@ export class AutoConfiguration implements ILifeCycle {
   @TraceInit({ namespace: ConfigKey.namespace })
   async onReady(container: IMidwayContainer): Promise<void> {
     void container
-    assert(this.cacheManager, 'cacheManager is not ready')
+    assert(this.cache, '@mwcp/cache cache instance is not ready')
 
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
     registerMiddleware(this.app, KmoreMiddleware)
