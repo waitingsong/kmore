@@ -11,7 +11,7 @@ import { Config, ConfigKey, Msg } from '##/lib/types.js'
 
 
 @Controller(DefaultApi.base)
-export class DefaultComponentController {
+export class DefaultKmoreController {
 
   @_Config(ConfigKey.config) private readonly config: Config
 
