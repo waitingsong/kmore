@@ -35,13 +35,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^23.0.1",
+    "@waiting/shared-core": "^23.2.0",
     "@waiting/shared-types": "^23.0.1",
-    "@waiting/shared-types-dev": "^16.0.1",
+    "@waiting/shared-types-dev": "^17.0.0",
     "kmore-types": "^59.4.1",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.1",
-    "rxwalker": "^7.0.0",
+    "rxwalker": "^7.0.1",
     "tsconfig-resolver": "^3.0.1",
     "tsx": "^4.7.1"
   },
