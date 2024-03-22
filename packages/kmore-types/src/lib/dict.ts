@@ -1,5 +1,4 @@
-/* eslint-disable node/no-unpublished-import */
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 import { computeCallExpressionToLiteralObj } from '@waiting/shared-types-dev'
 
 import {

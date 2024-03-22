@@ -10,9 +10,9 @@ describe(fileShortPath(import.meta.url), () => {
   describe('should work', () => {
     it('foo', () => {
       assert(typeof Src === 'object', 'typeof Src !== "object"')
-      // @ts-ignore
+      // @ts-expect-error
       if (typeof Src.foo === 'number') {
-        // @ts-ignore
+        // @ts-expect-error
         assert(Src.foo === 1)
       }
     })

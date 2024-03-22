@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 
@@ -53,6 +53,7 @@ describe(fileShortPath(import.meta.url), () => {
       file.saveSync()
 
       const path2 = genAbsolutePath(path, true)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const dict = (await import(path2)).dict
       assert.deepStrictEqual(dict, expectedDict)
     })
