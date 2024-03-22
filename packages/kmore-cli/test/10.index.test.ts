@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'node:assert/strict'
 import { stat, cp, rm } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -203,7 +205,6 @@ async function assertsDemo1(
   catch (ex) {
     console.error('jsPath:', jsPath)
     assert(false, (ex as Error).message)
-    return
   }
   assert(mods)
   assert(mods.dict1)

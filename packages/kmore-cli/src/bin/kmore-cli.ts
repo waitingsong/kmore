@@ -1,4 +1,3 @@
-/* eslint-disable node/no-process-exit */
 /**
  * kmore-cli
  * command: gen  case insensitive

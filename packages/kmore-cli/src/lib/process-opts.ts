@@ -72,7 +72,9 @@ export function mergeOptions<T extends object>(
     const upperKey = key.toUpperCase()
 
     if (propMap.has(upperKey)) {
-      Object.defineProperty(opts, propMap.get(upperKey) as string, {
+      const tmpKey = propMap.get(upperKey)
+      if (! tmpKey) { return }
+      Object.defineProperty(opts, tmpKey, {
         configurable: true,
         enumerable: true,
         writable: true,

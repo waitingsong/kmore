@@ -117,9 +117,7 @@ export async function walkDir(options: Options): Promise<Set<FilePath>> {
       const { path } = ev
       return path ? ! ifPathContainsKey(path, excludePathKeys) : false
     }),
-    filter(
-      ev => ev.type === EntryType.file && ev.path.endsWith('.ts') && ! ev.path.endsWith('.d.ts'),
-    ),
+    filter(ev => ev.type === EntryType.file && ev.path.endsWith('.ts') && ! ev.path.endsWith('.d.ts')),
     map(ev => ev.path),
     mergeMap(async (path) => {
       const exists = await ifFileContentContainsCallerFuncNames(matchFuncNameSet, maxScanLines, path)
