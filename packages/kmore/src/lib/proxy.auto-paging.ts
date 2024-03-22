@@ -44,7 +44,7 @@ export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): Km
     ) => autoPagingBuilder(options, wrapOutput ?? false, refTable),
   })
 
-  return refTable as KmoreQueryBuilder
+  return refTable
 }
 
 function autoPagingBuilder(
@@ -61,7 +61,7 @@ function autoPagingBuilder(
     ...initPagingOptions,
     ...options,
   }
-  if (wrapOutput === true) {
+  if (wrapOutput) {
     opts.wrapOutput = true
   }
   assert(opts.page > 0, 'AutoPagingOptions page should be greater than 0')

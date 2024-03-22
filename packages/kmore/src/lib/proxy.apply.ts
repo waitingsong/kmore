@@ -32,7 +32,7 @@ export function builderApplyTransactingProxy(
       assert(
         qidSet,
         'Transaction already completed, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
-              + kmoreTrxId.toString(),
+        + kmoreTrxId.toString(),
       )
       qidSet.add(qid)
       kmore.setCtxTrxIdMap(ctx, kmoreTrxId)

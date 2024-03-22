@@ -33,7 +33,7 @@ export async function pager<T = unknown>(
     pageSize: +pagingOptions.pageSize,
   }
 
-  const outputMaping = pagingOptions.wrapOutput === true
+  const outputMaping = pagingOptions.wrapOutput
     ? { ...initPageTypeMaping }
     : void 0
 
@@ -138,9 +138,7 @@ interface GenBuilderForPagingRetType {
   pagingOptions: _PagingOptions
   builderPager?: KmoreQueryBuilder | undefined
 }
-async function genBuilderForPaging(
-  options: PagerOptions,
-): Promise<GenBuilderForPagingRetType> {
+async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderForPagingRetType> {
 
   const { kmore, builder } = options
 
@@ -150,7 +148,7 @@ async function genBuilderForPaging(
   )
 
   // @ts-ignore
-  const method = builder['_method'] as string
+  const method = builder._method as string
   assert(
     method === 'select',
     'autoPaging() can only be called on SELECT queries, .first() not supported',

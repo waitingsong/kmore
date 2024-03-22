@@ -30,7 +30,11 @@ export async function getCurrentTime(
 
     switch (clientType) {
       case EnumClient.pg:
+
+      // eslint-disable-next-line no-fallthrough
       case EnumClient.pgnative:
+
+      // eslint-disable-next-line no-fallthrough
       case EnumClient.mysql:
         return parseRespCommon(res as RespCommon)
 
@@ -165,11 +169,14 @@ export function postProcessResponse<T extends PostProcessInput = PostProcessInpu
   switch (caseConvert) {
     case CaseType.camel:
       return postProcessResponseToCamel(result, queryContext)
+
     case CaseType.pascal:
       throw Error('Not implemented yet for pascal case conversion')
+
       // return postProcessResponseToPascal(result, queryContext)
     case CaseType.snake:
       return postProcessResponseToSnake(result, queryContext)
+
     default:
       return result
   }
@@ -197,7 +204,7 @@ type PostProcessRecordCaseConvert<T extends PostProcessRecord, CaseConvert exten
         : T
 
 /**
- * Convert keys of result to camelcase, if input is object
+ * Convert keys of result to camel case, if input is object
  */
 export function postProcessResponseToCamel<T extends PostProcessInput = PostProcessInput>(
   result: T,
@@ -234,8 +241,8 @@ function _elementKeyToCamel<T extends PostProcessRecord>(
 
   const { resultNotConvertKeys, resultNeedConvertKeys } = genResultKeysData(row, columns)
 
-  const reulst2 = genCamelKeysFrom(resultNeedConvertKeys)
-  const ret = Object.assign(resultNotConvertKeys, reulst2)
+  const results2 = genCamelKeysFrom(resultNeedConvertKeys)
+  const ret = Object.assign(resultNotConvertKeys, results2)
   return ret as PostProcessRespRet<T, CaseType.camel>
 }
 
@@ -297,8 +304,8 @@ function _elementKeyToSnake<T extends PostProcessRecord>(
 
   const { resultNotConvertKeys, resultNeedConvertKeys } = genResultKeysData(row, columns)
 
-  const reulst2 = genSnakeKeysFrom(resultNeedConvertKeys)
-  const ret = Object.assign(resultNotConvertKeys, reulst2)
+  const results2 = genSnakeKeysFrom(resultNeedConvertKeys)
+  const ret = Object.assign(resultNotConvertKeys, results2)
   return ret as PostProcessRespRet<T, CaseType.snake>
 }
 
@@ -343,9 +350,7 @@ function genResultKeysData<T extends PostProcessRecord>(
 
 
 
-export function genCamelKeysFrom<From extends PostProcessRecord>(
-  input: From,
-): RecordCamelKeys<From, '_'> {
+export function genCamelKeysFrom<From extends PostProcessRecord>(input: From): RecordCamelKeys<From, '_'> {
   return camelKeys(input)
 }
 
@@ -355,9 +360,7 @@ export function genCamelKeysFrom<From extends PostProcessRecord>(
 //   return pascalCase(input)
 // }
 
-export function genSnakeKeysFrom<From extends PostProcessRecord>(
-  input: From,
-): RecordSnakeKeys<From, '_'> {
+export function genSnakeKeysFrom<From extends PostProcessRecord>(input: From): RecordSnakeKeys<From, '_'> {
   return snakeKeys(input)
 }
 

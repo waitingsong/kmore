@@ -53,7 +53,7 @@ export function builderBindEvents(
         if (columns2.length) {
           columns2.forEach(row => queryCtxOpts.columns.push(row))
         }
-        return callCbOnStart({
+        callCbOnStart({
           ...opts,
           builder,
         })
@@ -61,18 +61,22 @@ export function builderBindEvents(
     )
     .on(
       'query',
-      (data: OnQueryData) => callCbOnQuery({
-        ...opts,
-        data,
-      }),
+      (data: OnQueryData) => {
+        callCbOnQuery({
+          ...opts,
+          data,
+        })
+      },
     )
     .on(
       'query-response',
-      (resp: QueryResponse, respRaw: OnQueryRespRaw) => callCbOnQueryResp({
-        ...opts,
-        _resp: resp,
-        respRaw,
-      }),
+      (resp: QueryResponse, respRaw: OnQueryRespRaw) => {
+        callCbOnQueryResp({
+          ...opts,
+          _resp: resp,
+          respRaw,
+        })
+      },
     )
     .on(
       'query-error',

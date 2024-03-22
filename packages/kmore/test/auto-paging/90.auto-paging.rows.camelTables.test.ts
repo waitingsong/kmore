@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { validatePageRet, validatePageRetPartial, validateRet } from './util.js'
 
 import { KmoreFactory, PageRawType } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
+
+import { validatePageRet, validatePageRetPartial, validateRet } from './util.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

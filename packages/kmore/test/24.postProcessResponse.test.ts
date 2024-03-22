@@ -44,7 +44,7 @@ describe(fileShortPath(import.meta.url), () => {
 })
 
 function postProcessResponse(
-  result: any,
+  result: unknown,
   queryContext?: QueryContext,
 ): unknown {
 
@@ -52,6 +52,7 @@ function postProcessResponse(
   assert(Array.isArray(result))
   assert(queryContext)
   result.forEach((row) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     row.foo = 123
   })
   return result

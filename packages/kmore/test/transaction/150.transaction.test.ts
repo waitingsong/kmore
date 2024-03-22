@@ -17,7 +17,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   after(async () => {
-    if (km.dbh && km.dbh.destroy) {
+    if (km.dbh?.destroy) {
       await km.dbh.destroy() // !
     }
   })
@@ -60,7 +60,7 @@ describe(fileShortPath(import.meta.url), () => {
         .then((uids) => {
           assert(uids, uids.toString())
           assert(uids.length === 1, uids.toString())
-          const row = uids[0] as unknown as {uid: number}
+          const row = uids[0] as unknown as { uid: number }
           assert(row)
           assert(row.uid === uid99)
         })

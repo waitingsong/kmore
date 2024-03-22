@@ -21,6 +21,7 @@ export const config: KnexConfig = {
   },
   pool: {
     afterCreate: (conn, done) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       done(null, conn)
     },
   },

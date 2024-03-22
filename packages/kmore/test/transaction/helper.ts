@@ -65,7 +65,8 @@ export async function read(
     : km.camelTables.ref_tb_user()
 
   const str = await builder
-    .first().where('uid', 1).then((row) => {
+    .first().where('uid', 1)
+    .then((row) => {
       return row?.ctime
     })
     .then((ctime) => {

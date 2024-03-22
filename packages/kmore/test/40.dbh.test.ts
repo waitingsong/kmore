@@ -33,11 +33,11 @@ describe(fileShortPath(import.meta.url), () => {
         uid = await dbh<UserDo>(dict.tables.tb_user)
           .transacting(trx)
           .forUpdate()
-          .insert([ { name: 'user3', ctime: new Date() } ])
+          .insert([{ name: 'user3', ctime: new Date() }])
           .returning('uid')
           .then((uids) => {
             assert(uids && uids.length === 1, uids.toString())
-            const row = uids[0] as unknown as {uid: number}
+            const row = uids[0] as unknown as { uid: number }
             return row.uid
           })
         assert(typeof uid === 'number' && uid > 0, uid?.toString())

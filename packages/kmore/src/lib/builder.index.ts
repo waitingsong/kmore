@@ -89,7 +89,7 @@ function extRefTableFnProperty(
 
   assert(caseConvert, 'caseConvert must be defined')
 
-  const kmoreQueryId = Symbol(`${kmore.dbId}-${Date.now()}`)
+  const kmoreQueryId = Symbol(`${kmore.dbId}-${Date.now().toString()}`)
 
   // @ts-ignore
   assert(kmore.dbh)
@@ -114,7 +114,7 @@ function extRefTableFnProperty(
 
   refTable = builderBindEvents(
     kmore,
-    refTable as KmoreQueryBuilder,
+    refTable,
     caseConvert,
     ctx,
     kmoreQueryId,

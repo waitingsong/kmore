@@ -6,9 +6,7 @@ import { genColumnMaping, patchWhereColumnAlias, splitScopedColumn } from './sma
 import { KmorePageKey, SmartKey } from './types.js'
 
 
-export function processJoinTableColumnAlias(
-  builder: KmoreQueryBuilder,
-): KmoreQueryBuilder {
+export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQueryBuilder {
 
   if (! builder._tablesJoin.length) {
     return builder
@@ -48,9 +46,7 @@ export function processJoinTableColumnAlias(
 }
 
 
-export function extRefTableFnPropertySmartJoin(
-  refTable: KmoreQueryBuilder,
-): KmoreQueryBuilder {
+export function extRefTableFnPropertySmartJoin(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
 
   Object.values(SmartKey).forEach((joinType) => {
     if (typeof refTable[joinType] === 'function') { return }
@@ -64,7 +60,7 @@ export function extRefTableFnPropertySmartJoin(
     })
   })
 
-  return refTable as KmoreQueryBuilder
+  return refTable
 }
 
 function smartJoinBuilder(

@@ -19,7 +19,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   after(async () => {
-    if (km.dbh && km.dbh.destroy) {
+    if (km.dbh?.destroy) {
       await km.dbh.destroy() // !
     }
   })

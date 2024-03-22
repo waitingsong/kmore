@@ -73,7 +73,7 @@ export type WrapIdentifierIgnoreRule = (string | RegExp)[]
 
 export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'unknown'
 
-export interface KmoreEvent <T = unknown> {
+export interface KmoreEvent<T = unknown> {
   dbId: string
   type: EventType
   /** __knexUid */
@@ -129,7 +129,7 @@ export interface OnQueryData {
   timeout?: boolean
 }
 
-export interface OnQueryRespRaw <T = unknown> {
+export interface OnQueryRespRaw<T = unknown> {
   __knexUid: string // '__knexUid3'
   __knexTxId: string | undefined // 'trx2'
   __knexQueryUid?: string // 'vFFCb1Utd8Aosbumkfm_v'
@@ -143,7 +143,7 @@ export interface OnQueryRespRaw <T = unknown> {
   sql: string // 'select * from "tb_user" where "uid" = $1 for update'
   timeout?: boolean
 }
-export interface QueryResponse <T = unknown> {
+export interface QueryResponse<T = unknown> {
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   _parsers: unknown[] | any
   _types: unknown

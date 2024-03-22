@@ -220,9 +220,7 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
     this.ctxTrxIdMap.get(ctx)?.add(kmoreTrxId)
   }
 
-  getTrxSetByCtx(
-    ctx: unknown,
-  ): Set<KmoreTransaction> {
+  getTrxSetByCtx(ctx: unknown): Set<KmoreTransaction> {
 
     const ret = new Set<KmoreTransaction>()
     if (! ctx || typeof ctx !== 'object') {

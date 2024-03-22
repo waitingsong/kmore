@@ -108,11 +108,16 @@ describe(fileShortPath(import.meta.url), () => {
 })
 
 
-function validateRet(ret: any): void {
+function validateRet(ret: unknown): void {
   assert(ret)
+  // @ts-expect-error
   assert(ret.realName)
+  // @ts-expect-error
   assert(ret.tbUserExtUid)
-  assert(ret && ret.uid)
-  assert(ret && ret.name)
-  assert(ret && ret.age)
+  // @ts-expect-error
+  assert(ret?.uid)
+  // @ts-expect-error
+  assert(ret?.name)
+  // @ts-expect-error
+  assert(ret?.age)
 }

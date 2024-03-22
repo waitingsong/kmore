@@ -2,11 +2,12 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { validateOptionsPageRet, validateOptionsPageWrapRet } from './output.helper.js'
 
 import { PagingOptions, KmoreFactory, PagingMeta } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
+
+import { validateOptionsPageRet, validateOptionsPageWrapRet } from './output.helper.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

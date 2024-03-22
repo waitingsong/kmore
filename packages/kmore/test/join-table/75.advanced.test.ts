@@ -36,10 +36,10 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret = await camelTables.ref_tb_user()
         .innerJoin<CT['tb_user'] & CT['tb_user_ext']>(
-        tables.tb_user_ext,
-        scoped.tb_user.uid,
-        scoped.tb_user_ext.uid,
-      )
+          tables.tb_user_ext,
+          scoped.tb_user.uid,
+          scoped.tb_user_ext.uid,
+        )
         .columns(cols)
         .first()
 
@@ -63,10 +63,10 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret = await camelTables.ref_tb_user()
         .innerJoin<CT['tb_user'] & CT['tb_user_ext']>(
-        tables.tb_user_ext,
-        scoped.tb_user.uid,
-        scoped.tb_user_ext.uid,
-      )
+          tables.tb_user_ext,
+          scoped.tb_user.uid,
+          scoped.tb_user_ext.uid,
+        )
         .select('name')
         .columns(cols)
         .first()

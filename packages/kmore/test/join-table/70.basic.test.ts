@@ -24,6 +24,7 @@ describe(fileShortPath(import.meta.url), () => {
           assert(row.name === 'user1', JSON.stringify(row))
           assert(row.real_name === 'rn1', JSON.stringify(row))
           break
+
         default:
           assert(false, `Should row.uid be 1 or 2, but got ${row.uid ? row.uid : 'n/a'}`)
           break
@@ -47,10 +48,10 @@ describe(fileShortPath(import.meta.url), () => {
 
       await refTables.ref_tb_user()
         .innerJoin<UserExtDo>(
-        tables.tb_user_ext,
-        scoped.tb_user.uid,
-        scoped.tb_user_ext.uid,
-      )
+          tables.tb_user_ext,
+          scoped.tb_user.uid,
+          scoped.tb_user_ext.uid,
+        )
         .select('*')
         .where(scoped.tb_user.uid, 1)
         .then((rows) => {

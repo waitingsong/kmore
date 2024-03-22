@@ -19,9 +19,7 @@ interface ProcessThenRetOptions<Resp = unknown> extends Omit<CtxBuilderResultPre
   reject: undefined | ((data: unknown) => Error)
 }
 
-export async function processThenRet(
-  options: ProcessThenRetOptions,
-): Promise<unknown> {
+export async function processThenRet(options: ProcessThenRetOptions): Promise<unknown> {
 
   const {
     ctxBuilderResultPreProcessor,
@@ -76,7 +74,7 @@ export async function processThenRet(
     }))
     .then((resp: unknown) => {
       if (resp && typeof resp === 'object'
-          && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)
+        && ! Object.hasOwn(resp, KmoreProxyKey.getThenProxyProcessed)
       ) {
         Object.defineProperty(resp, KmoreProxyKey.getThenProxyProcessed, {
           ...defaultPropDescriptor,
@@ -147,7 +145,10 @@ async function processTrxOnEx(
   if (trx) { // also processed on event `query-error`
     await kmore.finishTransaction(trx).catch(console.error)
   }
-  if (ex) {
+  if (ex instanceof Error) {
     return Promise.reject(ex)
+  }
+  else {
+    return Promise.reject(new Error('Kmore Error when executing then()', { cause: ex }))
   }
 }

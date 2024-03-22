@@ -39,7 +39,7 @@ export function callCbOnStart(options: CallCbOnStartOptions): void {
       kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    return cb(event, options.ctx)
+    cb(event, options.ctx); return
   }
 }
 
@@ -59,7 +59,7 @@ export function callCbOnQuery(options: CallCbOnQueryOptions): void {
       kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    return cb(event, options.ctx)
+    cb(event, options.ctx); return
   }
 }
 
@@ -80,7 +80,7 @@ export function callCbOnQueryResp(options: CallCbOnQueryRespOptions): void {
       kmoreQueryId: options.kmoreQueryId,
     })
     event.dbId = options.dbId
-    return cb(event, options.ctx)
+    cb(event, options.ctx); return
   }
 }
 
@@ -121,7 +121,8 @@ function processKnexOnEvent(input: Partial<KmoreEvent>): KmoreEvent {
     }
 
     case 'query': {
-      const data = input.data as OnQueryData
+      const { data } = input
+      assert(data, 'data should be set on query event')
       ev.method = data.method ? data.method : ''
       ev.kUid = data.__knexUid
       ev.trxId = data.__knexTxId ? data.__knexTxId : void 0
@@ -129,7 +130,8 @@ function processKnexOnEvent(input: Partial<KmoreEvent>): KmoreEvent {
     }
 
     case 'queryResponse': {
-      const data = input.respRaw as OnQueryRespRaw
+      const data = input.respRaw
+      assert(data, 'data should be set on queryResponse event')
       ev.method = data.method ? data.method : ''
       ev.command = data.response?.command
       ev.kUid = data.__knexUid
@@ -138,7 +140,8 @@ function processKnexOnEvent(input: Partial<KmoreEvent>): KmoreEvent {
     }
 
     case 'queryError': {
-      const data = input.exData as OnQueryErrorData
+      const data = input.exData
+      assert(data, 'data should be set on queryError event')
       ev.method = data.method
       ev.kUid = data.__knexUid
       ev.trxId = data.__knexTxId ? data.__knexTxId : void 0

@@ -99,7 +99,7 @@ export function patchWhereColumnAlias(
 
       // @ts-expect-error
       const method = builder._method as string
-      const tablesJoin = builder._tablesJoin as string[]
+      const tablesJoin = builder._tablesJoin
       console.info(`[Kmore]: patchWhereColumnAlias() column mapping not found: ${column}, will keep original`, {
         dbId,
         kmoreQueryId,
