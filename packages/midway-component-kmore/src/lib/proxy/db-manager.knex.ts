@@ -46,9 +46,7 @@ export function proxyKnex(options: ProxyKnexOptions): ProxyKnexOptions['targetPr
 interface ProxyOptionsKnexTransaction extends ProxyKnexOptions {
   targetProperty: Kmore['transaction']
 }
-function knexTransactionTracing(
-  options: ProxyOptionsKnexTransaction,
-): ProxyOptionsKnexTransaction['targetProperty'] {
+function knexTransactionTracing(options: ProxyOptionsKnexTransaction): ProxyOptionsKnexTransaction['targetProperty'] {
 
   const { dbSourceManager, traceSvc, targetProperty } = options
   assert(typeof targetProperty === 'function', 'targetProperty is not a function transaction()')

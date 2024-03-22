@@ -144,5 +144,6 @@ export class UserRepo8 {
     assert(kmoreTrxId, 'kmoreTrxId not found')
     return kmoreTrxId
   }
+
 }
 

@@ -58,7 +58,7 @@ export abstract class TrxStatusServiceBase {
 
   abstract startNewTrx(db: Kmore, callerKey: CallerKey): Promise<KmoreTransaction>
 
-  abstract getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions| undefined
+  abstract getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions | undefined
 
 }
 

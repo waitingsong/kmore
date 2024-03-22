@@ -19,7 +19,7 @@ describe(fileShortPath(import.meta.url), () => {
         .expect(200)
 
       assert(resp)
-      const data = resp.text as string
+      const data = resp.text
       assert(data === 'OK')
     })
 

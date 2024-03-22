@@ -62,6 +62,7 @@ export class UserController {
     const user = await ref_tb_user()
       .select('fake')
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return user
   }
 

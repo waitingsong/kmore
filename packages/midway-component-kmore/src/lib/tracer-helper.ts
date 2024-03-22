@@ -30,9 +30,7 @@ export interface TraceStartEventOptions extends TraceEventOptions {
   span: Span
 }
 
-export function traceStartEvent(
-  options: TraceStartEventOptions,
-): void {
+export function traceStartEvent(options: TraceStartEventOptions): void {
 
   const {
     dbConfig,
@@ -58,9 +56,7 @@ export function traceStartEvent(
   queryUidSpanMap.set(ev.kmoreQueryId, spanInfo)
 }
 
-export function TraceQueryEvent(
-  options: TraceEventOptions,
-): void {
+export function TraceQueryEvent(options: TraceEventOptions): void {
 
   const { dbConfig, traceSvc, queryUidSpanMap } = options
   if (! dbConfig.traceEvent) { return }
@@ -112,9 +108,7 @@ export function TraceQueryEvent(
     .catch(console.error)
 }
 
-export function TraceQueryRespEvent(
-  options: TraceEventOptions,
-): void {
+export function TraceQueryRespEvent(options: TraceEventOptions): void {
 
   const { dbConfig, traceSvc, queryUidSpanMap } = options
   if (! dbConfig.traceEvent) { return }

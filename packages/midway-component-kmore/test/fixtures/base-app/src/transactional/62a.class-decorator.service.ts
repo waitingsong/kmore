@@ -380,5 +380,6 @@ export class UserService2 {
     assert(kmoreTrxId, 'kmoreTrxId not found')
     return kmoreTrxId
   }
+
 }
 

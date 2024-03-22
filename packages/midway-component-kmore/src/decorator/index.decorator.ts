@@ -77,9 +77,11 @@ export function Transactional<M extends MethodType | undefined = undefined>(
       case 'Cacheable':
         dkey = METHOD_KEY_Cacheable
         break
+
       case 'CacheEvict':
         dkey = METHOD_KEY_CacheEvict
         break
+
       case 'CachePut':
         dkey = METHOD_KEY_CachePut
         break

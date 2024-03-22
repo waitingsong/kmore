@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import assert from 'assert/strict'
 
 import { KmoreFactory, Kmore, getCurrentTime, EnumClient, KmoreFactoryOpts } from 'kmore'
@@ -43,7 +45,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const time = await getCurrentTime(km.dbh, config.client)
   assert(time)
-  console.info(`CurrrentTime: ${time}`)
+  console.info(`CurrentTime: ${time}`)
 
   const { tables, scoped } = km.dict
   const { tb_user, tb_user_ext } = dict.columns
@@ -58,7 +60,8 @@ async function initTable(km: Kmore<Db>): Promise<void> {
     .createTable(tables.tb_user_ext, (tb) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       config.client === EnumClient.mysql || config.client === EnumClient.mysql2
-        ? tb.integer(tb_user_ext.uid).unsigned().primary()
+        ? tb.integer(tb_user_ext.uid).unsigned()
+          .primary()
         : tb.integer(tb_user_ext.uid).primary()
       tb.foreign(tb_user_ext.uid)
         .references(scoped.tb_user.uid) // 'tb_user.uid'
@@ -104,7 +107,7 @@ export function validateUserRows(rows: Partial<UserDO>[]): void {
   assert(Array.isArray(rows) && rows.length > 0)
 
   rows.forEach((row) => {
-    assert(row && row.uid)
+    assert(row?.uid)
     assert(typeof row.ctime === 'object')
 
     switch (row.uid) {
@@ -112,18 +115,20 @@ export function validateUserRows(rows: Partial<UserDO>[]): void {
         assert(row.name === 'user1', JSON.stringify(row))
         assert(row.real_name === 'rn1', JSON.stringify(row))
         break
+
       case 2:
         assert(row.name === 'user2', JSON.stringify(row))
         assert(row.real_name === 'rn2', JSON.stringify(row))
         break
+
       case 3:
         assert(row.name === 'user3', JSON.stringify(row))
         assert(row.real_name === 'rn3', JSON.stringify(row))
         break
+
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
-        break
     }
   })
 }
@@ -159,7 +164,7 @@ export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
   assert(Array.isArray(rows) && rows.length > 0)
 
   rows.forEach((row) => {
-    assert(row && row.uid)
+    assert(row?.uid)
     assert(typeof row.ctime === 'object')
 
     switch (row.uid) {
@@ -167,18 +172,20 @@ export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
         assert(row.name === 'user1', JSON.stringify(row))
         assert(row.realName === 'rn1', JSON.stringify(row))
         break
+
       case 2:
         assert(row.name === 'user2', JSON.stringify(row))
         assert(row.realName === 'rn2', JSON.stringify(row))
         break
+
       case 3:
         assert(row.name === 'user3', JSON.stringify(row))
         assert(row.realName === 'rn3', JSON.stringify(row))
         break
+
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
-        break
     }
   })
 }
@@ -203,7 +210,7 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
 
   const countRes = await km.refTables.ref_tb_user_ext().count()
   assert(
-    countRes && countRes[0] && countRes[0]['count'] === '2',
+    countRes?.[0] && countRes[0]['count'] === '2',
     'Should count be "2"',
   )
 
@@ -223,7 +230,7 @@ export function validateUserExtRows(rows: Partial<UserExtDO>[]): void {
   assert(Array.isArray(rows) && rows.length > 0)
 
   rows.forEach((row) => {
-    assert(row && row.uid)
+    assert(row?.uid)
 
     switch (row.uid) {
       case 1:
@@ -231,22 +238,23 @@ export function validateUserExtRows(rows: Partial<UserExtDO>[]): void {
         assert(typeof row.salary === 'string', JSON.stringify(row))
         assert(row.salary === '1000.1234', JSON.stringify(row))
         break
+
       case 2:
         assert(row.age === 10, JSON.stringify(row))
         assert(typeof row.salary === 'string', JSON.stringify(row))
         assert(row.salary === '1000.1200', JSON.stringify(row))
         break
+
       default:
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
-        break
     }
   })
 }
 
 
 async function getTransactionIsolation(dbh: Knex): Promise<string> {
-  return await dbh.raw('SHOW TRANSACTION ISOLATION LEVEL')
+  return dbh.raw('SHOW TRANSACTION ISOLATION LEVEL')
     .then((rows) => {
       return rows.rows[0] ? rows.rows[0].transaction_isolation : 'N/A'
     })
@@ -258,7 +266,7 @@ async function setTimeZone(dbh: Knex, zone: string): Promise<string> {
     .then((rows) => {
       return rows.rows[0] ? rows.rows[0].transaction_isolation : 'N/A'
     })
-  return await dbh.raw('SHOW TIME ZONE')
+  return dbh.raw('SHOW TIME ZONE')
     .then((rows) => {
       return rows.rows[0] ? rows.rows[0].TimeZone : 'N/A'
     })

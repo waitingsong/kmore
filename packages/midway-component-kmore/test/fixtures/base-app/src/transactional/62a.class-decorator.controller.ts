@@ -147,5 +147,6 @@ export class ClassDecoratorController {
 
     return 'OK'
   }
+
 }
 

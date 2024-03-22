@@ -1,10 +1,11 @@
 import { fileShortPath } from '@waiting/shared-core'
 
-import { validateRespOK } from './transacional.helper.js'
 
 import { apiPrefix, apiRoute } from '#@/fixtures/base-app/src/api-route.js'
 import { initDb } from '#@/helper.js'
 import { testConfig } from '#@/root.config.js'
+
+import { validateRespOK } from './transacional.helper.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

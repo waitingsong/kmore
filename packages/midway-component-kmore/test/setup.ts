@@ -6,10 +6,11 @@ import { createApp, close, createHttpRequest } from '@midwayjs/mock'
 import { Application } from '@mwcp/share'
 import type { Suite } from 'mocha'
 
+import { ConfigKey } from '##/index.js'
+
 import { kmoreConfig } from './config.unittest.js'
 import { TestConfig, testConfig } from './root.config.js'
 
-import { ConfigKey } from '##/index.js'
 
 
 const globalConfig = {

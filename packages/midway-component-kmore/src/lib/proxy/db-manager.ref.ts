@@ -130,7 +130,10 @@ function proxyRefTableFn(
   const globalExceptionHandler: CtxExceptionHandler
     = async (options2: CtxExceptionHandlerOptions) => {
 
-      let pm = Promise.reject(options2.exception)
+      const { exception } = options2
+      let pm = Promise.reject(exception instanceof Error
+        ? exception
+        : new Error('[kmore-component] globalExceptionHandler error:', { cause: exception }))
       if (ctxExceptionHandler) {
         pm = pm.catch(ex => ctxExceptionHandler({ ...options2, exception: ex }))
       }
@@ -210,7 +213,7 @@ function transacting(key: string, options: ProxyBuilderOptions): KmoreQueryBuild
       assert(trx, 'trx is empty when calling builder.transacting()')
       assert(trx.kmoreTrxId, 'trx.kmoreTrxId is empty when calling builder.transacting(). May calling db.dbh.transaction(), use db.transaction() instead')
 
-      const builder = Reflect.apply(target, thisBinding, args) as KmoreQueryBuilder
+      const builder = Reflect.apply(target, thisBinding, args)
 
       const querySpanInfo = dbSourceManager.trxSpanMap.get(trx.kmoreTrxId)
       if (querySpanInfo) {

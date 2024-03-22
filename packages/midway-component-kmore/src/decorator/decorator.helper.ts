@@ -23,8 +23,8 @@ import { ConfigKey, KmorePropagationConfig, Msg, TransactionalOptions } from '##
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trxnal_class_decorator_key'
 export const METHOD_KEY_Transactional = 'decorator:kmore_trxnal_decorator_key'
-export const classDecoratorKeyMap = new Map([ [TRX_CLASS_KEY, 'Transactional'] ])
-export const methodDecoratorKeyMap = new Map([ [METHOD_KEY_Transactional, 'Transactional'] ])
+export const classDecoratorKeyMap = new Map([[TRX_CLASS_KEY, 'Transactional']])
+export const methodDecoratorKeyMap = new Map([[METHOD_KEY_Transactional, 'Transactional']])
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
 export type MethodType = (...input: any[]) => (any | Promise<any>)
@@ -46,7 +46,7 @@ export interface TransactionalArgs<M extends MethodType | undefined = undefined>
   /**
    * @default undefined (no cache)
    */
-  cacheOptions: (Partial<CacheOptions<M>> & { op: 'Cacheable' | 'CacheEvict' | 'CachePut'}) | false | undefined
+  cacheOptions: (Partial<CacheOptions<M>> & { op: 'Cacheable' | 'CacheEvict' | 'CachePut' }) | false | undefined
 }
 
 export type Method = (...args: unknown[]) => Promise<unknown>
@@ -68,9 +68,7 @@ export interface TrxDecoratorExecutorOptions extends DecoratorExecutorParamBase<
 }
 
 
-export function genDecoratorExecutorOptions(
-  options: DecoratorExecutorParamBase<TransactionalArgs>,
-): TrxDecoratorExecutorOptions {
+export function genDecoratorExecutorOptions(options: DecoratorExecutorParamBase<TransactionalArgs>): TrxDecoratorExecutorOptions {
 
   const {
     decoratorKey,
@@ -115,9 +113,7 @@ export function genDecoratorExecutorOptions(
 }
 
 
-export async function transactionalDecoratorExecutor(
-  options: TrxDecoratorExecutorOptions,
-): Promise<unknown> {
+export async function transactionalDecoratorExecutor(options: TrxDecoratorExecutorOptions): Promise<unknown> {
 
   const {
     instanceName,

@@ -85,9 +85,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     return ret
   }
 
-  protected async builderPropagating(
-    builder: KmoreQueryBuilder,
-  ): ReturnType<CtxBuilderPreProcessor> {
+  protected async builderPropagating(builder: KmoreQueryBuilder): ReturnType<CtxBuilderPreProcessor> {
 
     const { trxPropagateOptions } = builder
     if (! trxPropagateOptions) {
@@ -103,9 +101,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     return resp
   }
 
-  protected async builderResultPreProcessor(
-    options: CtxBuilderResultPreProcessorOptions,
-  ): ReturnType<CtxBuilderResultPreProcessor> {
+  protected async builderResultPreProcessor(options: CtxBuilderResultPreProcessorOptions): ReturnType<CtxBuilderResultPreProcessor> {
 
     if (options.kmoreTrxId && options.trxPropagated && options.trxPropagateOptions) {
       const { kmoreQueryId, rowLockLevel } = options
@@ -123,9 +119,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     return options.response
   }
 
-  protected async exceptionHandler(
-    options: CtxExceptionHandlerOptions,
-  ): ReturnType<CtxExceptionHandler> {
+  protected async exceptionHandler(options: CtxExceptionHandlerOptions): ReturnType<CtxExceptionHandler> {
 
     if (options.trxPropagated && options.trxPropagateOptions) {
       const { kmoreQueryId, rowLockLevel } = options
@@ -142,7 +136,10 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
       // }
     }
 
-    return Promise.reject(options.exception)
+    const ex = options.exception
+    return Promise.reject(ex instanceof Error
+      ? ex
+      : new Error('[kmore-component] DbManager#exceptionHandler error:', { cause: ex }))
   }
 
   protected createProxy(db: Kmore, reqCtx: Ctx): Kmore<any, Ctx> {

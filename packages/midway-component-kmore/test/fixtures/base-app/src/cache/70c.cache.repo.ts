@@ -181,5 +181,6 @@ export class UserRepo6 {
     assert(kmoreTrxId, 'kmoreTrxId not found')
     return kmoreTrxId
   }
+
 }
 

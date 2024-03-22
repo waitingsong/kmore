@@ -119,5 +119,6 @@ export class AutoConfiguration implements ILifeCycle {
       })
     this.logger.info(`[${ConfigKey.componentName}] onStop() done`)
   }
+
 }
 

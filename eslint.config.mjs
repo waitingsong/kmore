@@ -11,6 +11,7 @@ const CI = !! ((process.env['CI']
 )
 
 const srcRules = {
+  '@typescript-eslint/prefer-ts-expect-error': 0,
   'import/no-extraneous-dependencies': [2, {
     devDependencies: false,
     optionalDependencies: false,
@@ -22,6 +23,7 @@ const srcRules = {
   }],
 }
 const testRules = {
+  '@typescript-eslint/prefer-ts-expect-error': 0,
 }
 
 if (CI) {

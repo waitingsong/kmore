@@ -24,14 +24,14 @@ export class UserService {
 
     const ret = await this.repo8.getUserByUidWithCacheableAfter(uid)
     const [user] = ret
-    assert(user && user.uid)
+    assert(user?.uid)
     // @ts-ignore
     assert(! ret[CacheConfigKey.CacheMetaType])
 
     const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableAfter:${uid}`
     const ret2 = await this.repo8.getUserByUidWithCacheableAfter(uid)
     const [user2] = ret2
-    assert(user2 && user2.uid)
+    assert(user2?.uid)
     validateMeta(ret2, cacheKey, initCacheManagerOptions.options.ttl)
   }
 
@@ -40,14 +40,14 @@ export class UserService {
 
     const ret = await this.repo8.getUserByUidWithCacheableBefore(uid)
     const [user] = ret
-    assert(user && user.uid)
+    assert(user?.uid)
     // @ts-ignore
     assert(! user[CacheConfigKey.CacheMetaType])
 
     const cacheKey = `${this.repo8.name}.getUserByUidWithCacheableBefore:${uid}`
     const ret2 = await this.repo8.getUserByUidWithCacheableBefore(uid)
     const [user2] = ret2
-    assert(user2 && user2.uid)
+    assert(user2?.uid)
     validateMeta(ret2, cacheKey, initCacheManagerOptions.options.ttl)
 
     const ret3 = await this.repo8.getUserByUidWithCacheableBefore(uid)
@@ -55,5 +55,6 @@ export class UserService {
     assert(user3 && user2.uid)
     validateMeta(ret3, cacheKey, initCacheManagerOptions.options.ttl)
   }
+
 }
 

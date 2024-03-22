@@ -122,9 +122,9 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   ): Promise<Kmore | undefined> {
 
     const globalEventCbs: EventCallbacks = {
-      start: (event: KmoreEvent, ctx?: Ctx) => this.cbOnStart(config, event, ctx),
-      query: (event: KmoreEvent, ctx?: Ctx) => this.cbOnQuery(config, event, ctx),
-      queryResponse: (event: KmoreEvent, ctx?: Ctx) => this.cbOnResp(config, event, ctx),
+      start: (event: KmoreEvent, ctx?: Ctx) => { this.cbOnStart(config, event, ctx) },
+      query: (event: KmoreEvent, ctx?: Ctx) => { this.cbOnQuery(config, event, ctx) },
+      queryResponse: (event: KmoreEvent, ctx?: Ctx) => { this.cbOnResp(config, event, ctx) },
       queryError: (event: KmoreEvent, ctx?: Ctx) => this.cbOnError(config, event, ctx),
     }
     const opts: KmoreFactoryOpts<unknown> = {
@@ -185,10 +185,8 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
         this.dataSource.delete(dataSource.dbId)
       }
       catch (ex: unknown) {
-        this.logger.error(
-          `Destroy knex connection failed with identifier: "${dataSource.instanceId.toString()}" :
-          \n${(ex as Error).message}`,
-        )
+        this.logger.error(`Destroy knex connection failed with identifier: "${dataSource.instanceId.toString()}" :
+          \n${(ex as Error).message}`)
       }
     }
   }

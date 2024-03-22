@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  DataSourceManager,
-  Config as _Config,
-  Logger as _Logger,
-} from '@midwayjs/core'
+import { DataSourceManager } from '@midwayjs/core'
 import {
   Attributes,
   Span,
@@ -19,8 +15,7 @@ import {
 import { DbConfig } from './types.js'
 
 
-export abstract class AbstractDbSourceManager
-<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
+export abstract class AbstractDbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
   extends DataSourceManager<Kmore | undefined> {
 
   // kmoreQueryId => QuerySpanInfo
@@ -37,7 +32,7 @@ export abstract class AbstractDbSourceManager
     config: DbConfig<D, Ctx>,
     clientName: SourceName,
     options?: CreateInstanceOptions,
-  ) => Promise<Kmore<Db, Ctx> | void>
+  ) => Promise<Kmore<Db, Ctx> | undefined>
 
 
   abstract getDbConfigByDbId(dbId: SourceName): DbConfig | undefined

@@ -7,7 +7,7 @@ import {
 
 
 export enum BuilderKeys {
-  'transacting' = 'transacting',
+  transacting = 'transacting',
   transaction = 'transaction',
   _ctxBuilderPreProcessor = '_ctxBuilderPreProcessor',
 }
