@@ -51,7 +51,7 @@ export function traceStartEvent(options: TraceStartEventOptions): void {
       event: KmoreAttrNames.QueryBuilderStart,
       time: genISO8601String(),
     }
-    traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
+    traceSvc.addEvent(span, input, { logCpuUsage: false, logMemoryUsage: false })
   }
   queryUidSpanMap.set(ev.kmoreQueryId, spanInfo)
 }
@@ -79,7 +79,7 @@ export function TraceQueryEvent(options: TraceEventOptions): void {
     bindings: data?.bindings ? JSON.stringify(data.bindings, null, 2) : void 0,
     time: genISO8601String(),
   }
-  traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
+  traceSvc.addEvent(span, input, { logCpuUsage: false, logMemoryUsage: false })
 
   new Promise<void>((done) => {
     const name = method === 'del' ? 'delete' : method
@@ -156,7 +156,7 @@ export function TraceQueryRespEvent(options: TraceEventOptions): void {
     traceSvc.setAttributes(span, tags)
   }
 
-  traceSvc.addEvent(span, input, { logCpuUsage: false, logMemeoryUsage: false })
+  traceSvc.addEvent(span, input, { logCpuUsage: false, logMemoryUsage: false })
   traceSvc.endSpan(span)
 
   queryUidSpanMap.delete(kmoreQueryId)
@@ -188,7 +188,7 @@ export function TraceQueryExceptionEvent(options: TraceEventOptions): void {
     exData: JSON.stringify(exData, null, 2),
     exError: JSON.stringify(exError, null, 2),
   }
-  traceSvc.addEvent(span, input, { logCpuUsage: true, logMemeoryUsage: true })
+  traceSvc.addEvent(span, input, { logCpuUsage: true, logMemoryUsage: true })
 
   const attrs: Attributes = {
     // [AttrNames.SAMPLING_PRIORITY]: 100,
@@ -244,7 +244,7 @@ export function traceFinishTrx(options: TraceFinishTrxOptions): void {
     time,
     kmoreTrxId: kmoreTrxId.toString(),
   }
-  traceSvc.addEvent(span, event, { logCpuUsage: false, logMemeoryUsage: false })
+  traceSvc.addEvent(span, event, { logCpuUsage: false, logMemoryUsage: false })
   traceSvc.endSpan(span)
   trxSpanMap.delete(kmoreTrxId)
 }

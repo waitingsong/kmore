@@ -28,11 +28,9 @@ export const methodDecoratorKeyMap = new Map([[METHOD_KEY_Transactional, 'Transa
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
 export type MethodType = (...input: any[]) => (any | Promise<any>)
-export interface CacheOptions<M extends MethodType | undefined = undefined>
-  extends CacheableArgs<M>, CacheEvictArgs<M> {
-  // op: 'Cacheable' | 'CacheEvict' | 'CachePut'
-}
-
+export type CacheOptions<M extends MethodType | undefined = undefined> =
+  (Partial<CacheableArgs<M>> | Partial<CacheEvictArgs<M>>) & { op: CacheOperation }
+export type CacheOperation = 'Cacheable' | 'CacheEvict' | 'CachePut'
 
 export interface TransactionalArgs<M extends MethodType | undefined = undefined> {
   /**
@@ -46,8 +44,9 @@ export interface TransactionalArgs<M extends MethodType | undefined = undefined>
   /**
    * @default undefined (no cache)
    */
-  cacheOptions: (Partial<CacheOptions<M>> & { op: 'Cacheable' | 'CacheEvict' | 'CachePut' }) | false | undefined
+  cacheOptions: CacheOptions<M> | false | undefined
 }
+
 
 export type Method = (...args: unknown[]) => Promise<unknown>
 export interface TransactionalDecoratorExecutorOptions extends RegisterTrxPropagateOptions {
