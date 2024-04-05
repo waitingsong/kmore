@@ -107,6 +107,11 @@ async function initUser(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
+  const query = ref_tb_user().where(tb_user.uid, null)
+  const sql = query.toSQL().sql.toUpperCase()
+  // console.info({ sql })
+  assert(sql.includes('WHERE "UID" IS NULL'))
+
   await sleep(1000)
 
 }
