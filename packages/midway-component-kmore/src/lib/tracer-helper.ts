@@ -8,7 +8,15 @@ import {
   Span,
   SpanStatusCode,
 } from '@mwcp/otel'
-import { SemanticAttributes } from '@opentelemetry/semantic-conventions'
+import {
+  SEMATTRS_DB_NAME,
+  SEMATTRS_DB_OPERATION,
+  SEMATTRS_DB_STATEMENT,
+  SEMATTRS_DB_SYSTEM,
+  SEMATTRS_DB_USER,
+  SEMATTRS_NET_PEER_NAME,
+  SEMATTRS_NET_PEER_PORT,
+} from '@opentelemetry/semantic-conventions'
 import {
   genISO8601String,
   humanMemoryUsage,
@@ -88,18 +96,18 @@ export function TraceQueryEvent(options: TraceEventOptions): void {
 
     const attrs: Attributes = {
       dbId,
-      [SemanticAttributes.DB_SYSTEM]: typeof knexConfig.client === 'string'
+      [SEMATTRS_DB_SYSTEM]: typeof knexConfig.client === 'string'
         ? knexConfig.client
         : JSON.stringify(knexConfig.client, null, 2),
-      [SemanticAttributes.NET_PEER_NAME]: conn.host,
-      [SemanticAttributes.DB_NAME]: conn.database,
-      [SemanticAttributes.NET_PEER_PORT]: conn.port ?? '',
-      [SemanticAttributes.DB_USER]: conn.user,
-      [AttrNames.QueryCostThottleInMS]: sampleThrottleMs,
+      [SEMATTRS_NET_PEER_NAME]: conn.host,
+      [SEMATTRS_DB_NAME]: conn.database,
+      [SEMATTRS_NET_PEER_PORT]: conn.port ?? '',
+      [SEMATTRS_DB_USER]: conn.user,
+      [AttrNames.QueryCostThrottleInMS]: sampleThrottleMs,
       kUid,
       queryUid,
       trxId: trxId ?? '',
-      [SemanticAttributes.DB_STATEMENT]: data?.sql ?? '',
+      [SEMATTRS_DB_STATEMENT]: data?.sql ?? '',
       // bindings: data?.bindings ? JSON.stringify(data.bindings, null, 2) : void 0,
     }
     traceSvc.setAttributes(span, attrs)
@@ -123,7 +131,7 @@ export function TraceQueryRespEvent(options: TraceEventOptions): void {
   const cost = end - start
   if (respRaw?.response?.command) {
     const tags: Attributes = {
-      [SemanticAttributes.DB_OPERATION]: respRaw.response.command,
+      [SEMATTRS_DB_OPERATION]: respRaw.response.command,
       [AttrNames.QueryRowCount]: respRaw.response.rowCount ?? 0,
       [AttrNames.QueryCost]: cost,
     }
