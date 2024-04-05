@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict'
 
-import {
-  Config as _Config,
-  Inject,
-} from '@midwayjs/core'
+import { Inject } from '@midwayjs/core'
 import { CacheConfigKey, initCacheManagerOptions } from '@mwcp/cache'
 
 import { Transactional } from '../../../../../dist/index.js'

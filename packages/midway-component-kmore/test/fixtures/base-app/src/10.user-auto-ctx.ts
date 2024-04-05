@@ -1,13 +1,12 @@
 import assert from 'node:assert/strict'
 
 import {
-  Config as _Config,
   Controller,
   Get,
   Inject,
   Param,
 } from '@midwayjs/core'
-import type { Context } from '@mwcp/share'
+import { Context, MConfig } from '@mwcp/share'
 
 import {
   ConfigKey,
@@ -20,7 +19,7 @@ import { Db, Db2, UserDTO, UserExtDTO } from '../../../test.model.js'
 @Controller('/user')
 export class UserController {
 
-  @_Config(ConfigKey.middlewareConfig) protected readonly mwConfig: MiddlewareConfig
+  @MConfig(ConfigKey.middlewareConfig) protected readonly mwConfig: MiddlewareConfig
 
   @Inject() readonly ctx: Context
   @Inject() dbManager: DbManager<'master', Db>

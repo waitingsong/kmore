@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
 
 import {
-  Config as _Config,
   Init,
   Inject,
   Provide,

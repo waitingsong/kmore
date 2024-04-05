@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict'
 
-import {
-  Config as _Config,
-  Inject,
-} from '@midwayjs/core'
+import { Inject } from '@midwayjs/core'
 
 import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
 import type { UserDTO } from '../../../../test.model.js'

@@ -1,7 +1,6 @@
 import assert from 'node:assert'
 
 import {
-  Config as _Config,
   Controller,
   Get,
   Inject,

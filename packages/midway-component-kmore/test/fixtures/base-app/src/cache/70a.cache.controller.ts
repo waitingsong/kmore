@@ -1,10 +1,9 @@
 import {
-  Config as _Config,
   Controller,
   Get,
   Inject,
 } from '@midwayjs/core'
-import type { Context } from '@mwcp/share'
+import { Context } from '@mwcp/share'
 
 import { apiPrefix, apiRoute } from '../api-route.js'
 

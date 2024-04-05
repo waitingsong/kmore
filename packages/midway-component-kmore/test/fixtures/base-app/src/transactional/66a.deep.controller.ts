@@ -1,5 +1,4 @@
 import {
-  Config as _Config,
   Controller,
   Get,
   Inject,

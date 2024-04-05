@@ -2,7 +2,6 @@ import assert from 'node:assert'
 
 import {
   App,
-  Config as _Config,
   Configuration,
   ILifeCycle,
   ILogger,
@@ -19,6 +18,7 @@ import { TraceInit } from '@mwcp/otel'
 import {
   Application,
   IMidwayContainer,
+  MConfig,
   RegisterDecoratorHandlerParam,
   registerDecoratorHandler,
   registerMiddleware,
@@ -62,10 +62,10 @@ export class AutoConfiguration implements ILifeCycle {
 
   @Logger() protected readonly logger: ILogger
 
-  @_Config(ConfigKey.config) readonly config: Config
-  @_Config() readonly kmoreSourceConfig: KmoreSourceConfig
+  @MConfig(ConfigKey.config) readonly config: Config
+  @MConfig() readonly kmoreSourceConfig: KmoreSourceConfig
 
-  @_Config(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
+  @MConfig(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
 
   @Inject() readonly dbSManager: DbSourceManager
 

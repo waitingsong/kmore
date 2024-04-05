@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict'
 
 import {
-  Config as _Config,
   Controller,
   Get,
   Init,
   Inject,
   Param,
 } from '@midwayjs/core'
-import type { Context } from '@mwcp/share'
+import { Context } from '@mwcp/share'
 import { KmoreTransaction } from 'kmore'
 
 import {

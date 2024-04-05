@@ -2,7 +2,6 @@
 import assert from 'node:assert'
 
 import {
-  Config as _Config,
   Init,
   Inject,
   Logger as _Logger,
@@ -21,7 +20,7 @@ import {
   TraceInit,
   TraceService,
 } from '@mwcp/otel'
-import type { Context } from '@mwcp/share'
+import { Context, MConfig } from '@mwcp/share'
 import {
   EventCallbacks,
   Kmore,
@@ -49,7 +48,7 @@ import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
 export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
   extends AbstractDbSourceManager<SourceName, D, Ctx> {
 
-  @_Config(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
+  @MConfig(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
 
   @_Logger() private readonly logger: ILogger
 
