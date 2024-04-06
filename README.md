@@ -24,7 +24,7 @@ Declarative Transaction via decorator `@Transactional`
 
 ## Install global dependencies
 ```sh
-npm i -g c8 lerna rollup tsx zx
+npm i -g c8 lerna madge rollup tsx zx
 ```
 
 ## Installation
