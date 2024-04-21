@@ -2,7 +2,7 @@
  * kmore-cli
  * command: gen  case insensitive
  */
-import minimist from 'minimist'
+import { retrieveArgsFromProcess } from '@waiting/shared-core'
 
 import { genCmdHelp, helpDefault } from '../lib/helper.js'
 import { runCmd } from '../lib/index.js'
@@ -11,7 +11,7 @@ import { CliArgs, InputOptions } from '../lib/types.js'
 // log(yargs.argv)
 
 let args!: CliArgs
-const argv = minimist<InputOptions>(process.argv.slice(2))
+const argv = retrieveArgsFromProcess()
 
 try {
   args = parseCliArgs(argv)

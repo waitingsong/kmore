@@ -32,7 +32,7 @@ export interface Options {
   concurrent?: number
   /** String key to skip build under path. Default: node_modules */
   excludePathKeys?: string | string[]
-  /** Maxium file lines to match CallerFuncName (import), Default: 128 */
+  /** Maximum file lines to match CallerFuncName (import), Default: 128 */
   maxScanLines?: number
   callerFuncNames?: CallerFuncNameSet
 }
