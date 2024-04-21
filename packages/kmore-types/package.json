@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types-dev": "^17.0.0"
+    "@waiting/shared-types-dev": "^17.0.1"
   },
   "engines": {
     "node": ">=18.12.0"
