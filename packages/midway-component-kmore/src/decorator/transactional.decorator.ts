@@ -9,7 +9,7 @@ import {
   cacheableMethodIgnoreIfMethodDecoratorKeys,
 } from '@mwcp/cache'
 import {
-  CustomDecoratorFactoryParam,
+  CustomDecoratorFactoryOptions,
   customDecoratorFactory,
   regCustomDecorator,
 } from '@mwcp/share'
@@ -50,11 +50,7 @@ export function Transactional<M extends MethodType | undefined = undefined>(
   cacheOptions: TransactionalArgs<M>['cacheOptions'] = false,
 ) {
 
-  const options: Partial<TransactionalArgs<M>> = {
-    // propagationType,
-    // propagationOptions,
-    // cacheOptions,
-  }
+  const options: Partial<TransactionalArgs<M>> = { }
   // !!
   if (propagationType) {
     options.propagationType = propagationType
@@ -62,44 +58,45 @@ export function Transactional<M extends MethodType | undefined = undefined>(
   if (propagationOptions) {
     options.propagationOptions = propagationOptions
   }
-  if (cacheOptions) {
-    options.cacheOptions = cacheOptions
-  }
+  // @FIXME
+  void cacheOptions
+  // if (cacheOptions) {
+  //   options.cacheOptions = cacheOptions
+  // }
 
-  const opts: CustomDecoratorFactoryParam<TransactionalArgs<M>> = {
+  const opts: CustomDecoratorFactoryOptions<TransactionalArgs<M>> = {
     decoratorKey: METHOD_KEY_Transactional,
     decoratorArgs: options,
-    enableClassDecorator: true,
   }
-  if (cacheOptions) {
-    let dkey = ''
-    switch (cacheOptions.op) {
-      case 'Cacheable':
-        dkey = METHOD_KEY_Cacheable
-        break
+  // if (cacheOptions) {
+  //   let decoratorKey = ''
+  //   switch (cacheOptions.op) {
+  //     case 'Cacheable':
+  //       decoratorKey = METHOD_KEY_Cacheable
+  //       break
 
-      case 'CacheEvict':
-        dkey = METHOD_KEY_CacheEvict
-        break
+  //     case 'CacheEvict':
+  //       decoratorKey = METHOD_KEY_CacheEvict
+  //       break
 
-      case 'CachePut':
-        dkey = METHOD_KEY_CachePut
-        break
-    }
-    assert(dkey, `invalid cacheOptions.op: ${cacheOptions.op}`)
+  //     case 'CachePut':
+  //       decoratorKey = METHOD_KEY_CachePut
+  //       break
+  //   }
+  //   assert(decoratorKey, `invalid cacheOptions.op: ${cacheOptions.op}`)
 
-    opts.before = (target, propertyName, descriptor) => {
-      const opts2: CustomDecoratorFactoryParam<CacheableArgs<M>> = {
-        decoratorKey: dkey,
-        decoratorArgs: cacheOptions,
-        enableClassDecorator: false,
-        classIgnoreIfMethodDecoratorKeys: cacheableClassIgnoreIfMethodDecoratorKeys,
-        methodIgnoreIfMethodDecoratorKeys: cacheableMethodIgnoreIfMethodDecoratorKeys,
-      }
-      regCustomDecorator(target, propertyName, descriptor, opts2)
-    }
-  }
+  //   opts.before = (target, propertyName, descriptor) => {
+  //     const opts2: CustomDecoratorFactoryOptions<CacheableArgs<M>> = {
+  //       decoratorKey,
+  //       decoratorArgs: cacheOptions,
+  //       enableClassDecorator: false,
+  //       classIgnoreIfMethodDecoratorKeys: cacheableClassIgnoreIfMethodDecoratorKeys,
+  //       methodIgnoreIfMethodDecoratorKeys: cacheableMethodIgnoreIfMethodDecoratorKeys,
+  //     }
+  //     regCustomDecorator(target, propertyName, descriptor, opts2)
+  //   }
+  // }
 
-  return customDecoratorFactory<TransactionalArgs<M>>(opts)
+  return customDecoratorFactory(opts)
 }
 
