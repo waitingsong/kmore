@@ -4,7 +4,7 @@ import { MConfig, DecoratorExecutorParamBase, DecoratorHandlerBase } from '@mwcp
 import { GenDecoratorExecutorOptionsExt, genDecoratorExecutorOptions } from '../helper.js'
 import { Config, CacheableArgs, ConfigKey, DecoratorExecutorOptions } from '../types.js'
 
-import { decoratorExecutor } from './decorator.helper.js'
+import { decoratorExecutor } from './transactional.helper.js'
 
 /**
  * Cacheable decorator handler

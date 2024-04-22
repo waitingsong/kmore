@@ -34,7 +34,7 @@ import {
   METHOD_KEY_Transactional,
   genDecoratorExecutorOptions,
   transactionalDecoratorExecutor,
-} from './decorator/decorator.helper.js'
+} from './decorator/transactional.helper.js'
 import { useComponents } from './imports.js'
 import { DbSourceManager } from './lib/db-source-manager.js'
 import { Config, ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
