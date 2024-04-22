@@ -25,6 +25,7 @@ export enum Msg {
   hello = 'hello world',
   insufficientCallstacks = 'Insufficient call stacks by getCallerStack',
   callerKeyNotRegisteredOrNotEntry = 'callerKey is not registered or not entry caller',
+  propagationConfigIsUndefined = 'propagationConfig is undefined',
 }
 
 

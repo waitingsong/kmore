@@ -1,11 +1,8 @@
-import {
-  CustomDecoratorFactoryOptions,
-  customDecoratorFactory,
-} from '@mwcp/share'
+import { customDecoratorFactory } from '@mwcp/share'
+import type { MethodType } from '@waiting/shared-types'
 
 import { DecoratorHandlerTransactional } from './transactional.handler.js'
 import {
-  MethodType,
   TransactionalArgs,
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
@@ -37,57 +34,21 @@ export function Transactional<M extends MethodType | undefined = undefined>(
    */
   propagationType?: TransactionalArgs['propagationType'],
   propagationOptions?: TransactionalArgs['propagationOptions'],
-  cacheOptions: TransactionalArgs<M>['cacheOptions'] = false,
 ) {
 
-  const options: Partial<TransactionalArgs<M>> = { }
-  // !!
+  const opts: Partial<TransactionalArgs<M>> = { }
   if (propagationType) {
-    options.propagationType = propagationType
+    opts.propagationType = propagationType
   }
+
   if (propagationOptions) {
-    options.propagationOptions = propagationOptions
+    opts.propagationOptions = propagationOptions
   }
-  // @FIXME
-  void cacheOptions
-  // if (cacheOptions) {
-  //   options.cacheOptions = cacheOptions
-  // }
 
-  const opts: CustomDecoratorFactoryOptions<TransactionalArgs<M>> = {
+  return customDecoratorFactory({
+    decoratorArgs: opts,
     decoratorKey: METHOD_KEY_Transactional,
-    decoratorArgs: options,
     decoratorHandlerClass: DecoratorHandlerTransactional,
-  }
-  // if (cacheOptions) {
-  //   let decoratorKey = ''
-  //   switch (cacheOptions.op) {
-  //     case 'Cacheable':
-  //       decoratorKey = METHOD_KEY_Cacheable
-  //       break
-
-  //     case 'CacheEvict':
-  //       decoratorKey = METHOD_KEY_CacheEvict
-  //       break
-
-  //     case 'CachePut':
-  //       decoratorKey = METHOD_KEY_CachePut
-  //       break
-  //   }
-  //   assert(decoratorKey, `invalid cacheOptions.op: ${cacheOptions.op}`)
-
-  //   opts.before = (target, propertyName, descriptor) => {
-  //     const opts2: CustomDecoratorFactoryOptions<CacheableArgs<M>> = {
-  //       decoratorKey,
-  //       decoratorArgs: cacheOptions,
-  //       enableClassDecorator: false,
-  //       classIgnoreIfMethodDecoratorKeys: cacheableClassIgnoreIfMethodDecoratorKeys,
-  //       methodIgnoreIfMethodDecoratorKeys: cacheableMethodIgnoreIfMethodDecoratorKeys,
-  //     }
-  //     regCustomDecorator(target, propertyName, descriptor, opts2)
-  //   }
-  // }
-
-  return customDecoratorFactory(opts)
+  })
 }
 

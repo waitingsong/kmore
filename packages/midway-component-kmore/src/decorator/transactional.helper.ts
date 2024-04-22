@@ -1,11 +1,10 @@
 import assert from 'assert'
 
 import { DecoratorExecutorParamBase, DecoratorMetaDataPayload, deepmerge } from '@mwcp/share'
-import { MethodType } from '@waiting/shared-types'
 import { PropagationType } from 'kmore'
 
 import { initTransactionalOptions } from '##/lib/config.js'
-import { ConfigKey, KmorePropagationConfig, Msg, TransactionalOptions } from '##/lib/types.js'
+import { KmorePropagationConfig, Msg, TransactionalOptions } from '##/lib/types.js'
 
 
 export interface DecoratorExecutorOptions extends DecoratorExecutorParamBase<TransactionalArgs> {
