@@ -1,17 +1,6 @@
-import { assert } from 'console'
-
-import {
-  CacheableArgs,
-  METHOD_KEY_CacheEvict,
-  METHOD_KEY_CachePut,
-  METHOD_KEY_Cacheable,
-  cacheableClassIgnoreIfMethodDecoratorKeys,
-  cacheableMethodIgnoreIfMethodDecoratorKeys,
-} from '@mwcp/cache'
 import {
   CustomDecoratorFactoryOptions,
   customDecoratorFactory,
-  regCustomDecorator,
 } from '@mwcp/share'
 
 import {
@@ -20,6 +9,7 @@ import {
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
 } from './decorator.helper.js'
+import { DecoratorHandlerTransactional } from './transactional.handler.js'
 
 
 export {
@@ -67,6 +57,7 @@ export function Transactional<M extends MethodType | undefined = undefined>(
   const opts: CustomDecoratorFactoryOptions<TransactionalArgs<M>> = {
     decoratorKey: METHOD_KEY_Transactional,
     decoratorArgs: options,
+    decoratorHandlerClass: DecoratorHandlerTransactional,
   }
   // if (cacheOptions) {
   //   let decoratorKey = ''

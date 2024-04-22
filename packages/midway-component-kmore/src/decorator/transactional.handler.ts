@@ -1,4 +1,3 @@
-import { CachingFactory } from '@midwayjs/cache-manager'
 import { Inject, Singleton } from '@midwayjs/core'
 import { MConfig, DecoratorExecutorParamBase, DecoratorHandlerBase } from '@mwcp/share'
 
