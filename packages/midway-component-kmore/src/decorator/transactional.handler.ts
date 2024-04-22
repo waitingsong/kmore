@@ -1,33 +1,24 @@
 import { Inject, Singleton } from '@midwayjs/core'
 import { MConfig, DecoratorExecutorParamBase, DecoratorHandlerBase } from '@mwcp/share'
 
-import { GenDecoratorExecutorOptionsExt, genDecoratorExecutorOptions } from '../helper.js'
-import { Config, CacheableArgs, ConfigKey, DecoratorExecutorOptions } from '../types.js'
+import { ConfigKey, KmorePropagationConfig } from '##/lib/types.js'
 
-import { decoratorExecutor } from './transactional.helper.js'
+import { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, decoratorExecutor, genDecoratorExecutorOptions } from './transactional.helper.js'
 
-/**
- * Cacheable decorator handler
- * @description Not support sync method
- */
+
 @Singleton()
 export class DecoratorHandlerTransactional extends DecoratorHandlerBase {
-  /** component config */
-  @MConfig(ConfigKey.config) protected readonly cacheConfig: Config
-
-  @Inject() cachingFactory: CachingFactory
+  @MConfig(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
 
   override async genExecutorParamAsync(options: DecoratorExecutorParamBase): Promise<DecoratorExecutorOptions> {
     const optsExt: GenDecoratorExecutorOptionsExt = {
-      config: this.cacheConfig,
-      cachingFactory: this.cachingFactory,
-      op: 'cacheable',
+      propagationConfig: this.propagationConfig,
     }
     const ret = genDecoratorExecutorOptions(options, optsExt)
     return ret
   }
 
-  override async executorAsync(options: DecoratorExecutorOptions<CacheableArgs>) {
+  override async executorAsync(options: DecoratorExecutorOptions) {
     return decoratorExecutor(options)
   }
 

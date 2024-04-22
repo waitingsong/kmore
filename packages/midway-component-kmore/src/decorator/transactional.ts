@@ -9,13 +9,13 @@ import {
   TransactionalArgs,
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
-} from './transactional.helper.js'
+} from './transactional.helper.old.js'
 
 
 export {
   classDecoratorKeyMap,
   methodDecoratorKeyMap,
-} from './transactional.helper.js'
+} from './transactional.helper.old.js'
 
 export {
   TransactionalArgs as DecoratorArgs,
