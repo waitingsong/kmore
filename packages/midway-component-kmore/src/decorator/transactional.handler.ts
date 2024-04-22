@@ -3,12 +3,8 @@ import { MConfig, DecoratorExecutorParamBase, DecoratorHandlerBase } from '@mwcp
 
 import { ConfigKey, KmorePropagationConfig } from '##/lib/types.js'
 
-import {
-  DecoratorExecutorOptions,
-  GenDecoratorExecutorOptionsExt,
-  decoratorExecutor,
-  genDecoratorExecutorOptionsAsync,
-} from './transactional.helper.js'
+import { decoratorExecutor, genDecoratorExecutorOptionsAsync } from './transactional.helper.js'
+import { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt } from './transactional.types.js'
 
 
 @Singleton()

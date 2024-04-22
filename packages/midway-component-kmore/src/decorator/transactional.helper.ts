@@ -8,18 +8,10 @@ import { initTransactionalOptions } from '##/lib/config.js'
 import { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
 import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
 import { TrxStatusService } from '##/lib/trx-status.service.js'
-import { KmorePropagationConfig, Msg, TransactionalOptions } from '##/lib/types.js'
+import { Msg } from '##/lib/types.js'
 
+import { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, TransactionalArgs } from './transactional.types.js'
 
-export type DecoratorExecutorOptions = DecoratorExecutorParamBase<TransactionalArgs>
-  & GenDecoratorExecutorOptionsExt
-  & {
-    trxStatusSvc: TrxStatusService,
-  }
-
-export interface GenDecoratorExecutorOptionsExt {
-  propagationConfig: KmorePropagationConfig
-}
 
 export async function genDecoratorExecutorOptionsAsync<T extends object>(
   optionsBase: DecoratorExecutorParamBase<T>,
@@ -55,18 +47,6 @@ export async function genDecoratorExecutorOptionsAsync<T extends object>(
     trxStatusSvc,
   }
   return ret
-}
-
-
-export interface TransactionalArgs {
-  /**
-   * @default {@link PropagationType.REQUIRED}
-   */
-  propagationType: PropagationType | undefined
-  /**
-   * @default {@link TransactionalOptions}
-   */
-  propagationOptions: Partial<TransactionalOptions> | undefined
 }
 
 

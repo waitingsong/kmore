@@ -1,19 +1,17 @@
 import { customDecoratorFactory } from '@mwcp/share'
-import type { MethodType } from '@waiting/shared-types'
 
 import { DecoratorHandlerTransactional } from './transactional.handler.js'
 import {
   TransactionalArgs,
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
-} from './transactional.helper.old.js'
+} from './transactional.types.js'
 
 
 export {
   classDecoratorKeyMap,
   methodDecoratorKeyMap,
-} from './transactional.helper.old.js'
-
+} from './transactional.types.js'
 export {
   TransactionalArgs as DecoratorArgs,
   TRX_CLASS_KEY,
@@ -28,7 +26,7 @@ export {
  * @description default config can be set via `KmorePropagationConfig`
  *  in `src/config/config.{default|prod|local}.ts`
  */
-export function Transactional<M extends MethodType | undefined = undefined>(
+export function Transactional(
   /**
    * @default {@link Propagation.REQUIRED}
    */
@@ -36,7 +34,7 @@ export function Transactional<M extends MethodType | undefined = undefined>(
   propagationOptions?: TransactionalArgs['propagationOptions'],
 ) {
 
-  const opts: Partial<TransactionalArgs<M>> = { }
+  const opts: Partial<TransactionalArgs> = { }
   if (propagationType) {
     opts.propagationType = propagationType
   }

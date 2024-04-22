@@ -19,22 +19,14 @@ import {
   Application,
   IMidwayContainer,
   MConfig,
-  RegisterDecoratorHandlerParam,
-  registerDecoratorHandler,
   registerMiddleware,
   deleteRouter,
 } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
 
-
 import * as DefaultConfig from './config/config.default.js'
 import * as LocalConfig from './config/config.local.js'
 import * as UnittestConfig from './config/config.unittest.js'
-import {
-  METHOD_KEY_Transactional,
-  genDecoratorExecutorOptions,
-  transactionalDecoratorExecutor,
-} from './decorator/transactional.helper.old.js'
 import { useComponents } from './imports.js'
 import { DbSourceManager } from './lib/db-source-manager.js'
 import { Config, ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
@@ -86,19 +78,6 @@ export class AutoConfiguration implements ILifeCycle {
 
     // 全局db处理中间件，请求结束时回滚/提交所有本次请求未提交事务
     registerMiddleware(this.app, KmoreMiddleware)
-
-    const optsCacheable: RegisterDecoratorHandlerParam = {
-      decoratorKey: METHOD_KEY_Transactional,
-      decoratorService: this.decoratorService,
-      fnDecoratorExecutorAsync: transactionalDecoratorExecutor,
-      fnDecoratorExecutorSync: 'bypass',
-      fnGenDecoratorExecutorParam: genDecoratorExecutorOptions,
-    }
-    const aroundFactoryOptions = {
-      webApp: this.app,
-      config: this.propagationConfig,
-    }
-    registerDecoratorHandler(optsCacheable, aroundFactoryOptions)
   }
 
   @TraceInit({ namespace: ConfigKey.namespace })
