@@ -19,7 +19,7 @@ export const apiRoute = {
   selfUpdateDel: 'self_update_delete',
   selfReturnMissingAwait: 'self_return_missing_await',
   selfReturnPromise: 'self_return_promise',
-  seperateTrx: 'seperate_trx',
+  separateTrx: 'separate_trx',
   sibling: 'sibling',
   simple: 'simple',
   supports: 'supports',

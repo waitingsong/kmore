@@ -26,7 +26,7 @@ export class ClassDecoratorDeep2Controller {
     return 'OK'
   }
 
-  @Get(`/${apiRoute.seperateTrx}`)
+  @Get(`/${apiRoute.separateTrx}`)
   async serial(): Promise<'OK'> {
     await this.userSvc2.getUsers()
     await this.userSvc3.getUsers2()

@@ -12,10 +12,8 @@ describe(fileShortPath(import.meta.url), () => {
     const { httpRequest } = testConfig
 
     const path = '/user/paging'
-    const resp = await httpRequest
-      .get(path)
-      .expect(200)
-
+    const resp = await httpRequest.get(path)
+    assert(resp.ok, resp.text)
     const ret = resp.body as UserDTO[]
     assert(Array.isArray(ret))
     assert(ret.length)
@@ -25,10 +23,8 @@ describe(fileShortPath(import.meta.url), () => {
     const { httpRequest } = testConfig
 
     const path = '/user/paging_trx'
-    const resp = await httpRequest
-      .get(path)
-      .expect(200)
-
+    const resp = await httpRequest.get(path)
+    assert(resp.ok, resp.text)
     const ret = resp.body as UserDTO[]
     assert(Array.isArray(ret))
     assert(ret.length)
