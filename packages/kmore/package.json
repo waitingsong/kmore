@@ -42,7 +42,7 @@
     "@waiting/shared-core": "^23.6.1"
   },
   "devDependencies": {
-    "@mwcp/otel": "26 - 27",
+    "@mwcp/otel": "^26.5.1",
     "kmore-cli": "^59.5.6",
     "kmore-types": "^59.5.6",
     "knex": "^3.1.0",

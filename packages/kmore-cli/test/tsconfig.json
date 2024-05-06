@@ -9,7 +9,7 @@
     "rootDir": ".."
   },
   "include": [
-    "../src/",
+    "../src",
     "."
   ]
 }
