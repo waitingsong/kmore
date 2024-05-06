@@ -37,13 +37,13 @@
   "dependencies": {
     "@waiting/shared-core": "^23.6.1",
     "@waiting/shared-types": "^23.6.0",
-    "@waiting/shared-types-dev": "^17.0.1",
+    "@waiting/shared-types-dev": "^17.0.2",
     "kmore-types": "^59.5.6",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.1",
     "rxwalker": "^7.0.1",
     "tsconfig-resolver": "^3.0.1",
-    "tsx": "^4.7.2"
+    "tsx": "^4.9.3"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5"
