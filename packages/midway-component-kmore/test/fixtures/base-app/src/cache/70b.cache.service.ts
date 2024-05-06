@@ -4,7 +4,7 @@ import {
   Inject,
   InjectClient,
 } from '@midwayjs/core'
-import { CacheConfigKey, CachingFactory, MidwayCache } from '@mwcp/cache'
+import { CacheConfigKey, CachingFactory, MidwayCache, CacheEvict } from '@mwcp/cache'
 
 import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
 import type { UserDTO } from '../../../../test.model.js'
@@ -132,8 +132,8 @@ export class UserService {
     return ret
   }
 
-  @Transactional<UserRepo6['getUsers']>(void 0, void 0, {
-    op: 'CacheEvict',
+  @Transactional()
+  @CacheEvict<UserRepo6['getUsers']>({
     cacheName: 'UserRepo6.getUsers',
   })
   async delUser(uid: UserDTO['uid']): Promise<UserDTO> {

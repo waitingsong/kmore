@@ -15,9 +15,8 @@ describe(fileShortPath(import.meta.url), () => {
     const pathUpdate = '/trx_manual/rollback/'
     const urlUpdate = `${pathUpdate}${uid}`
 
-    const resp = await httpRequest
-      .get(urlUpdate)
-      .expect(200)
+    const resp = await httpRequest.get(urlUpdate)
+    assert(resp.ok, resp.text)
     const ret = resp.text as 'OK'
     assert(ret === 'OK')
   })
@@ -28,9 +27,8 @@ describe(fileShortPath(import.meta.url), () => {
     const pathUpdate = '/trx_manual/commit/'
     const urlUpdate = `${pathUpdate}${uid}`
 
-    const resp = await httpRequest
-      .get(urlUpdate)
-      .expect(200)
+    const resp = await httpRequest.get(urlUpdate)
+    assert(resp.ok, resp.text)
     const ret = resp.text as 'OK'
     assert(ret === 'OK')
   })

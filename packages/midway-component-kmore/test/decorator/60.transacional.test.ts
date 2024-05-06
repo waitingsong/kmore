@@ -14,10 +14,8 @@ describe(fileShortPath(import.meta.url), () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.simple}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       assert(resp)
       const data = resp.text
       assert(data === 'OK')

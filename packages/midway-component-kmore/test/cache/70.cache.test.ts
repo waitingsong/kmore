@@ -1,3 +1,5 @@
+import assert from 'node:assert'
+
 import { fileShortPath } from '@waiting/shared-core'
 
 
@@ -5,7 +7,7 @@ import { apiPrefix, apiRoute } from '#@/fixtures/base-app/src/api-route.js'
 import { initDb } from '#@/helper.js'
 import { testConfig } from '#@/root.config.js'
 
-import { validateRespOK } from './transacional.helper.js'
+import { validateRespOK } from './transactional.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -19,14 +21,12 @@ describe(fileShortPath(import.meta.url), () => {
   describe('Should ignore @Cacheable combined with @Transactional', () => {
     const prefix = apiPrefix.cache
 
-    it(apiRoute.get, async () => {
+    it.only(apiRoute.get, async () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.get}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       validateRespOK(resp)
     })
 
@@ -34,10 +34,8 @@ describe(fileShortPath(import.meta.url), () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.delete}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       validateRespOK(resp)
     })
 

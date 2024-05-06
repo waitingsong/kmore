@@ -5,9 +5,7 @@ import {
   Init,
   Inject,
   Logger as _Logger,
-  Provide,
-  Scope,
-  ScopeEnum,
+  Singleton,
 } from '@midwayjs/core'
 import { ILogger } from '@midwayjs/logger'
 import {
@@ -43,8 +41,7 @@ import {
 import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
 
 
-@Provide()
-@Scope(ScopeEnum.Singleton)
+@Singleton()
 export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
   extends AbstractDbSourceManager<SourceName, D, Ctx> {
 

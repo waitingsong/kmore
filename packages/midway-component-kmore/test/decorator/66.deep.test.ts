@@ -1,11 +1,12 @@
-import { fileShortPath } from '@waiting/shared-core'
+import assert from 'node:assert'
 
+import { fileShortPath } from '@waiting/shared-core'
 
 import { apiPrefix, apiRoute } from '#@/fixtures/base-app/src/api-route.js'
 import { initDb } from '#@/helper.js'
 import { testConfig } from '#@/root.config.js'
 
-import { validateRespOK } from './transacional.helper.js'
+import { validateRespOK } from './transactional.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -19,14 +20,12 @@ describe(fileShortPath(import.meta.url), () => {
   describe('Should @Transactional propagation work', () => {
     const prefix = apiPrefix.classDecoratorDeep2
 
-    it(apiRoute.seperateTrx, async () => {
+    it(apiRoute.separateTrx, async () => {
       const { httpRequest } = testConfig
-      const url = `${prefix}/${apiRoute.seperateTrx}`
+      const url = `${prefix}/${apiRoute.separateTrx}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       validateRespOK(resp)
     })
 
@@ -34,10 +33,8 @@ describe(fileShortPath(import.meta.url), () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.sibling}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       validateRespOK(resp)
     })
 
@@ -45,10 +42,8 @@ describe(fileShortPath(import.meta.url), () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.update}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       validateRespOK(resp)
     })
 
@@ -56,10 +51,8 @@ describe(fileShortPath(import.meta.url), () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.controllerUpdate}`
 
-      const resp = await httpRequest
-        .get(url)
-        .expect(200)
-
+      const resp = await httpRequest.get(url)
+      assert(resp.ok, resp.text)
       validateRespOK(resp)
     })
   })

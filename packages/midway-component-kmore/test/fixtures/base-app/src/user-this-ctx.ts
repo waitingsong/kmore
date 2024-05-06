@@ -57,7 +57,7 @@ export class UserThisController {
 
     assert(user)
     assert(user[0])
-    assert(typeof user[0].realName === 'string')
+    assert(typeof user[0].realName === 'string', JSON.stringify(user))
 
     assert.deepStrictEqual(user, user2)
     assert.deepStrictEqual(user, user3)

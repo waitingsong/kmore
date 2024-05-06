@@ -15,9 +15,8 @@ describe(fileShortPath(import.meta.url), () => {
 
     const urlUpdate = `${pathUpdate}/rollback/${uid}`
 
-    const resp = await httpRequest
-      .get(urlUpdate)
-      .expect(200)
+    const resp = await httpRequest.get(urlUpdate)
+    assert(resp.ok, resp.text)
     const ret = resp.text as 'OK'
     assert(ret === 'OK', ret)
   })
@@ -27,9 +26,8 @@ describe(fileShortPath(import.meta.url), () => {
 
     const urlUpdate = `${pathUpdate}/commit/${uid}`
 
-    const resp = await httpRequest
-      .get(urlUpdate)
-      .expect(200)
+    const resp = await httpRequest.get(urlUpdate)
+    assert(resp.ok, resp.text)
     const ret = resp.text as 'OK'
     assert(ret === 'OK', ret)
   })

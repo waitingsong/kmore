@@ -3,6 +3,7 @@ import * as koa from '@midwayjs/koa'
 import * as swagger from '@midwayjs/swagger'
 import * as cache from '@mwcp/cache'
 import * as otel from '@mwcp/otel'
+import * as share from '@mwcp/share'
 
 
 /* c8 ignore next 4 */
@@ -20,6 +21,7 @@ if (CI) {
   useComponents.push(swagger)
   useComponents.push(cache)
 }
+useComponents.push(share)
 
 export interface IComponentInfo {
   Configuration: unknown

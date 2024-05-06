@@ -4,7 +4,7 @@ import {
   Init,
   Inject,
 } from '@midwayjs/core'
-import { CacheConfigKey } from '@mwcp/cache'
+import { CacheConfigKey, Cacheable } from '@mwcp/cache'
 import type { Context } from '@mwcp/share'
 import { KmoreQueryBuilder, TrxPropagateOptions } from 'kmore'
 
@@ -74,11 +74,8 @@ export class UserRepo6 {
     assert(trx === trx2)
   }
 
-  @Transactional<UserRepo6['getUsers']>(void 0, void 0, {
-    op: 'Cacheable',
-    // ttl: 10,
-    // cacheName: 'UserRepo6:getUsers',
-  })
+  @Cacheable<UserRepo6['getUsers']>()
+  @Transactional()
   async getUsers(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
     const builder = this.ref_tb_user()
     const { trxPropagateOptions } = builder
@@ -106,9 +103,8 @@ export class UserRepo6 {
   }
 
 
-  @Transactional<UserRepo6['getUsers']>(void 0, void 0, {
-    op: 'Cacheable',
-  })
+  @Cacheable()
+  @Transactional()
   async getUsers2(expectTotal = 3): Promise<UserDTO[]> {
     const users = await this.db.camelTables.ref_tb_user()
     assert(users && users.length === expectTotal)

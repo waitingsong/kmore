@@ -16,9 +16,8 @@ describe(fileShortPath(import.meta.url), () => {
     const uid = 1
     const url = `${path}${uid}`
 
-    const resp = await httpRequest
-      .get(url)
-      .expect(200)
+    const resp = await httpRequest.get(url)
+    assert(resp.ok, resp.text)
     const ret = resp.body as UserDTO[]
     assert(Array.isArray(ret))
     assert(ret.length === 1)
@@ -34,9 +33,8 @@ describe(fileShortPath(import.meta.url), () => {
     const uid = 2
     const url = `${path}${uid}`
 
-    const resp = await httpRequest
-      .get(url)
-      .expect(200)
+    const resp = await httpRequest.get(url)
+    assert(resp.ok, resp.text)
     const ret = resp.body as UserDTO[]
     assert(Array.isArray(ret))
     assert(ret.length === 1)

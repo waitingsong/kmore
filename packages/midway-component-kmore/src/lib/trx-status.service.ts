@@ -50,7 +50,7 @@ const skipMethodNameSet = new Set([
 ])
 
 /**
- * Declaritive transaction status manager
+ * Declarative transaction status manager
  */
 @Provide()
 export class TrxStatusService extends TrxStatusServiceBase {
@@ -449,7 +449,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
   }
 
 
-  /* --------- protected methods --------- */
+  // #region protected methods
 
   protected traceEnd(options: TraceEndOptions): void {
     const { kmoreTrxId, op, trxPropagateOptions } = options
