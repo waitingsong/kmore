@@ -42,11 +42,14 @@ import { Msg } from './types.js'
 
 
 const skipMethodNameSet = new Set([
+  'aopCallback.around',
+  'aopDispatchAsync',
+  'aroundAsync',
   'aroundFactory',
-  'classDecoratorExecuctor',
+  'classDecoratorExecutor',
+  'createAsync',
   'registerPropagation',
   'retrieveTopCallerKeyFromCallStack',
-  'transactionalDecoratorExector',
 ])
 
 /**
@@ -224,7 +227,7 @@ export class TrxStatusService extends TrxStatusServiceBase {
   }
 
 
-  retrieveTopCallerKeyFromCallStack(limit = 64): CallerKey | undefined {
+  retrieveTopCallerKeyFromCallStack(limit = 128): CallerKey | undefined {
     const callers = getSimpleCallers(limit)
     if (! callers.length) { return }
 
