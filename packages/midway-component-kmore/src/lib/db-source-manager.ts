@@ -91,7 +91,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
    */
   @TraceInit<DbSourceManager['_createDataSource']>({
     spanName: ([, dataSourceName]) => `INIT ${ConfigKey.namespace}.DbSourceManager._createDataSource():${dataSourceName}`,
-    before: (_, args) => {
+    before: (args) => {
       if (! args[0].traceInitConnection) { return }
 
       const config: DbConfig = { ...args[0] }

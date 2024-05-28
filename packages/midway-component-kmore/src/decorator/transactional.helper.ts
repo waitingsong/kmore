@@ -50,7 +50,7 @@ export async function genDecoratorExecutorOptionsAsync<T extends object>(
 }
 
 
-export async function decoratorExecutorAsync(options: DecoratorExecutorOptions): Promise<unknown> {
+export async function aroundAsync(options: DecoratorExecutorOptions): Promise<unknown> {
   const {
     instanceName,
     mergedDecoratorParam,
@@ -103,6 +103,7 @@ export async function decoratorExecutorAsync(options: DecoratorExecutorOptions):
 
   try {
     const { method, methodArgs } = options
+    assert(method, 'method is undefined')
     const resp = await method(...methodArgs)
 
     const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
@@ -142,10 +143,9 @@ async function processEx(options: ProcessExOptions): Promise<never> {
 }
 
 
-
-export function decoratorExecutorSync(options: DecoratorExecutorOptions): unknown {
+export function aroundSync(options: DecoratorExecutorOptions): unknown {
   const { method, methodArgs } = options
-  const resp = method(...methodArgs)
-  return resp
+  assert(method, 'method is undefined')
+  return method(...methodArgs)
 }
 

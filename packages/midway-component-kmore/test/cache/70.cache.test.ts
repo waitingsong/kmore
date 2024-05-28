@@ -21,7 +21,7 @@ describe(fileShortPath(import.meta.url), () => {
   describe('Should ignore @Cacheable combined with @Transactional', () => {
     const prefix = apiPrefix.cache
 
-    it.only(apiRoute.get, async () => {
+    it(apiRoute.get, async () => {
       const { httpRequest } = testConfig
       const url = `${prefix}/${apiRoute.get}`
 
