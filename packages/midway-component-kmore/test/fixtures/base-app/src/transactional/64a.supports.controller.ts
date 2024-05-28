@@ -14,8 +14,8 @@ import {
   PropagationType,
   Transactional,
 } from '../../../../../dist/index.js'
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '../../../../api-test.js'
 import type { Db } from '../../../../test.model.js'
-import { apiPrefix, apiRoute } from '../api-route.js'
 
 import { PropagationOverrideService } from './64a.supports.service.js'
 

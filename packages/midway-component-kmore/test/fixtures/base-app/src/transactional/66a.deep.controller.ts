@@ -6,7 +6,7 @@ import {
 import type { Context } from '@mwcp/share'
 
 import { Transactional } from '../../../../../dist/index.js'
-import { apiPrefix, apiRoute } from '../api-route.js'
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '../../../../api-test.js'
 
 import { UserService2 } from './62a.class-decorator.service.js'
 import { UserService3 } from './65b.deep.service.js'

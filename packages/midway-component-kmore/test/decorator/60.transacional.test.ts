@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { apiPrefix, apiRoute } from '#@/fixtures/base-app/src/api-route.js'
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '#@/api-test.js'
 import { testConfig } from '#@/root.config.js'
 
 

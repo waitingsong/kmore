@@ -8,15 +8,14 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
-
 import {
   DbManager,
   Kmore,
   PropagationType,
   Transactional,
 } from '../../../../../dist/index.js'
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '../../../../api-test.js'
 import type { Db } from '../../../../test.model.js'
-import { apiPrefix, apiRoute } from '../api-route.js'
 
 
 @Controller(apiPrefix.methodDecorator)

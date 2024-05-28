@@ -8,7 +8,7 @@ import {
 import type { Context } from '@mwcp/share'
 
 import { Msg, Transactional } from '../../../../../dist/index.js'
-import { apiPrefix, apiRoute } from '../api-route.js'
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '../../../../api-test.js'
 
 import { UserService } from './61a.method-decorator.service.js'
 
