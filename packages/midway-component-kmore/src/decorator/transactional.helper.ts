@@ -1,14 +1,13 @@
 import assert from 'assert'
 
 import { DecoratorExecutorParamBase, DecoratorMetaDataPayload, deepmerge } from '@mwcp/share'
-import { sleep } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
 
 import { initTransactionalOptions } from '##/lib/config.js'
 import { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
 import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
 import { TrxStatusService } from '##/lib/trx-status.service.js'
-import { Msg } from '##/lib/types.js'
+import { ConfigKey, Msg } from '##/lib/types.js'
 
 import { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, TransactionalArgs } from './transactional.types.js'
 
@@ -49,8 +48,7 @@ export async function genDecoratorExecutorOptionsAsync<T extends object>(
   return ret
 }
 
-
-export async function aroundAsync(options: DecoratorExecutorOptions): Promise<unknown> {
+export async function beforeAsync(options: DecoratorExecutorOptions): Promise<void> {
   const {
     instanceName,
     mergedDecoratorParam,
@@ -84,68 +82,35 @@ export async function aroundAsync(options: DecoratorExecutorOptions): Promise<un
   let callerKey: CallerKey | undefined = void 0
   try {
     callerKey = trxStatusSvc.registerPropagation(opts)
+    options.callerKey = callerKey
   }
   catch (ex) {
-    const prefix = '[Kmore]: registerPropagation error'
+    const prefix = `[@mwcp/${ConfigKey.namespace}] registerPropagation error`
     const msg = ex instanceof Error && ex.message.includes(Msg.insufficientCallstacks)
       ? `${prefix}. ${Msg.insufficientCallstacks}`
       : prefix
     console.error(msg, ex)
     const error = new Error(msg, { cause: ex })
     const key = genCallerKey(opts.className, opts.funcName)
-    await processEx({
-      callerKey: key,
-      error,
-      trxStatusSvc,
-    })
-  }
-  assert(callerKey)
-
-  try {
-    const { method, methodArgs } = options
-    assert(method, 'method is undefined')
-    const resp = await method(...methodArgs)
-
-    const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
-    if (! tkey || tkey !== callerKey) {
-      return resp
-    }
-    // Delay for commit, prevent from method returning Promise or calling Knex builder without `await`!
-    await sleep(0)
-    // only top caller can commit
-    await trxStatusSvc.trxCommitIfEntryTop(tkey)
-    return resp
-  }
-  catch (error) {
-    await processEx({
-      callerKey,
-      error,
-      trxStatusSvc,
-    })
-  }
-}
-
-interface ProcessExOptions {
-  callerKey: CallerKey
-  error: unknown
-  trxStatusSvc: TrxStatusService
-}
-async function processEx(options: ProcessExOptions): Promise<never> {
-  const { callerKey, trxStatusSvc, error } = options
-
-  const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
-  if (! tkey || tkey !== callerKey) {
+    options.callerKey = key
     throw error
   }
-
-  await trxStatusSvc.trxRollbackEntry(callerKey)
-  throw error
+  assert(callerKey, `[@mwcp/${ConfigKey.namespace}] generate callerKey failed`)
 }
 
 
-export function aroundSync(options: DecoratorExecutorOptions): unknown {
-  const { method, methodArgs } = options
-  assert(method, 'method is undefined')
-  return method(...methodArgs)
+export async function afterAsync(options: DecoratorExecutorOptions): Promise<void> {
+  const { trxStatusSvc, callerKey } = options
+
+  if (! callerKey) { return }
+
+  const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+  if (tkey && tkey === callerKey) {
+    // Delay for commit, prevent from method returning Promise or calling Knex builder without `await`!
+    // await sleep(0)
+    // only top caller can commit
+    await trxStatusSvc.trxCommitIfEntryTop(tkey)
+  }
 }
+
 

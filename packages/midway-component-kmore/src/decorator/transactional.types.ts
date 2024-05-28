@@ -1,6 +1,7 @@
 import { DecoratorExecutorParamBase } from '@mwcp/share'
 import { PropagationType } from 'kmore'
 
+import { CallerKey } from '##/lib/propagation/trx-status.base.js'
 import { TrxStatusService } from '##/lib/trx-status.service.js'
 import { KmorePropagationConfig, TransactionalOptions } from '##/lib/types.js'
 
@@ -14,6 +15,7 @@ export type DecoratorExecutorOptions = DecoratorExecutorParamBase<TransactionalA
   & GenDecoratorExecutorOptionsExt
   & {
     trxStatusSvc: TrxStatusService,
+    callerKey?: CallerKey | undefined,
   }
 
 export interface GenDecoratorExecutorOptionsExt {

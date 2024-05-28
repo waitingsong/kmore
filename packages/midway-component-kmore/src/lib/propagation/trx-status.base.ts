@@ -20,7 +20,7 @@ import { DbSourceManager } from '../db-source-manager.js'
 
 
 /**
- * Declaritive transaction status manager
+ * Declarative transaction status manager
  */
 export abstract class TrxStatusServiceBase {
 

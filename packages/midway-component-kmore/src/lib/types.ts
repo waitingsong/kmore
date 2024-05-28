@@ -19,6 +19,7 @@ export enum ConfigKey {
   dbSourceManager = 'DbSourceManager',
   dbManager = 'DbManager',
   propagationConfig = 'kmorePropagationConfig',
+  Transactional = 'Transactional',
 }
 
 export enum Msg {
@@ -104,7 +105,7 @@ export enum KmoreAttrNames {
 
 
 /**
- * Transaction propagation config for declaritive transaction
+ * Transaction propagation config for declarative transaction
  */
 export interface KmorePropagationConfig extends TransactionalOptions {
   /**
