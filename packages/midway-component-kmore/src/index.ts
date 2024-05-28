@@ -29,6 +29,14 @@ export {
 
 export type { Knex } from 'knex'
 
+export {
+  JsonObject,
+  JsonResp,
+  JsonType,
+  MiddlewareConfig,
+  NpmPkg,
+} from '@waiting/shared-types'
+
 
 // @ts-ignore
 declare module '@midwayjs/core/dist/interface' {
