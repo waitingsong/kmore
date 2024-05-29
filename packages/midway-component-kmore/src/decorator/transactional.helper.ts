@@ -48,7 +48,7 @@ export async function genDecoratorExecutorOptionsAsync<T extends object>(
   return ret
 }
 
-export async function beforeAsync(options: DecoratorExecutorOptions): Promise<void> {
+export async function before(options: DecoratorExecutorOptions): Promise<void> {
   const {
     instanceName,
     mergedDecoratorParam,
@@ -99,10 +99,13 @@ export async function beforeAsync(options: DecoratorExecutorOptions): Promise<vo
 }
 
 
-export async function afterAsync(options: DecoratorExecutorOptions): Promise<void> {
+export async function afterReturn(options: DecoratorExecutorOptions): Promise<void> {
   const { trxStatusSvc, callerKey } = options
 
   if (! callerKey) { return }
+  assert(! options.error, `[@mwcp/${ConfigKey.namespace}] options.error is not undefined in afterAsync().
+  It should be handled in after() lifecycle redirect to afterThrow() with errorExt.
+  Error: ${options.error?.message}`)
 
   const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
   if (tkey && tkey === callerKey) {
@@ -111,6 +114,6 @@ export async function afterAsync(options: DecoratorExecutorOptions): Promise<voi
     // only top caller can commit
     await trxStatusSvc.trxCommitIfEntryTop(tkey)
   }
-}
 
+}
 

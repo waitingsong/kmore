@@ -4,7 +4,7 @@ import { MConfig, DecoratorExecutorParamBase, DecoratorHandlerBase, genError } f
 import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
 import { ConfigKey, KmorePropagationConfig } from '##/lib/types.js'
 
-import { afterAsync, beforeAsync, genDecoratorExecutorOptionsAsync } from './transactional.helper.js'
+import { afterReturn, before, genDecoratorExecutorOptionsAsync } from './transactional.helper.js'
 import { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt } from './transactional.types.js'
 
 
@@ -29,23 +29,19 @@ export class DecoratorHandlerTransactional extends DecoratorHandlerBase {
   override before(options: DecoratorExecutorOptions) {
     // Do NOT use isAsyncFunction(options.method), result may not correct
     if (! options.methodIsAsyncFunction) { return }
-
-    return beforeAsync(options).catch((ex) => {
-      return this.afterThrow(options, ex)
-    })
+    return before(options)
   }
 
-  override after(options: DecoratorExecutorOptions) {
+  override afterReturn(options: DecoratorExecutorOptions) {
     if (! options.methodIsAsyncFunction) { return }
 
-    return afterAsync(options).catch((ex) => {
-      return this.afterThrow(options, ex)
-    })
+    return afterReturn(options)
+      .catch(ex => this.afterThrow(options, ex))
   }
 
   override async afterThrow(options: DecoratorExecutorOptions, errorExt?: unknown): Promise<void> {
     const error = genError({
-      error: options.error ?? errorExt,
+      error: errorExt ?? options.error,
       throwMessageIfInputUndefined: `[@mwcp/${ConfigKey.namespace}] ${ConfigKey.Transactional}() afterThrow error is undefined`,
       altMessage: `[@mwcp/${ConfigKey.namespace}] ${ConfigKey.Transactional}() decorator afterThrow error`,
     })
