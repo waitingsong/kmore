@@ -60,7 +60,7 @@ export class UserRepo100 {
 
   @Transactional()
   async delUserAllThrowError(): Promise<void> {
-    await this.ref_tb_user().del()
+    // await this.ref_tb_user().del()
     throw new Error('test:delUserAllThrowError')
   }
 
