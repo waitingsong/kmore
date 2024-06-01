@@ -95,7 +95,6 @@ export interface ProxyGetHandlerOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
   propKey: string | symbol
-  receiver: unknown
   ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
   ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
   ctxExceptionHandler: CtxExceptionHandler | undefined

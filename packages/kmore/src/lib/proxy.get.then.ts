@@ -69,7 +69,9 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     }
     else {
       // query response or response data
-      getThenProxyRet = Reflect.apply(builder.then, builder, []) as Promise<unknown>
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      getThenProxyRet = Reflect.apply(builder['_ori_then'], builder, [])
     }
 
     const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
