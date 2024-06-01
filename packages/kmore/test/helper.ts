@@ -38,6 +38,8 @@ export async function initDb(): Promise<void> {
   await initUserExt(km)
   await initOrder(km)
   await km.dbh.destroy()
+
+  console.info('initDb() done')
 }
 
 async function initTable(km: Kmore<Db>): Promise<void> {
