@@ -14,28 +14,29 @@ export function createQueryBuilderGetProxy(options: CreateQueryBuilderGetProxyOp
     ctxExceptionHandler,
   } = options
 
-  const ret = new Proxy(options.builder, {
-    get: (target: KmoreQueryBuilder, propKey: string | symbol, receiver: unknown) => {
-      switch (propKey) {
-        case 'then':
-          // return proxyGetThen({ kmore, target, propKey, receiver })
-          return thenHandler({
-            kmore,
-            builder: target,
-            propKey,
-            receiver,
-            resultPagerHandler,
-            ctxBuilderPreProcessor,
-            ctxBuilderResultPreProcessor,
-            ctxExceptionHandler,
-          })
-
-        default:
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          return Reflect.get(target, propKey, receiver)
-      }
-    },
+  void Object.defineProperty(options.builder, '_ori_then', {
+    ...defaultPropDescriptor,
+    writable: true,
+    value: options.builder.then,
   })
+
+  void Object.defineProperty(options.builder, 'then', {
+    ...defaultPropDescriptor,
+    writable: true,
+    value: thenHandler({ // proxyGetThen
+      kmore,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      builder: options.builder,
+      propKey: 'then',
+      resultPagerHandler,
+      ctxBuilderPreProcessor,
+      ctxBuilderResultPreProcessor,
+      ctxExceptionHandler,
+    }),
+  })
+
+  const ret = options.builder
+
   void Object.defineProperty(ret, 'createQueryBuilderGetProxyKey', {
     ...defaultPropDescriptor,
     value: Date.now(),
