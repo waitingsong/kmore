@@ -303,7 +303,12 @@ async function deleteRow(
   trx: KmoreTransaction,
   uid: number,
 ): Promise<void> {
-  void kmore
+
+  const countRes = await kmore.refTables.ref_tb_user().transacting(trx).count()
+  const count = countRes[0]?.['count']
+    ? +countRes[0]['count']
+    : 0
+  assert(count > 0)
 
   const affectedRow = await tables.ref_tb_user()
     .transacting(trx)
@@ -314,4 +319,10 @@ async function deleteRow(
   assert(affectedRow)
   assert(affectedRow?.uid === uid)
   assert(affectedRow?.realName)
+
+  const countRes2 = await kmore.refTables.ref_tb_user().transacting(trx).count()
+  const count2 = countRes2[0]?.['count']
+    ? +countRes2[0]['count']
+    : 0
+  assert(count2 === count - 1)
 }
