@@ -12,40 +12,55 @@ export function builderApplyTransactingProxy(
   ctx: unknown,
 ): KmoreQueryBuilder {
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const applyTransactingProxy = new Proxy(refTable.transacting, {
-    apply: (
-      target: KmoreQueryBuilder['transacting'],
-      ctx2: KmoreQueryBuilder,
-      args: [KmoreTransaction],
-    ): KmoreQueryBuilder => {
-
-      const [trx] = args
-      assert(trx.isTransaction === true, 'trx must be a transaction')
-      const { kmoreTrxId } = trx
-      assert(kmoreTrxId, 'trx.kmoreTrxId must be provided when .transacting(trx)')
-
-      const qid = ctx2.kmoreQueryId
-      assert(qid, 'trx.kmoreQueryId must be provided when .transacting(trx)')
-
-      const qidSet = kmore.trxIdQueryMap.get(kmoreTrxId)
-      assert(
-        qidSet,
-        'Transaction already completed, may committed or rollbacked already. trxIdQueryMap not contains kmoreTrxId:'
-        + kmoreTrxId.toString(),
-      )
-      qidSet.add(qid)
-      kmore.setCtxTrxIdMap(ctx, kmoreTrxId)
-      return Reflect.apply(target, ctx2, args)
-    },
+  void Object.defineProperty(refTable, '_ori_transacting', {
+    ...defaultPropDescriptor,
+    writable: true,
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    value: refTable.transacting,
   })
+
   void Object.defineProperty(refTable, 'transacting', {
     ...defaultPropDescriptor,
     writable: true,
-    value: applyTransactingProxy,
+    value: (...args: [KmoreTransaction]) => customTransacting.call(refTable, {
+      kmore,
+      ctx,
+      args,
+    }),
   })
 
   return refTable
+}
+
+interface CustomTransactingOptions {
+  kmore: KmoreBase
+  ctx: unknown
+  args: [KmoreTransaction]
+}
+
+function customTransacting(this: KmoreQueryBuilder, options: CustomTransactingOptions): Promise<unknown> {
+  const { args, ctx, kmore } = options
+
+  const [trx] = args
+  assert(trx.isTransaction === true, 'trx must be a transaction')
+  const { kmoreTrxId } = trx
+  assert(kmoreTrxId, 'trx.kmoreTrxId must be provided when .transacting(trx)')
+
+  const qid = this.kmoreQueryId
+  assert(qid, 'trx.kmoreQueryId must be provided when .transacting(trx)')
+
+  const qidSet = kmore.trxIdQueryMap.get(kmoreTrxId)
+  assert(
+    qidSet,
+    'Transaction already completed, may committed or rollback already. trxIdQueryMap not contains kmoreTrxId:'
+    + kmoreTrxId.toString(),
+  )
+  qidSet.add(qid)
+  kmore.setCtxTrxIdMap(ctx, kmoreTrxId)
+
+  // @ts-expect-error method
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+  return this._ori_transacting(...args)
 }
 
 /*
