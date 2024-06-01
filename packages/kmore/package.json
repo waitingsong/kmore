@@ -81,7 +81,7 @@
     "lint:nofix": "eslint --cache src test",
     "pretest": "npm run build && npm run build:unit",
     "rp": "tsx bin-hashbang.js",
-    "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json mocha --jobs=2",
+    "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json mocha --parallel=false",
     "tsc": "tsc -p tsconfig.json"
   }
 }
