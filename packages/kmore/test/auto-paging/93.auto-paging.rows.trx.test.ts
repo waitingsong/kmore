@@ -5,6 +5,7 @@ import { fileShortPath } from '@waiting/shared-core'
 import {
   CaseType,
   DbQueryBuilder,
+  Kmore,
   KmoreFactory,
   KmoreTransaction,
   PageRawType,
@@ -34,7 +35,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('normal', async () => {
       const trx = await km.transaction()
 
-      await deleteRow(tables, trx, uid)
+      await deleteRow(km, tables, trx, uid)
 
       const ret0 = await tables.ref_tb_user()
         .transacting(trx)
@@ -51,7 +52,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('all', async () => {
       const trx = await km.transaction()
 
-      await deleteRow(tables, trx, uid)
+      await deleteRow(km, tables, trx, uid)
 
       const ret10 = await tables.ref_tb_user()
         .transacting(trx)
@@ -103,7 +104,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('partial', async () => {
       const trx = await km.transaction()
 
-      await deleteRow(tables, trx, uid)
+      await deleteRow(km, tables, trx, uid)
 
       const ret30 = await tables.ref_tb_user()
         .transacting(trx)
@@ -163,7 +164,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('where', async () => {
       const trx = await km.transaction()
 
-      await deleteRow(tables, trx, uid)
+      await deleteRow(km, tables, trx, uid)
 
       const ret = await tables.ref_tb_user()
         .transacting(trx)
@@ -297,10 +298,12 @@ function validateRet(input: UserDTO[], len = 3): void {
 
 
 async function deleteRow(
+  kmore: Kmore<Db>,
   tables: DbQueryBuilder<unknown, Db, 'ref_', CaseType.camel>,
   trx: KmoreTransaction,
   uid: number,
 ): Promise<void> {
+  void kmore
 
   const affectedRow = await tables.ref_tb_user()
     .transacting(trx)
