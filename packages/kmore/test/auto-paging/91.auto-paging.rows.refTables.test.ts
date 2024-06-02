@@ -179,23 +179,23 @@ function validatePagerRet(input: PageRawType<UserDo>, len = 3): void {
   assert(Object.hasOwn(input, 'pageSize'))
 
   const { total, page, pageSize } = input
-  console.log({ total, page, pageSize, rows: input.length })
+  // console.log({ total, page, pageSize, rows: input.length })
   assert(typeof total === 'number')
   assert(typeof page === 'number')
   assert(typeof pageSize === 'number')
 
   assert(pageSize === initPagingMeta.pageSize)
-  assert(input.pageSize > 0)
-  assert(input.total > 0)
-  assert(Array.isArray(input))
-  assert(input.length === len)
-  assert(pageSize >= input.length)
+  assert(input.pageSize > 0, JSON.stringify(input))
+  assert(input.total > 0, JSON.stringify(input))
+  assert(Array.isArray(input), JSON.stringify(input))
+  assert(input.length === len, JSON.stringify(input))
+  assert(pageSize >= input.length, JSON.stringify(input))
 
   const [row] = input
-  console.log({ row })
-  assert(row)
-  assert(row.uid)
-  assert(row.name)
+  // console.log({ row })
+  assert(row, JSON.stringify(input))
+  assert(row.uid, JSON.stringify(input))
+  assert(row.name, JSON.stringify(input))
 }
 
 function validatePagerRetPartial(
@@ -217,17 +217,17 @@ function validatePagerRetPartial(
   })
 
   const { total, page, pageSize } = input
-  console.log({ total, page, pageSize, rows: input.length })
-  assert(typeof total === 'number')
-  assert(typeof page === 'number')
-  assert(typeof pageSize === 'number')
+  // console.log({ total, page, pageSize, rows: input.length })
+  assert(typeof total === 'number', JSON.stringify(input))
+  assert(typeof page === 'number', JSON.stringify(input))
+  assert(typeof pageSize === 'number', JSON.stringify(input))
 
-  assert(pageSize === initPagingMeta.pageSize)
-  assert(input.pageSize > 0)
-  assert(input.total > 0)
-  assert(Array.isArray(input))
-  assert(input.length === len)
-  assert(pageSize >= input.length)
+  assert(pageSize === initPagingMeta.pageSize, JSON.stringify(input))
+  assert(input.pageSize > 0, JSON.stringify(input))
+  assert(input.total > 0, JSON.stringify(input))
+  assert(Array.isArray(input), JSON.stringify(input))
+  assert(input.length === len, JSON.stringify(input))
+  assert(pageSize >= input.length, JSON.stringify(input))
 
   const [row] = input
   assert(row)
@@ -256,7 +256,7 @@ function validateRet(input: UserDo[], len = 3): void {
   assert(input.length === len)
 
   const [row] = input
-  console.log({ row })
+  // console.log({ row })
   assert(row)
   assert(row.uid)
   assert(row.name)

@@ -207,7 +207,7 @@ describe(fileShortPath(import.meta.url), () => {
         .select('*')
         // .where('tb_user_ext_uid', 1)
 
-      console.log({ ret })
+      // console.log({ ret })
       assert(ret)
     })
 
