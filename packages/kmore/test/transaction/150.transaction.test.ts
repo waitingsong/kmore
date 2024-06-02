@@ -117,6 +117,9 @@ describe(fileShortPath(import.meta.url), () => {
       const count1 = await countTbUser(km, trx)
       assert(count1 === 2, `before rollback count: ${count1} != 2`)
 
+      const count1a = await countTbUser(km)
+      assert(count1a === 3, `before rollback count: ${count1a} != 3, outside transaction`)
+
       await trx.rollback()
 
       const count2 = await countTbUser(km)
