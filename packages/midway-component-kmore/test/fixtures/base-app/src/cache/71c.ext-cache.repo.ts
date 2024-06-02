@@ -84,9 +84,7 @@ export class UserRepo8 {
 
 
   @Transactional()
-  @Cacheable<UserRepo8['getUserByUidWithCacheableAfter']>({
-    key: ([uid]) => uid.toString(),
-  })
+  @Cacheable<UserRepo8['getUserByUidWithCacheableAfter']>()
   async getUserByUidWithCacheableAfter(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
     const builder = this.ref_tb_user()
     const { trxPropagateOptions } = builder
@@ -104,7 +102,6 @@ export class UserRepo8 {
   }
 
   @Cacheable<UserRepo8['getUserByUidWithCacheableBefore']>({
-    key: ([uid]) => uid.toString(),
     ttl: 30,
   })
   @Transactional()

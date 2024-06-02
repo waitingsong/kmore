@@ -37,7 +37,7 @@ describe(fileShortPath(import.meta.url), () => {
     assert(resp.ok, resp.text)
     const ret = resp.body as UserDTO[]
     assert(Array.isArray(ret))
-    assert(ret.length === 1)
+    assert(ret.length === 1, `Expect ret.length == 1, but ${ret.length}`)
 
     const [user] = ret
     assert(user)

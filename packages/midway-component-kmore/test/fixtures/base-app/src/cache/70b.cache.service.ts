@@ -135,6 +135,7 @@ export class UserService {
   @Transactional()
   @CacheEvict<UserRepo6['getUsers']>({
     cacheName: 'UserRepo6.getUsers',
+    key: '', // ignore uid
   })
   async delUser(uid: UserDTO['uid']): Promise<UserDTO> {
     const [user, trx, trxPropagateOptions] = await this.getUserByUid(uid)

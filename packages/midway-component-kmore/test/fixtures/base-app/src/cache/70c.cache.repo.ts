@@ -103,7 +103,9 @@ export class UserRepo6 {
   }
 
 
-  @Cacheable()
+  @Cacheable({
+    key: '', // ignore value of expectTotal
+  })
   @Transactional()
   async getUsers2(expectTotal = 3): Promise<UserDTO[]> {
     const users = await this.db.camelTables.ref_tb_user()

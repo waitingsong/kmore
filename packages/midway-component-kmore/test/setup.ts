@@ -9,6 +9,7 @@ import type { Suite } from 'mocha'
 import { ConfigKey } from '##/index.js'
 
 import { kmoreConfig } from './config.unittest.js'
+import { initDb } from './helper.js'
 import { TestConfig, testConfig } from './root.config.js'
 
 
@@ -25,6 +26,7 @@ export async function mochaGlobalSetup(this: Suite) {
   app = await createAppInstance()
   await updateConfig(app, testConfig)
   await updateConfig2(app, testConfig)
+  await initDb()
 }
 
 export async function mochaGlobalTeardown(this: Suite) {
