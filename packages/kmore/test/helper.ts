@@ -362,3 +362,18 @@ export async function deleteRow(
     : 0
   assert(count2 === count - 1)
 }
+
+export async function countTbUser(
+  kmore: Kmore<Db>,
+  trx?: KmoreTransaction,
+): Promise<number> {
+
+  const countRes = trx
+    ? await kmore.refTables.ref_tb_user().transacting(trx).count()
+    : await kmore.refTables.ref_tb_user().count()
+  const count = countRes[0]?.['count']
+    ? +countRes[0]['count']
+    : 0
+  return count
+}
+

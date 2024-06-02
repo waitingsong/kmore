@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { deleteRow } from '#@/helper.js'
+import { countTbUser, deleteRow } from '#@/helper.js'
 
 import { KmoreFactory } from '../../src/index.js'
 import { config } from '../test.config.js'
@@ -109,28 +109,17 @@ describe(fileShortPath(import.meta.url), () => {
     it('rollback delete', async () => {
       const trx = await km.transaction()
 
-      const countRes0 = await km.refTables.ref_tb_user().count()
-      const count0 = countRes0[0]?.['count']
-        ? +countRes0[0]['count']
-        : 0
-      console.log({ count0 })
+      const count0 = await countTbUser(km)
       assert(count0 === 3, `count0: ${count0} != 3`)
 
       await deleteRow(km, tables, trx, uid)
 
-      const countRes = await km.refTables.ref_tb_user().transacting(trx).count()
-      const count = countRes[0]?.['count']
-        ? +countRes[0]['count']
-        : 0
-      console.log({ count })
-      assert(count === 2, `before rollback count: ${count} != 2`)
+      const count1 = await countTbUser(km, trx)
+      assert(count1 === 2, `before rollback count: ${count1} != 2`)
 
       await trx.rollback()
-      const countRes2 = await km.refTables.ref_tb_user().count()
-      const count2 = countRes2[0]?.['count']
-        ? +countRes2[0]['count']
-        : 0
-      console.log({ count2 })
+
+      const count2 = await countTbUser(km)
       assert(count2 === 3, `after rollback count: ${count2} != 3`)
     })
   })
