@@ -5,7 +5,16 @@ import assert from 'assert/strict'
 import { sleep } from '@waiting/shared-core'
 import type { Knex } from 'knex'
 
-import { KmoreFactory, Kmore, getCurrentTime, EnumClient, KmoreFactoryOpts } from '../src/index.js'
+import {
+  CaseType,
+  DbQueryBuilder,
+  EnumClient,
+  Kmore,
+  KmoreFactory,
+  KmoreFactoryOpts,
+  KmoreTransaction,
+  getCurrentTime,
+} from '##/index.js'
 
 import { config, dbDict } from './test.config.js'
 import { Db, UserDo, UserDTO, UserExtDo } from './test.model.js'
@@ -313,3 +322,43 @@ async function setTimeZone(dbh: Knex, zone: string): Promise<string> {
     })
 }
 
+
+export async function deleteRow(
+  kmore: Kmore<Db>,
+  tables: DbQueryBuilder<unknown, Db, 'ref_', CaseType.camel>,
+  trx: KmoreTransaction,
+  uid: number,
+): Promise<void> {
+
+  const countRes = await kmore.refTables.ref_tb_user().transacting(trx).count()
+  const count = countRes[0]?.['count']
+    ? +countRes[0]['count']
+    : 0
+  assert(count > 0)
+
+  const rowExists = await tables.ref_tb_user()
+    .transacting(trx)
+    .select('*')
+    .where({ uid })
+    .first()
+  assert(rowExists, `rowExists is null, uid: ${uid}`)
+
+  const affectedRows = await tables.ref_tb_user()
+    .transacting(trx)
+    .where({ uid })
+    .del('*')
+
+  assert(affectedRows, 'affectedRows is null')
+  assert(Array.isArray(affectedRows) && affectedRows.length > 0, 'affectedRows is empty')
+
+  const [affectedRow] = affectedRows
+  assert(affectedRow, 'affectedRow is null')
+  assert(affectedRow?.uid === uid)
+  assert(affectedRow?.realName)
+
+  const countRes2 = await kmore.refTables.ref_tb_user().transacting(trx).count()
+  const count2 = countRes2[0]?.['count']
+    ? +countRes2[0]['count']
+    : 0
+  assert(count2 === count - 1)
+}
