@@ -11,6 +11,7 @@ import {
   PageRawType,
 } from '##/index.js'
 import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
+import { countTbUser } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { Db, UserDTO } from '#@/test.model.js'
 
@@ -35,7 +36,13 @@ describe(fileShortPath(import.meta.url), () => {
     it('normal', async () => {
       const trx = await km.transaction()
 
+      const count0 = await countTbUser(km)
+      assert(count0 === 3, `count0: ${count0} != 3`)
+
       await deleteRow(km, tables, trx, uid)
+
+      const count1 = await countTbUser(km, trx)
+      assert(count1 === 2, `before rollback count: ${count1} != 2`)
 
       const ret0 = await tables.ref_tb_user()
         .transacting(trx)
@@ -47,12 +54,21 @@ describe(fileShortPath(import.meta.url), () => {
       validatePagerRet(ret, len)
 
       await trx.rollback()
+
+      const count2 = await countTbUser(km)
+      assert(count2 === 3, `after rollback count: ${count2} != 3`)
     })
 
     it('all', async () => {
       const trx = await km.transaction()
 
+      const count0 = await countTbUser(km)
+      assert(count0 === 3, `count0: ${count0} != 3`)
+
       await deleteRow(km, tables, trx, uid)
+
+      const count1 = await countTbUser(km, trx)
+      assert(count1 === 2, `before rollback count: ${count1} != 2`)
 
       const ret10 = await tables.ref_tb_user()
         .transacting(trx)
@@ -98,7 +114,13 @@ describe(fileShortPath(import.meta.url), () => {
         .then()
       validatePagerRet(ret23, len)
 
+      const count2 = await countTbUser(km)
+      assert(count2 === 3, `after rollback count: ${count2} != 3`)
+
       await trx.rollback()
+
+      const count3 = await countTbUser(km)
+      assert(count3 === 3, `after rollback count: ${count3} != 3`)
     })
 
     it('partial', async () => {
@@ -216,7 +238,7 @@ function validatePagerRet(input: PageRawType<UserDTO> | undefined, len = 3): voi
 
     if (len > 0) {
       const [row] = input
-      console.log({ row })
+      // console.log({ row })
       assert(row)
       assert(row.uid)
       assert(row.name)
