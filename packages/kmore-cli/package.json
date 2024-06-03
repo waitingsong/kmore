@@ -43,7 +43,7 @@
     "rxjs": "^7.8.1",
     "rxwalker": "^7.0.1",
     "tsconfig-resolver": "^3.0.1",
-    "tsx": "^4.11.0"
+    "tsx": "^4.11.2"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5"
