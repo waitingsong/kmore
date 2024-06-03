@@ -11,7 +11,7 @@ import {
   PageRawType,
 } from '##/index.js'
 import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
-import { countTbUser } from '#@/helper.js'
+import { countTbUser, deleteRow } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { Db, UserDTO } from '#@/test.model.js'
 
@@ -318,33 +318,3 @@ function validateRet(input: UserDTO[], len = 3): void {
   assert(row.name)
 }
 
-
-async function deleteRow(
-  kmore: Kmore<Db>,
-  tables: DbQueryBuilder<unknown, Db, 'ref_', CaseType.camel>,
-  trx: KmoreTransaction,
-  uid: number,
-): Promise<void> {
-
-  const countRes = await kmore.refTables.ref_tb_user().transacting(trx).count()
-  const count = countRes[0]?.['count']
-    ? +countRes[0]['count']
-    : 0
-  assert(count > 0)
-
-  const affectedRow = await tables.ref_tb_user()
-    .transacting(trx)
-    .where({ uid })
-    .del('*')
-    .then(rows => rows[0])
-
-  assert(affectedRow)
-  assert(affectedRow?.uid === uid)
-  assert(affectedRow?.realName)
-
-  const countRes2 = await kmore.refTables.ref_tb_user().transacting(trx).count()
-  const count2 = countRes2[0]?.['count']
-    ? +countRes2[0]['count']
-    : 0
-  assert(count2 === count - 1)
-}
