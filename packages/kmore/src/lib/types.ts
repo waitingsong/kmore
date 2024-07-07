@@ -4,7 +4,7 @@ import type { TraceContext, Span } from '@mwcp/otel'
 import { CaseType } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import {
+import type {
   KmoreQueryBuilder,
   QueryBuilderExtKey,
   TrxPropagateOptions,

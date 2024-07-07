@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import {
+import type {
   CaseConvertTable,
   CaseType,
   DbScopedColsByKey,
@@ -13,10 +13,10 @@ import {
   StrKey,
   UnwrapArrayMember,
 } from '@waiting/shared-types'
-import { DbDict } from 'kmore-types'
+import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
-import { PropagationType } from './propagation.types.js'
+import type { PropagationType } from './propagation.types.js'
 
 
 /**
@@ -286,11 +286,11 @@ interface AliasQueryBuilder<
   <
     AliasUT extends Knex.InferrableColumnDescriptor<Knex.ResolveTableType<TRecord>>[],
     TResult2 = ArrayIfAlready<
-    TResult,
-    DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    Knex.ResolveTableType<TRecord>,
-    IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT>>
+      TResult,
+      DeferredKeySelectionNS.Augment<
+        UnwrapArrayMember<TResult>,
+        Knex.ResolveTableType<TRecord>,
+        IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT>>
     >,
   >(
     ...aliases: AliasUT
@@ -299,11 +299,11 @@ interface AliasQueryBuilder<
   <
     AliasUT extends Knex.InferrableColumnDescriptor<Knex.ResolveTableType<TRecord>>[],
     TResult2 = ArrayIfAlready<
-    TResult,
-    DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    Knex.ResolveTableType<TRecord>,
-    IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT>>
+      TResult,
+      DeferredKeySelectionNS.Augment<
+        UnwrapArrayMember<TResult>,
+        Knex.ResolveTableType<TRecord>,
+        IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT>>
     >,
   >(
     aliases: AliasUT
@@ -312,11 +312,11 @@ interface AliasQueryBuilder<
   <
     AliasUT extends (Dict | string)[],
     TResult2 = ArrayIfAlready<
-    TResult,
-    DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    Knex.ResolveTableType<TRecord>,
-    IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT> >
+      TResult,
+      DeferredKeySelectionNS.Augment<
+        UnwrapArrayMember<TResult>,
+        Knex.ResolveTableType<TRecord>,
+        IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT> >
     >,
   >(
     ...aliases: AliasUT
@@ -325,11 +325,11 @@ interface AliasQueryBuilder<
   <
     AliasUT extends (Dict | string)[],
     TResult2 = ArrayIfAlready<
-    TResult,
-    DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    TRecord,
-    IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT> >
+      TResult,
+      DeferredKeySelectionNS.Augment<
+        UnwrapArrayMember<TResult>,
+        TRecord,
+        IncompatibleToAlt<ArrayMember<AliasUT>, string, never>, Knex.IntersectAliases<AliasUT> >
     >,
   >(
     aliases: AliasUT
@@ -348,18 +348,18 @@ interface ColumnNameQueryBuilder<
   // When all columns are known to be keys of original record,
   // we can extend our selection by these columns
   (columnName: '*'): KmoreQueryBuilder<
-  D,
-  CaseConvert,
-  EnablePage,
-  TRecord,
-  ArrayIfAlready<TResult, DeferredKeySelection<TRecord, string>>
+    D,
+    CaseConvert,
+    EnablePage,
+    TRecord,
+    ArrayIfAlready<TResult, DeferredKeySelection<TRecord, string>>
   >
 
   <
     ColNameUT extends keyof Knex.ResolveTableType<TRecord>,
     TResult2 = DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    Knex.ResolveTableType<TRecord>,
+      UnwrapArrayMember<TResult>,
+      Knex.ResolveTableType<TRecord>,
     ColNameUT & string
     >[],
   >(
@@ -369,8 +369,8 @@ interface ColumnNameQueryBuilder<
   <
     ColNameUT extends keyof Knex.ResolveTableType<TRecord>,
     TResult2 = DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    Knex.ResolveTableType<TRecord>,
+      UnwrapArrayMember<TResult>,
+      Knex.ResolveTableType<TRecord>,
     ColNameUT & string
     >[],
   >(
@@ -381,8 +381,8 @@ interface ColumnNameQueryBuilder<
   // specify result type and if not widen the result to entire record type with any omissions permitted
   <
     TResult2 = DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    SafePartial<TRecord>,
+      UnwrapArrayMember<TResult>,
+      SafePartial<TRecord>,
     keyof TRecord & string
     >[],
   >(
@@ -391,8 +391,8 @@ interface ColumnNameQueryBuilder<
 
   <
     TResult2 = DeferredKeySelectionNS.Augment<
-    UnwrapArrayMember<TResult>,
-    SafePartial<TRecord>,
+      UnwrapArrayMember<TResult>,
+      SafePartial<TRecord>,
     keyof TRecord & string
     >[],
   >(
@@ -535,22 +535,22 @@ export declare namespace DeferredKeySelectionNS {
   // Replace the Base if already a deferred selection.
   // If not, create a new deferred selection with specified base.
   type SetBase<TSelection, TBase> = TSelection extends DeferredKeySelection<
-  any,
-  infer TKeys,
-  infer THasSelect,
-  infer TAliasMapping,
-  infer TSingle,
-  infer TIntersectProps,
-  infer TUnionProps
+    any,
+    infer TKeys,
+    infer THasSelect,
+    infer TAliasMapping,
+    infer TSingle,
+    infer TIntersectProps,
+    infer TUnionProps
   >
     ? DeferredKeySelection<
-    TBase,
-    TKeys,
-    THasSelect,
-    TAliasMapping,
-    TSingle,
-    TIntersectProps,
-    TUnionProps
+      TBase,
+      TKeys,
+      THasSelect,
+      TAliasMapping,
+      TSingle,
+      TIntersectProps,
+      TUnionProps
     >
     : DeferredKeySelection<TBase, never>
 
@@ -563,8 +563,8 @@ export declare namespace DeferredKeySelectionNS {
   type ReplaceBase<TSelection, TBase> =
     UnwrapArrayMember<TSelection> extends Any
       ? ArrayIfAlready<
-      TSelection,
-      SetBase<UnwrapArrayMember<TSelection>, TBase>
+        TSelection,
+        SetBase<UnwrapArrayMember<TSelection>, TBase>
       >
       : unknown extends UnwrapArrayMember<TSelection>
         ? ArrayIfAlready<TSelection, SetBase<unknown, TBase>>
@@ -576,22 +576,22 @@ export declare namespace DeferredKeySelectionNS {
     TSelection,
     TSingle extends boolean,
   > = TSelection extends DeferredKeySelection<
-  infer TBase,
-  infer TKeys,
-  infer THasSelect,
-  infer TAliasMapping,
-  any,
-  infer TIntersectProps,
-  infer TUnionProps
+    infer TBase,
+    infer TKeys,
+    infer THasSelect,
+    infer TAliasMapping,
+    any,
+    infer TIntersectProps,
+    infer TUnionProps
   >
     ? DeferredKeySelection<
-    TBase,
-    TKeys,
-    THasSelect,
-    TAliasMapping,
-    TSingle,
-    TIntersectProps,
-    TUnionProps
+      TBase,
+      TKeys,
+      THasSelect,
+      TAliasMapping,
+      TSingle,
+      TIntersectProps,
+      TUnionProps
     >
     : never
 
@@ -599,16 +599,16 @@ export declare namespace DeferredKeySelectionNS {
     TSelection,
     TKey extends string,
   > = TSelection extends DeferredKeySelection<
-  infer TBase,
-  infer TKeys,
-  any,
-  infer TAliasMapping,
-  infer TSingle,
-  infer TIntersectProps,
-  infer TUnionProps
+    infer TBase,
+    infer TKeys,
+    any,
+    infer TAliasMapping,
+    infer TSingle,
+    infer TIntersectProps,
+    infer TUnionProps
   >
     ? DeferredKeySelection<
-    TBase,
+      TBase,
     TKeys | TKey,
     true,
     TAliasMapping,
@@ -622,18 +622,18 @@ export declare namespace DeferredKeySelectionNS {
     TSelection,
     T extends {},
   > = TSelection extends DeferredKeySelection<
-  infer TBase,
-  infer TKeys,
-  infer THasSelect,
-  infer TAliasMapping,
-  infer TSingle,
-  infer TIntersectProps,
-  infer TUnionProps
+    infer TBase,
+    infer TKeys,
+    infer THasSelect,
+    infer TAliasMapping,
+    infer TSingle,
+    infer TIntersectProps,
+    infer TUnionProps
   >
     ? DeferredKeySelection<
-    TBase,
-    TKeys,
-    THasSelect,
+      TBase,
+      TKeys,
+      THasSelect,
     TAliasMapping & T,
     TSingle,
     TIntersectProps,
@@ -642,21 +642,21 @@ export declare namespace DeferredKeySelectionNS {
     : DeferredKeySelection<unknown, never, false, T>
 
   type AddUnionMember<TSelection, T> = TSelection extends DeferredKeySelection<
-  infer TBase,
-  infer TKeys,
-  infer THasSelect,
-  infer TAliasMapping,
-  infer TSingle,
-  infer TIntersectProps,
-  infer TUnionProps
+    infer TBase,
+    infer TKeys,
+    infer THasSelect,
+    infer TAliasMapping,
+    infer TSingle,
+    infer TIntersectProps,
+    infer TUnionProps
   >
     ? DeferredKeySelection<
-    TBase,
-    TKeys,
-    THasSelect,
-    TAliasMapping,
-    TSingle,
-    TIntersectProps,
+      TBase,
+      TKeys,
+      THasSelect,
+      TAliasMapping,
+      TSingle,
+      TIntersectProps,
     TUnionProps | T
     >
     : DeferredKeySelection<TSelection, never, false, {}, false, {}, T>
@@ -672,13 +672,13 @@ export declare namespace DeferredKeySelectionNS {
 
   // Core resolution logic -- Refer to docs for DeferredKeySelection for specifics
   type ResolveOne<TSelection> = TSelection extends DeferredKeySelection<
-  infer TBase,
-  infer TKeys,
-  infer THasSelect,
-  infer TAliasMapping,
-  infer TSingle,
-  infer TIntersectProps,
-  infer TUnionProps
+    infer TBase,
+    infer TKeys,
+    infer THasSelect,
+    infer TAliasMapping,
+    infer TSingle,
+    infer TIntersectProps,
+    infer TUnionProps
   >
     ? UnknownOrCurlyCurlyToAny<
     // ^ We convert final result to any if it is unknown for backward compatibility.
@@ -687,23 +687,23 @@ export declare namespace DeferredKeySelectionNS {
     //
     //   So we compromise on type safety here and return any.
       | AugmentParams<
-    AnyToUnknown<TBase> extends {}
-      ? // ^ Conversion of any -> unknown is needed here to prevent distribution
-    //   of any over the conditional
-      TSingle extends true
-        ? TKeys extends keyof TBase
-          ? TBase[TKeys]
-          : any
-        : AugmentParams<
-        true extends THasSelect
-          ? PartialOrAny<TBase, TKeys>
-          : TBase,
-        MappedAliasType<TBase, TAliasMapping>
-        >
-      : unknown,
-    TIntersectProps
-    >
-    | TUnionProps
+        AnyToUnknown<TBase> extends {}
+          ? // ^ Conversion of any -> unknown is needed here to prevent distribution
+        //   of any over the conditional
+          TSingle extends true
+            ? TKeys extends keyof TBase
+              ? TBase[TKeys]
+              : any
+            : AugmentParams<
+              true extends THasSelect
+                ? PartialOrAny<TBase, TKeys>
+                : TBase,
+              MappedAliasType<TBase, TAliasMapping>
+            >
+          : unknown,
+        TIntersectProps
+      >
+      | TUnionProps
     >
     : TSelection
 

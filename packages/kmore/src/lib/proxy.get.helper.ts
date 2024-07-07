@@ -3,7 +3,7 @@
 import assert from 'assert'
 
 import type { KmoreBase } from './base.js'
-import { CtxBuilderResultPreProcessor, CtxBuilderResultPreProcessorOptions, CtxExceptionHandler } from './builder.types.js'
+import type { CtxBuilderResultPreProcessor, CtxBuilderResultPreProcessorOptions, CtxExceptionHandler } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { KmoreProxyKey } from './types.js'
 

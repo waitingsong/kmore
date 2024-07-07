@@ -2,14 +2,14 @@ import assert from 'node:assert'
 
 import type { KmoreBase } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
+import type { CallCbOptionsBase } from './event.js'
 import {
   callCbOnQuery,
   callCbOnQueryError,
   callCbOnQueryResp,
   callCbOnStart,
-  CallCbOptionsBase,
 } from './event.js'
-import {
+import type {
   CaseType,
   OnQueryData,
   OnQueryErrorData,

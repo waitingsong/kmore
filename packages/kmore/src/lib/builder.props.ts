@@ -1,8 +1,9 @@
 import assert from 'assert'
 
-import { KmoreQueryBuilder, QueryBuilderExtKey } from './builder.types.js'
+import type { KmoreQueryBuilder } from './builder.types.js'
+import { QueryBuilderExtKey } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
-import { CaseType } from './types.js'
+import type { CaseType } from './types.js'
 
 
 export function createBuilderProperties(

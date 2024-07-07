@@ -10,17 +10,16 @@ import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
 import { createRefTables } from './builder.index.js'
-import { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
+import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
+import type { PostProcessInput } from './helper.js'
 import {
-  PostProcessInput,
   defaultWrapIdentifierIgnoreRule,
   postProcessResponse,
   wrapIdentifier,
 } from './helper.js'
 import { createTrxProperties } from './proxy.trx.js'
-import {
-  CaseType,
+import type {
   EventCallbacks,
   KmoreTransaction,
   KmoreTransactionConfig,
@@ -29,6 +28,7 @@ import {
   TrxIdQueryMap,
   WrapIdentifierIgnoreRule,
 } from './types.js'
+import { CaseType } from './types.js'
 import { genKmoreTrxId } from './util.js'
 
 

@@ -7,16 +7,18 @@ import {
   snakeKeys,
   snakeToCamel,
 } from '@waiting/shared-core'
-import { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
+import type { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Knex } from 'knex'
 
-import {
-  CaseType,
-  EnumClient,
+import type {
   KnexConfig,
   QueryContext,
   WrapIdentifierIgnoreRule,
+} from './types.js'
+import {
+  CaseType,
+  EnumClient,
 } from './types.js'
 
 

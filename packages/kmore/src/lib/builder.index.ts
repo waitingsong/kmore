@@ -20,7 +20,7 @@ import { extRefTableFnPropertyAutoPaging } from './proxy.auto-paging.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
-import { CaseType } from './types.js'
+import type { CaseType } from './types.js'
 
 
 export function createRefTables<

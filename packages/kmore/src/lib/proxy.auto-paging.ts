@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import { KmoreQueryBuilder, PageWrapType, PagingMeta, PagingOptions } from './builder.types.js'
+import type { KmoreQueryBuilder, PageWrapType, PagingMeta, PagingOptions } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { KmorePageKey } from './types.js'
 

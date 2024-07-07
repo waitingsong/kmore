@@ -7,7 +7,7 @@ import type {
   PageRawType,
   PageWrapType,
 } from './builder.types.js'
-import {
+import type {
   CaseType,
   EventCallbacks,
   KmoreTransaction,
