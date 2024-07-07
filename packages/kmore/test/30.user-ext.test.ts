@@ -32,6 +32,7 @@ describe(fileShortPath(import.meta.url), () => {
       await ref_tb_user_ext()
         .insert([{ uid: 999, age: 10, address: 'address1' }])
         .then((rows) => {
+          void rows
           assert(false, 'Should throw error, but NOT')
         })
         .catch((err: Error) => {
