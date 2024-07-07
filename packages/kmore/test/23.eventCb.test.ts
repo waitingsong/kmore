@@ -8,7 +8,7 @@ import { KmoreFactory } from '../src/index.js'
 
 import { validateUserRows } from './helper.js'
 import { config, dbDict } from './test.config.js'
-import type { Db, Context} from './test.model.js'
+import type { Db, Context } from './test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
