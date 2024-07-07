@@ -1,12 +1,13 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, Kmore } from '../src/index.js'
+import type { Kmore } from '../src/index.js';
+import { KmoreFactory } from '../src/index.js'
 import { postProcessResponse } from '../src/lib/helper.js'
 
 import { config, dbDict } from './test.config.js'
-import { Db, Context, UserDo } from './test.model.js'
+import type { Db, Context } from './test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

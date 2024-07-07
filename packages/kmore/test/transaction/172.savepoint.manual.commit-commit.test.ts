@@ -1,11 +1,11 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { Kmore, KmoreFactory, KmoreTransaction } from '../../src/index.js'
-import { config } from '../test.config.js'
-import { Db } from '../test.model.js'
+import { KmoreFactory, } from '##/index.js'
+import { config } from '#@/test.config.js'
+import type { Db } from '#@/test.model.js'
 
 import {
   date0,

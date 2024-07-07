@@ -1,8 +1,8 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { genCamelKeysFrom, genSnakeKeysFrom } from '../../src/lib/helper.js'
+import { genCamelKeysFrom, genSnakeKeysFrom } from '##/lib/helper.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

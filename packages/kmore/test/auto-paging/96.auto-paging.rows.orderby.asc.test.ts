@@ -1,7 +1,6 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
-
 
 import { KmoreFactory } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'

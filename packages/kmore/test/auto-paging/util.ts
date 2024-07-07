@@ -1,6 +1,6 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
-import { PageRawType } from '##/index.js'
+import type { PageRawType } from '##/index.js'
 import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
 import type { UserDTO } from '#@/test.model.js'
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 
-import { Kmore, KmoreQueryBuilder, KmoreTransaction } from '../../src/index.js'
-import { Db, UserDTO } from '../test.model.js'
+import type { Kmore, KmoreQueryBuilder, KmoreTransaction } from '##/index.js'
+import type { Db } from '#@/test.model.js'
 
 
 export async function updateWithoutTrx(

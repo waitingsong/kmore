@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
 
-import { DbDict, genDbDict } from 'kmore-types'
+import type { DbDict } from 'kmore-types'
+import { genDbDict } from 'kmore-types'
 
-import { KnexConfig } from '../src/index.js'
+import type { KnexConfig } from '../src/index.js'
 
 import { CI } from './root.config.js'
-import { Db } from './test.model.js'
+import type { Db } from './test.model.js'
 
 
 export const config: KnexConfig = {

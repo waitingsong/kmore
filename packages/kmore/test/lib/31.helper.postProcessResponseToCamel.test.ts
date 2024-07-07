@@ -1,8 +1,8 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { postProcessResponseToCamel } from '../../src/lib/helper.js'
+import { postProcessResponseToCamel } from '##/lib/helper.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

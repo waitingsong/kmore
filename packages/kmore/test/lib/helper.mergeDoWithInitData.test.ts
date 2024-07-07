@@ -1,14 +1,14 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { mergeDoWithInitData } from '../../src/index.js'
+import { mergeDoWithInitData } from '##/index.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
 
   describe('Should work', () => {
-    it('nomral', async () => {
+    it('normal', async () => {
       const initDoUser = {
         name: 'foo',
         foo_bar: 1,

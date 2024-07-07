@@ -1,19 +1,12 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import {
-  CaseType,
-  DbQueryBuilder,
-  Kmore,
-  KmoreFactory,
-  KmoreTransaction,
-  PageRawType,
-} from '##/index.js'
+import { KmoreFactory, type PageRawType } from '##/index.js'
 import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
 import { countTbUser, deleteRow } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'
-import type { Db, UserDTO } from '#@/test.model.js'
+import type { UserDTO } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

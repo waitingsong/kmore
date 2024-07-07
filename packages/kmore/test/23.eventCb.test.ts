@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, Kmore, EventCallbacks, KmoreEvent } from '../src/index.js'
+import type { Kmore, EventCallbacks, KmoreEvent } from '../src/index.js'
+import { KmoreFactory } from '../src/index.js'
 
 import { validateUserRows } from './helper.js'
 import { config, dbDict } from './test.config.js'
-import { Db, Context, UserDo } from './test.model.js'
+import type { Db, Context} from './test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

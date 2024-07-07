@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
-import { RecordCamelKeys } from '@waiting/shared-types'
+import type { RecordCamelKeys } from '@waiting/shared-types'
 
-import { KmoreFactory } from '../../src/index.js'
-import { config, dbDict } from '../test.config.js'
+import { KmoreFactory } from '##/index.js'
+import { config, dbDict } from '#@/test.config.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

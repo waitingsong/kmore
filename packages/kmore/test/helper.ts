@@ -1,23 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import assert from 'assert/strict'
+import assert from 'assert'
 
 import { sleep } from '@waiting/shared-core'
 import type { Knex } from 'knex'
 
-import {
+import type {
   CaseType,
   DbQueryBuilder,
-  EnumClient,
   Kmore,
-  KmoreFactory,
   KmoreFactoryOpts,
   KmoreTransaction,
+} from '##/index.js'
+import {
+  EnumClient,
+  KmoreFactory,
   getCurrentTime,
 } from '##/index.js'
 
 import { config, dbDict } from './test.config.js'
-import { Db, UserDo, UserDTO, UserExtDo } from './test.model.js'
+import type { Db, UserDo, UserDTO, UserExtDo } from './test.model.js'
 
 
 type TableName = string

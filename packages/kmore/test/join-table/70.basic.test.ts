@@ -1,9 +1,9 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory } from '../../src/index.js'
-import { config, dbDict } from '../test.config.js'
+import { KmoreFactory } from '##/index.js'
+import { config, dbDict } from '#@/test.config.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -27,7 +27,6 @@ describe(fileShortPath(import.meta.url), () => {
 
         default:
           assert(false, `Should row.uid be 1 or 2, but got ${row.uid ? row.uid : 'n/a'}`)
-          break
       }
     })
   }
