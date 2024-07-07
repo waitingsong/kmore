@@ -1,5 +1,6 @@
-import { genDbDict, DbDict } from '../../src/lib/dict.js'
-import { Db } from '../test3.model.js'
+import type { DbDict } from '../../src/lib/dict.js'
+import { genDbDict } from '../../src/lib/dict.js'
+import type { Db } from '../test3.model.js'
 
 
 

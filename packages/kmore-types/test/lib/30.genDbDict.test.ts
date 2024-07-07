@@ -2,9 +2,10 @@ import assert from 'assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { genDbDict, DbDict } from '../../src/index.js'
+import type { DbDict } from '../../src/index.js'
+import { genDbDict } from '../../src/index.js'
 import { expectedDict } from '../demo-config.js'
-import { Db } from '../test3.model.js'
+import type { Db } from '../test3.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

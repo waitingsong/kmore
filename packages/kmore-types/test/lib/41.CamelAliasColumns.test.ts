@@ -1,8 +1,8 @@
 import { fileShortPath } from '@waiting/shared-core'
-import { Equals } from '@waiting/shared-types'
+import type { Equals } from '@waiting/shared-types'
 
-import { CamelAliasColumns } from '../../src/index.js'
-import { Db } from '../test3.model.js'
+import type { CamelAliasColumns } from '../../src/index.js'
+import type { Db } from '../test3.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

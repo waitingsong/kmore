@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 import { computeCallExpressionToLiteralObj } from '@waiting/shared-types-dev'
 
-import {
+import type {
   DictTables,
   DictColumns,
   DictAlias,

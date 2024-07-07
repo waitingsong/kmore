@@ -1,6 +1,6 @@
 import { computeCallExpressionToLiteralObj } from '@waiting/shared-types-dev'
 
-import { DbDict } from '../../src/lib/dict.js'
+import type { DbDict } from '../../src/lib/dict.js'
 
 
 export function genDbDict<D>(): DbDict<D> {

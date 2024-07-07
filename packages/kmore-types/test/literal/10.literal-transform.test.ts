@@ -8,11 +8,13 @@ import {
   genAbsolutePath,
   genCurrentDirname,
 } from '@waiting/shared-core'
-import {
+import type {
   CallExpressionPosKey,
+  TransFormOptions,
+} from '@waiting/shared-types-dev'
+import {
   createSourceFile,
   transformCallExpressionToLiteralType,
-  TransFormOptions,
 } from '@waiting/shared-types-dev'
 
 import { expectedDict, expectedDict2 } from '../demo-config.js'

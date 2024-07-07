@@ -2,10 +2,10 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { DbDict } from '../src/index.js'
+import type { DbDict } from '../src/index.js'
 
 import { expectedDict, expectedDict3 } from './demo-config.js'
-import { Db, Db3 } from './test3.model.js'
+import type { Db, Db3 } from './test3.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
