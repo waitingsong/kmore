@@ -64,6 +64,8 @@ async function initTable(km: Kmore<Db>): Promise<void> {
   const { tables, scoped } = km.dict
   const { tb_user, tb_user_ext, tb_order } = dict.columns
 
+  const foo = km.tables.tb_order()
+
   await km.dbh.schema
     .createTable(tables.tb_user, (tb) => {
       tb.increments(tb_user.uid).primary()
