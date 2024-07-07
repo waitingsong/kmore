@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 
 import {
+  $,
   fileShortPath,
   genAbsolutePath,
   genCurrentDirname,
@@ -13,7 +14,6 @@ import {
   transformCallExpressionToLiteralType,
   TransFormOptions,
 } from '@waiting/shared-types-dev'
-import { $ } from 'zx'
 
 import { expectedDict, expectedDict2 } from '../demo-config.js'
 

@@ -35,15 +35,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^23.11.0",
-    "@waiting/shared-types": "^23.6.0",
-    "@waiting/shared-types-dev": "^17.0.2",
+    "@waiting/shared-core": "^23.20.0",
+    "@waiting/shared-types": "^23.19.1",
+    "@waiting/shared-types-dev": "^18.0.2",
     "kmore-types": "^61.0.0",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.1",
     "rxwalker": "^7.0.1",
     "tsconfig-resolver": "^3.0.1",
-    "tsx": "^4.11.2"
+    "tsx": "^4.16.2"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5"
