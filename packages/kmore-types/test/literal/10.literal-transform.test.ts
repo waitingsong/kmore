@@ -8,14 +8,8 @@ import {
   genAbsolutePath,
   genCurrentDirname,
 } from '@waiting/shared-core'
-import type {
-  CallExpressionPosKey,
-  TransFormOptions,
-} from '@waiting/shared-types-dev'
-import {
-  createSourceFile,
-  transformCallExpressionToLiteralType,
-} from '@waiting/shared-types-dev'
+import type { CallExpressionPosKey, TransFormOptions } from '@waiting/shared-types-dev'
+import { createSourceFile, transformCallExpressionToLiteralType } from '@waiting/shared-types-dev'
 
 import { expectedDict, expectedDict2 } from '../demo-config.js'
 
@@ -75,6 +69,7 @@ describe(fileShortPath(import.meta.url), () => {
 
       let posKey: CallExpressionPosKey = 'dict:6:14'
       let obj = ret.fromPosKey(posKey)
+      assert(obj, 'obj is null')
       assert.deepStrictEqual(obj, expectedDict)
 
       posKey = 'dict:6:15'
