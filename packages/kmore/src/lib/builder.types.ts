@@ -63,16 +63,6 @@ export type DbQueryBuilder<
   TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
 }
 
-export type DbQueryBuilder2<
-  Context,
-  D,
-  CaseConvert extends CaseType,
-> = {
-  /** tb_name: () => knex('tb_name') */
-  [tb in keyof D as `${tb & string}`]:
-  // @ts-expect-error
-  TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
-}
 
 export type TbQueryBuilder<D extends {}, CaseConvert extends CaseType, TRecord extends {}, Context>
   = (options?: Partial<TbQueryBuilderOptions<Context>>) => KmoreQueryBuilder<D, CaseConvert, 0, TRecord, TRecord[]>
