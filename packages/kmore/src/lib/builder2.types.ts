@@ -16,16 +16,9 @@ import type {
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
-import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
-import type { PropagationType } from './propagation.types.js'
+import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
+import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
-
-/**
- * - 0: No paging
- * - 1: Paging, PagingMeta on response Array
- * - 2: paging, wrap response as `PageWrapType`
- */
-type PagingCategory = 0 | 1 | 2
 
 export type KmoreQueryBuilder<
   D extends {} = {},
@@ -77,28 +70,6 @@ export interface TbQueryBuilderOptions<Context> {
   ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 
-export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
-export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
-export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
-
-export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
-  kmoreQueryId: symbol
-  kmoreTrxId: symbol | undefined
-  response: Resp
-  transactionalProcessed: boolean | undefined
-  trxPropagateOptions: TrxPropagateOptions | undefined
-  trxPropagated: boolean | undefined
-  /**
-   * Propagation rowlock level
-   * @default {@link RowLockLevel}
-   */
-  rowLockLevel: RowLockLevel | undefined
-}
-
-export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
-  exception: unknown
-}
-
 
 export enum QueryBuilderExtKey {
   caseConvert = 'caseConvert',
@@ -128,35 +99,7 @@ interface QueryBuilderExtName<D extends {} = {}> {
   rowLockLevel: RowLockLevel | undefined
   transactionalProcessed: boolean | undefined
 }
-export interface TrxPropagateOptions {
-  entryKey: string
-  key: string
-  dbId: string
-  type: PropagationType
-  path: string
-  className: string
-  funcName: string
-  methodName: string
-  line: number
-  column: number
-  /**
-   * @default {@link RowLockLevel.ForShare}
-   */
-  readRowLockLevel: RowLockLevel
-  /**
-   * @default {@link RowLockLevel.ForUpdate}
-   */
-  writeRowLockLevel: RowLockLevel
-}
 
-/**
- * Used for `@Transactional()` decorator
- */
-export enum RowLockLevel {
-  ForShare = 'FOR_SHARE',
-  ForUpdate = 'FOR_UPDATE',
-  None = 'None',
-}
 
 interface QueryBuilderExtMethod<
   D extends {} = {},
@@ -179,21 +122,6 @@ type AutoPaging<
 > = <Wrap extends boolean | undefined = false>(options?: Partial<PagingOptions>, wrapOutput?: Wrap)
 => KmoreQueryBuilder<D, CaseConvert, CalcPagingCat<Wrap>, TRecord, TRecord[]>
 
-type CalcPagingCat<T> = T extends true ? 2 : 1
-
-type AddPagingMeta<
-  TSelection,
-  EnablePage extends PagingCategory = 0,
-> = EnablePage extends 0
-  ? TSelection
-  : TSelection extends (infer R)[]
-    ? EnablePage extends 2
-      ? WrapPageOutput<R>
-      : PageRawType<R>
-    : TSelection
-
-// type RemovePagingMeta<T> = T extends ((infer M)[] & PagingMeta) ? M[] : T
-type WrapPageOutput<T> = T extends PageWrapType ? T : PageWrapType<T>
 
 
 type SmartJoin<
@@ -224,52 +152,24 @@ type SmartJoin<
 ) => KmoreQueryBuilder<D, CaseConvert, EnablePage, TResult2, TResult2[]>
 
 
-export interface PagingOptions {
+export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
+export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
+export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
+
+export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
+  kmoreQueryId: symbol
+  kmoreTrxId: symbol | undefined
+  response: Resp
+  transactionalProcessed: boolean | undefined
+  trxPropagateOptions: TrxPropagateOptions | undefined
+  trxPropagated: boolean | undefined
   /**
-   * @default true
+   * Propagation rowlock level
+   * @default {@link RowLockLevel}
    */
-  enable: boolean
-  /**
-   * Current page number, start from 1
-   * @default 1
-   */
-  page: number
-  /**
-   * @default 10
-   */
-  pageSize: number
+  rowLockLevel: RowLockLevel | undefined
 }
 
-/**
- * Note: keyof PagingMeta is not enumerable
- */
-export type PageRawType<T = unknown> = T[] & PagingMeta
-export interface PageWrapType<T = unknown> extends PagingMeta { rows: T[] }
-
-export interface PagingMeta {
-  /**
-   * Total count of rows in table
-   *
-   * @note This is the number of query response rows,
-   *  not the number of rows in the current page,
-   *  also not the number of pages.
-   */
-  total: number
-  /**
-   * Current page number, start from 1
-   */
-  page: number
-  /**
-   * Number of rows of each page.
-   * The number rows of the last page may be less than this value
-   */
-  pageSize: number
+export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
+  exception: unknown
 }
-
-
-// If we have more categories of deferred selection in future,
-// this will combine all of them
-type ResolveResult<S, EnablePage extends PagingCategory = 0>
-  = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePage>
-
-

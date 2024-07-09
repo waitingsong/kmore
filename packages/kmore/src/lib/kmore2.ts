@@ -12,7 +12,7 @@ import { CaseType } from './types.js'
 
 
 
-export class Builder<
+export class KmoreQueryBuilder<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
   EnablePage extends PagingCategory = 0,
