@@ -155,6 +155,27 @@ type SmartJoin<
 ) => KmoreQueryBuilder<D, CaseConvert, EnablePage, TResult2, TResult2[]>
 
 
+export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
+export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
+export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
+
+export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
+  kmoreQueryId: symbol
+  kmoreTrxId: symbol | undefined
+  response: Resp
+  transactionalProcessed: boolean | undefined
+  trxPropagateOptions: TrxPropagateOptions | undefined
+  trxPropagated: boolean | undefined
+  /**
+   * Propagation rowlock level
+   * @default {@link RowLockLevel}
+   */
+  rowLockLevel: RowLockLevel | undefined
+}
+
+export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
+  exception: unknown
+}
 
 
 /*  ---------------- re-declare types of Knex ----------------  */
@@ -432,24 +453,3 @@ interface WhereRaw<
 }
 
 
-export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
-export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
-export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
-
-export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
-  kmoreQueryId: symbol
-  kmoreTrxId: symbol | undefined
-  response: Resp
-  transactionalProcessed: boolean | undefined
-  trxPropagateOptions: TrxPropagateOptions | undefined
-  trxPropagated: boolean | undefined
-  /**
-   * Propagation rowlock level
-   * @default {@link RowLockLevel}
-   */
-  rowLockLevel: RowLockLevel | undefined
-}
-
-export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
-  exception: unknown
-}
