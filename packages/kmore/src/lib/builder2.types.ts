@@ -21,38 +21,38 @@ import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
-export class KmoreQueryBuilderX<
-  D extends object = any,
-  CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
-  TRecord extends object = any,
-  TResult = any[],
-> implements QueryBuilderExtName<D>, QueryBuilderExtMethod<D, CaseConvert, EnablePage, TRecord> {
+// export class KmoreQueryBuilderX<
+//   D extends object = any,
+//   CaseConvert extends CaseType = CaseType,
+//   EnablePage extends PagingCategory = 0,
+//   TRecord extends object = any,
+//   TResult = any[],
+// > implements QueryBuilderExtName<D>, QueryBuilderExtMethod<D, CaseConvert, EnablePage, TRecord> {
 
-  caseConvert: CaseType
-  kmoreQueryId: symbol
-  dbDict: DbDict<D>
-  dbId: string
-  _tablesJoin: string[]
-  pagingType?: 'counter' | 'pager'
-  trxPropagateOptions?: TrxPropagateOptions
-  trxPropagated?: boolean
-  rowLockLevel: RowLockLevel | undefined
-  transactionalProcessed: boolean | undefined
+//   caseConvert: CaseType
+//   kmoreQueryId: symbol
+//   dbDict: DbDict<D>
+//   dbId: string
+//   _tablesJoin: string[]
+//   pagingType?: 'counter' | 'pager'
+//   trxPropagateOptions?: TrxPropagateOptions
+//   trxPropagated?: boolean
+//   rowLockLevel: RowLockLevel | undefined
+//   transactionalProcessed: boolean | undefined
 
-  smartCrossJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartInnerJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartLeftJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartRightJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  autoPaging: AutoPaging<D, CaseConvert, TRecord>
+//   smartCrossJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
+//   smartInnerJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
+//   smartJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
+//   smartLeftJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
+//   smartRightJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
+//   autoPaging: AutoPaging<D, CaseConvert, TRecord>
 
-  select<TRecord2 extends object = TRecord, TResult2 = TResult>(...args: Parameters<Knex.Select<TRecord, TResult>>): this {
-    void args
-    return this
-  }
+//   select<TRecord2 extends object = TRecord, TResult2 = TResult>(...args: Parameters<Knex.Select<TRecord, TResult>>): this {
+//     void args
+//     return this
+//   }
 
-}
+// }
 
 
 export type DbQueryBuilder<
@@ -66,51 +66,22 @@ export type DbQueryBuilder<
     : never
 }
 
-export enum QueryBuilderExtKey {
-  caseConvert = 'caseConvert',
-  kmoreQueryId = 'kmoreQueryId',
-  dbDict = 'dbDict',
-  dbId = 'dbId',
-  tablesJoin = '_tablesJoin',
-  pagingType = 'pagingType',
-  transactionalProcessed = 'transactionalProcessed',
-  trxPropagateOptions = 'trxPropagateOptions',
-  trxPropagated = 'trxPropagated',
-  rowLockLevel = 'rowLockLevel',
-}
-interface QueryBuilderExtName<D extends {} = {}> {
-  caseConvert: CaseType
-  kmoreQueryId: symbol
-  dbDict: DbDict<D>
-  dbId: string
-  _tablesJoin: string[]
-  pagingType?: 'counter' | 'pager'
-  trxPropagateOptions?: TrxPropagateOptions
-  trxPropagated?: boolean
-  /**
-   * Propagation rowlock level
-   * @default {@link RowLockLevel}
-   */
-  rowLockLevel: RowLockLevel | undefined
-  transactionalProcessed: boolean | undefined
-}
-
 export type KmoreQueryBuilder<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends object = any,
   TResult = any,
-> = QueryBuilder<D, CaseConvert, EnablePage, TRecord, AddPagingMeta<TResult, EnablePage>>
+> = QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
 
 type KmoreQueryInterface<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends object = any, TResult = any,
 > = {
-  [K in keyof Knex.QueryInterface<TRecord, TResult>]: KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  [K in keyof Knex.QueryInterface<TRecord, TResult>]: KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
 
