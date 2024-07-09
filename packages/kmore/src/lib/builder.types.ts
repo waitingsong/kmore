@@ -26,29 +26,29 @@ import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 export type KmoreQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = any,
 > = QueryBuilderExtName<D>
-& QueryBuilderExtMethod<D, CaseConvert, EnablePage, TRecord>
-& QueryBuilder<D, CaseConvert, EnablePage, TRecord, AddPagingMeta<TResult, EnablePage>>
+& QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>
+& QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
 type OmitQueryBuilderKeys = 'select' | 'where' | 'orderBy' | 'columns' | keyof Knex.ChainableInterface
 
 interface QueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = any,
 > extends
-  Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePage>>,
+  Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePaging>>,
   Omit<Knex.QueryBuilder<TRecord, TResult>, OmitQueryBuilderKeys> {
 
-  select: Select<D, CaseConvert, EnablePage, TRecord, TResult>
-  where: Where<D, CaseConvert, EnablePage, TRecord, TResult>
-  orderBy: OrderBy<D, CaseConvert, EnablePage, TRecord, TResult>
-  columns: Select<D, CaseConvert, EnablePage, TRecord, TResult>
+  select: Select<D, CaseConvert, EnablePaging, TRecord, TResult>
+  where: Where<D, CaseConvert, EnablePaging, TRecord, TResult>
+  orderBy: OrderBy<D, CaseConvert, EnablePaging, TRecord, TResult>
+  columns: Select<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
 export type DbQueryBuilder<
@@ -107,14 +107,14 @@ interface QueryBuilderExtName<D extends {} = {}> {
 interface QueryBuilderExtMethod<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
 > {
-  smartCrossJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartInnerJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartLeftJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-  smartRightJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
+  smartCrossJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartInnerJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartLeftJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartRightJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
   autoPaging: AutoPaging<D, CaseConvert, TRecord>
 }
 
@@ -130,7 +130,7 @@ type AutoPaging<
 type SmartJoin<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TResult = unknown[],
 > = <
   TRecord1 = UnwrapArrayMember<TResult>,
@@ -152,7 +152,7 @@ type SmartJoin<
    */
   scopedColumn: C1 extends C2 ? never : C1,
   // @ts-expect-error
-) => KmoreQueryBuilder<D, CaseConvert, EnablePage, TResult2, TResult2[]>
+) => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TResult2, TResult2[]>
 
 
 export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
@@ -183,36 +183,36 @@ export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProc
 interface Select<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any, TResult = unknown[],
 > extends
-  AliasQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>,
-  ColumnNameQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult> {
+  AliasQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>,
+  ColumnNameQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult> {
 
-  (): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
-
-  <
-    TResult2 = ArrayIfAlready<TResult, any>,
-    TInnerRecord extends {} = any,
-    TInnerResult = any,
-  >(
-    ...subQueryBuilders: readonly KmoreQueryBuilder<D, CaseConvert, EnablePage, TInnerRecord, TInnerResult>[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  (): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   <
     TResult2 = ArrayIfAlready<TResult, any>,
     TInnerRecord extends {} = any,
     TInnerResult = any,
   >(
-    subQueryBuilders: readonly KmoreQueryBuilder<D, CaseConvert, EnablePage, TInnerRecord, TInnerResult>[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+    ...subQueryBuilders: readonly KmoreQueryBuilder<D, CaseConvert, EnablePaging, TInnerRecord, TInnerResult>[]
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
+
+  <
+    TResult2 = ArrayIfAlready<TResult, any>,
+    TInnerRecord extends {} = any,
+    TInnerResult = any,
+  >(
+    subQueryBuilders: readonly KmoreQueryBuilder<D, CaseConvert, EnablePaging, TInnerRecord, TInnerResult>[]
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 }
 
 
 interface AliasQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[],
 > {
@@ -228,7 +228,7 @@ interface AliasQueryBuilder<
     >,
   >(
     ...aliases: AliasUT
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 
   <
     AliasUT extends Knex.InferrableColumnDescriptor<Knex.ResolveTableType<TRecord>>[],
@@ -241,7 +241,7 @@ interface AliasQueryBuilder<
     >,
   >(
     aliases: AliasUT
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 
   <
     AliasUT extends (Dict | string)[],
@@ -254,7 +254,7 @@ interface AliasQueryBuilder<
     >,
   >(
     ...aliases: AliasUT
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 
   <
     AliasUT extends (Dict | string)[],
@@ -267,14 +267,14 @@ interface AliasQueryBuilder<
     >,
   >(
     aliases: AliasUT
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 }
 
 // commons
 interface ColumnNameQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[],
 > {
@@ -284,7 +284,7 @@ interface ColumnNameQueryBuilder<
   (columnName: '*'): KmoreQueryBuilder<
     D,
     CaseConvert,
-    EnablePage,
+    EnablePaging,
     TRecord,
     ArrayIfAlready<TResult, DeferredKeySelectionNS.DeferredKeySelection<TRecord, string>>
   >
@@ -298,7 +298,7 @@ interface ColumnNameQueryBuilder<
     >[],
   >(
     ...columnNames: readonly ColNameUT[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 
   <
     ColNameUT extends keyof Knex.ResolveTableType<TRecord>,
@@ -309,7 +309,7 @@ interface ColumnNameQueryBuilder<
     >[],
   >(
     columnNames: readonly ColNameUT[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 
   // For non-inferrable column selection, we will allow consumer to
   // specify result type and if not widen the result to entire record type with any omissions permitted
@@ -321,7 +321,7 @@ interface ColumnNameQueryBuilder<
     >[],
   >(
     ...columnNames: readonly Knex.ColumnDescriptor<TRecord, TResult>[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 
   <
     TResult2 = DeferredKeySelectionNS.Augment<
@@ -331,14 +331,14 @@ interface ColumnNameQueryBuilder<
     >[],
   >(
     columnNames: readonly Knex.ColumnDescriptor<TRecord, TResult>[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult2>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult2>
 }
 
 
 interface OrderBy<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[],
 > {
@@ -347,13 +347,13 @@ interface OrderBy<
     columnName: keyof TRecord | QueryBuilder,
     order?: 'asc' | 'desc' | undefined,
     nulls?: 'first' | 'last' | undefined
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   (
     columnName: string | QueryBuilder,
     order?: string | undefined,
     nulls?: string | undefined
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   (
     columnDefs: (
@@ -363,7 +363,7 @@ interface OrderBy<
         order?: 'asc' | 'desc' | undefined,
         nulls?: 'first' | 'last' | undefined,
       }>)[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   (
     columnDefs: (
@@ -373,48 +373,48 @@ interface OrderBy<
         order?: string | undefined,
         nulls?: string | undefined,
       }>)[]
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
 
 // If we have more categories of deferred selection in future,
 // this will combine all of them
-type ResolveResult<S, EnablePage extends PagingCategory = 0>
-  = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePage>
+type ResolveResult<S, EnablePaging extends PagingCategory = 0>
+  = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
 
 type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
 
 export interface Where<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = any,
-> extends WhereRaw<D, CaseConvert, EnablePage, TRecord, TResult> {
+> extends WhereRaw<D, CaseConvert, EnablePaging, TRecord, TResult> {
 
-  (raw: Knex.Raw): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (raw: Knex.Raw): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
-  (callback: Knex.QueryCallback<TRecord, TResult>): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (callback: Knex.QueryCallback<TRecord, TResult>): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
-  (object: Knex.DbRecord<Knex.ResolveTableType<TRecord>>): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (object: Knex.DbRecord<Knex.ResolveTableType<TRecord>>): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
-  (object: Readonly<Object>): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (object: Readonly<Object>): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   <T extends keyof Knex.ResolveTableType<TRecord>>(
     columnName: T,
     value: Knex.DbColumn<Knex.ResolveTableType<TRecord>[T]> | null
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
-  (columnName: string, value: Knex.Value | null): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (columnName: string, value: Knex.Value | null): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   <T extends keyof Knex.ResolveTableType<TRecord>>(
     columnName: T,
     operator: ComparisonOperator,
     value: Knex.DbColumn<Knex.ResolveTableType<TRecord>[T]> | null
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   (columnName: string, operator: string, value: Knex.Value | null):
-  KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   <
     T extends keyof Knex.ResolveTableType<TRecord>,
@@ -424,32 +424,32 @@ export interface Where<
     columnName: T,
     operator: ComparisonOperator,
     value: Knex.QueryBuilder<TRecordInner, TResultInner>
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   <TRecordInner extends {}, TResultInner>(
     columnName: string,
     operator: string,
     value: Knex.QueryBuilder<TRecordInner, TResultInner>
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
-  (left: Knex.Raw, operator: string, right: Knex.Value | null): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (left: Knex.Raw, operator: string, right: Knex.Value | null): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
   <TRecordInner extends {}, TResultInner>(
     left: Knex.Raw,
     operator: string,
     right: Knex.QueryBuilder<TRecordInner, TResultInner>
-  ): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  ): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
 interface WhereRaw<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
+  EnablePaging extends PagingCategory = 0,
   TRecord extends {} = any,
   TResult = unknown[],
 >
   extends Knex.RawQueryBuilder<TRecord, TResult> {
-  (condition: boolean): KmoreQueryBuilder<D, CaseConvert, EnablePage, TRecord, TResult>
+  (condition: boolean): KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
 

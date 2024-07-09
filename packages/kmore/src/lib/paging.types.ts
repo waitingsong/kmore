@@ -59,11 +59,11 @@ export type CalcPagingCat<T> = T extends true ? 2 : 1
 
 export type AddPagingMeta<
   TSelection,
-  EnablePage extends PagingCategory = 0,
-> = EnablePage extends 0
+  EnablePaging extends PagingCategory = 0,
+> = EnablePaging extends 0
   ? TSelection
   : TSelection extends (infer R)[]
-    ? EnablePage extends 2
+    ? EnablePaging extends 2
       ? WrapPageOutput<R>
       : PageRawType<R>
     : TSelection
