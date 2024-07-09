@@ -380,7 +380,7 @@ interface OrderBy<
 
 // If we have more categories of deferred selection in future,
 // this will combine all of them
-type ResolveResult<S, EnablePaging extends PagingCategory = 0>
+export type ResolveResult<S, EnablePaging extends PagingCategory = 0>
   = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
 
 type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
