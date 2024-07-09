@@ -20,6 +20,20 @@ import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
+export class KmoreQueryBuilderX<
+  D extends object = any,
+  CaseConvert extends CaseType = CaseType,
+  EnablePage extends PagingCategory = 0,
+> {
+
+  select<TRecord extends object = any, TResult = unknown[]>(...args: Parameters<Knex.Select<TRecord, TResult>>): this {
+    void args
+    return this
+  }
+
+}
+
+
 export type KmoreQueryBuilder<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
