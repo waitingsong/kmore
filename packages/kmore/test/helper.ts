@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import { sleep } from '@waiting/shared-core'
 import type { Knex } from 'knex'

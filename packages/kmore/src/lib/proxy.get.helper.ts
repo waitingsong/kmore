@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { KmoreBase } from './base.js'
 import type { CtxBuilderResultPreProcessor, CtxBuilderResultPreProcessorOptions, CtxExceptionHandler } from './builder.types.js'

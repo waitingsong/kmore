@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import { snakeToCamel } from '@waiting/shared-core'
 import type { DbDict } from 'kmore-types'

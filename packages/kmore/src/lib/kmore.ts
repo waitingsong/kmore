@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'

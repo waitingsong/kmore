@@ -1,6 +1,6 @@
 /* eslint-disable max-params */
 /* eslint-disable @typescript-eslint/ban-types */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { KmoreBase } from './base.js'
 import { pager } from './builder.auto-paging.js'

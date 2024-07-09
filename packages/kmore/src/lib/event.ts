@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { initKmoreEvent } from './config.js'

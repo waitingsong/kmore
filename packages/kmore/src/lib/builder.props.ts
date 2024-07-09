@@ -1,4 +1,4 @@
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { QueryBuilderExtKey } from './builder.types.js'

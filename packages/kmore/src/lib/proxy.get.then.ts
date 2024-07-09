@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { PagerOptions, ProxyGetHandlerOptions } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
