@@ -102,6 +102,7 @@ type ChainableInterface<
 //     : Knex.QueryBuilder<TRecord, TResult>[K]
 // }
 
+// @ts-expect-error extends Knex.QueryBuilder
 interface QueryBuilder<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
@@ -109,12 +110,11 @@ interface QueryBuilder<
   TRecord extends object = any,
   TResult = any,
 > extends
-  QueryInterface<D, CaseConvert, EnablePaging, TRecord, TResult>
-  // ChainableInterface<TResult, EnablePaging>,
-  // Knex.QueryBuilder<TRecord, TResult>
-{
+  QueryInterface<D, CaseConvert, EnablePaging, TRecord, TResult>,
+  ChainableInterface<TResult, EnablePaging>,
+  Knex.QueryBuilder<TRecord, TResult> {
 
-  // methods of knex.QueryBuilder
+  // methods of knex.QueryBuilder need to be redefined here
 
   or: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
   not: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
