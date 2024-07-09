@@ -3,13 +3,13 @@ import assert from 'node:assert'
 import type { KmoreBase, PagerOptions, CreateQueryBuilderGetProxyOptions } from './base.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
+import type { KmoreQueryBuilder } from './builder.types.js'
+import { defaultPropDescriptor } from './config.js'
 import type {
-  KmoreQueryBuilder,
   PageRawType,
   PagingMeta,
   PageWrapType,
-} from './builder.types.js'
-import { defaultPropDescriptor } from './config.js'
+} from './paging.types.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import type { _PagingOptions } from './proxy.auto-paging.js'
 import { initPageTypeMaping } from './proxy.auto-paging.js'

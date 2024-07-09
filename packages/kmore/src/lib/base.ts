@@ -4,9 +4,8 @@ import type {
   CtxBuilderResultPreProcessor,
   CtxExceptionHandler,
   KmoreQueryBuilder,
-  PageRawType,
-  PageWrapType,
 } from './builder.types.js'
+import type { PageRawType, PageWrapType } from './paging.types.js'
 import type {
   CaseType,
   EventCallbacks,
