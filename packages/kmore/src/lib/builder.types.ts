@@ -19,7 +19,7 @@ import type { Knex } from 'knex'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
 import { ArrayIfAlready, ArrayMember, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
 import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
-import type { PropagationType } from './propagation.types.js'
+import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
 
@@ -102,35 +102,7 @@ interface QueryBuilderExtName<D extends {} = {}> {
   rowLockLevel: RowLockLevel | undefined
   transactionalProcessed: boolean | undefined
 }
-export interface TrxPropagateOptions {
-  entryKey: string
-  key: string
-  dbId: string
-  type: PropagationType
-  path: string
-  className: string
-  funcName: string
-  methodName: string
-  line: number
-  column: number
-  /**
-   * @default {@link RowLockLevel.ForShare}
-   */
-  readRowLockLevel: RowLockLevel
-  /**
-   * @default {@link RowLockLevel.ForUpdate}
-   */
-  writeRowLockLevel: RowLockLevel
-}
 
-/**
- * Used for `@Transactional()` decorator
- */
-export enum RowLockLevel {
-  ForShare = 'FOR_SHARE',
-  ForUpdate = 'FOR_UPDATE',
-  None = 'None',
-}
 
 interface QueryBuilderExtMethod<
   D extends {} = {},
