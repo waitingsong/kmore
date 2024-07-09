@@ -75,26 +75,81 @@ export type KmoreQueryBuilder<
 > = QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
 
-type KmoreQueryInterface<
+type QueryInterface<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
   TRecord extends object = any, TResult = any,
 > = {
-  [K in keyof Knex.QueryInterface<TRecord, TResult>]: KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  [K in keyof Knex.QueryInterface<TRecord, TResult>]:
+  (...args: Parameters< Knex.QueryInterface<TRecord, TResult>[K] >) => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
+type ChainableInterface<
+  TResult = any,
+  EnablePaging extends PagingCategory = 0,
+> = Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePaging>>
+
+// type QueryBuilder<
+//   D extends object = any,
+//   CaseConvert extends CaseType = CaseType,
+//   EnablePaging extends PagingCategory = 0,
+//   TRecord extends object = any,
+//   TResult = any,
+// > = {
+//   [K in keyof Knex.QueryBuilder<TRecord, TResult>]: Knex.QueryBuilder<TRecord, TResult>[K] extends Knex.QueryBuilder<TRecord, TResult>
+//     ? KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+//     : Knex.QueryBuilder<TRecord, TResult>[K]
+// }
 
 interface QueryBuilder<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
-  EnablePage extends PagingCategory = 0,
-  TRecord extends {} = any,
+  EnablePaging extends PagingCategory = 0,
+  TRecord extends object = any,
   TResult = any,
 > extends
-  KmoreQueryInterface<D, CaseConvert, EnablePage, TRecord, TResult>,
-  Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePage>> {
+  QueryInterface<D, CaseConvert, EnablePaging, TRecord, TResult>
+  // ChainableInterface<TResult, EnablePaging>,
+  // Knex.QueryBuilder<TRecord, TResult>
+{
 
+  // methods of knex.QueryBuilder
+
+  or: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  not: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  and: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forUpdate(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forUpdate(tableNames: readonly string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forShare(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forShare(tableNames: readonly string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forNoKeyUpdate(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forNoKeyUpdate(
+    tableNames: readonly string[]
+  ): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forKeyShare(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forKeyShare(tableNames: readonly string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  skipLocked(): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  noWait(): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  on(event: string, callback: Function): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  queryContext(context: any): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  clone(): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  timeout(
+    ms: number,
+    options?: { cancel?: boolean }
+  ): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
+// type Q1 = QueryBuilder<any, CaseType.camel, 0, any, any>['andHavingNotIn']
+// const q1: Q1 = () => {
+//   return
+// }
 
