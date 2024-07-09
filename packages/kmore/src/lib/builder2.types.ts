@@ -114,7 +114,6 @@ type KmoreQueryInterface<
 }
 
 
-type OmitQueryBuilderKeys = 'select' | 'where' | 'orderBy' | 'columns' | keyof Knex.ChainableInterface
 interface QueryBuilder<
   D extends object = any,
   CaseConvert extends CaseType = CaseType,
@@ -122,8 +121,8 @@ interface QueryBuilder<
   TRecord extends {} = any,
   TResult = any,
 > extends
-  Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePage>>,
-  Omit<Knex.QueryBuilder<TRecord, TResult>, OmitQueryBuilderKeys> {
+  KmoreQueryInterface<D, CaseConvert, EnablePage, TRecord, TResult>,
+  Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePage>> {
 
 }
 
