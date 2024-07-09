@@ -97,6 +97,11 @@ describe(fileShortPath(import.meta.url), () => {
       console.warn('Retry after 1s: ', t4b)
       assert(t4b === date2, `t4b: ${t4b}, date2: ${date2}`)
 
+      await sleep(1000)
+      const t4c = await read(km)
+      console.warn('Retry2 after 1s: ', t4c)
+      assert(t4c === date2, `t4c: ${t4c}, date2: ${date2}`)
+
       assert(true)
     })
 
