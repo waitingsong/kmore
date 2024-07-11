@@ -33,11 +33,12 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
   })
 
   const pagingFlag = builder[KmorePageKey.PagingBuilderType]
-  // conter query is not need to process
+  // counter query is not need to process
   if (! pagingFlag || pagingFlag === 'pager') {
     Object.defineProperty(aliasObject, 'forSmartJoin', {
       value: true,
     })
+    // @ts-expect-error
     void builder.columns(aliasObject)
   }
 
@@ -80,22 +81,27 @@ function smartJoinBuilder(
   let ret: unknown
   switch (joinType) {
     case SmartKey.join:
+      // @ts-expect-error parameter type is correct
       ret = queryBuilder.join(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.leftJoin:
+      // @ts-expect-error parameter type is correct
       ret = queryBuilder.leftJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.rightJoin:
+      // @ts-expect-error parameter type is correct
       ret = queryBuilder.rightJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.innerJoin:
+      // @ts-expect-error parameter type is correct
       ret = queryBuilder.innerJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.crossJoin:
+      // @ts-expect-error parameter type is correct
       ret = queryBuilder.crossJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 

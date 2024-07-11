@@ -16,6 +16,7 @@ import type {
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
+import type { QueryBuilder as QB } from './builder2.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
 import { ArrayIfAlready, ArrayMember, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
 import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
@@ -31,7 +32,8 @@ export type KmoreQueryBuilder<
   TResult = any,
 > = QueryBuilderExtName<D>
 & QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>
-& QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
+// & QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
+& QB<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
 type OmitQueryBuilderKeys = 'select' | 'where' | 'orderBy' | 'columns' | keyof Knex.ChainableInterface
 
