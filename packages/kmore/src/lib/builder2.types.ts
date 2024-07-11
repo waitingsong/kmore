@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  CaseType,
-  DbScopedColsByKey,
-  DbScopedColsByTableType,
-  JoinTableWithCaseConvert,
-  SplitScopedColumn,
-  StrKey,
-  UnwrapArrayMember,
-} from '@waiting/shared-types'
+import type { CaseType } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
 import type { ResolveResult } from './builder.types.js'
