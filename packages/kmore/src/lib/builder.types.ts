@@ -180,6 +180,10 @@ export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProc
   exception: unknown
 }
 
+// If we have more categories of deferred selection in future,
+// this will combine all of them
+export type ResolveResult<S, EnablePaging extends PagingCategory = 0>
+  = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
 
 /*  ---------------- re-declare types of Knex ----------------  */
 
@@ -380,10 +384,6 @@ interface OrderBy<
 }
 
 
-// If we have more categories of deferred selection in future,
-// this will combine all of them
-export type ResolveResult<S, EnablePaging extends PagingCategory = 0>
-  = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
 
 type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
 
