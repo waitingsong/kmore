@@ -10,7 +10,7 @@ import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
 import { createRefTables } from './builder.index.js'
-import type { DbQueryBuilder, DbQueryBuilder2, KmoreQueryBuilder } from './builder.types.js'
+import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
 import type { PostProcessInput } from './helper.js'
 import {
@@ -38,8 +38,6 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
    * Original table names, without case conversion.
    */
   readonly refTables: DbQueryBuilder<Context, D, 'ref_', CaseType.none>
-
-  readonly tables: DbQueryBuilder2<Context, D, '', CaseType.none>
 
   /**
    * Create a table reference function property with camel case conversion.

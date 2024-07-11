@@ -148,6 +148,7 @@ interface QueryBuilder<
   ): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
+// test
 // type Q1 = QueryBuilder<any, CaseType.camel, 0, any, any>['andHavingNotIn']
 // const q1: Q1 = () => {
 //   return
