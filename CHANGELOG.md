@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [61.2.8](https://github.com/waitingsong/kmore/compare/v61.2.7...v61.2.8) (2024-07-12)
+
+
+### Bug Fixes
+
+* **types:** TypeScript 5.5 RangeError: Maximum call stack size exceeded ([69d145e](https://github.com/waitingsong/kmore/commit/69d145e7e5631b3343e6ab1ce343534c049f2743))
+
+
+
+
+
 ## [61.2.7](https://github.com/waitingsong/kmore/compare/v61.2.6...v61.2.7) (2024-07-09)
 
 **Note:** Version bump only for package npm-mono-base
