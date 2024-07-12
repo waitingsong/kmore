@@ -24,7 +24,7 @@ import type { CaseType } from './types.js'
 
 
 export function createRefTables<
-  D,
+  D extends object,
   Context,
   P extends string,
 >(
