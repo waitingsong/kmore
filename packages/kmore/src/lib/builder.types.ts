@@ -22,17 +22,6 @@ import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
-// export type KmoreQueryBuilder<
-//   D extends {} = {},
-//   CaseConvert extends CaseType = CaseType,
-//   EnablePaging extends PagingCategory = 0,
-//   TRecord extends {} = any,
-//   TResult = any,
-// > =
-// // QueryBuilderExtName<D>
-// // & QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>
-// QB<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
-
 
 export type DbQueryBuilder<
   Context,
