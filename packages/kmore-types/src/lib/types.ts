@@ -62,7 +62,9 @@ export type DictCamelColumns<D> = {
  * ```
  */
 export type DictScoped<D> = {
-  [TbName in keyof D]: ScopedColumns<D[TbName], TbName & string>
+  [TbName in keyof D]: TbName extends string
+    ? ScopedColumns<D[TbName], TbName>
+    : never
 }
 
 /**
@@ -77,9 +79,19 @@ export type DictScoped<D> = {
  * }
  * ```
  */
+// export type DictAlias<D> = {
+//   [TbName in keyof D]: TbName extends string
+//     ? AliasColumns<D[TbName], TbName >
+//     : never
+// }
 export type DictAlias<D> = {
-  [TbName in keyof D]: AliasColumns<D[TbName], TbName & string>
+  [TbName in keyof D]: TbName extends string
+    ? {
+        [F in keyof D[TbName]]: Record<`${SnakeToCamel<TbName & string>}${SnakeToPascal<F & string>}`, `${TbName}.${F & string}`>
+      }
+    : never
 }
+
 
 export type DictCamelAlias<D> = {
   [TbName in keyof D]: CamelAliasColumns<D[TbName], TbName & string>
@@ -97,7 +109,9 @@ export type Columns<T> = {
  * ```
  */
 export type CamelColumns<T> = {
-  [F in keyof T as `${SnakeToCamel<F & string>}`]: SnakeToCamel<F & string>
+  [F in keyof T as F extends string ? `${SnakeToCamel<F>}` : never]: F extends string
+    ? SnakeToCamel<F>
+    : never
 }
 /**
  * ```ts
@@ -108,7 +122,7 @@ export type CamelColumns<T> = {
  * ```
  */
 export type ScopedColumns<T, K extends string> = {
-  [F in keyof T]: `${K}.${F & string}`
+  [F in keyof T]: F extends string ? `${K}.${F}` : never
 }
 /**
  * ```ts
@@ -119,7 +133,9 @@ export type ScopedColumns<T, K extends string> = {
  * ```
  */
 export type AliasColumns<T, K extends string> = {
-  [F in keyof T]: Record<`${SnakeToCamel<K>}${SnakeToPascal<F & string>}`, `${K}.${F & string}`>
+  [F in keyof T]: F extends string
+    ? Record<`${SnakeToCamel<K>}${SnakeToPascal<F>}`, `${K}.${F}`>
+    : never
 }
 /**
  * ```ts
@@ -223,6 +239,6 @@ export type ScopedColumnsType<T, K extends string> = {
  * ```
  */
 export type AliasColumnsType<T, K extends string> = {
-  [F in keyof T as `${SnakeToCamel<K>}${SnakeToPascal<F & string>}`]: T[F]
+  [F in keyof T as F extends string ? `${SnakeToCamel<K>}${SnakeToPascal<F>}` : never]: T[F]
 }
 
