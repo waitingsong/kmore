@@ -12,7 +12,7 @@ import type {
 } from './paging.types.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import type { _PagingOptions } from './proxy.auto-paging.js'
-import { initPageTypeMaping } from './proxy.auto-paging.js'
+import { initPageTypeMapping } from './proxy.auto-paging.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import { KmorePageKey } from './types.js'
@@ -35,7 +35,7 @@ export async function pager<T = unknown>(
   }
 
   const outputMaping = pagingOptions.wrapOutput
-    ? { ...initPageTypeMaping }
+    ? { ...initPageTypeMapping }
     : void 0
 
 
