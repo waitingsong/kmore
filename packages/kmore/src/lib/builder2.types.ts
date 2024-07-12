@@ -26,14 +26,14 @@ declare namespace Knex {
 
 export type DbQueryBuilder<
   Context,
-  D,
+  D extends object,
   Prefix extends string,
   CaseConvert extends CaseType,
 > = {
   /** ref_tb_name: () => knex('tb_name') */
-  [tb in keyof D as `${Prefix}${tb & string}`]:
-  // @ts-expect-error
-  TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
+  [tb in keyof D as `${Prefix}${tb & string}`]: D[tb] extends object
+    ? TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
+    : never
 }
 
 
