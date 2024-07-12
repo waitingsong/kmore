@@ -135,7 +135,7 @@ function addPaginMetaOnArray<T = unknown>(
 }
 
 interface GenBuilderForPagingRetType {
-  total: number
+  total: number | bigint
   pagingOptions: _PagingOptions
   builderPager?: KmoreQueryBuilder | undefined
 }
@@ -193,8 +193,14 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
 
   const total = await builderCounter
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .then((rows: [{ total: number }]) => {
-      return rows[0].total > 0 ? +rows[0].total : 0
+    .then((rows: { total?: number | string }[]) => {
+      if (rows.length > 0) {
+        const [row] = rows
+        if (row?.total) {
+          return typeof row.total === 'number' ? row.total : BigInt(row.total)
+        }
+      }
+      return 0
     })
 
   const ret: GenBuilderForPagingRetType = {
