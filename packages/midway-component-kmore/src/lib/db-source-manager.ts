@@ -42,7 +42,7 @@ import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
 
 
 @Singleton()
-export class DbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
+export class DbSourceManager<SourceName extends string = string, D extends object = object, Ctx extends Context = Context>
   extends AbstractDbSourceManager<SourceName, D, Ctx> {
 
   @MConfig(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
