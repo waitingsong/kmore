@@ -10,16 +10,18 @@ import type { ResolveResult, QueryBuilderExtMethod, TbQueryBuilderOptions, Query
 import type { AddPagingMeta, PagingCategory } from './paging.types.js'
 
 
-// declare namespace Knex {
-//   interface QueryBuilder<
-//     TRecord extends object = any, TResult = any,
-//     D extends object = any,
-//     CaseConvert extends CaseType = CaseType,
-//     EnablePaging extends PagingCategory = 0,
-//   > {
-//     smartJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-//   }
-// }
+declare namespace Knex {
+  interface QueryInterface<
+    TRecord extends object = any, TResult = any,
+    D extends object = any,
+    CaseConvert extends CaseType = CaseType,
+    EnablePaging extends PagingCategory = 0,
+  >
+    extends
+    QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>,
+    QueryBuilderExtName<D> {
+  }
+}
 
 
 export type DbQueryBuilder<
@@ -47,7 +49,6 @@ export type KmoreQueryBuilder<
   TResult = any,
 > = QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
-// @ts-expect-error
 export interface QueryBuilder<
   D extends object = object,
   CaseConvert extends CaseType = CaseType,
@@ -57,8 +58,9 @@ export interface QueryBuilder<
 > extends
   // QueryInterface<D, CaseConvert, EnablePaging, TRecord, TResult>,
   ChainableInterface<TResult, EnablePaging>,
-  QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>,
-  QueryBuilderExtName<D>,
+  // QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>,
+  // QueryBuilderExtName<D>,
+  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>,
   Knex.QueryBuilder<TRecord, TResult> {
 
   // methods of knex.QueryBuilder need to be redefined here

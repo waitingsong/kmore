@@ -15,22 +15,23 @@ import type {
 } from '@waiting/shared-types'
 import type { DbDict } from 'kmore-types'
 
-import type { QueryBuilder as QB } from './builder2.types.js'
+import type { KmoreQueryBuilder } from './builder2.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
 // import { ArrayIfAlready, ArrayMember, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
 import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
-export type KmoreQueryBuilder<
-  D extends {} = {},
-  CaseConvert extends CaseType = CaseType,
-  EnablePaging extends PagingCategory = 0,
-  TRecord extends {} = any,
-  TResult = any,
-> = QueryBuilderExtName<D>
-& QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>
-& QB<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
+// export type KmoreQueryBuilder<
+//   D extends {} = {},
+//   CaseConvert extends CaseType = CaseType,
+//   EnablePaging extends PagingCategory = 0,
+//   TRecord extends {} = any,
+//   TResult = any,
+// > =
+// // QueryBuilderExtName<D>
+// // & QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>
+// QB<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
 
 export type DbQueryBuilder<
