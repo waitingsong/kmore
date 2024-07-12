@@ -216,8 +216,7 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
 
   const b3 = builderPager
     .limit(pagingOptions.pageSize)
-    .offset(offset >= 0 ? offset : 0)
-    // as KmoreQueryBuilder
+    .offset(offset >= 0 ? offset : 0) as unknown as KmoreQueryBuilder
 
   ret.builderPager = b3
   return ret
