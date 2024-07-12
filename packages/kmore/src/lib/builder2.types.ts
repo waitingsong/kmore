@@ -6,7 +6,7 @@ import type {
 } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import type { ResolveResult, QueryBuilderExtMethod, SmartJoin, TbQueryBuilderOptions, QueryBuilderExtName } from './builder.types.js'
+import type { ResolveResult, QueryBuilderExtMethod, TbQueryBuilderOptions, QueryBuilderExtName } from './builder.types.js'
 import type { AddPagingMeta, PagingCategory } from './paging.types.js'
 
 
@@ -35,20 +35,21 @@ export type DbQueryBuilder<
 }
 
 
-export type TbQueryBuilder<D extends object, CaseConvert extends CaseType, TRecord extends {}, Context>
+export type TbQueryBuilder<D extends object, CaseConvert extends CaseType, TRecord extends object, Context>
   = (options?: Partial<TbQueryBuilderOptions<Context>>) => KmoreQueryBuilder<D, CaseConvert, 0, TRecord, TRecord[]>
 
 
 export type KmoreQueryBuilder<
-  D extends object = any,
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
   TRecord extends object = any,
   TResult = any,
 > = QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
+// @ts-expect-error
 export interface QueryBuilder<
-  D extends object = any,
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
   TRecord extends object = any,
