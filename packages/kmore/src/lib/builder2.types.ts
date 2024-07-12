@@ -46,15 +46,16 @@ export type KmoreQueryBuilder<
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
   TRecord extends object = any,
-  TResult = any,
+  TResult = unknown[],
 > = QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
 
+// @ts-expect-error
 export interface QueryBuilder<
   D extends object = object,
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
   TRecord extends object = any,
-  TResult = any,
+  TResult = unknown[],
 > extends
   // QueryInterface<D, CaseConvert, EnablePaging, TRecord, TResult>,
   ChainableInterface<TResult, EnablePaging>,
@@ -97,79 +98,11 @@ export interface QueryBuilder<
     options?: { cancel?: boolean }
   ): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
 
-  // select: (...args: Parameters<Knex.Select<TRecord, TResult>>) => QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
-  // select: Select<D, CaseConvert, EnablePaging, TRecord, TResult>
-  // select: Select<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
 
-
-
-
-// test
-// type Q1 = QueryBuilder<any, CaseType.camel, 0, any, any>['andHavingNotIn']
-// const q1: Q1 = () => {
-//   return
-// }
-
-// type QueryInterface<
-//   D extends object = any,
-//   CaseConvert extends CaseType = CaseType,
-//   EnablePaging extends PagingCategory = 0,
-//   TRecord extends object = any, TResult = any,
-// > = {
-//   [K in keyof Knex.QueryInterface<TRecord, TResult>]:
-//   (...args: Parameters<Knex.QueryInterface<TRecord, TResult>[K]>) => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
-// }
 
 type ChainableInterface<
   TResult = any,
   EnablePaging extends PagingCategory = 0,
 > = Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePaging>>
-
-// type QueryBuilder<
-//   D extends object = any,
-//   CaseConvert extends CaseType = CaseType,
-//   EnablePaging extends PagingCategory = 0,
-//   TRecord extends object = any,
-//   TResult = any,
-// > = {
-//   [K in keyof Knex.QueryBuilder<TRecord, TResult>]: Knex.QueryBuilder<TRecord, TResult>[K] extends Knex.QueryBuilder<TRecord, TResult>
-//     ? KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
-//     : Knex.QueryBuilder<TRecord, TResult>[K]
-// }
-
-
-
-// export class KmoreQueryBuilderX<
-//   D extends object = any,
-//   CaseConvert extends CaseType = CaseType,
-//   EnablePage extends PagingCategory = 0,
-//   TRecord extends object = any,
-//   TResult = any[],
-// > implements QueryBuilderExtName<D>, QueryBuilderExtMethod<D, CaseConvert, EnablePage, TRecord> {
-
-//   caseConvert: CaseType
-//   kmoreQueryId: symbol
-//   dbDict: DbDict<D>
-//   dbId: string
-//   _tablesJoin: string[]
-//   pagingType?: 'counter' | 'pager'
-//   trxPropagateOptions?: TrxPropagateOptions
-//   trxPropagated?: boolean
-//   rowLockLevel: RowLockLevel | undefined
-//   transactionalProcessed: boolean | undefined
-
-//   smartCrossJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-//   smartInnerJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-//   smartJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-//   smartLeftJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-//   smartRightJoin: SmartJoin<D, CaseConvert, EnablePage, TRecord>
-//   autoPaging: AutoPaging<D, CaseConvert, TRecord>
-
-//   select<TRecord2 extends object = TRecord, TResult2 = TResult>(...args: Parameters<Knex.Select<TRecord, TResult>>): this {
-//     void args
-//     return this
-//   }
-
-// }
 
