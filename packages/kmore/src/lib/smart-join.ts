@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
-import { genColumnMaping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
+import { genColumnMapping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
 import { KmorePageKey, SmartKey } from './types.js'
 
 
@@ -22,7 +22,7 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
   // const queryContext = builder._queryContext as QueryContext | undefined
   // const caseConvert = queryContext?.postProcessResponseCaseConvert ?? CaseType.snake
   const tablesJoin = new Set([...builder._tablesJoin])
-  const aliasMap = genColumnMaping(dbDict, tablesJoin)
+  const aliasMap = genColumnMapping(dbDict, tablesJoin)
 
   const aliasObject: Record<string, string> = {}
   aliasMap.forEach((col, alias) => {
@@ -38,7 +38,6 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
     Object.defineProperty(aliasObject, 'forSmartJoin', {
       value: true,
     })
-    // @ts-expect-error
     void builder.columns(aliasObject)
   }
 
@@ -81,27 +80,22 @@ function smartJoinBuilder(
   let ret: unknown
   switch (joinType) {
     case SmartKey.join:
-      // @ts-expect-error parameter type is correct
       ret = queryBuilder.join(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.leftJoin:
-      // @ts-expect-error parameter type is correct
       ret = queryBuilder.leftJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.rightJoin:
-      // @ts-expect-error parameter type is correct
       ret = queryBuilder.rightJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.innerJoin:
-      // @ts-expect-error parameter type is correct
       ret = queryBuilder.innerJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
     case SmartKey.crossJoin:
-      // @ts-expect-error parameter type is correct
       ret = queryBuilder.crossJoin(tableName2, scopedColumnBeJoined, scopedColumn)
       break
 
