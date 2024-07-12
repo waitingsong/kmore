@@ -353,7 +353,7 @@ function genResultKeysData<T extends PostProcessRecord>(
 
 
 export function genCamelKeysFrom<From extends PostProcessRecord>(input: From): RecordCamelKeys<From, '_'> {
-  return camelKeys(input)
+  return camelKeys(input) as RecordCamelKeys<From, '_'>
 }
 
 // function genPascalKeysFrom<From extends PostProcessRecord>(
@@ -363,7 +363,7 @@ export function genCamelKeysFrom<From extends PostProcessRecord>(input: From): R
 // }
 
 export function genSnakeKeysFrom<From extends PostProcessRecord>(input: From): RecordSnakeKeys<From, '_'> {
-  return snakeKeys(input)
+  return snakeKeys(input) as RecordSnakeKeys<From, '_'>
 }
 
 
