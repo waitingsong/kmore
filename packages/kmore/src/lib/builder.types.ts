@@ -59,7 +59,7 @@ export enum QueryBuilderExtKey {
   trxPropagated = 'trxPropagated',
   rowLockLevel = 'rowLockLevel',
 }
-export interface QueryBuilderExtName<D extends {} = {}> {
+export interface QueryBuilderExtName<D extends object = object> {
   caseConvert: CaseType
   kmoreQueryId: symbol
   dbDict: DbDict<D>
@@ -78,10 +78,10 @@ export interface QueryBuilderExtName<D extends {} = {}> {
 
 
 export interface QueryBuilderExtMethod<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
-  TRecord extends {} = any,
+  TRecord extends object = any,
 > {
   smartCrossJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
   smartInnerJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
