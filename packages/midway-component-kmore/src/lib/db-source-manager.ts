@@ -72,7 +72,7 @@ export class DbSourceManager<SourceName extends string = string, D = unknown, Ct
   /**
    * 创建单个实例
    */
-  protected async createDataSource<Db>(
+  protected async createDataSource<Db extends object>(
     config: DbConfig<Db, Ctx>,
     dataSourceName: SourceName,
     cacheDataSource = true,
