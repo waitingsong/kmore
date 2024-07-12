@@ -87,7 +87,9 @@ export type DictScoped<D> = {
 export type DictAlias<D> = {
   [TbName in keyof D]: TbName extends string
     ? {
-        [F in keyof D[TbName]]: Record<`${SnakeToCamel<TbName & string>}${SnakeToPascal<F & string>}`, `${TbName}.${F & string}`>
+        [F in keyof D[TbName]]: F extends string
+          ? Record<`${SnakeToCamel<TbName>}${SnakeToPascal<F>}`, `${TbName}.${F}`>
+          : never
       }
     : never
 }
@@ -109,7 +111,7 @@ export type Columns<T> = {
  * ```
  */
 export type CamelColumns<T> = {
-  [F in keyof T as F extends string ? `${SnakeToCamel<F>}` : never]: F extends string
+  [F in keyof T as F extends string ? `${SnakeToCamel<F>}` : F]: F extends string
     ? SnakeToCamel<F>
     : never
 }
@@ -122,7 +124,7 @@ export type CamelColumns<T> = {
  * ```
  */
 export type ScopedColumns<T, K extends string> = {
-  [F in keyof T]: F extends string ? `${K}.${F}` : never
+  [F in keyof T]: F extends string | number ? `${K}.${F}` : never
 }
 /**
  * ```ts
@@ -227,7 +229,7 @@ export type ColumnsType<T> = {
  * ```
  */
 export type ScopedColumnsType<T, K extends string> = {
-  [F in keyof T as `${K}.${F & string}`]: T[F]
+  [F in keyof T as F extends string | number ? `${K}.${F}` : F]: T[F]
 }
 /**
  * Build table alias columns type
@@ -239,6 +241,6 @@ export type ScopedColumnsType<T, K extends string> = {
  * ```
  */
 export type AliasColumnsType<T, K extends string> = {
-  [F in keyof T as F extends string ? `${SnakeToCamel<K>}${SnakeToPascal<F>}` : never]: T[F]
+  [F in keyof T as F extends string ? `${SnakeToCamel<K>}${SnakeToPascal<F>}` : F]: T[F]
 }
 
