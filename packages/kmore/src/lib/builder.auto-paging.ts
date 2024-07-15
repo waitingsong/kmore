@@ -34,13 +34,13 @@ export async function pager<T = unknown>(
     pageSize: +pagingOptions.pageSize,
   }
 
-  const outputMaping = pagingOptions.wrapOutput
+  const outputMapping = pagingOptions.wrapOutput
     ? { ...initPageTypeMapping }
     : void 0
 
 
   if (! total || ! builderPager) {
-    if (outputMaping) {
+    if (outputMapping) {
       const data: PageWrapType<T> = {
         ...props,
         rows: [],
@@ -48,7 +48,7 @@ export async function pager<T = unknown>(
       return data
     }
     else {
-      return addPaginMetaOnArray([], props)
+      return addPagingMetaOnArray([], props)
     }
   }
 
@@ -66,26 +66,26 @@ export async function pager<T = unknown>(
   // console.info({ builderPageSql: builderPagerSql })
 
   return pagingOptions.wrapOutput
-    ? builderPagerPatched.then((rows: T[] | undefined) => genOutputData(rows, props, outputMaping))
-    : builderPagerPatched.then((rows: T[] | undefined) => addPaginMetaOnArray(rows, props))
+    ? builderPagerPatched.then((rows: T[] | undefined) => genOutputData(rows, props, outputMapping))
+    : builderPagerPatched.then((rows: T[] | undefined) => addPagingMetaOnArray(rows, props))
 }
 
 function genOutputData<T = unknown>(
   input: T[] | undefined,
   props: PagingMeta,
-  outputMaping: Record<keyof PageWrapType, string> | undefined,
+  outputMapping: Record<keyof PageWrapType, string> | undefined,
 ): PageWrapType<T> {
 
-  assert(outputMaping, 'outputMaping should be set')
-  assert(Object.keys(outputMaping).length, 'outputMaping should not be empty')
+  assert(outputMapping, 'outputMapping should be set')
+  assert(Object.keys(outputMapping).length, 'outputMapping should not be empty')
 
   if (input) {
     if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
-      props.total = input.length
+      props.total = BigInt(input.length)
     }
   }
   else if (props.page === 1) {
-    props.total = 0
+    props.total = 0n
   }
 
   const data: PageWrapType<T> = {
@@ -93,7 +93,7 @@ function genOutputData<T = unknown>(
     rows: input ?? [],
   }
 
-  Object.entries(outputMaping).forEach(([key, key2]) => {
+  Object.entries(outputMapping).forEach(([key, key2]) => {
     if (! Object.hasOwn(props, key)) { return }
     // @ts-ignore
     const value = props[key] as unknown
@@ -107,7 +107,7 @@ function genOutputData<T = unknown>(
 }
 
 
-function addPaginMetaOnArray<T = unknown>(
+function addPagingMetaOnArray<T = unknown>(
   input: T[] | undefined,
   props: PagingMeta,
 ): PageRawType<T> | undefined {
@@ -116,11 +116,11 @@ function addPaginMetaOnArray<T = unknown>(
 
   if (input.length) {
     if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
-      props.total = input.length
+      props.total = BigInt(input.length)
     }
   }
   else if (props.page === 1) {
-    props.total = 0
+    props.total = 0n
   }
 
   Object.entries(props).forEach(([key, value]) => {
@@ -135,7 +135,7 @@ function addPaginMetaOnArray<T = unknown>(
 }
 
 interface GenBuilderForPagingRetType {
-  total: number | bigint
+  total: bigint
   pagingOptions: _PagingOptions
   builderPager?: KmoreQueryBuilder | undefined
 }
@@ -197,10 +197,10 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
       if (rows.length > 0) {
         const [row] = rows
         if (row?.total) {
-          return typeof row.total === 'number' ? row.total : BigInt(row.total)
+          return BigInt(row.total)
         }
       }
-      return 0
+      return 0n
     })
 
   const ret: GenBuilderForPagingRetType = {
