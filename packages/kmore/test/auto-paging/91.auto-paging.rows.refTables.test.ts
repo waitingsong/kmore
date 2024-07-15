@@ -179,7 +179,7 @@ function validatePagerRet(input: PageRawType<UserDo>, len = 3): void {
 
   const { total, page, pageSize } = input
   // console.log({ total, page, pageSize, rows: input.length })
-  assert(typeof total === 'number')
+  assert(typeof total === 'bigint')
   assert(typeof page === 'number')
   assert(typeof pageSize === 'number')
 
@@ -217,7 +217,7 @@ function validatePagerRetPartial(
 
   const { total, page, pageSize } = input
   // console.log({ total, page, pageSize, rows: input.length })
-  assert(typeof total === 'number', JSON.stringify(input))
+  assert(typeof total === 'bigint', JSON.stringify(input))
   assert(typeof page === 'number', JSON.stringify(input))
   assert(typeof pageSize === 'number', JSON.stringify(input))
 

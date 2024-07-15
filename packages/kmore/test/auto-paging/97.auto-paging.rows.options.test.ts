@@ -33,7 +33,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
-        total: 3,
+        total: 3n,
         page: 1,
         pageSize: 1,
       }
@@ -47,7 +47,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
-        total: 3,
+        total: 3n,
         page: 1,
         pageSize: 2,
       }
@@ -61,7 +61,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
-        total: 3,
+        total: 3n,
         page: 1,
         pageSize: 3,
       }
@@ -76,7 +76,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
-        total: 3,
+        total: 3n,
         page: 2,
         pageSize: 2,
       }
@@ -91,7 +91,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret = await tables.ref_tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
-        total: 3,
+        total: 3n,
         page: 3,
         pageSize: 2,
       }

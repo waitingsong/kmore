@@ -218,13 +218,13 @@ function validatePagerRet(input: PageRawType<UserDTO> | undefined, len = 3): voi
 
   const { total, page, pageSize } = input
   try {
-    assert(typeof total === 'number')
+    assert(typeof total === 'bigint')
     assert(typeof page === 'number')
     assert(typeof pageSize === 'number')
 
     assert(pageSize === initPagingMeta.pageSize)
     assert(pageSize > 0)
-    assert(total === len)
+    assert(total === BigInt(len))
     assert(Array.isArray(input))
     assert(input.length === len)
     assert(pageSize >= input.length)
@@ -263,13 +263,13 @@ function validatePagerRetPartial(
 
   const { total, page, pageSize } = input
   try {
-    assert(typeof total === 'number')
+    assert(typeof total === 'bigint')
     assert(typeof page === 'number')
     assert(typeof pageSize === 'number')
 
     assert(pageSize === initPagingMeta.pageSize)
     assert(pageSize > 0)
-    assert(total === len)
+    assert(total === BigInt(len))
     assert(Array.isArray(input))
     assert(input.length === len)
     assert(pageSize >= input.length)

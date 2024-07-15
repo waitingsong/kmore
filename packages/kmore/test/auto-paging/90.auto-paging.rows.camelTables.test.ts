@@ -28,7 +28,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should autoPaging work', () => {
-    it('normal', async () => {
+    it.only('normal', async () => {
       const ret0 = await tables.ref_tb_user()
       validateRet(ret0)
 
