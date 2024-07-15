@@ -12,7 +12,7 @@ import type { Knex } from 'knex'
 import type { KmoreQueryBuilder, QueryBuilder, QueryBuilderExtMethod } from './builder.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
 import { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
-import type { AddPagingMeta, PagingCategory } from './paging.types.js'
+import type { PagingCategory } from './paging.types.js'
 
 
 declare module 'knex/types/index.js' {
