@@ -91,21 +91,23 @@ export interface QueryBuilderExtMethod<
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
   TRecord extends object = any,
+  TResult = unknown[],
 > {
   smartCrossJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
   smartInnerJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
   smartJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
   smartLeftJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
   smartRightJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-  autoPaging: AutoPaging<D, CaseConvert, TRecord>
+  autoPaging: AutoPaging<D, CaseConvert, TRecord, TResult>
 }
 
 type AutoPaging<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any,
+  TRecord extends object = any,
+  TResult = unknown[],
 > = <Wrap extends boolean | undefined = false>(options?: Partial<PagingOptions>, wrapOutput?: Wrap)
-=> KmoreQueryBuilder<D, CaseConvert, CalcPagingCat<Wrap>, TRecord, TRecord[]>
+=> KmoreQueryBuilder<D, CaseConvert, CalcPagingCat<Wrap>, TRecord, TResult>
 
 
 
@@ -176,9 +178,10 @@ export interface QueryBuilder<
 > extends
   ChainableInterface<TResult, EnablePaging>,
   QueryBuilderExtName<D>,
-  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>,
+  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>
   // Knex.QueryInterface<TRecord, TResult>,
-  Knex.QueryBuilder<TRecord, TResult> {
+  // Knex.QueryBuilder<TRecord, TResult>
+{
 
   // methods of knex.QueryBuilder need to be redefined here
 

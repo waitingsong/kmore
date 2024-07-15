@@ -38,7 +38,7 @@ declare module 'knex/types/index.js' {
       D extends object = any,
       CaseConvert extends CaseType = CaseType,
       EnablePaging extends PagingCategory = 0,
-    > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>,
+    > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord, TResult>,
       QueryInterfacePatch<D, CaseConvert, EnablePaging, TRecord, TResult> {
       dummy: <
         D2 extends object = D,
