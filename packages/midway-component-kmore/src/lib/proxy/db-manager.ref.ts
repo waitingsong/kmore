@@ -68,7 +68,6 @@ export function proxyRef(options: ProxyRefOptions): Dbqb {
         ctxExceptionHandler,
       }
 
-      // @ts-expect-error
       // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-unsafe-return
       const queryBuilderCreator: TbQueryBuilder<object, CaseType, object, unknown> = inputOptions => proxyRefTableFn(inputOptions, opts)
       return queryBuilderCreator
