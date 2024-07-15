@@ -28,7 +28,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should autoPaging work', () => {
-    it.only('normal', async () => {
+    it('normal', async () => {
       const ret0 = await tables.ref_tb_user()
       validateRet(ret0)
 
@@ -36,16 +36,20 @@ describe(fileShortPath(import.meta.url), () => {
         .autoPaging()
       validatePageRet(ret)
     })
+    it('error with .first()', async () => {
+      try {
+        await tables.ref_tb_user()
+          .select('uid')
+          .autoPaging()
+          .first()
+      }
+      catch (ex) {
+        assert(ex instanceof Error)
+        assert(ex.message.includes('first() is not supported with autoPaging()'))
+      }
+    })
 
     it('all', async () => {
-      const ret100 = await tables.ref_tb_user()
-        .select('uid')
-        .autoPaging()
-        .first()
-      assert(ret100)
-      assert(ret100.uid > 0)
-
-
       const ret10 = await tables.ref_tb_user()
         .autoPaging()
       validatePageRet(ret10)

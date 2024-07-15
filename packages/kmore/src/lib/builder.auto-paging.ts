@@ -154,7 +154,8 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
   const method = builder._method as string
   assert(
     method === 'select',
-    'autoPaging() can only be called on SELECT queries, .first() not supported',
+    'autoPaging() can only be called on SELECT queries, first() is not supported with autoPaging()'
+    + ` method: ${method}`,
   )
 
   // @ts-ignore
