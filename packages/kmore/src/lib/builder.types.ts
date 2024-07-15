@@ -165,37 +165,6 @@ export type ResolveResult<S, EnablePaging extends PagingCategory = 0>
   = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
 
 
-declare module 'knex/types/index.js' {
-  namespace Knex {
-    // // @ts-expect-error
-    // interface QueryInterface<
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   TRecord extends object = any, TResult = any,
-    //   D extends object = any,
-    //   CaseConvert extends CaseType = CaseType,
-    //   EnablePaging extends PagingCategory = 0,
-    // >
-    //   extends
-    //   QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
-    //   dummy: () => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
-    // }
-
-    // @ts-expect-error
-    interface QueryInterface<
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      TRecord extends object = any, TResult = any,
-      D extends object = any,
-      CaseConvert extends CaseType = CaseType,
-      EnablePaging extends PagingCategory = 0,
-    > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
-      dummy: <
-        D2 extends object = any,
-        CaseConvert2 extends CaseType = CaseType,
-        EnablePaging2 extends PagingCategory = 0,
-      >() => KmoreQueryBuilder<D2, CaseConvert2, EnablePaging2, TRecord, TResult>
-    }
-  }
-}
 
 // @ts-expect-error
 export interface QueryBuilder<

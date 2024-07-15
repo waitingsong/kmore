@@ -4,23 +4,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import type {
-  CaseConvertTable,
   CaseType,
-  DbScopedColsByKey,
-  DbScopedColsByTableType,
-  JoinTableWithCaseConvert,
-  SplitScopedColumn,
-  StrKey,
   UnwrapArrayMember,
 } from '@waiting/shared-types'
-import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
-import { KmoreQueryBuilder, QueryBuilderExtMethod } from './builder.types.js'
+import type { KmoreQueryBuilder, QueryBuilder, QueryBuilderExtMethod } from './builder.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
-import { ArrayIfAlready, ArrayMember, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
-import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
-import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
+import { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
+import type { AddPagingMeta, PagingCategory } from './paging.types.js'
 
 
 declare module 'knex/types/index.js' {
@@ -270,14 +262,8 @@ interface OrderBy<
 }
 
 
-// If we have more categories of deferred selection in future,
-// this will combine all of them
-type ResolveResult<S, EnablePaging extends PagingCategory = 0>
-  = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
 
-type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
-
-export interface Where<
+interface Where<
   D extends {} = {},
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
