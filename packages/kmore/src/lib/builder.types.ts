@@ -168,7 +168,6 @@ export type ResolveResult<S, EnablePaging extends PagingCategory = 0>
 
 
 
-// @ts-expect-error
 export interface QueryBuilder<
   D extends object = object,
   CaseConvert extends CaseType = CaseType,
@@ -182,7 +181,6 @@ export interface QueryBuilder<
   // Knex.QueryInterface<TRecord, TResult>,
   // Knex.QueryBuilder<TRecord, TResult>
 {
-
   // methods of knex.QueryBuilder need to be redefined here
 
   or: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>

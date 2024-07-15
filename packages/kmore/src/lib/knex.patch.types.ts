@@ -15,7 +15,7 @@ import { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAl
 import type { PagingCategory } from './paging.types.js'
 
 
-export const patchPlaceholder = 1
+export type PatchPlaceholder = boolean
 
 declare module 'knex/types/index.js' {
   namespace Knex {

@@ -1,3 +1,9 @@
+import type { PatchPlaceholder } from './knex.patch.types.js'
+
+
+declare const _fix: PatchPlaceholder
+void _fix
+
 
 export * from './kmore.js'
 export * from './types.js'
@@ -21,4 +27,3 @@ export {
   mergeDoWithInitData,
 } from './helper.js'
 export { genKmoreTrxId } from './util.js'
-
