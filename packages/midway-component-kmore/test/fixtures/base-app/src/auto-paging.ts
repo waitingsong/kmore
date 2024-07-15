@@ -46,7 +46,7 @@ export class UserPagingController {
 
     assert(users)
     assert(users.length === 3)
-    assert(users.total === 3)
+    assert(users.total === 3n)
     assert(users.page === 1)
     assert(users.pageSize)
 
@@ -69,7 +69,7 @@ export class UserPagingController {
 
     assert(users)
     assert(users.length === 2)
-    assert(users.total === 2)
+    assert(users.total === 2n)
     assert(users.page === 1)
     assert(users.pageSize)
 
@@ -80,7 +80,7 @@ export class UserPagingController {
 
     assert(users2)
     assert(users2.length === 3)
-    assert(users2.total === 3)
+    assert(users2.total === 3n)
     assert(users2.page === 1)
 
     return users2
