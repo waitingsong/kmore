@@ -22,6 +22,19 @@ import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from
 
 declare module 'knex/types/index.js' {
   namespace Knex {
+    // // @ts-expect-error
+    // interface QueryInterface<
+    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    //   TRecord extends object = any, TResult = any,
+    //   D extends object = any,
+    //   CaseConvert extends CaseType = CaseType,
+    //   EnablePaging extends PagingCategory = 0,
+    // >
+    //   extends
+    //   QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
+    //   dummy: () => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+    // }
+
     // @ts-expect-error
     interface QueryInterface<
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,18 +42,13 @@ declare module 'knex/types/index.js' {
       D extends object = any,
       CaseConvert extends CaseType = CaseType,
       EnablePaging extends PagingCategory = 0,
-    >
-      extends
-      QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
-      dummy: () => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+    > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
+      dummy: <
+        D2 extends object = any,
+        CaseConvert2 extends CaseType = CaseType,
+        EnablePaging2 extends PagingCategory = 0,
+      >() => KmoreQueryBuilder<D2, CaseConvert2, EnablePaging2, TRecord, TResult>
     }
-
-    // interface QueryInterface<
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   TRecord extends {} = any, TResult = any,
-    // > {
-    //   foo: () => QueryInterface<TRecord, TResult>
-    // }
   }
 }
 
