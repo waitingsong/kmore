@@ -8,7 +8,7 @@ import type { DbDict } from 'kmore-types'
 import type { KmoreQueryBuilder } from './builder.types.js'
 
 
-export function genColumnMaping(
+export function genColumnMapping(
   dbDict: DbDict<unknown>,
   tablesJoin: Set<string>,
 ): Map<string, string> {

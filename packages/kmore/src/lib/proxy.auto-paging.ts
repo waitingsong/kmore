@@ -19,7 +19,7 @@ export const initPagingMeta: PagingMeta = {
   pageSize: initPagingOptions.pageSize,
 }
 
-export const initPageTypeMaping: Record<keyof PageWrapType, string> = {
+export const initPageTypeMapping: Record<keyof PageWrapType, string> = {
   total: 'total',
   page: 'page',
   pageSize: 'pageSize',

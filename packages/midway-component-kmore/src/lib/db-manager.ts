@@ -30,7 +30,7 @@ import { ConfigKey } from './types.js'
 
 
 @Provide()
-export class DbManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context> {
+export class DbManager<SourceName extends string = string, D extends object = object, Ctx extends Context = Context> {
 
   @Inject() readonly ctx: Ctx
   @Inject() readonly dbSourceManager: DbSourceManager<SourceName, D, Ctx>
@@ -54,7 +54,7 @@ export class DbManager<SourceName extends string = string, D = unknown, Ctx exte
     startActiveSpan: false,
     kind: SpanKind.INTERNAL,
   })
-  getDataSource<Db = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
+  getDataSource<Db extends object = D>(dataSourceName: SourceName): Kmore<Db, Ctx> {
 
     // const event: Attributes = {
     //   event: KmoreAttrNames.getDataSourceStart,

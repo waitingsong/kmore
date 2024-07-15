@@ -15,7 +15,7 @@ import {
 import { DbConfig } from './types.js'
 
 
-export abstract class AbstractDbSourceManager<SourceName extends string = string, D = unknown, Ctx extends Context = Context>
+export abstract class AbstractDbSourceManager<SourceName extends string = string, D extends object = object, Ctx extends Context = Context>
   extends DataSourceManager<Kmore | undefined> {
 
   // kmoreQueryId => QuerySpanInfo
@@ -25,10 +25,10 @@ export abstract class AbstractDbSourceManager<SourceName extends string = string
 
   declare dataSource: Map<SourceName, Kmore<D, Ctx>>
 
-  declare getDataSource: <Db = D>(dataSourceName: SourceName)
+  declare getDataSource: <Db extends object = D>(dataSourceName: SourceName)
   => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
 
-  declare createInstance: <Db = D>(
+  declare createInstance: <Db extends object = D>(
     config: DbConfig<D, Ctx>,
     clientName: SourceName,
     options?: CreateInstanceOptions,

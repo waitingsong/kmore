@@ -12,7 +12,7 @@ import type {
 } from './paging.types.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import type { _PagingOptions } from './proxy.auto-paging.js'
-import { initPageTypeMaping } from './proxy.auto-paging.js'
+import { initPageTypeMapping } from './proxy.auto-paging.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import { KmorePageKey } from './types.js'
@@ -35,7 +35,7 @@ export async function pager<T = unknown>(
   }
 
   const outputMaping = pagingOptions.wrapOutput
-    ? { ...initPageTypeMaping }
+    ? { ...initPageTypeMapping }
     : void 0
 
 
@@ -135,7 +135,7 @@ function addPaginMetaOnArray<T = unknown>(
 }
 
 interface GenBuilderForPagingRetType {
-  total: number
+  total: number | bigint
   pagingOptions: _PagingOptions
   builderPager?: KmoreQueryBuilder | undefined
 }
@@ -193,8 +193,14 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
 
   const total = await builderCounter
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .then((rows: [{ total: number }]) => {
-      return rows[0].total > 0 ? +rows[0].total : 0
+    .then((rows: { total?: number | string }[]) => {
+      if (rows.length > 0) {
+        const [row] = rows
+        if (row?.total) {
+          return typeof row.total === 'number' ? row.total : BigInt(row.total)
+        }
+      }
+      return 0
     })
 
   const ret: GenBuilderForPagingRetType = {
@@ -210,7 +216,7 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
 
   const b3 = builderPager
     .limit(pagingOptions.pageSize)
-    .offset(offset >= 0 ? offset : 0) as KmoreQueryBuilder
+    .offset(offset >= 0 ? offset : 0) as unknown as KmoreQueryBuilder
 
   ret.builderPager = b3
   return ret

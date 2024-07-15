@@ -3,6 +3,7 @@
 import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
+import { RecordCamelKeys } from '@waiting/shared-types'
 
 import { KmoreFactory, type PageRawType } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
@@ -31,7 +32,7 @@ describe(fileShortPath(import.meta.url), () => {
       const ret0 = await tables.ref_tb_user()
       validateRet(ret0)
 
-      const ret = await tables.ref_tb_user()
+      const ret: PageRawType<UserDTO> = await tables.ref_tb_user()
         .autoPaging()
       validatePageRet(ret)
     })
@@ -47,6 +48,7 @@ describe(fileShortPath(import.meta.url), () => {
       validatePageRet(ret11)
 
       const ret12 = await tables.ref_tb_user()
+        .select('*')
         .autoPaging()
         .then()
         .then(rows => rows)
