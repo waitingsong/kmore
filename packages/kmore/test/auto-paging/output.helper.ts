@@ -14,7 +14,7 @@ export function validateOptionsPageWrapRet(input: PageWrapType<UserDTO>, expect:
   })
 
   const { total, page, pageSize, rows } = input
-  assert(typeof total === 'number')
+  assert(typeof total === 'bigint')
   assert(typeof page === 'number')
   assert(typeof pageSize === 'number')
 
@@ -35,7 +35,7 @@ export function validateOptionsPageRet(input: PageRawType<UserDTO>, expect: Pagi
   })
 
   const { total, page, pageSize } = input
-  assert(typeof total === 'number')
+  assert(typeof total === 'bigint')
   assert(typeof page === 'number')
   assert(typeof pageSize === 'number')
 

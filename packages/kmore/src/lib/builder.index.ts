@@ -24,7 +24,7 @@ import type { CaseType } from './types.js'
 
 
 export function createRefTables<
-  D,
+  D extends object,
   Context,
   P extends string,
 >(
@@ -58,7 +58,7 @@ export function createRefTables<
         options?.ctxBuilderPreProcessor,
         options?.ctxBuilderResultPreProcessor,
         options?.ctxExceptionHandler,
-      )
+      ) as DbQueryBuilder<Context, D, P, CaseType>
     } // must dynamically!!
 
     Object.defineProperty(rb, name, {

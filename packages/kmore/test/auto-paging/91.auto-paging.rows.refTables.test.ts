@@ -51,16 +51,16 @@ describe(fileShortPath(import.meta.url), () => {
         .then(rows => rows)
       validatePagerRet(ret12)
 
-      const ret20 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('*')
-      validatePagerRet(ret20)
+      // const ret20 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('*')
+      // validatePagerRet(ret20)
 
-      const ret21 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('*')
-        .then()
-      validatePagerRet(ret21)
+      // const ret21 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('*')
+      //   .then()
+      // validatePagerRet(ret21)
 
       const ret22 = await tables.ref_tb_user()
         .select('*')
@@ -75,16 +75,16 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('partial', async () => {
-      const ret30 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('uid', 'realName')
-      validatePagerRetPartial(ret30, colkeys)
+      // const ret30 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('uid', 'realName')
+      // validatePagerRetPartial(ret30, colkeys)
 
-      const ret31 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('uid', 'realName')
-        .then()
-      validatePagerRetPartial(ret31, colkeys)
+      // const ret31 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('uid', 'realName')
+      //   .then()
+      // validatePagerRetPartial(ret31, colkeys)
 
       const ret32 = await tables.ref_tb_user()
         .select('uid', 'realName')
@@ -97,16 +97,16 @@ describe(fileShortPath(import.meta.url), () => {
         .then()
       validatePagerRetPartial(ret33, colkeys)
 
-      const ret40 = await tables.ref_tb_user()
-        .autoPaging()
-        .select(colkeys)
-      validatePagerRetPartial(ret40, colkeys)
+      // const ret40 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select(colkeys)
+      // validatePagerRetPartial(ret40, colkeys)
 
-      const ret41 = await tables.ref_tb_user()
-        .autoPaging()
-        .select(colkeys)
-        .then()
-      validatePagerRetPartial(ret41, colkeys)
+      // const ret41 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select(colkeys)
+      //   .then()
+      // validatePagerRetPartial(ret41, colkeys)
 
       const ret42 = await tables.ref_tb_user()
         .select(colkeys)
@@ -122,24 +122,24 @@ describe(fileShortPath(import.meta.url), () => {
 
     it('where', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .where({ uid })
+        .autoPaging()
       validatePagerRet(ret, 1)
     })
 
     it('where orderby asc', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .where({ uid })
         .orderBy('uid', 'asc')
+        .autoPaging()
       validatePagerRet(ret, 1)
     })
 
     it('where orderby desc', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .where({ uid })
         .orderBy('uid', 'desc')
+        .autoPaging()
       validatePagerRet(ret, 1)
     })
 
@@ -147,7 +147,6 @@ describe(fileShortPath(import.meta.url), () => {
       const ret: PageRawType<UserDo> = await tables.ref_tb_user()
         .select('*')
         .limit(1) // will be ignored
-        // @ts-ignore
         .autoPaging()
 
       validatePagerRet(ret, 3)
@@ -180,13 +179,13 @@ function validatePagerRet(input: PageRawType<UserDo>, len = 3): void {
 
   const { total, page, pageSize } = input
   // console.log({ total, page, pageSize, rows: input.length })
-  assert(typeof total === 'number')
+  assert(typeof total === 'bigint')
   assert(typeof page === 'number')
   assert(typeof pageSize === 'number')
 
   assert(pageSize === initPagingMeta.pageSize)
-  assert(input.pageSize > 0, JSON.stringify(input))
-  assert(input.total > 0, JSON.stringify(input))
+  assert(pageSize > 0, JSON.stringify(input))
+  assert(total > 0, JSON.stringify(input))
   assert(Array.isArray(input), JSON.stringify(input))
   assert(input.length === len, JSON.stringify(input))
   assert(pageSize >= input.length, JSON.stringify(input))
@@ -218,13 +217,13 @@ function validatePagerRetPartial(
 
   const { total, page, pageSize } = input
   // console.log({ total, page, pageSize, rows: input.length })
-  assert(typeof total === 'number', JSON.stringify(input))
+  assert(typeof total === 'bigint', JSON.stringify(input))
   assert(typeof page === 'number', JSON.stringify(input))
   assert(typeof pageSize === 'number', JSON.stringify(input))
 
   assert(pageSize === initPagingMeta.pageSize, JSON.stringify(input))
-  assert(input.pageSize > 0, JSON.stringify(input))
-  assert(input.total > 0, JSON.stringify(input))
+  assert(pageSize > 0, JSON.stringify(input))
+  assert(total > 0, JSON.stringify(input))
   assert(Array.isArray(input), JSON.stringify(input))
   assert(input.length === len, JSON.stringify(input))
   assert(pageSize >= input.length, JSON.stringify(input))

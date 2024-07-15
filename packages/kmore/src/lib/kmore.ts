@@ -32,7 +32,7 @@ import { CaseType } from './types.js'
 import { genKmoreTrxId } from './util.js'
 
 
-export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
+export class Kmore<D extends object = any, Context = any> extends KmoreBase<Context> {
 
   /**
    * Original table names, without case conversion.
@@ -161,10 +161,10 @@ export class Kmore<D = any, Context = any> extends KmoreBase<Context> {
       this.trxActionOnEnd = options.trxActionOnEnd
     }
 
-    this.refTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.none)
-    this.camelTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.camel)
+    this.refTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.none) as DbQueryBuilder<Context, D, 'ref_', CaseType.none>
+    this.camelTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.camel) as DbQueryBuilder<Context, D, 'ref_', CaseType.camel>
     // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
-    this.snakeTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.snake)
+    this.snakeTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.snake) as DbQueryBuilder<Context, D, 'ref_', CaseType.snake>
 
 
     this.dbh = options.dbh ? options.dbh : createDbh(this.config)
@@ -333,7 +333,7 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
   trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
 }
 
-export function KmoreFactory<D, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {
+export function KmoreFactory<D extends object, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {
   const km = new Kmore<D, Ctx>(options)
   return km
 }

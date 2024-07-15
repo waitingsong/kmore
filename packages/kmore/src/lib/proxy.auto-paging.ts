@@ -14,12 +14,12 @@ export const initPagingOptions: _PagingOptions = {
 }
 
 export const initPagingMeta: PagingMeta = {
-  total: 0,
+  total: 0n,
   page: 1,
   pageSize: initPagingOptions.pageSize,
 }
 
-export const initPageTypeMaping: Record<keyof PageWrapType, string> = {
+export const initPageTypeMapping: Record<keyof PageWrapType, string> = {
   total: 'total',
   page: 'page',
   pageSize: 'pageSize',

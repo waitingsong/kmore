@@ -32,7 +32,7 @@ export interface PagingMeta {
    *  not the number of rows in the current page,
    *  also not the number of pages.
    */
-  total: number
+  total: bigint
   /**
    * Current page number, start from 1
    */

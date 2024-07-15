@@ -51,3 +51,5 @@ export type SafePartial<T> = Partial<AnyOrUnknownToOther<T, {}>>
 export type AnyOrUnknownToOther<T1, T2> = unknown extends T1 ? T2 : T1
 
 
+export type ComparisonOperator = '=' | '>' | '>=' | '<' | '<=' | '<>'
+

@@ -2,6 +2,7 @@
 export * from './kmore.js'
 export * from './types.js'
 export * from './builder.types.js'
+export type { QueryBuilderExtMethod } from './knex.patch.types.js'
 export type {
   PagingOptions,
   PageRawType,

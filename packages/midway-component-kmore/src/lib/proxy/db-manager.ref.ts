@@ -56,22 +56,21 @@ export function proxyRef(options: ProxyRefOptions): Dbqb {
         typeof target[propKey] === 'function',
         `${propKey.toString()} is not a function`,
       )
+      const opts = {
+        dbSourceManager,
+        propKey,
+        reqCtx,
+        targetProperty: target,
+        traceSvc,
+        trxStatusSvc,
+        ctxBuilderPreProcessor,
+        ctxBuilderResultPreProcessor,
+        ctxExceptionHandler,
+      }
 
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      const queryBuilderCreator: TbQueryBuilder<{}, CaseType, {}, unknown> = inputOptions => proxyRefTableFn(
-        inputOptions,
-        {
-          dbSourceManager,
-          propKey,
-          reqCtx,
-          targetProperty: target,
-          traceSvc,
-          trxStatusSvc,
-          ctxBuilderPreProcessor,
-          ctxBuilderResultPreProcessor,
-          ctxExceptionHandler,
-        },
-      )
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-unsafe-return
+      const queryBuilderCreator: TbQueryBuilder<object, CaseType, object, unknown> = inputOptions => proxyRefTableFn(inputOptions, opts)
       return queryBuilderCreator
     },
   })

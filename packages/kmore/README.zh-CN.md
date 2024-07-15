@@ -193,7 +193,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
 
   // 不可枚举分页属性
   const { 
-    total,    // 总记录数
+    total,    // 总记录数 bigint
     page,     // 当前页号，起始 1
     pageSize, // 每页记录数
   } = users
@@ -214,7 +214,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
 
   // 可枚举分页属性
   const { 
-    total,    // 总记录数
+    total,    // 总记录数 bigint
     page,     // 当前页号，起始 1
     pageSize, // 每页记录数
     rows,     // 查询结果数据

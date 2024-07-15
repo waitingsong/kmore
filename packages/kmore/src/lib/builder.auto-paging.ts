@@ -12,7 +12,7 @@ import type {
 } from './paging.types.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import type { _PagingOptions } from './proxy.auto-paging.js'
-import { initPageTypeMaping } from './proxy.auto-paging.js'
+import { initPageTypeMapping } from './proxy.auto-paging.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import { KmorePageKey } from './types.js'
@@ -34,13 +34,13 @@ export async function pager<T = unknown>(
     pageSize: +pagingOptions.pageSize,
   }
 
-  const outputMaping = pagingOptions.wrapOutput
-    ? { ...initPageTypeMaping }
+  const outputMapping = pagingOptions.wrapOutput
+    ? { ...initPageTypeMapping }
     : void 0
 
 
   if (! total || ! builderPager) {
-    if (outputMaping) {
+    if (outputMapping) {
       const data: PageWrapType<T> = {
         ...props,
         rows: [],
@@ -48,7 +48,7 @@ export async function pager<T = unknown>(
       return data
     }
     else {
-      return addPaginMetaOnArray([], props)
+      return addPagingMetaOnArray([], props)
     }
   }
 
@@ -66,26 +66,27 @@ export async function pager<T = unknown>(
   // console.info({ builderPageSql: builderPagerSql })
 
   return pagingOptions.wrapOutput
-    ? builderPagerPatched.then((rows: T[] | undefined) => genOutputData(rows, props, outputMaping))
-    : builderPagerPatched.then((rows: T[] | undefined) => addPaginMetaOnArray(rows, props))
+    ? builderPagerPatched.then((rows: T[] | undefined) => genOutputData(rows, props, outputMapping))
+    : builderPagerPatched.then((rows: T[] | undefined) => addPagingMetaOnArray(rows, props))
 }
 
 function genOutputData<T = unknown>(
   input: T[] | undefined,
   props: PagingMeta,
-  outputMaping: Record<keyof PageWrapType, string> | undefined,
+  outputMapping: Record<keyof PageWrapType, string> | undefined,
 ): PageWrapType<T> {
 
-  assert(outputMaping, 'outputMaping should be set')
-  assert(Object.keys(outputMaping).length, 'outputMaping should not be empty')
+  assert(outputMapping, 'outputMapping should be set')
+  assert(Object.keys(outputMapping).length, 'outputMapping should not be empty')
 
+  const total = BigInt(props.total)
   if (input) {
-    if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
-      props.total = input.length
+    if (props.page === 1 && total < props.pageSize && input.length < total) {
+      props.total = BigInt(input.length)
     }
   }
   else if (props.page === 1) {
-    props.total = 0
+    props.total = 0n
   }
 
   const data: PageWrapType<T> = {
@@ -93,7 +94,7 @@ function genOutputData<T = unknown>(
     rows: input ?? [],
   }
 
-  Object.entries(outputMaping).forEach(([key, key2]) => {
+  Object.entries(outputMapping).forEach(([key, key2]) => {
     if (! Object.hasOwn(props, key)) { return }
     // @ts-ignore
     const value = props[key] as unknown
@@ -107,20 +108,21 @@ function genOutputData<T = unknown>(
 }
 
 
-function addPaginMetaOnArray<T = unknown>(
+function addPagingMetaOnArray<T = unknown>(
   input: T[] | undefined,
   props: PagingMeta,
 ): PageRawType<T> | undefined {
 
   if (! Array.isArray(input)) { return }
 
+  const total = BigInt(props.total)
   if (input.length) {
-    if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
-      props.total = input.length
+    if (props.page === 1 && total < props.pageSize && input.length < total) {
+      props.total = BigInt(input.length)
     }
   }
   else if (props.page === 1) {
-    props.total = 0
+    props.total = 0n
   }
 
   Object.entries(props).forEach(([key, value]) => {
@@ -135,7 +137,7 @@ function addPaginMetaOnArray<T = unknown>(
 }
 
 interface GenBuilderForPagingRetType {
-  total: number
+  total: bigint
   pagingOptions: _PagingOptions
   builderPager?: KmoreQueryBuilder | undefined
 }
@@ -152,7 +154,8 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
   const method = builder._method as string
   assert(
     method === 'select',
-    'autoPaging() can only be called on SELECT queries, .first() not supported',
+    'autoPaging() can only be called on SELECT queries, first() is not supported with autoPaging()'
+    + ` method: ${method}`,
   )
 
   // @ts-ignore
@@ -193,8 +196,14 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
 
   const total = await builderCounter
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .then((rows: [{ total: number }]) => {
-      return rows[0].total > 0 ? +rows[0].total : 0
+    .then((rows: { total?: number | string }[]) => {
+      if (rows.length > 0) {
+        const [row] = rows
+        if (row?.total) {
+          return BigInt(row.total)
+        }
+      }
+      return 0n
     })
 
   const ret: GenBuilderForPagingRetType = {
@@ -210,7 +219,7 @@ async function genBuilderForPaging(options: PagerOptions): Promise<GenBuilderFor
 
   const b3 = builderPager
     .limit(pagingOptions.pageSize)
-    .offset(offset >= 0 ? offset : 0) as KmoreQueryBuilder
+    .offset(offset >= 0 ? offset : 0) as unknown as KmoreQueryBuilder
 
   ret.builderPager = b3
   return ret
