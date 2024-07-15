@@ -149,12 +149,12 @@ export interface QueryBuilder<
   TRecord extends object = any,
   TResult = unknown[],
 > extends
-  ChainableInterface<TResult, EnablePaging>,
-  QueryBuilderExtName<D>,
-  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>
   // Knex.QueryInterface<TRecord, TResult>,
   // Knex.QueryBuilder<TRecord, TResult>
-{
+  ChainableInterface<TResult, EnablePaging>,
+  QueryBuilderExtName<D>,
+  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging> {
+
   // methods of knex.QueryBuilder need to be redefined here
 
   or: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
