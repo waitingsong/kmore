@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
-import { genColumnMaping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
+import { genColumnMapping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
 import { KmorePageKey, SmartKey } from './types.js'
 
 
@@ -22,7 +22,7 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
   // const queryContext = builder._queryContext as QueryContext | undefined
   // const caseConvert = queryContext?.postProcessResponseCaseConvert ?? CaseType.snake
   const tablesJoin = new Set([...builder._tablesJoin])
-  const aliasMap = genColumnMaping(dbDict, tablesJoin)
+  const aliasMap = genColumnMapping(dbDict, tablesJoin)
 
   const aliasObject: Record<string, string> = {}
   aliasMap.forEach((col, alias) => {
@@ -33,7 +33,7 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
   })
 
   const pagingFlag = builder[KmorePageKey.PagingBuilderType]
-  // conter query is not need to process
+  // counter query is not need to process
   if (! pagingFlag || pagingFlag === 'pager') {
     Object.defineProperty(aliasObject, 'forSmartJoin', {
       value: true,

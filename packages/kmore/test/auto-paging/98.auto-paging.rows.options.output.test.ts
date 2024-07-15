@@ -18,7 +18,7 @@ describe(fileShortPath(import.meta.url), () => {
   const ord = 'asc'
 
   const meta: PagingMeta = {
-    total: 3,
+    total: 3n,
     page: 1,
     pageSize: 1,
   }

@@ -52,7 +52,7 @@ export function readWithoutThen(
     .first().where('uid', 1)
 
   assert(data, 'Should have data')
-  return data as KmoreQueryBuilder
+  return data as unknown as KmoreQueryBuilder
 }
 
 export async function read(
@@ -74,7 +74,7 @@ export async function read(
     })
     .then((data) => {
       // void data
-      // throw new Error('fooo')
+      // throw new Error('foo')
       return data
     })
     // .catch((ex) => {
@@ -96,7 +96,7 @@ export function readInvalid(
   const b2 = builder.forUpdate()
     .select('*')
     .where('fake', 1)
-  return b2 as KmoreQueryBuilder
+  return b2 as unknown as KmoreQueryBuilder
 }
 
 export async function restore(

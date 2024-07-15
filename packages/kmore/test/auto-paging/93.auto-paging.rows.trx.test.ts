@@ -83,14 +83,14 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret20 = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .select('*')
+        .autoPaging()
       validatePagerRet(ret20, len)
 
       const ret21 = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .select('*')
+        .autoPaging()
         .then()
       validatePagerRet(ret21, len)
 
@@ -123,14 +123,14 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret30 = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .select('uid', 'realName')
+        .autoPaging()
       validatePagerRetPartial(ret30, colkeys, len)
 
       const ret31 = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .select('uid', 'realName')
+        .autoPaging()
         .then()
       validatePagerRetPartial(ret31, colkeys, len)
 
@@ -149,14 +149,14 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret40 = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .select(colkeys)
+        .autoPaging()
       validatePagerRetPartial(ret40, colkeys, len)
 
       const ret41 = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .select(colkeys)
+        .autoPaging()
         .then()
       validatePagerRetPartial(ret41, colkeys, len)
 
@@ -183,8 +183,8 @@ describe(fileShortPath(import.meta.url), () => {
 
       const ret = await tables.ref_tb_user()
         .transacting(trx)
-        .autoPaging()
         .where('uid', uid)
+        .autoPaging()
       validatePagerRet(ret, 0)
 
       await trx.rollback()
@@ -192,13 +192,13 @@ describe(fileShortPath(import.meta.url), () => {
 
     it.skip('smartJoin', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
         )
         .select('*')
         // .where('tb_user_ext_uid', 1)
+        .autoPaging()
 
       // console.log({ ret })
       assert(ret)
@@ -218,13 +218,13 @@ function validatePagerRet(input: PageRawType<UserDTO> | undefined, len = 3): voi
 
   const { total, page, pageSize } = input
   try {
-    assert(typeof total === 'number')
+    assert(typeof total === 'bigint')
     assert(typeof page === 'number')
     assert(typeof pageSize === 'number')
 
     assert(pageSize === initPagingMeta.pageSize)
     assert(pageSize > 0)
-    assert(total === len)
+    assert(total === BigInt(len))
     assert(Array.isArray(input))
     assert(input.length === len)
     assert(pageSize >= input.length)
@@ -263,13 +263,13 @@ function validatePagerRetPartial(
 
   const { total, page, pageSize } = input
   try {
-    assert(typeof total === 'number')
+    assert(typeof total === 'bigint')
     assert(typeof page === 'number')
     assert(typeof pageSize === 'number')
 
     assert(pageSize === initPagingMeta.pageSize)
     assert(pageSize > 0)
-    assert(total === len)
+    assert(total === BigInt(len))
     assert(Array.isArray(input))
     assert(input.length === len)
     assert(pageSize >= input.length)
