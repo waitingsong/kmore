@@ -18,6 +18,7 @@ import {
   postProcessResponse,
   wrapIdentifier,
 } from './helper.js'
+import { patchPlaceholder } from './knex.patch.types.js'
 import { createTrxProperties } from './proxy.trx.js'
 import type {
   EventCallbacks,
@@ -30,6 +31,9 @@ import type {
 } from './types.js'
 import { CaseType } from './types.js'
 import { genKmoreTrxId } from './util.js'
+
+
+void patchPlaceholder
 
 
 export class Kmore<D extends object = any, Context = any> extends KmoreBase<Context> {

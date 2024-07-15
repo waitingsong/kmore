@@ -15,6 +15,8 @@ import { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAl
 import type { PagingCategory } from './paging.types.js'
 
 
+export const patchPlaceholder = 1
+
 declare module 'knex/types/index.js' {
   namespace Knex {
     // // @ts-expect-error
@@ -31,8 +33,7 @@ declare module 'knex/types/index.js' {
     // }
 
     // @ts-expect-error
-    interface QueryInterface<
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    export interface QueryInterface<
       TRecord extends object = any, TResult = any,
       D extends object = any,
       CaseConvert extends CaseType = CaseType,
@@ -40,12 +41,15 @@ declare module 'knex/types/index.js' {
     > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord>,
       QueryInterfacePatch<D, CaseConvert, EnablePaging, TRecord, TResult> {
       dummy: <
-        D2 extends object = any,
-        CaseConvert2 extends CaseType = CaseType,
-        EnablePaging2 extends PagingCategory = 0,
+        D2 extends object = D,
+        CaseConvert2 extends CaseType = CaseConvert,
+        EnablePaging2 extends PagingCategory = EnablePaging,
       >() => KmoreQueryBuilder<D2, CaseConvert2, EnablePaging2, TRecord, TResult>
     }
+
+
   }
+
 }
 
 interface QueryInterfacePatch<
@@ -65,7 +69,7 @@ interface QueryInterfacePatch<
 
 /*  ---------------- re-declare types of Knex ----------------  */
 
-export interface Select<
+interface Select<
   D extends object = object,
   CaseConvert extends CaseType = CaseType,
   EnablePaging extends PagingCategory = 0,
