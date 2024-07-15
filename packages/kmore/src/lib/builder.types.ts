@@ -17,8 +17,7 @@ import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
-// import { ArrayIfAlready, ArrayMember, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
-import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
+import type { AddPagingMeta, PagingCategory } from './paging.types.js'
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
@@ -84,31 +83,6 @@ export interface QueryBuilderExtName<D extends object = object> {
   rowLockLevel: RowLockLevel | undefined
   transactionalProcessed: boolean | undefined
 }
-
-
-export interface QueryBuilderExtMethod<
-  D extends object = object,
-  CaseConvert extends CaseType = CaseType,
-  EnablePaging extends PagingCategory = 0,
-  TRecord extends object = any,
-  TResult = unknown[],
-> {
-  smartCrossJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-  smartInnerJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-  smartJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-  smartLeftJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-  smartRightJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
-  autoPaging: AutoPaging<D, CaseConvert, TRecord, TResult>
-}
-
-type AutoPaging<
-  D extends object = object,
-  CaseConvert extends CaseType = CaseType,
-  TRecord extends object = any,
-  TResult = unknown[],
-> = <Wrap extends boolean | undefined = false>(options?: Partial<PagingOptions>, wrapOutput?: Wrap)
-=> KmoreQueryBuilder<D, CaseConvert, CalcPagingCat<Wrap>, TRecord, TResult>
-
 
 
 export type SmartJoin<

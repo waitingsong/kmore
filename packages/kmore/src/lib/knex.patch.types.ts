@@ -9,29 +9,14 @@ import type {
 } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import type { KmoreQueryBuilder, QueryBuilder, QueryBuilderExtMethod } from './builder.types.js'
+import type { KmoreQueryBuilder, QueryBuilder, SmartJoin } from './builder.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
-import { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
-import type { PagingCategory } from './paging.types.js'
+import type { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
+import type { CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
 
-
-export type PatchPlaceholder = boolean
 
 declare module 'knex/types/index.js' {
   namespace Knex {
-    // // @ts-expect-error
-    // interface QueryInterface<
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   TRecord extends object = any, TResult = any,
-    //   D extends object = any,
-    //   CaseConvert extends CaseType = CaseType,
-    //   EnablePaging extends PagingCategory = 0,
-    // >
-    //   extends
-    //   QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
-    //   dummy: () => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
-    // }
-
     // @ts-expect-error
     export interface QueryInterface<
       TRecord extends object = any, TResult = any,
@@ -40,17 +25,16 @@ declare module 'knex/types/index.js' {
       EnablePaging extends PagingCategory = 0,
     > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord, TResult>,
       QueryInterfacePatch<D, CaseConvert, EnablePaging, TRecord, TResult> {
+
       dummy: <
         D2 extends object = D,
         CaseConvert2 extends CaseType = CaseConvert,
         EnablePaging2 extends PagingCategory = EnablePaging,
       >() => KmoreQueryBuilder<D2, CaseConvert2, EnablePaging2, TRecord, TResult>
     }
-
-
   }
-
 }
+
 
 interface QueryInterfacePatch<
   D extends object = object,
@@ -65,6 +49,32 @@ interface QueryInterfacePatch<
   orderBy: OrderBy<D, CaseConvert, EnablePaging, TRecord, TResult>
   columns: Select<D, CaseConvert, EnablePaging, TRecord, TResult>
 }
+
+
+export interface QueryBuilderExtMethod<
+  D extends object = object,
+  CaseConvert extends CaseType = CaseType,
+  EnablePaging extends PagingCategory = 0,
+  TRecord extends object = any,
+  TResult = unknown[],
+> {
+  smartCrossJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartInnerJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartLeftJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  smartRightJoin: SmartJoin<D, CaseConvert, EnablePaging, TRecord>
+  autoPaging: AutoPaging<D, CaseConvert, TRecord, TResult>
+}
+
+type AutoPaging<
+  D extends object = object,
+  CaseConvert extends CaseType = CaseType,
+  TRecord extends object = any,
+  TResult = unknown[],
+> = <Wrap extends boolean | undefined = false>(options?: Partial<PagingOptions>, wrapOutput?: Wrap)
+=> KmoreQueryBuilder<D, CaseConvert, CalcPagingCat<Wrap>, TRecord, TResult>
+
+
 
 
 /*  ---------------- re-declare types of Knex ----------------  */
