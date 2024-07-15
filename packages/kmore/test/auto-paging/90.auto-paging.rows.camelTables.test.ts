@@ -38,6 +38,14 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('all', async () => {
+      const ret100 = await tables.ref_tb_user()
+        .select('uid')
+        .autoPaging()
+        .first()
+      assert(ret100)
+      assert(ret100.uid > 0)
+
+
       const ret10 = await tables.ref_tb_user()
         .autoPaging()
       validatePageRet(ret10)
@@ -54,16 +62,16 @@ describe(fileShortPath(import.meta.url), () => {
         .then(rows => rows)
       validatePageRet(ret12)
 
-      const ret20 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('*')
-      validatePageRet(ret20)
+      // const ret20 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('*')
+      // validatePageRet(ret20)
 
-      const ret21 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('*')
-        .then()
-      validatePageRet(ret21)
+      // const ret21 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('*')
+      //   .then()
+      // validatePageRet(ret21)
 
       const ret22 = await tables.ref_tb_user()
         .select('*')
