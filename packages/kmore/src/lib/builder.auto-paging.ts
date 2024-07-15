@@ -79,8 +79,9 @@ function genOutputData<T = unknown>(
   assert(outputMapping, 'outputMapping should be set')
   assert(Object.keys(outputMapping).length, 'outputMapping should not be empty')
 
+  const total = BigInt(props.total)
   if (input) {
-    if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
+    if (props.page === 1 && total < props.pageSize && input.length < total) {
       props.total = BigInt(input.length)
     }
   }
@@ -114,8 +115,9 @@ function addPagingMetaOnArray<T = unknown>(
 
   if (! Array.isArray(input)) { return }
 
+  const total = BigInt(props.total)
   if (input.length) {
-    if (props.page === 1 && props.total < props.pageSize && input.length < props.total) {
+    if (props.page === 1 && total < props.pageSize && input.length < total) {
       props.total = BigInt(input.length)
     }
   }
