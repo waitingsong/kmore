@@ -184,8 +184,8 @@ function validatePagerRet(input: PageRawType<UserDo>, len = 3): void {
   assert(typeof pageSize === 'number')
 
   assert(pageSize === initPagingMeta.pageSize)
-  assert(input.pageSize > 0, JSON.stringify(input))
-  assert(input.total > 0, JSON.stringify(input))
+  assert(pageSize > 0, JSON.stringify(input))
+  assert(total > 0, JSON.stringify(input))
   assert(Array.isArray(input), JSON.stringify(input))
   assert(input.length === len, JSON.stringify(input))
   assert(pageSize >= input.length, JSON.stringify(input))
@@ -222,8 +222,8 @@ function validatePagerRetPartial(
   assert(typeof pageSize === 'number', JSON.stringify(input))
 
   assert(pageSize === initPagingMeta.pageSize, JSON.stringify(input))
-  assert(input.pageSize > 0, JSON.stringify(input))
-  assert(input.total > 0, JSON.stringify(input))
+  assert(pageSize > 0, JSON.stringify(input))
+  assert(total > 0, JSON.stringify(input))
   assert(Array.isArray(input), JSON.stringify(input))
   assert(input.length === len, JSON.stringify(input))
   assert(pageSize >= input.length, JSON.stringify(input))
