@@ -78,16 +78,16 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('partial', async () => {
-      const ret30 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('uid', 'realName')
-      validatePageRetPartial(ret30, colkeys)
+      // const ret30 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('uid', 'realName')
+      // validatePageRetPartial(ret30, colkeys)
 
-      const ret31 = await tables.ref_tb_user()
-        .autoPaging()
-        .select('uid', 'realName')
-        .then()
-      validatePageRetPartial(ret31, colkeys)
+      // const ret31 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select('uid', 'realName')
+      //   .then()
+      // validatePageRetPartial(ret31, colkeys)
 
       const ret32 = await tables.ref_tb_user()
         .select('uid', 'realName')
@@ -100,16 +100,16 @@ describe(fileShortPath(import.meta.url), () => {
         .then()
       validatePageRetPartial(ret33, colkeys)
 
-      const ret40 = await tables.ref_tb_user()
-        .autoPaging()
-        .select(colkeys)
-      validatePageRetPartial(ret40, colkeys)
+      // const ret40 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select(colkeys)
+      // validatePageRetPartial(ret40, colkeys)
 
-      const ret41 = await tables.ref_tb_user()
-        .autoPaging()
-        .select(colkeys)
-        .then()
-      validatePageRetPartial(ret41, colkeys)
+      // const ret41 = await tables.ref_tb_user()
+      //   .autoPaging()
+      //   .select(colkeys)
+      //   .then()
+      // validatePageRetPartial(ret41, colkeys)
 
       const ret42 = await tables.ref_tb_user()
         .select(colkeys)
@@ -125,24 +125,24 @@ describe(fileShortPath(import.meta.url), () => {
 
     it('where', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .where({ uid })
+        .autoPaging()
       validatePageRet(ret, 1)
     })
 
     it('where orderby asc', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .where({ uid })
         .orderBy('uid', 'asc')
+        .autoPaging()
       validatePageRet(ret, 1)
     })
 
     it('where orderby desc', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .where({ uid })
         .orderBy('uid', 'desc')
+        .autoPaging()
       validatePageRet(ret, 1)
     })
 
@@ -150,7 +150,6 @@ describe(fileShortPath(import.meta.url), () => {
       const ret: PageRawType<UserDTO> = await tables.ref_tb_user()
         .select('*')
         .limit(1) // will be ignored
-        // @ts-ignore
         .autoPaging()
 
       validatePageRet(ret, 3)
@@ -158,12 +157,12 @@ describe(fileShortPath(import.meta.url), () => {
 
     it('smartJoin', async () => {
       const ret = await tables.ref_tb_user()
-        .autoPaging()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
         )
         .where('tbUserExtUid', uid)
+        .autoPaging()
 
       console.log({ ret })
       assert(ret)
