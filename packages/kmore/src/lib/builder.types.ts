@@ -14,15 +14,13 @@ import type {
   UnwrapArrayMember,
 } from '@waiting/shared-types'
 import type { DbDict } from 'kmore-types'
+import type { Knex } from 'knex'
 
-import type { KmoreQueryBuilder } from './builder2.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
 // import { ArrayIfAlready, ArrayMember, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
 import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
-
-export type { KmoreQueryBuilder }
 
 export type DbQueryBuilder<
   Context,
@@ -37,8 +35,18 @@ export type DbQueryBuilder<
 }
 
 
-export type TbQueryBuilder<D extends {}, CaseConvert extends CaseType, TRecord extends {}, Context>
+export type TbQueryBuilder<D extends object, CaseConvert extends CaseType, TRecord extends object, Context>
   = (options?: Partial<TbQueryBuilderOptions<Context>>) => KmoreQueryBuilder<D, CaseConvert, 0, TRecord, TRecord[]>
+
+
+export type KmoreQueryBuilder<
+  D extends object = object,
+  CaseConvert extends CaseType = CaseType,
+  EnablePaging extends PagingCategory = 0,
+  TRecord extends object = any,
+  TResult = unknown[],
+> = QueryBuilder<D, CaseConvert, EnablePaging, TRecord, AddPagingMeta<TResult, EnablePaging>>
+
 
 export interface TbQueryBuilderOptions<Context> {
   ctx: Context
@@ -155,4 +163,94 @@ export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProc
 // this will combine all of them
 export type ResolveResult<S, EnablePaging extends PagingCategory = 0>
   = AddPagingMeta<DeferredKeySelectionNS.Resolve<S>, EnablePaging>
+
+
+declare module 'knex/types/index.js' {
+  namespace Knex {
+    // // @ts-expect-error
+    // interface QueryInterface<
+    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    //   TRecord extends object = any, TResult = any,
+    //   D extends object = any,
+    //   CaseConvert extends CaseType = CaseType,
+    //   EnablePaging extends PagingCategory = 0,
+    // >
+    //   extends
+    //   QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
+    //   dummy: () => KmoreQueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+    // }
+
+    // @ts-expect-error
+    interface QueryInterface<
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      TRecord extends object = any, TResult = any,
+      D extends object = any,
+      CaseConvert extends CaseType = CaseType,
+      EnablePaging extends PagingCategory = 0,
+    > extends QueryBuilderExtMethod<D, CaseConvert, EnablePaging, TRecord> {
+      dummy: <
+        D2 extends object = any,
+        CaseConvert2 extends CaseType = CaseType,
+        EnablePaging2 extends PagingCategory = 0,
+      >() => KmoreQueryBuilder<D2, CaseConvert2, EnablePaging2, TRecord, TResult>
+    }
+  }
+}
+
+// @ts-expect-error
+export interface QueryBuilder<
+  D extends object = object,
+  CaseConvert extends CaseType = CaseType,
+  EnablePaging extends PagingCategory = 0,
+  TRecord extends object = any,
+  TResult = unknown[],
+> extends
+  ChainableInterface<TResult, EnablePaging>,
+  QueryBuilderExtName<D>,
+  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>,
+  // Knex.QueryInterface<TRecord, TResult>,
+  Knex.QueryBuilder<TRecord, TResult> {
+
+  // methods of knex.QueryBuilder need to be redefined here
+
+  or: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  not: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  and: QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forUpdate(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forUpdate(tableNames: readonly string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forShare(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forShare(tableNames: readonly string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forNoKeyUpdate(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forNoKeyUpdate(
+    tableNames: readonly string[]
+  ): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  forKeyShare(...tableNames: string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  forKeyShare(tableNames: readonly string[]): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  skipLocked(): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  noWait(): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  on(event: string, callback: Function): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  queryContext(context: any): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+  clone(): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+  timeout(
+    ms: number,
+    options?: { cancel?: boolean }
+  ): QueryBuilder<D, CaseConvert, EnablePaging, TRecord, TResult>
+
+}
+
+
+type ChainableInterface<
+  TResult = any,
+  EnablePaging extends PagingCategory = 0,
+> = Knex.ChainableInterface<AddPagingMeta<ResolveResult<TResult>, EnablePaging>>
+
 

@@ -10,7 +10,7 @@ import { default as _knex } from 'knex'
 
 import { KmoreBase } from './base.js'
 import { createRefTables } from './builder.index.js'
-import type { DbQueryBuilder, KmoreQueryBuilder } from './builder2.types.js'
+import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
 import type { PostProcessInput } from './helper.js'
 import {
