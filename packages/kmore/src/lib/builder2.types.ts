@@ -62,8 +62,8 @@ export interface QueryBuilder<
 > extends
   ChainableInterface<TResult, EnablePaging>,
   QueryBuilderExtName<D>,
-  // Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>,
-  Knex.QueryInterface<TRecord, TResult>,
+  Knex.QueryInterface<TRecord, TResult, D, CaseConvert, EnablePaging>,
+  // Knex.QueryInterface<TRecord, TResult>,
   Knex.QueryBuilder<TRecord, TResult> {
 
   // methods of knex.QueryBuilder need to be redefined here
