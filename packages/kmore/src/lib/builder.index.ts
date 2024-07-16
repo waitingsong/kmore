@@ -15,6 +15,7 @@ import type {
   TbQueryBuilder,
 } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
+import { extRefTableFnPropertyDummy } from './dummy.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import { extRefTableFnPropertyAutoPaging } from './proxy.auto-paging.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
@@ -111,6 +112,7 @@ function extRefTableFnProperty(
 
   refTable = builderApplyTransactingProxy(kmore, refTable, ctx)
   refTable = extRefTableFnPropertySmartJoin(refTable)
+  refTable = extRefTableFnPropertyDummy(refTable)
 
   refTable = builderBindEvents(
     kmore,
