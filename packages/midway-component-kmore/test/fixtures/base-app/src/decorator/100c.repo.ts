@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { Init, Inject } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
@@ -8,8 +8,8 @@ import {
   DbManager,
   Kmore,
   Transactional,
-} from '../../../../../dist/index.js'
-import type { Db, UserDTO } from '../../../../test.model.js'
+} from '../types/index.js'
+import type { Db, UserDTO } from '../types/test.model.js'
 
 
 @Transactional()

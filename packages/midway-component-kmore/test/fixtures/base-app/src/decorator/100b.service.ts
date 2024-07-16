@@ -1,6 +1,6 @@
 import { Inject } from '@midwayjs/core'
 
-import { Transactional } from '../../../../../dist/index.js'
+import { Transactional } from '../types/index.js'
 
 import { UserRepo100 as UserRepo100 } from './100c.repo.js'
 

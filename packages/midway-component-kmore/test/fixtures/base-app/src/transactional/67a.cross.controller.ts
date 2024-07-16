@@ -5,7 +5,7 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
-import { apiBase as apiPrefix, apiMethod as apiRoute } from '../../../../api-test.js'
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '../types/api-test.js'
 
 import { UserService3 } from './67b.cross.service.js'
 

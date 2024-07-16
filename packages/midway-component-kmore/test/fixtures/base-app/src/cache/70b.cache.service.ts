@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import {
   Inject,
@@ -6,8 +6,8 @@ import {
 } from '@midwayjs/core'
 import { CacheConfigKey, CachingFactory, MidwayCache, CacheEvict } from '@mwcp/cache'
 
-import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
-import type { UserDTO } from '../../../../test.model.js'
+import { Transactional, TrxPropagateOptions } from '../types/index.js'
+import type { UserDTO } from '../types/test.model.js'
 
 import { validateMeta } from './70.helper.js'
 import { UserRepo6 } from './70c.cache.repo.js'

@@ -1,9 +1,9 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { Inject } from '@midwayjs/core'
 
-import { Transactional, TrxPropagateOptions } from '../../../../../dist/index.js'
-import type { UserDTO } from '../../../../test.model.js'
+import { Transactional, TrxPropagateOptions } from '../types/index.js'
+import type { UserDTO } from '../types/test.model.js'
 
 import { UserRepo4 } from './67c.cross.repo.js'
 import { UserRepo5 } from './67d.cross.repo.js'

@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import {
   Controller,
@@ -13,8 +13,8 @@ import {
   DbManager,
   Kmore,
   MiddlewareConfig,
-} from '../../../../dist/index.js'
-import { Db, UserDTO } from '../../../test.model.js'
+} from './types/index.js'
+import type { Db, UserDTO } from './types/test.model.js'
 
 
 @Controller('/user')

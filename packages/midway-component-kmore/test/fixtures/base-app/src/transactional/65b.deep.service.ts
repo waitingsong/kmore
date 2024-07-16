@@ -1,13 +1,12 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { Inject } from '@midwayjs/core'
-
 
 import {
   DbManager,
   Transactional,
-} from '../../../../../dist/index.js'
-import type { Db, UserDTO } from '../../../../test.model.js'
+} from '../types/index.js'
+import type { Db, UserDTO } from '../types/test.model.js'
 
 import { UserRepo3 } from './65c.deep.repo.js'
 

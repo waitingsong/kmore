@@ -1,9 +1,9 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import { Inject } from '@midwayjs/core'
 import { CacheConfigKey, initCacheManagerOptions } from '@mwcp/cache'
 
-import { Transactional } from '../../../../../dist/index.js'
+import { Transactional } from '../types/index.js'
 
 import { validateMeta } from './70.helper.js'
 import { UserRepo8 } from './71c.ext-cache.repo.js'

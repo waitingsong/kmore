@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict'
+import assert from 'node:assert'
 
 import {
   Controller,
@@ -8,14 +8,14 @@ import {
 } from '@midwayjs/core'
 import type { Context } from '@mwcp/share'
 
+import { apiBase as apiPrefix, apiMethod as apiRoute } from '../types/api-test.js'
 import {
   DbManager,
   Kmore,
   PropagationType,
   Transactional,
-} from '../../../../../dist/index.js'
-import { apiBase as apiPrefix, apiMethod as apiRoute } from '../../../../api-test.js'
-import type { Db } from '../../../../test.model.js'
+} from '../types/index.js'
+import type { Db } from '../types/test.model.js'
 
 
 @Controller(apiPrefix.args)
