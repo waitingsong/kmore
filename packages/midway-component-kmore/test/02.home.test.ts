@@ -4,7 +4,8 @@ import { fileShortPath } from '@waiting/shared-core'
 
 import { ConfigKey, Msg } from '##/lib/types.js'
 import { apiBase, apiMethod } from '#@/api-test.js'
-import { RespData, TestRespBody, testConfig } from '#@/root.config.js'
+import { testConfig } from '#@/root.config.js'
+import type { RespData, TestRespBody } from '#@/root.config.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -14,11 +15,9 @@ describe(fileShortPath(import.meta.url), () => {
   it(`Should ${apiBase.root} work`, async () => {
     const { app, httpRequest } = testConfig
 
-    const resp = await httpRequest
-      .get(apiBase.root)
-      // .expect(200)
-
+    const resp = await httpRequest.get(apiBase.root)
     assert(resp.ok, resp.text)
+
     const ret = resp.body as TestRespBody | RespData
     assert(typeof ret === 'object', JSON.stringify(ret, null, 2))
 
@@ -42,10 +41,9 @@ describe(fileShortPath(import.meta.url), () => {
   it(`Should ${helloPath} work`, async () => {
     const { app, httpRequest } = testConfig
 
-    const resp = await httpRequest
-      .get(helloPath)
-
+    const resp = await httpRequest.get(helloPath)
     assert(resp.ok, resp.text)
+
     const ret = resp.text
     assert(ret.includes(Msg.hello), JSON.stringify(ret, null, 2))
   })
