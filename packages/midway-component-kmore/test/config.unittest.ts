@@ -1,21 +1,23 @@
 import assert from 'node:assert/strict'
 
 import type { Context } from '@mwcp/share'
-import { EventCallbacks } from 'kmore'
+import type { EventCallbacks } from 'kmore'
 import { genDbDict } from 'kmore-types'
 
-import {
+import type {
   Config,
-  initialMiddlewareConfig,
-  initMiddlewareOptions,
   MiddlewareConfig,
   MiddlewareOptions,
   DbConfig,
   KmoreEvent,
+} from '##/index.js'
+import {
+  initialMiddlewareConfig,
+  initMiddlewareOptions,
   KmoreSourceConfig,
   initDbConfig,
 } from '##/index.js'
-import { Db } from '#@/test.model.js'
+import type { Db } from '#@/test.model.js'
 
 
 

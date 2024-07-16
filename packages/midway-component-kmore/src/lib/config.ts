@@ -1,6 +1,6 @@
 import { PropagationType, RowLockLevel } from 'kmore'
 
-import {
+import type {
   DbConfig,
   MiddlewareConfig,
   MiddlewareOptions,

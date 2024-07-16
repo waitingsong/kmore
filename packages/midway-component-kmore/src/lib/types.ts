@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseConfig } from '@mwcp/share'
+import type { BaseConfig } from '@mwcp/share'
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
 import type { KmoreFactoryOpts, PropagationType, RowLockLevel } from 'kmore'
 

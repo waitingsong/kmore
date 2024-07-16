@@ -1,6 +1,6 @@
 import { genDbDict } from 'kmore-types'
 
-import { Db, Db2 } from './demo/types.js'
+import type { Db, Db2 } from './demo/types.js'
 
 
 export const expectedDict1 = genDbDict<Db>()

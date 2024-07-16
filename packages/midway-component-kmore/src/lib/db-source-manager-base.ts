@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataSourceManager } from '@midwayjs/core'
-import {
+import type {
   Attributes,
   Span,
   TraceContext,
   TraceService,
 } from '@mwcp/otel'
 import type { Context } from '@mwcp/share'
-import {
+import type {
   Kmore,
   QuerySpanInfo,
 } from 'kmore'
 
-import { DbConfig } from './types.js'
+import type { DbConfig } from './types.js'
 
 
 export abstract class AbstractDbSourceManager<SourceName extends string = string, D extends object = object, Ctx extends Context = Context>

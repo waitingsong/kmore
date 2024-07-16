@@ -12,7 +12,8 @@ import {
 } from '@waiting/shared-core'
 import { $ } from 'zx'
 
-import { runCmd, RunCmdArgs } from '../src/index.js'
+import type { RunCmdArgs } from '../src/index.js'
+import { runCmd } from '../src/index.js'
 
 import { expectedDict1, expectedDict2 } from './demo1.expect.js'
 

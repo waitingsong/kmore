@@ -7,7 +7,7 @@ import { retrieveArgsFromProcess } from '@waiting/shared-core'
 import { genCmdHelp, helpDefault } from '../lib/helper.js'
 import { runCmd } from '../lib/index.js'
 import { parseCliArgs, parseCliOpts } from '../lib/process-opts.js'
-import { CliArgs, InputOptions } from '../lib/types.js'
+import type { CliArgs, InputOptions } from '../lib/types.js'
 // log(yargs.argv)
 
 let args!: CliArgs

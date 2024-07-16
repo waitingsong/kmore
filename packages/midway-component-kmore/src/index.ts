@@ -1,4 +1,4 @@
-import { ConfigKey, KmoreSourceConfig, MiddlewareConfig } from './lib/types.js'
+import type { ConfigKey, KmoreSourceConfig, MiddlewareConfig } from './lib/types.js'
 
 
 export { AutoConfiguration as Configuration } from './configuration.js'
@@ -11,25 +11,25 @@ export * from './decorator/index.decorator.js'
 export {
   CaseType,
   Kmore,
-  KmoreEvent,
-  KmoreQueryBuilder,
-  KmoreTransaction,
-  KmoreTransactionConfig,
-  KnexConfig,
-  PageRawType,
-  PageWrapType,
-  PagingMeta,
-  PagingOptions,
+  type KmoreEvent,
+  type KmoreQueryBuilder,
+  type KmoreTransaction,
+  type KmoreTransactionConfig,
+  type KnexConfig,
+  type PageRawType,
+  type PageWrapType,
+  type PagingMeta,
+  type PagingOptions,
   PropagationType,
   RowLockLevel,
-  TrxPropagateOptions,
+  type TrxPropagateOptions,
   getCurrentTime,
   mergeDoWithInitData,
 } from 'kmore'
 
 export type { Knex } from 'knex'
 
-export {
+export type {
   JsonObject,
   JsonResp,
   JsonType,

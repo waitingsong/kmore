@@ -1,4 +1,4 @@
-import { CallerFuncNameSet } from 'kmore-types'
+import type { CallerFuncNameSet } from 'kmore-types'
 
 
 export type CmdType = 'gen'

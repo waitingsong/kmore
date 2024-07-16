@@ -1,9 +1,10 @@
 import assert from 'node:assert'
 
-import { KmoreTransaction, QueryBuilderExtKey, TrxPropagateOptions } from 'kmore'
+import type { KmoreTransaction, TrxPropagateOptions } from 'kmore'
+import { QueryBuilderExtKey } from 'kmore'
 
 import { traceGenTrx } from './propagating.helper.js'
-import { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base.js'
+import type { PropagatingOptions, TrxStatusServiceBase } from './trx-status.base.js'
 import { genCallerKey } from './trx-status.helper.js'
 
 

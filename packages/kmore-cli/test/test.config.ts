@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-// @ts-ignore  below is fake import!!
-import { genDbDictFromType, kmore, config, DbModel } from 'kmore'
+// @ts-ignore  below is fake import only for unittest!
+import { type DbModel, genDbDictFromType, kmore, config } from 'kmore'
 
 
 genDbDictFromType<DbAlias>()

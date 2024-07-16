@@ -1,14 +1,17 @@
 import assert from 'node:assert'
 import { relative } from 'node:path'
 
-import { Attributes, AttrNames, Span, TraceService } from '@mwcp/otel'
+import type { Attributes, Span, TraceService } from '@mwcp/otel'
+import { AttrNames } from '@mwcp/otel'
 import { getStackCallerSites } from '@waiting/shared-core'
-import {
+import type {
   KmoreQueryBuilder,
   KmoreTransaction,
+  TrxPropagateOptions,
+} from 'kmore'
+import {
   QueryBuilderExtKey,
   RowLockLevel,
-  TrxPropagateOptions,
 } from 'kmore'
 
 import type {

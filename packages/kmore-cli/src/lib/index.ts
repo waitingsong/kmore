@@ -1,5 +1,5 @@
 import { buildSource } from './transformer.js'
-import { RunCmdArgs, Options, FilePath } from './types.js'
+import type { RunCmdArgs, Options, FilePath } from './types.js'
 
 
 export async function runCmd(args: RunCmdArgs): Promise<FilePath[]> {

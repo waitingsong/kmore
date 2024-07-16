@@ -2,7 +2,7 @@ import type { ParsedArgs } from 'minimist'
 
 import { cmdSet, initialCliArgs } from './config.js'
 import { helpDefault } from './helper.js'
-import { CliArgs, CmdType, InputOptions, Options } from './types.js'
+import type { CliArgs, CmdType, InputOptions, Options } from './types.js'
 
 
 export function parseCliArgs(argv: ParsedArgs): CliArgs {

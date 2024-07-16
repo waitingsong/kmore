@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { fileShortPath } from '@waiting/shared-core'
 
 import { testConfig } from '#@/root.config.js'
-import { UserDTO } from '#@/test.model.js'
+import type { UserDTO } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

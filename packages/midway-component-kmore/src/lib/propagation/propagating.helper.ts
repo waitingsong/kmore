@@ -1,7 +1,8 @@
-import { Attributes, AttrNames } from '@mwcp/otel'
-import { KmoreTransaction, TrxPropagateOptions } from 'kmore'
+import type { Attributes } from '@mwcp/otel'
+import { AttrNames } from '@mwcp/otel'
+import type { KmoreTransaction, TrxPropagateOptions } from 'kmore'
 
-import { TrxStatusServiceBase } from './trx-status.base.js'
+import type { TrxStatusServiceBase } from './trx-status.base.js'
 import { trxTrace } from './trx-status.helper.js'
 
 

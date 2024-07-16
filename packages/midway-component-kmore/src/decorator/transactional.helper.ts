@@ -1,15 +1,16 @@
 import assert from 'assert'
 
-import { DecoratorExecutorParamBase, DecoratorMetaDataPayload, deepmerge } from '@mwcp/share'
+import type { DecoratorExecutorParamBase, DecoratorMetaDataPayload } from '@mwcp/share'
+import { deepmerge } from '@mwcp/share'
 import { PropagationType } from 'kmore'
 
 import { initTransactionalOptions } from '##/lib/config.js'
-import { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
+import type { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
 import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
 import { TrxStatusService } from '##/lib/trx-status.service.js'
 import { ConfigKey, Msg } from '##/lib/types.js'
 
-import { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, TransactionalArgs } from './transactional.types.js'
+import type { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, TransactionalArgs } from './transactional.types.js'
 
 
 export async function genDecoratorExecutorOptionsAsync<T extends object>(

@@ -1,8 +1,8 @@
 import { customDecoratorFactory } from '@mwcp/share'
 
 import { DecoratorHandlerTransactional } from './transactional.handler.js'
+import type { TransactionalArgs } from './transactional.types.js'
 import {
-  TransactionalArgs,
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
 } from './transactional.types.js'
@@ -13,7 +13,7 @@ export {
   methodDecoratorKeyMap,
 } from './transactional.types.js'
 export {
-  TransactionalArgs as DecoratorArgs,
+  type TransactionalArgs as DecoratorArgs,
   TRX_CLASS_KEY,
   METHOD_KEY_Transactional,
   METHOD_KEY_Transactional as TRX_METHOD_KEY,

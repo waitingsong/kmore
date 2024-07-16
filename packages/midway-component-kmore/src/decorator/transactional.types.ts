@@ -1,9 +1,9 @@
-import { DecoratorExecutorParamBase } from '@mwcp/share'
-import { PropagationType } from 'kmore'
+import type { DecoratorExecutorParamBase } from '@mwcp/share'
+import type { PropagationType } from 'kmore'
 
-import { CallerKey } from '##/lib/propagation/trx-status.base.js'
-import { TrxStatusService } from '##/lib/trx-status.service.js'
-import { KmorePropagationConfig, TransactionalOptions } from '##/lib/types.js'
+import type { CallerKey } from '##/lib/propagation/trx-status.base.js'
+import type { TrxStatusService } from '##/lib/trx-status.service.js'
+import type { KmorePropagationConfig, TransactionalOptions } from '##/lib/types.js'
 
 
 export const TRX_CLASS_KEY = 'decorator:kmore_trx_class_decorator_key'

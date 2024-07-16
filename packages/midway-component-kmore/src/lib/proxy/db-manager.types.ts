@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Context } from '@mwcp/share'
-import {
+import type {
   CaseType,
   DbQueryBuilder,
 } from 'kmore'

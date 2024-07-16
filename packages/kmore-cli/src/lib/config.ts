@@ -1,7 +1,7 @@
 /* eslint-disable id-length */
-import { CallerFuncNameSet } from 'kmore-types'
+import type { CallerFuncNameSet } from 'kmore-types'
 
-import { CliArgs, Options } from './types.js'
+import type { CliArgs, Options } from './types.js'
 
 
 export const cmdSet = new Set(['gen'])

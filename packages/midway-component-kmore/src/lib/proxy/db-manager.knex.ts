@@ -8,17 +8,19 @@ import assert from 'node:assert'
 
 import type { Attributes, TraceService } from '@mwcp/otel'
 import { genISO8601String } from '@waiting/shared-core'
-import {
+import type {
   Kmore,
   KmoreTransaction,
   QuerySpanInfo,
 } from 'kmore'
 
-import { DbSourceManager } from '../db-source-manager.js'
-import { traceCommitRollbackTrx, TraceCommitRollbackTrxOptions } from '../tracer-helper.js'
+import type { DbSourceManager } from '../db-source-manager.js'
+import type { TraceCommitRollbackTrxOptions } from '../tracer-helper.js'
+import { traceCommitRollbackTrx } from '../tracer-helper.js'
 import { KmoreAttrNames } from '../types.js'
 
-import { BuilderKeys, Dbqb } from './db-manager.types.js'
+import type { Dbqb } from './db-manager.types.js'
+import { BuilderKeys } from './db-manager.types.js'
 
 
 export interface ProxyKnexOptions {

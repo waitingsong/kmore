@@ -4,7 +4,7 @@ import {
   initMiddlewareOptions,
   initPropagationConfig,
 } from '##/lib/config.js'
-import {
+import type {
   KmorePropagationConfig,
   Config,
   MiddlewareConfig,

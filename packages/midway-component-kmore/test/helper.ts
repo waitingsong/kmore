@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import assert from 'assert/strict'
 
-import { KmoreFactory, Kmore, getCurrentTime, EnumClient, KmoreFactoryOpts } from 'kmore'
+import type { Kmore, KmoreFactoryOpts } from 'kmore'
+import { KmoreFactory, getCurrentTime, EnumClient } from 'kmore'
 import type { Knex } from 'knex'
 
 
 import { knexConfig as config, dbDict } from './config.unittest.js'
-import { Db, UserDO, UserDTO, UserExtDO } from './test.model.js'
+import type { Db, UserDO, UserDTO, UserExtDO } from './test.model.js'
 
 
 type TableName = string

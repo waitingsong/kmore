@@ -3,20 +3,22 @@ import { readFile } from 'node:fs/promises'
 // import { resolve } from 'node:path'
 
 import { pathResolve } from '@waiting/shared-core'
+import type { TransFormOptions } from '@waiting/shared-types-dev'
 import {
-  TransFormOptions,
   createSourceFile,
   transformCallExpressionToLiteralType,
 } from '@waiting/shared-types-dev'
-import { CallerFuncNameSet } from 'kmore-types'
-import { from as ofrom, of, Observable, iif, tap, lastValueFrom } from 'rxjs'
+import type { CallerFuncNameSet } from 'kmore-types'
+import type { Observable } from 'rxjs'
+import { from as ofrom, of, iif, tap, lastValueFrom } from 'rxjs'
 import { map, mergeMap, filter } from 'rxjs/operators'
 import { walk, EntryType } from 'rxwalker'
 // eslint-disable-next-line import/named
-import { CacheStrategy, TsConfigResolverOptions, tsconfigResolver } from 'tsconfig-resolver'
+import type { TsConfigResolverOptions } from 'tsconfig-resolver'
+import { CacheStrategy, tsconfigResolver } from 'tsconfig-resolver'
 
 import { globalCallerFuncNameSet, initOptions } from './config.js'
-import { FilePath, Options } from './types.js'
+import type { FilePath, Options } from './types.js'
 
 
 /**

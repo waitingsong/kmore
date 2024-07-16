@@ -1,5 +1,5 @@
 import { initDbConfig } from '##/lib/config.js'
-import { Config } from '##/lib/index.js'
+import type { Config } from '##/lib/index.js'
 
 
 export const keys = 123456

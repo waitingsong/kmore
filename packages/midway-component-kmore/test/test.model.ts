@@ -1,4 +1,4 @@
-import { RecordCamelKeys } from '@waiting/shared-types'
+import type { RecordCamelKeys } from '@waiting/shared-types'
 
 
 export class Db {

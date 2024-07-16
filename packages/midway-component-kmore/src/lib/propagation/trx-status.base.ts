@@ -4,9 +4,9 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import { TraceService } from '@mwcp/otel'
-import { CallerInfo } from '@waiting/shared-core'
-import {
+import type { TraceService } from '@mwcp/otel'
+import type { CallerInfo } from '@waiting/shared-core'
+import type {
   Kmore,
   KmoreQueryBuilder,
   KmoreTransaction,
@@ -16,7 +16,7 @@ import {
   TrxPropagateOptions,
 } from 'kmore'
 
-import { DbSourceManager } from '../db-source-manager.js'
+import type { DbSourceManager } from '../db-source-manager.js'
 
 
 /**

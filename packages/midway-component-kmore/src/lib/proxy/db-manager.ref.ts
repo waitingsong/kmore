@@ -3,9 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import assert from 'node:assert'
 
-import { Attributes, TraceService } from '@mwcp/otel'
+import type { Attributes, TraceService } from '@mwcp/otel'
 import { genISO8601String } from '@waiting/shared-core'
-import {
+import type {
   CaseType,
   CtxBuilderPreProcessor,
   CtxBuilderResultPreProcessor,
@@ -19,11 +19,12 @@ import {
   TbQueryBuilderOptions,
 } from 'kmore'
 
-import { DbSourceManager } from '../db-source-manager.js'
-import { TrxStatusService } from '../trx-status.service.js'
+import type { DbSourceManager } from '../db-source-manager.js'
+import type { TrxStatusService } from '../trx-status.service.js'
 import { KmoreAttrNames } from '../types.js'
 
-import { BuilderKeys, builderKeys, Dbqb } from './db-manager.types.js'
+import type { Dbqb } from './db-manager.types.js'
+import { BuilderKeys, builderKeys } from './db-manager.types.js'
 
 
 export interface ProxyRefOptions {

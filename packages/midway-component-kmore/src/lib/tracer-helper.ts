@@ -1,11 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'node:assert'
 
-import {
+import type {
   TraceService,
   Attributes,
-  AttrNames,
   Span,
+} from '@mwcp/otel'
+import {
+  AttrNames,
   SpanStatusCode,
 } from '@mwcp/otel'
 import {
@@ -21,10 +23,11 @@ import {
   genISO8601String,
   humanMemoryUsage,
 } from '@waiting/shared-core'
-import { KmoreEvent, KmoreTransaction, KmoreTransactionConfig } from 'kmore'
+import type { KmoreEvent, KmoreTransaction, KmoreTransactionConfig } from 'kmore'
 
-import { AbstractDbSourceManager as DbSourceManager } from './db-source-manager-base.js'
-import { DbConfig, KmoreAttrNames, QuerySpanInfo } from './types.js'
+import type { AbstractDbSourceManager as DbSourceManager } from './db-source-manager-base.js'
+import type { DbConfig, QuerySpanInfo } from './types.js'
+import { KmoreAttrNames } from './types.js'
 
 
 export interface TraceEventOptions {
