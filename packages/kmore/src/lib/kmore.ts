@@ -8,6 +8,7 @@ import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
 
+import type { BuilderPreProcessor } from './base.js'
 import { KmoreBase } from './base.js'
 import { createRefTables } from './builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
@@ -331,6 +332,7 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    * @default rollback
    */
   trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
+  builderPreProcessors?: BuilderPreProcessor[] | undefined
 }
 
 export function KmoreFactory<D extends object, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {

@@ -113,3 +113,13 @@ type ResultPagerHandler<T = unknown> = (
 ) => Promise<PageRawType<T> | PageWrapType<T> | undefined>
 
 
+
+export interface BuilderPreProcessorOptions {
+  kmore: KmoreBase
+  builder: KmoreQueryBuilder
+}
+
+/**
+ * Run before the builder is executed (.then() is calling)
+ */
+export type BuilderPreProcessor = (options: BuilderPreProcessorOptions) => Promise<KmoreQueryBuilder>
