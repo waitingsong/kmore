@@ -27,21 +27,21 @@ export class TrxDecoratorOverrideController {
   @Inject() dbManager: DbManager<'master', Db>
   @Inject() userSvc: PropagationOverrideService
 
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
     const db = this.dbManager.getDataSource('master')
     assert(db)
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Transactional(PropagationType.SUPPORTS)
   @Get(`/${apiRoute.simple}`)
   async simple(): Promise<'OK'> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { kmoreQueryId, trxPropagated, trxPropagateOptions } = builder
     assert(kmoreQueryId)
     assert(! trxPropagated)

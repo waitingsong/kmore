@@ -27,8 +27,8 @@ export class UserRepo6 {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -36,8 +36,8 @@ export class UserRepo6 {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Transactional()
@@ -77,7 +77,7 @@ export class UserRepo6 {
   @Cacheable<UserRepo6['getUsers']>()
   @Transactional()
   async getUsers(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const users = await builder
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
@@ -88,7 +88,7 @@ export class UserRepo6 {
   }
 
   async getUserByUid(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const user = await builder
       .where({ uid })
@@ -108,7 +108,7 @@ export class UserRepo6 {
   })
   @Transactional()
   async getUsers2(expectTotal = 3): Promise<UserDTO[]> {
-    const users = await this.db.camelTables.ref_tb_user()
+    const users = await this.db.camelTables.tb_user()
     assert(users && users.length === expectTotal)
     return users
   }
@@ -117,7 +117,7 @@ export class UserRepo6 {
     assert(uid)
     assert(realName)
 
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .where({ uid })
       .update({ realName })
       .returning('*')
@@ -132,7 +132,7 @@ export class UserRepo6 {
   async delUser(uid: UserDTO['uid']): Promise<[UserDTO, symbol, TrxPropagateOptions]> {
     assert(uid)
 
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const user = await builder
       .where({ uid })
@@ -150,13 +150,13 @@ export class UserRepo6 {
   }
 
   async delUserAll(): Promise<UserDTO> {
-    return this.ref_tb_user().del()
+    return this.tb_user().del()
   }
 
 
   // NOTE: .forShare() will not be append with aggregate function!
   async countUser(): Promise<[number, symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const trxId = this.validateBuilderLinkedTrx(builder)
     const total = await builder

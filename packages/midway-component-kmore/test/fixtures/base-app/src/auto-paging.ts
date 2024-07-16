@@ -26,7 +26,7 @@ export class UserPagingController {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
 
   @Init()
   async init(): Promise<void> {
@@ -34,14 +34,14 @@ export class UserPagingController {
     assert(db)
 
     this.db = db
-    const ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user = ref_tb_user
+    const tb_user = db.camelTables.tb_user
+    this.tb_user = tb_user
   }
 
 
   @Get('/paging')
   async users(): Promise<UserDTO[]> {
-    const users = await this.ref_tb_user()
+    const users = await this.tb_user()
       .autoPaging()
 
     assert(users)
@@ -58,12 +58,12 @@ export class UserPagingController {
     const trx = await this.db.transaction()
     assert(trx)
 
-    await this.ref_tb_user()
+    await this.tb_user()
       .transacting(trx)
       .where('uid', 2)
       .del()
 
-    const users = await this.ref_tb_user()
+    const users = await this.tb_user()
       .transacting(trx)
       .autoPaging()
 
@@ -75,7 +75,7 @@ export class UserPagingController {
 
     await trx.rollback()
 
-    const users2 = await this.ref_tb_user()
+    const users2 = await this.tb_user()
       .autoPaging()
 
     assert(users2)

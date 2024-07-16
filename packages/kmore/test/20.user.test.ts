@@ -24,11 +24,11 @@ describe(fileShortPath(import.meta.url), () => {
   describe('Should read table with tables param in object work', () => {
     it('tb_user', async () => {
       const { refTables } = km
-      const { ref_tb_user } = km.refTables
+      const { tb_user } = km.refTables
 
       // validate insert result
-      const countRes = await km.refTables.ref_tb_user().count()
-      const ret = await km.refTables.ref_tb_user().select('*')
+      const countRes = await km.refTables.tb_user().count()
+      const ret = await km.refTables.tb_user().select('*')
       assert(
         ret.length === 3,
         `Should count be "3", but got ${JSON.stringify(ret)}`,
@@ -38,19 +38,19 @@ describe(fileShortPath(import.meta.url), () => {
         `Should count be "3", but got ${JSON.stringify(ret)}`,
       )
 
-      const countRes2 = await refTables.ref_tb_user().count()
+      const countRes2 = await refTables.tb_user().count()
       assert(
         countRes2[0] && countRes2[0]['count'] === '3',
         `Should count be "3", but got ${JSON.stringify(ret)}`,
       )
 
-      const countRes3 = await ref_tb_user().count()
+      const countRes3 = await tb_user().count()
       assert(
         countRes3[0] && countRes3[0]['count'] === '3',
         `Should count be "3", but got ${JSON.stringify(ret)}`,
       )
 
-      await ref_tb_user().select('*')
+      await tb_user().select('*')
         .then((rows) => {
           validateUserRows(rows)
           return rows

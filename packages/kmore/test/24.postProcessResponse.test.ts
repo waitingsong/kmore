@@ -29,9 +29,9 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should work', () => {
     it('tb_user', async () => {
-      const { ref_tb_user } = km.refTables
+      const { tb_user } = km.refTables
 
-      const ret = await ref_tb_user().select('*')
+      const ret = await tb_user().select('*')
       assert(ret)
       ret.forEach((row) => {
         // @ts-ignore

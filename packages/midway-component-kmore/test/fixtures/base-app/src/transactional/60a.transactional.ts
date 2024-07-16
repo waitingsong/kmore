@@ -25,8 +25,8 @@ export class TrxDecoratorController {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -34,8 +34,8 @@ export class TrxDecoratorController {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Transactional(PropagationType.REQUIRED)
@@ -45,10 +45,10 @@ export class TrxDecoratorController {
     assert(trx)
     await trx.rollback()
 
-    const users = await this.ref_tb_user()
+    const users = await this.tb_user()
     assert(users && users.length === 3)
 
-    const user2 = await this.db.camelTables.ref_tb_user()
+    const user2 = await this.db.camelTables.tb_user()
     void user2
 
     const ret = this._simple()

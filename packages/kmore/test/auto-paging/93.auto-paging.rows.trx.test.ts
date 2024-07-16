@@ -37,11 +37,11 @@ describe(fileShortPath(import.meta.url), () => {
       const count1 = await countTbUser(km, trx)
       assert(count1 === 2, `before rollback count: ${count1} != 2`)
 
-      const ret0 = await tables.ref_tb_user()
+      const ret0 = await tables.tb_user()
         .transacting(trx)
       validateRet(ret0, len)
 
-      const ret = await tables.ref_tb_user()
+      const ret = await tables.tb_user()
         .transacting(trx)
         .autoPaging()
       validatePagerRet(ret, len)
@@ -63,44 +63,44 @@ describe(fileShortPath(import.meta.url), () => {
       const count1 = await countTbUser(km, trx)
       assert(count1 === 2, `before rollback count: ${count1} != 2`)
 
-      const ret10 = await tables.ref_tb_user()
+      const ret10 = await tables.tb_user()
         .transacting(trx)
         .autoPaging()
       validatePagerRet(ret10, len)
 
-      const ret11 = await tables.ref_tb_user()
+      const ret11 = await tables.tb_user()
         .transacting(trx)
         .autoPaging()
         .then()
       validatePagerRet(ret11, len)
 
-      const ret12 = await tables.ref_tb_user()
+      const ret12 = await tables.tb_user()
         .transacting(trx)
         .autoPaging()
         // .first() // not support first() with autoPaging()
         .then()
       validatePagerRet(ret12, len)
 
-      const ret20 = await tables.ref_tb_user()
+      const ret20 = await tables.tb_user()
         .transacting(trx)
         .select('*')
         .autoPaging()
       validatePagerRet(ret20, len)
 
-      const ret21 = await tables.ref_tb_user()
+      const ret21 = await tables.tb_user()
         .transacting(trx)
         .select('*')
         .autoPaging()
         .then()
       validatePagerRet(ret21, len)
 
-      const ret22 = await tables.ref_tb_user()
+      const ret22 = await tables.tb_user()
         .transacting(trx)
         .select('*')
         .autoPaging()
       validatePagerRet(ret22, len)
 
-      const ret23 = await tables.ref_tb_user()
+      const ret23 = await tables.tb_user()
         .transacting(trx)
         .select('*')
         .autoPaging()
@@ -121,52 +121,52 @@ describe(fileShortPath(import.meta.url), () => {
 
       await deleteRow(km, tables, trx, uid)
 
-      const ret30 = await tables.ref_tb_user()
+      const ret30 = await tables.tb_user()
         .transacting(trx)
         .select('uid', 'realName')
         .autoPaging()
       validatePagerRetPartial(ret30, colkeys, len)
 
-      const ret31 = await tables.ref_tb_user()
+      const ret31 = await tables.tb_user()
         .transacting(trx)
         .select('uid', 'realName')
         .autoPaging()
         .then()
       validatePagerRetPartial(ret31, colkeys, len)
 
-      const ret32 = await tables.ref_tb_user()
+      const ret32 = await tables.tb_user()
         .transacting(trx)
         .select('uid', 'realName')
         .autoPaging()
       validatePagerRetPartial(ret32, colkeys, len)
 
-      const ret33 = await tables.ref_tb_user()
+      const ret33 = await tables.tb_user()
         .transacting(trx)
         .select('uid', 'realName')
         .autoPaging()
         .then()
       validatePagerRetPartial(ret33, colkeys, len)
 
-      const ret40 = await tables.ref_tb_user()
+      const ret40 = await tables.tb_user()
         .transacting(trx)
         .select(colkeys)
         .autoPaging()
       validatePagerRetPartial(ret40, colkeys, len)
 
-      const ret41 = await tables.ref_tb_user()
+      const ret41 = await tables.tb_user()
         .transacting(trx)
         .select(colkeys)
         .autoPaging()
         .then()
       validatePagerRetPartial(ret41, colkeys, len)
 
-      const ret42 = await tables.ref_tb_user()
+      const ret42 = await tables.tb_user()
         .transacting(trx)
         .select(colkeys)
         .autoPaging()
       validatePagerRetPartial(ret42, colkeys, len)
 
-      const ret43 = await tables.ref_tb_user()
+      const ret43 = await tables.tb_user()
         .transacting(trx)
         .select(colkeys)
         .autoPaging()
@@ -181,7 +181,7 @@ describe(fileShortPath(import.meta.url), () => {
 
       await deleteRow(km, tables, trx, uid)
 
-      const ret = await tables.ref_tb_user()
+      const ret = await tables.tb_user()
         .transacting(trx)
         .where('uid', uid)
         .autoPaging()
@@ -191,7 +191,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it.skip('smartJoin', async () => {
-      const ret = await tables.ref_tb_user()
+      const ret = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',

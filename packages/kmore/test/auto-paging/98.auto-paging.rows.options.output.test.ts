@@ -38,7 +38,7 @@ describe(fileShortPath(import.meta.url), () => {
         page: 1,
         pageSize: 1,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options, true)
+      const ret = await tables.tb_user().autoPaging(options, true)
       validateOptionsPageWrapRet(ret, meta)
     })
 
@@ -48,7 +48,7 @@ describe(fileShortPath(import.meta.url), () => {
         page: 1,
         pageSize: 1,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options, false)
+      const ret = await tables.tb_user().autoPaging(options, false)
       validateOptionsPageRet(ret, meta)
     })
 
@@ -58,7 +58,7 @@ describe(fileShortPath(import.meta.url), () => {
         page: 1,
         pageSize: 1,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options, void 0)
+      const ret = await tables.tb_user().autoPaging(options, void 0)
       validateOptionsPageRet(ret, meta)
     })
 
@@ -68,7 +68,7 @@ describe(fileShortPath(import.meta.url), () => {
         page: 1,
         pageSize: 1,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
       validateOptionsPageRet(ret, meta)
     })
   })

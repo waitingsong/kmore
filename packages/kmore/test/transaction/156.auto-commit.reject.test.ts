@@ -102,14 +102,14 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
     it('reuse tbUser', async () => {
       const trx = await km.transaction({ trxActionOnEnd: 'commit' })
       assert(trx)
 
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.camelTables.tb_user()
       try {
         await tbUser
           .transacting(trx)

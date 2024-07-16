@@ -34,7 +34,7 @@ describe(fileShortPath(import.meta.url), () => {
         alias.tb_user_ext.uid, // { tbUserExtUid: 'tb_user_ext.uid' }
       ]
 
-      const ret = await camelTables.ref_tb_user()
+      const ret = await camelTables.tb_user()
         .innerJoin<CT['tb_user'] & CT['tb_user_ext']>(
           tables.tb_user_ext,
           scoped.tb_user.uid,
@@ -61,7 +61,7 @@ describe(fileShortPath(import.meta.url), () => {
         foo: scoped.tb_user_ext.uid,
       }
 
-      const ret = await camelTables.ref_tb_user()
+      const ret = await camelTables.tb_user()
         .innerJoin<CT['tb_user'] & CT['tb_user_ext']>(
           tables.tb_user_ext,
           scoped.tb_user.uid,

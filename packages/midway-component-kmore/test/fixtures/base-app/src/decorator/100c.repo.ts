@@ -20,23 +20,23 @@ export class UserRepo100 {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
     const db = this.dbManager.getDataSource('master')
     assert(db)
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Transactional()
   async delUser(uid: UserDTO['uid']): Promise<[UserDTO, symbol, TrxPropagateOptions]> {
     assert(uid)
 
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const user = await builder
       .where({ uid })
@@ -55,17 +55,17 @@ export class UserRepo100 {
 
   @Transactional()
   async delUserAll(): Promise<number> {
-    return this.ref_tb_user().del()
+    return this.tb_user().del()
   }
 
   @Transactional()
   async delUserAllThrowError(): Promise<void> {
-    // await this.ref_tb_user().del()
+    // await this.tb_user().del()
     throw new Error('test:delUserAllThrowError')
   }
 
   async countUser(): Promise<[number, symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const trxId = this.validateBuilderLinkedTrx(builder)
     const total = await builder

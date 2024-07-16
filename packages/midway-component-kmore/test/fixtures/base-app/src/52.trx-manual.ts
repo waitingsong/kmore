@@ -24,7 +24,7 @@ export class TrxController {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
 
   @Init()
   async init(): Promise<void> {
@@ -32,7 +32,7 @@ export class TrxController {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
+    this.tb_user = db.camelTables.tb_user
   }
 
   @Get('/commit/:id')
@@ -41,7 +41,7 @@ export class TrxController {
     assert(trx)
     await this.update(uid, trx)
 
-    const currCtime2 = await this.ref_tb_user()
+    const currCtime2 = await this.tb_user()
       .transacting(trx)
       .select('ctime')
       .where({ uid })
@@ -58,7 +58,7 @@ export class TrxController {
     assert(trx)
     await this.update(uid, trx)
 
-    const currCtime2 = await this.ref_tb_user()
+    const currCtime2 = await this.tb_user()
       .transacting(trx)
       .select('ctime')
       .where({ uid })
@@ -71,14 +71,14 @@ export class TrxController {
 
 
   protected async update(uid: number, trx: KmoreTransaction): Promise<void> {
-    const currCtime = await this.ref_tb_user()
+    const currCtime = await this.tb_user()
       .select('ctime')
       .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
     const newTime = new Date()
-    await this.ref_tb_user()
+    await this.tb_user()
       .transacting(trx)
       .forUpdate()
       .update({
@@ -86,7 +86,7 @@ export class TrxController {
       })
       .where({ uid })
 
-    const currCtime2 = await this.ref_tb_user()
+    const currCtime2 = await this.tb_user()
       .transacting(trx)
       .select('ctime')
       .where({ uid })

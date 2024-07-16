@@ -23,7 +23,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('tb_user left join tb_user_ext', async () => {
       const { scoped } = km.dict
 
-      const ret = await km.refTables.ref_tb_user()
+      const ret = await km.refTables.tb_user()
         .smartLeftJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -44,7 +44,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('tb_user left join tb_user_ext and tb_order', async () => {
       const { scoped } = km.dict
 
-      const ret = await km.refTables.ref_tb_user()
+      const ret = await km.refTables.tb_user()
         .smartLeftJoin(
           'tb_user_ext.uid',
           'tb_user.uid',

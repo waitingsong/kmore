@@ -45,7 +45,7 @@ describe(fileShortPath(import.meta.url), () => {
       const { refTables } = km
       const { tables, scoped } = km.dict
 
-      await refTables.ref_tb_user()
+      await refTables.tb_user()
         .innerJoin<UserExtDo>(
           tables.tb_user_ext,
           scoped.tb_user.uid,

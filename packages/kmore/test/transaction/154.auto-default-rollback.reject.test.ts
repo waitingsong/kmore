@@ -109,7 +109,7 @@ describe(fileShortPath(import.meta.url), () => {
       const trx = await km.transaction()
       assert(trx)
 
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.camelTables.tb_user()
       try {
         await tbUser
           .transacting(trx)

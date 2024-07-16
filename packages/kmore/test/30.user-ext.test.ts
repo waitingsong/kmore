@@ -26,10 +26,10 @@ describe(fileShortPath(import.meta.url), () => {
 
     it('Should constraint violation work', async () => {
       const { refTables } = km
-      const { ref_tb_user_ext } = km.refTables
+      const { tb_user_ext } = km.refTables
 
       // insert
-      await ref_tb_user_ext()
+      await tb_user_ext()
         .insert([{ uid: 999, age: 10, address: 'address1' }])
         .then((rows) => {
           void rows
@@ -40,13 +40,13 @@ describe(fileShortPath(import.meta.url), () => {
         })
 
       // validate insert result
-      const countRes = await refTables.ref_tb_user_ext().count()
+      const countRes = await refTables.tb_user_ext().count()
       assert(
         countRes?.[0] && countRes[0]['count'] === '2',
         'Should count be "2"',
       )
 
-      await km.refTables.ref_tb_user_ext().select('*')
+      await km.refTables.tb_user_ext().select('*')
         .then((rows) => {
           validateUserExtRows(rows)
           return rows

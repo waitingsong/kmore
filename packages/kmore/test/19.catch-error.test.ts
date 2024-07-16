@@ -28,7 +28,7 @@ describe(fileShortPath(import.meta.url), () => {
       const errorMsg = 'debug test error'
 
       try {
-        await km.camelTables.ref_tb_user()
+        await km.camelTables.tb_user()
           .select('uid')
           .where('uid', 1)
           .then(() => {
@@ -45,7 +45,7 @@ describe(fileShortPath(import.meta.url), () => {
 
     it('wrong sql column with tailing then()', async () => {
       try {
-        await km.camelTables.ref_tb_user()
+        await km.camelTables.tb_user()
           .select('uid')
           .where('fake', 1)
           .then()
@@ -59,7 +59,7 @@ describe(fileShortPath(import.meta.url), () => {
 
     it('wrong sql column without tailing then()', async () => {
       try {
-        await km.camelTables.ref_tb_user()
+        await km.camelTables.tb_user()
           .select('uid')
           .where('fake', 1)
       }

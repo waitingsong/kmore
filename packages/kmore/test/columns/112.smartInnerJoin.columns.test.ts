@@ -22,7 +22,7 @@ describe(fileShortPath(import.meta.url), () => {
       const { dict } = km
       const uid = 1
 
-      const builder = km.refTables.ref_tb_user()
+      const builder = km.refTables.tb_user()
         .smartInnerJoin(
           'tb_user_ext.uid',
           'tb_user.uid',

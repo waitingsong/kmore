@@ -25,7 +25,7 @@ export type DbQueryBuilder<
   Prefix extends string,
   CaseConvert extends CaseType,
 > = {
-  /** ref_tb_name: () => knex('tb_name') */
+  /** prefix_tb_name: () => knex('tb_name') */
   [tb in keyof D as `${Prefix}${tb & string}`]: D[tb] extends object
     ? TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
     : never

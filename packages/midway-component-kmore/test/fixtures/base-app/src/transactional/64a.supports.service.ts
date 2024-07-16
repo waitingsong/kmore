@@ -23,8 +23,8 @@ export class PropagationOverrideService {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -32,8 +32,8 @@ export class PropagationOverrideService {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   async usersAll(): Promise<void> {
@@ -77,7 +77,7 @@ export class PropagationOverrideService {
   }
 
   async getUsers(): Promise<UserRet> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const users = await builder
     const trxId = this.validateBuilderLinkedTrx(builder, true) // must after "await"
     assert(users)
@@ -88,7 +88,7 @@ export class PropagationOverrideService {
 
   @Transactional(PropagationType.SUPPORTS)
   async getUsersWithMethodDecoratorSupports(validateTrx: boolean): Promise<UserRet> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const users = await builder
     let trxId
     if (validateTrx) {

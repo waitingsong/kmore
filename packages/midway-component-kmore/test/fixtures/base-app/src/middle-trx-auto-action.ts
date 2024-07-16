@@ -24,8 +24,8 @@ export class UserController {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -33,8 +33,8 @@ export class UserController {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Get('/commit/:id')
@@ -59,14 +59,14 @@ export class UserController {
 
 
   protected async update(uid: number, trx: KmoreTransaction): Promise<void> {
-    const currCtime = await this.ref_tb_user()
+    const currCtime = await this.tb_user()
       .select('ctime')
       .where({ uid })
       .then(rows => rows[0]?.ctime)
     assert(currCtime)
 
     const newTime = new Date()
-    await this.ref_tb_user()
+    await this.tb_user()
       .transacting(trx)
       .forUpdate()
       .update({
@@ -74,7 +74,7 @@ export class UserController {
       })
       .where({ uid })
 
-    const currCtime2 = await this.ref_tb_user()
+    const currCtime2 = await this.tb_user()
       .transacting(trx)
       .select('ctime')
       .where({ uid })

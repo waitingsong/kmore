@@ -21,7 +21,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('normal', async () => {
       const uid = 1
 
-      const ret = await km.refTables.ref_tb_user()
+      const ret = await km.refTables.tb_user()
         .where('uid', uid)
         .select('*')
         .then((rows) => {
@@ -37,7 +37,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('smartJoin', async () => {
       const uid = 1
 
-      const ret = await km.refTables.ref_tb_user()
+      const ret = await km.refTables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',

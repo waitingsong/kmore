@@ -22,8 +22,8 @@ export class UserService {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -31,8 +31,8 @@ export class UserService {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Transactional()
@@ -50,7 +50,7 @@ export class UserService {
 
   @Transactional()
   async getUsers(): Promise<[UserDTO[], symbol]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const users = await builder
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users)
@@ -59,7 +59,7 @@ export class UserService {
 
   @Transactional()
   async getUserByUid(uid: UserDTO['uid']): Promise<UserDTO> {
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .where({ uid })
       .first()
     assert(user)
@@ -67,14 +67,14 @@ export class UserService {
   }
 
   async getUsersNoTrx(): Promise<UserDTO[]> {
-    const users = await this.ref_tb_user()
+    const users = await this.tb_user()
     assert(users)
     return users
   }
 
   @Transactional()
   async getUsers2(): Promise<[UserDTO[], symbol]> {
-    const builder = this.db.camelTables.ref_tb_user()
+    const builder = this.db.camelTables.tb_user()
     const users = await builder
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users && users.length === 3)
@@ -110,7 +110,7 @@ export class UserService {
     assert(uid)
     assert(realName)
 
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .where({ uid })
       .update({ realName })
       .returning('*')
@@ -126,7 +126,7 @@ export class UserService {
   async delUser(uid: UserDTO['uid']): Promise<[UserDTO, symbol]> {
     assert(uid)
 
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const user = await builder
       .where({ uid })
       .del()
@@ -141,7 +141,7 @@ export class UserService {
 
   @Transactional()
   async delUserAll(): Promise<[symbol]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     await builder.del()
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     return [trxId]
@@ -200,7 +200,7 @@ export class UserService {
 
 
   async countUserNoTrx(): Promise<number> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const total = await builder
       .count({ total: '*' })
       .then(rows => rows[0]?.total)
@@ -216,7 +216,7 @@ export class UserService {
   // NOTE: .forShare() will not be append with aggregate function!
   @Transactional()
   async countUser(): Promise<[number, symbol]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const total = await builder
       .count({ total: '*' })
       .then(rows => rows[0]?.total)
@@ -248,7 +248,7 @@ export class UserService {
 
   @Transactional()
   async truncateTbUser(): Promise<void> {
-    await this.ref_tb_user().truncate()
+    await this.tb_user().truncate()
   }
 
 

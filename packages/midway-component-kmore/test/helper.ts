@@ -79,11 +79,11 @@ async function initTable(km: Kmore<Db>): Promise<void> {
 
 
 async function initUser(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_user } = km.refTables
+  const { tb_user: tb } = km.refTables
   const { tb_user } = km.dict.columns
 
   // insert
-  await ref_tb_user()
+  await tb()
     .insert([
       { name: 'user1', real_name: 'rn1', ctime: new Date() }, // ms
       {
@@ -134,10 +134,10 @@ export function validateUserRows(rows: Partial<UserDO>[]): void {
 }
 
 async function initUserCamel(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_user } = km.camelTables
+  const { tb_user } = km.camelTables
 
   // insert
-  await ref_tb_user()
+  await tb_user()
     .insert([
       {
         name: 'user3',
@@ -149,7 +149,7 @@ async function initUserCamel(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
-  await ref_tb_user()
+  await tb_user()
     .select('*')
     .then((rows) => {
       validateUserRowsDTO(rows)
@@ -191,10 +191,10 @@ export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
 }
 
 async function initUserExt(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_user_ext } = km.refTables
+  const { tb_user_ext } = km.refTables
 
   // insert
-  await ref_tb_user_ext()
+  await tb_user_ext()
     .insert([
       { uid: 1, age: 10, address: 'address1', salary: 1000.1234 },
       { uid: 2, age: 10, address: 'address1', salary: '1000.12' },
@@ -208,14 +208,14 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
-  const countRes = await km.refTables.ref_tb_user_ext().count()
+  const countRes = await km.refTables.tb_user_ext().count()
   assert(
     countRes?.[0] && countRes[0]['count'] === '2',
     'Should count be "2"',
   )
 
   // validate insert result
-  await ref_tb_user_ext().select('*')
+  await tb_user_ext().select('*')
     .then((rows) => {
       validateUserExtRows(rows)
       return rows

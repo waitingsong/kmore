@@ -21,7 +21,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('tb_user join tb_user_ext', async () => {
       const uid = 1
 
-      const ret = await km.camelTables.ref_tb_user()
+      const ret = await km.camelTables.tb_user()
         .smartInnerJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -42,7 +42,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('tb_user join tb_user_ext and tb_order', async () => {
-      const ret = await km.camelTables.ref_tb_user()
+      const ret = await km.camelTables.tb_user()
         .smartInnerJoin(
           'tb_user_ext.uid',
           'tb_user.uid',

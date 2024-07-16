@@ -29,7 +29,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('transaction', async () => {
       const trx = await km.transaction()
       assert(trx)
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.camelTables.tb_user()
       const ret = await tbUser
         .transacting(trx)
         .forUpdate()
@@ -44,7 +44,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('transaction rollback', async () => {
       const trx1 = await km.transaction()
       assert(trx1)
-      let tbUser = km.camelTables.ref_tb_user()
+      let tbUser = km.camelTables.tb_user()
 
       const uidsAll = await tbUser
         .select('*')
@@ -74,7 +74,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(uidsAll2.length === 0)
       await trx1.rollback()
 
-      tbUser = km.camelTables.ref_tb_user()
+      tbUser = km.camelTables.tb_user()
       const uidsAll3 = await tbUser
         .select('*')
         .then()
@@ -82,7 +82,7 @@ describe(fileShortPath(import.meta.url), () => {
       assert(uidsAll3)
       assert(uidsAll3.length === 3)
 
-      tbUser = km.camelTables.ref_tb_user()
+      tbUser = km.camelTables.tb_user()
       const trx2 = await km.transaction()
       assert(trx2)
       const ret2 = await tbUser

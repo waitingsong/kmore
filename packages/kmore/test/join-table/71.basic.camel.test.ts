@@ -50,7 +50,7 @@ describe(fileShortPath(import.meta.url), () => {
       const { camelTables } = km
       const { tables, scoped } = km.dict
 
-      await camelTables.ref_tb_user()
+      await camelTables.tb_user()
         .innerJoin<UserExtDTO>(
           tables.tb_user_ext,
           scoped.tb_user.uid,
@@ -72,7 +72,7 @@ describe(fileShortPath(import.meta.url), () => {
       const { camelTables } = km
       const { tables, scoped } = km.dict
 
-      await camelTables.ref_tb_user()
+      await camelTables.tb_user()
         .select(scoped.tb_user.uid, scoped.tb_user.name, 'realName')
         .innerJoin<UserExtDTO>(
           tables.tb_user_ext,

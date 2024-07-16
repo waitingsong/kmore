@@ -27,7 +27,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('common', async () => {
       const trx = await km.transaction()
       assert(trx)
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.camelTables.tb_user()
       const { kmoreQueryId } = tbUser
       const ret = await tbUser
         .transacting(trx)
@@ -50,7 +50,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('commit', async () => {
       const trx = await km.transaction()
       assert(trx)
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.camelTables.tb_user()
       const { kmoreQueryId } = tbUser
       const pm = tbUser
         .transacting(trx)
@@ -75,7 +75,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('rollback', async () => {
       const trx = await km.transaction()
       assert(trx)
-      const tbUser = km.camelTables.ref_tb_user()
+      const tbUser = km.camelTables.tb_user()
       const { kmoreQueryId } = tbUser
       const pm = tbUser
         .transacting(trx)

@@ -30,7 +30,7 @@ describe(fileShortPath(import.meta.url), () => {
       const options: Partial<PagingOptions> = {
         pageSize: 1,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
         total: 3n,
@@ -44,7 +44,7 @@ describe(fileShortPath(import.meta.url), () => {
       const options: Partial<PagingOptions> = {
         pageSize: 2,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
         total: 3n,
@@ -58,7 +58,7 @@ describe(fileShortPath(import.meta.url), () => {
       const options: Partial<PagingOptions> = {
         pageSize: 3,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
         total: 3n,
@@ -73,7 +73,7 @@ describe(fileShortPath(import.meta.url), () => {
         page: 2,
         pageSize: 2,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
         total: 3n,
@@ -88,7 +88,7 @@ describe(fileShortPath(import.meta.url), () => {
         page: 3,
         pageSize: 2,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
 
       const meta: PagingMeta = {
         total: 3n,
@@ -104,7 +104,7 @@ describe(fileShortPath(import.meta.url), () => {
         enable: false,
         pageSize: 2,
       }
-      const ret = await tables.ref_tb_user().autoPaging(options)
+      const ret = await tables.tb_user().autoPaging(options)
 
       assert(ret.length === 3)
       assert(! Object.hasOwn(ret, 'total'))

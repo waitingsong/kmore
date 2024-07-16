@@ -24,8 +24,8 @@ export class UserRepo8 {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -33,13 +33,13 @@ export class UserRepo8 {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   // @Cacheable()
   // async getUsersWitchCacheable(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
-  //   const builder = this.ref_tb_user()
+  //   const builder = this.tb_user()
   //   const { trxPropagateOptions } = builder
   //   const users = await builder
   //   const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
@@ -54,7 +54,7 @@ export class UserRepo8 {
   //   op: 'Cacheable',
   // })
   // async getUsers(): Promise<[UserDTO[], symbol, TrxPropagateOptions]> {
-  //   const builder = this.ref_tb_user()
+  //   const builder = this.tb_user()
   //   const { trxPropagateOptions } = builder
   //   const users = await builder
   //   const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
@@ -69,7 +69,7 @@ export class UserRepo8 {
   //   key: input => input[0].toString(),
   // })
   // async getUserByUid(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
-  //   const builder = this.ref_tb_user()
+  //   const builder = this.tb_user()
   //   const { trxPropagateOptions } = builder
   //   const user = await builder
   //     .where({ uid })
@@ -86,7 +86,7 @@ export class UserRepo8 {
   @Transactional()
   @Cacheable<UserRepo8['getUserByUidWithCacheableAfter']>()
   async getUserByUidWithCacheableAfter(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const user = await builder
       .where({ uid })
@@ -106,7 +106,7 @@ export class UserRepo8 {
   })
   @Transactional()
   async getUserByUidWithCacheableBefore(uid: UserDTO['uid']): Promise<[UserDTO | undefined, symbol, TrxPropagateOptions]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const { trxPropagateOptions } = builder
     const user = await builder
       .where({ uid })

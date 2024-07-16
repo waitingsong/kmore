@@ -21,7 +21,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should smartJoin table work', () => {
     it('tb_user join tb_user_ext', async () => {
-      const ret = await tables.ref_tb_user()
+      const ret = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -30,7 +30,7 @@ describe(fileShortPath(import.meta.url), () => {
         .first()
       validateRet(ret)
 
-      const ret2 = await tables.ref_tb_user()
+      const ret2 = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -39,7 +39,7 @@ describe(fileShortPath(import.meta.url), () => {
         .first()
       validateRet(ret2)
 
-      const ret3 = await tables.ref_tb_user()
+      const ret3 = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -48,7 +48,7 @@ describe(fileShortPath(import.meta.url), () => {
         .first()
       validateRet(ret3)
 
-      const ret4 = await tables.ref_tb_user()
+      const ret4 = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',
@@ -59,7 +59,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('tb_user join tb_user_ext and tb_order', async () => {
-      const ret = await tables.ref_tb_user()
+      const ret = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
           'tb_user.uid',

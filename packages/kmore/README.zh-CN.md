@@ -111,17 +111,17 @@ await km.dbh.schema
 
 #### Snake style
 ```ts
-// auto generated accessort tb_user() and tb_user_detail()
-const { ref_tb_user, ref_tb_user_detail } = km.refTables
+// auto generated accessors tb_user() and tb_user_detail()
+const { tb_user, tb_user_detail } = km.refTables
 
-await ref_tb_user()
+await tb_user()
   .insert([
     { user_name: 'user1', ctime: new Date() }, // ms
     { user_name: 'user2', ctime: 'now()' }, // μs
   ])
   .then()
 
-const affectedRows = await ref_tb_user_detail()
+const affectedRows = await tb_user_detail()
   .insert([
     { uid: 1, age: 10, user_address: 'address1' },
     { uid: 2, age: 10, user_address: 'address1' },
@@ -134,8 +134,8 @@ const affectedRows = await ref_tb_user_detail()
 ```ts
 import { RecordCamelKeys } from '@waiting/shared-types'
 
-// auto generated accessort tb_user() and tb_user_detail() 
-const { ref_tb_user, ref_tb_user_detail } = km.camelTables
+// auto generated accessors tb_user() and tb_user_detail() 
+const { tb_user, tb_user_detail } = km.camelTables
 
 interface UserDO {
   user_name: string
@@ -143,7 +143,7 @@ interface UserDO {
 }
 type UserDTO = RecordCamelKeys<UserDO>
 
-const users: UserDTO[] = await ref_tb_user()
+const users: UserDTO[] = await tb_user()
   .insert([
     { userName: 'user1', ctime: new Date() }, // ms
     { userName: 'user2', ctime: 'now()' }, // μs
@@ -157,7 +157,7 @@ const users: UserDTO[] = await ref_tb_user()
 const uid = 1
 
 // tb_user JOIN tb_user_ext ON tb_user_ext.uid = tb_user.uid
-const ret = await km.camelTables.ref_tb_user()
+const ret = await km.camelTables.tb_user()
   .smartJoin(
     'tb_user_ext.uid',
     'tb_user.uid',
@@ -187,7 +187,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     page: 2,      // default 1
     pageSize: 20, // default 10
   }
-  const users = await tables.ref_tb_user().autoPaging(options)
+  const users = await tables.tb_user().autoPaging(options)
   assert(Array.isArray(users))
   assert(users.length)
 
@@ -207,7 +207,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     page: 2,      // default 1
     pageSize: 20, // default 10
   }
-  const users = await tables.ref_tb_user().autoPaging(options, true)
+  const users = await tables.tb_user().autoPaging(options, true)
   assert(! Array.isArray(users))
   assert(Array.isArray(users.rows))
   assert(users.rows.length)
@@ -292,8 +292,8 @@ export class UserRepo {
   }
 
   async getUser(uid: number): Promise<UserDTO | undefined> {
-    const { ref_tb_user } = this.db.camelTables
-    const user = await ref_tb_user()
+    const { tb_user } = this.db.camelTables
+    const user = await tb_user()
       .where({ uid })
       .then(rows => rows[0])
     return user

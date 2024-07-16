@@ -29,8 +29,8 @@ export class User2Controller {
     const db = this.dbManager.getDataSource('master')
     assert(db)
 
-    const { ref_tb_user } = db.camelTables
-    const user = await ref_tb_user({ ctx: this.ctx })
+    const { tb_user } = db.camelTables
+    const user = await tb_user({ ctx: this.ctx })
       .select('*')
       .where({ uid })
 
@@ -42,8 +42,8 @@ export class User2Controller {
     const db = this.dbManager.getDataSource<Db2>('master')
     assert(db)
 
-    const { ref_tb_user_ext } = db.camelTables
-    const user = await ref_tb_user_ext({ ctx: this.ctx })
+    const { tb_user_ext } = db.camelTables
+    const user = await tb_user_ext({ ctx: this.ctx })
       .select('*')
       .where({ uid })
 
@@ -55,8 +55,8 @@ export class User2Controller {
     const db = this.dbManager.getDataSource('master')
     assert(db)
 
-    const { ref_tb_user } = db.camelTables
-    const user = await ref_tb_user({ ctx: this.ctx })
+    const { tb_user } = db.camelTables
+    const user = await tb_user({ ctx: this.ctx })
       .select('fake')
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

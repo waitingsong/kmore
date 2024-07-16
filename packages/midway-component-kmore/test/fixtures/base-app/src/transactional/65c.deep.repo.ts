@@ -23,8 +23,8 @@ export class UserRepo3 {
   @Inject() dbManager: DbManager<'master', Db>
 
   db: Kmore<Db, Context>
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-  ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user_ext: Kmore<Db, Context>['camelTables']['tb_user_ext']
 
   @Init()
   async init(): Promise<void> {
@@ -32,8 +32,8 @@ export class UserRepo3 {
     assert(db)
 
     this.db = db
-    this.ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+    this.tb_user = db.camelTables.tb_user
+    this.tb_user_ext = db.camelTables.tb_user_ext
   }
 
   @Transactional()
@@ -61,7 +61,7 @@ export class UserRepo3 {
   }
 
   async getUsers(): Promise<[UserDTO[], symbol]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const users = await builder
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users)
@@ -69,7 +69,7 @@ export class UserRepo3 {
   }
 
   async getUserByUid(uid: UserDTO['uid']): Promise<UserDTO> {
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .where({ uid })
       .first()
     assert(user)
@@ -78,7 +78,7 @@ export class UserRepo3 {
 
 
   async getUsers2(): Promise<UserDTO[]> {
-    const users = await this.db.camelTables.ref_tb_user()
+    const users = await this.db.camelTables.tb_user()
     assert(users && users.length === 3)
     return users
   }
@@ -110,7 +110,7 @@ export class UserRepo3 {
     assert(uid)
     assert(realName)
 
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .where({ uid })
       .update({ realName })
       .returning('*')
@@ -125,7 +125,7 @@ export class UserRepo3 {
   async delUser(uid: UserDTO['uid']): Promise<UserDTO> {
     assert(uid)
 
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .where({ uid })
       .del()
       .returning('*')
@@ -137,7 +137,7 @@ export class UserRepo3 {
   }
 
   async delUserAll(): Promise<UserDTO> {
-    return this.ref_tb_user().del()
+    return this.tb_user().del()
   }
 
   async userUpdateDel(
@@ -183,7 +183,7 @@ export class UserRepo3 {
 
   // NOTE: .forShare() will not be append with aggregate function!
   async countUser(): Promise<[number, symbol]> {
-    const builder = this.ref_tb_user()
+    const builder = this.tb_user()
     const trxId = this.validateBuilderLinkedTrx(builder)
     const total = await builder
       .count({ total: '*' })
@@ -207,7 +207,7 @@ export class UserRepo3 {
   }
 
   async truncateTbUser(): Promise<void> {
-    await this.ref_tb_user().truncate()
+    await this.tb_user().truncate()
   }
 
 

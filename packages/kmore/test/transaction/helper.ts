@@ -9,7 +9,7 @@ export async function updateWithoutTrx(
   date: Date,
 ): Promise<string> {
 
-  const str = await km.camelTables.ref_tb_user()
+  const str = await km.camelTables.tb_user()
     .forUpdate()
     .update({ ctime: date })
     .where('uid', 1)
@@ -26,7 +26,7 @@ export async function update(
   date: Date,
 ): Promise<string> {
 
-  const str = await km.camelTables.ref_tb_user()
+  const str = await km.camelTables.tb_user()
     .transacting(trx)
     .forUpdate()
     .update({ ctime: date })
@@ -45,8 +45,8 @@ export function readWithoutThen(
 ): KmoreQueryBuilder {
 
   const builder = trx
-    ? km.camelTables.ref_tb_user().transacting(trx)
-    : km.camelTables.ref_tb_user()
+    ? km.camelTables.tb_user().transacting(trx)
+    : km.camelTables.tb_user()
 
   const data = builder
     .first().where('uid', 1)
@@ -61,8 +61,8 @@ export async function read(
 ): Promise<string> {
 
   const builder = trx
-    ? km.camelTables.ref_tb_user().transacting(trx)
-    : km.camelTables.ref_tb_user()
+    ? km.camelTables.tb_user().transacting(trx)
+    : km.camelTables.tb_user()
 
   const str = await builder
     .first().where('uid', 1)
@@ -91,8 +91,8 @@ export function readInvalid(
 ): KmoreQueryBuilder {
 
   const builder = trx
-    ? km.camelTables.ref_tb_user().transacting(trx)
-    : km.camelTables.ref_tb_user()
+    ? km.camelTables.tb_user().transacting(trx)
+    : km.camelTables.tb_user()
   const b2 = builder.forUpdate()
     .select('*')
     .where('fake', 1)
@@ -104,7 +104,7 @@ export async function restore(
   date: Date,
 ): Promise<void> {
 
-  await km.camelTables.ref_tb_user()
+  await km.camelTables.tb_user()
     .update({ ctime: date })
     .where('uid', 1)
 }

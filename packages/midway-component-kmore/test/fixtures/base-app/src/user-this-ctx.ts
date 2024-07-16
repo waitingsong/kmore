@@ -26,14 +26,14 @@ export class UserThisController {
   @Inject() readonly ctx: Context
   @Inject() dbManager: DbManager<'master', Db>
 
-  ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
+  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
 
   @Init()
   async init(): Promise<void> {
     const db = this.dbManager.getDataSource('master')
     assert(db)
-    const ref_tb_user = db.camelTables.ref_tb_user
-    this.ref_tb_user = ref_tb_user
+    const tb_user = db.camelTables.tb_user
+    this.tb_user = tb_user
   }
 
 
@@ -42,16 +42,16 @@ export class UserThisController {
     const db = this.dbManager.getDataSource('master')
     assert(db)
 
-    const user = await this.ref_tb_user()
+    const user = await this.tb_user()
       .select('*')
       .where({ uid })
 
-    const { ref_tb_user } = db.camelTables
-    const user2 = await ref_tb_user()
+    const { tb_user } = db.camelTables
+    const user2 = await tb_user()
       .select('*')
       .where({ uid })
 
-    const user3 = await db.camelTables.ref_tb_user()
+    const user3 = await db.camelTables.tb_user()
       .select('*')
       .where({ uid })
 

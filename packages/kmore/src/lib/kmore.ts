@@ -37,19 +37,19 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
   /**
    * Original table names, without case conversion.
    */
-  readonly refTables: DbQueryBuilder<Context, D, 'ref_', CaseType.none>
+  readonly refTables: DbQueryBuilder<Context, D, '', CaseType.none>
 
   /**
    * Create a table reference function property with camel case conversion.
    */
-  readonly camelTables: DbQueryBuilder<Context, D, 'ref_', CaseType.camel>
+  readonly camelTables: DbQueryBuilder<Context, D, '', CaseType.camel>
 
-  // readonly pascalTables: DbQueryBuilder<D, 'ref_', CaseType.pascal>
+  // readonly pascalTables: DbQueryBuilder<D, '', CaseType.pascal>
 
   /**
    * Create a table reference function property with snake case conversion.
    */
-  readonly snakeTables: DbQueryBuilder<Context, D, 'ref_', CaseType.snake>
+  readonly snakeTables: DbQueryBuilder<Context, D, '', CaseType.snake>
 
   /**
   * Generics parameter, do NOT access as variable!
@@ -161,10 +161,10 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
       this.trxActionOnEnd = options.trxActionOnEnd
     }
 
-    this.refTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.none) as DbQueryBuilder<Context, D, 'ref_', CaseType.none>
-    this.camelTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.camel) as DbQueryBuilder<Context, D, 'ref_', CaseType.camel>
-    // this.pascalTables = this.createRefTables<'ref_'>('ref_', CaseType.pascal)
-    this.snakeTables = createRefTables<D, Context, 'ref_'>(this, 'ref_', CaseType.snake) as DbQueryBuilder<Context, D, 'ref_', CaseType.snake>
+    this.refTables = createRefTables<D, Context, ''>(this, '', CaseType.none) as DbQueryBuilder<Context, D, '', CaseType.none>
+    this.camelTables = createRefTables<D, Context, ''>(this, '', CaseType.camel) as DbQueryBuilder<Context, D, '', CaseType.camel>
+    // this.pascalTables = this.createRefTables<''>('', CaseType.pascal)
+    this.snakeTables = createRefTables<D, Context, ''>(this, '', CaseType.snake) as DbQueryBuilder<Context, D, '', CaseType.snake>
 
 
     this.dbh = options.dbh ? options.dbh : createDbh(this.config)

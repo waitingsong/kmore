@@ -97,11 +97,11 @@ async function initTable(km: Kmore<Db>): Promise<void> {
 
 
 async function initUser(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_user } = km.refTables
+  const { tb_user: tb } = km.refTables
   const { tb_user } = km.dict.columns
 
   // insert
-  await ref_tb_user()
+  await tb()
     .insert([
       { name: 'user1', real_name: 'rn1', ctime: new Date() }, // ms
       {
@@ -120,7 +120,7 @@ async function initUser(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
-  const query = ref_tb_user().where(tb_user.uid, null)
+  const query = tb().where(tb_user.uid, null)
   const sql = query.toSQL().sql.toUpperCase()
   // console.info({ sql })
   assert(sql.includes('WHERE "UID" IS NULL'))
@@ -160,10 +160,10 @@ export function validateUserRows(rows: Partial<UserDo>[]): void {
 }
 
 async function initUserCamel(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_user } = km.camelTables
+  const { tb_user } = km.camelTables
 
   // insert
-  await ref_tb_user()
+  await tb_user()
     .insert([
       {
         name: 'user3',
@@ -175,7 +175,7 @@ async function initUserCamel(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
-  await ref_tb_user()
+  await tb_user()
     .select('*')
     .then((rows) => {
       validateUserRowsDTO(rows)
@@ -218,10 +218,10 @@ export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
 }
 
 async function initUserExt(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_user_ext } = km.refTables
+  const { tb_user_ext } = km.refTables
 
   // insert
-  await ref_tb_user_ext()
+  await tb_user_ext()
     .insert([
       { uid: 1, age: 10, address: 'address1' },
       { uid: 2, age: 10, address: 'address1' },
@@ -235,14 +235,14 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
-  const countRes = await km.refTables.ref_tb_user_ext().count()
+  const countRes = await km.refTables.tb_user_ext().count()
   assert(
     countRes?.[0] && countRes[0]['count'] === '2',
     'Should count be "2"',
   )
 
   // validate insert result
-  await ref_tb_user_ext().select('*')
+  await tb_user_ext().select('*')
     .then((rows) => {
       validateUserExtRows(rows)
       return rows
@@ -276,10 +276,10 @@ export function validateUserExtRows(rows: Partial<UserExtDo>[]): void {
 }
 
 async function initOrder(km: Kmore<Db>): Promise<void> {
-  const { ref_tb_order } = km.refTables
+  const { tb_order } = km.refTables
 
   // insert
-  await ref_tb_order()
+  await tb_order()
     .insert([
       {
         uid: 1,
@@ -297,7 +297,7 @@ async function initOrder(km: Kmore<Db>): Promise<void> {
       assert(false, err.message)
     })
 
-  const countRes = await km.refTables.ref_tb_order().count()
+  const countRes = await km.refTables.tb_order().count()
   assert(
     countRes?.[0] && countRes[0]['count'] === '2',
     'Should count be "2"',
@@ -327,25 +327,25 @@ async function setTimeZone(dbh: Knex, zone: string): Promise<string> {
 
 export async function deleteRow(
   kmore: Kmore<Db>,
-  tables: DbQueryBuilder<unknown, Db, 'ref_', CaseType.camel>,
+  tables: DbQueryBuilder<unknown, Db, '', CaseType.camel>,
   trx: KmoreTransaction,
   uid: number,
 ): Promise<void> {
 
-  const countRes = await kmore.refTables.ref_tb_user().transacting(trx).count()
+  const countRes = await kmore.refTables.tb_user().transacting(trx).count()
   const count = countRes[0]?.['count']
     ? +countRes[0]['count']
     : 0
   assert(count > 0)
 
-  const rowExists = await tables.ref_tb_user()
+  const rowExists = await tables.tb_user()
     .transacting(trx)
     .select('*')
     .where({ uid })
     .first()
   assert(rowExists, `rowExists is null, uid: ${uid}`)
 
-  const affectedRows = await tables.ref_tb_user()
+  const affectedRows = await tables.tb_user()
     .transacting(trx)
     .where({ uid })
     .del('*')
@@ -358,7 +358,7 @@ export async function deleteRow(
   assert(affectedRow?.uid === uid)
   assert(affectedRow?.realName)
 
-  const countRes2 = await kmore.refTables.ref_tb_user().transacting(trx).count()
+  const countRes2 = await kmore.refTables.tb_user().transacting(trx).count()
   const count2 = countRes2[0]?.['count']
     ? +countRes2[0]['count']
     : 0
@@ -371,8 +371,8 @@ export async function countTbUser(
 ): Promise<number> {
 
   const countRes = trx
-    ? await kmore.refTables.ref_tb_user().transacting(trx).count()
-    : await kmore.refTables.ref_tb_user().count()
+    ? await kmore.refTables.tb_user().transacting(trx).count()
+    : await kmore.refTables.tb_user().count()
   const count = countRes[0]?.['count']
     ? +countRes[0]['count']
     : 0
