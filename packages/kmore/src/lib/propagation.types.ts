@@ -8,7 +8,7 @@ export enum PropagationType {
    */
   MANDATORY = 'MANDATORY',
   /**
-   * Execute non-transactionally, suspend the current transaction if one exists.
+   * Execute non-transactional, suspend the current transaction if one exists.
    */
   NOT_SUPPORTED = 'NOT_SUPPORTED',
   /**
@@ -16,7 +16,7 @@ export enum PropagationType {
    */
   REQUIRED = 'REQUIRED',
   /**
-   * Support a current transaction, execute non-transactionally if none exists.
+   * Support a current transaction, execute non-transactional if none exists.
    */
   SUPPORTS = 'SUPPORTS',
 }
