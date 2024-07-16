@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [63.1.0](https://github.com/waitingsong/kmore/compare/v63.0.0...v63.1.0) (2024-07-16)
+
+
+### Features
+
+* remove prefix "ref_" of refTable, use blank ([7ed3329](https://github.com/waitingsong/kmore/commit/7ed33290881cbd1f8c9192198d2d3420f8e6abcf))
+
+
+
+
+
 # [63.0.0](https://github.com/waitingsong/kmore/compare/v62.0.0...v63.0.0) (2024-07-15)
 
 **Note:** Version bump only for package kmore
