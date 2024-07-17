@@ -10,7 +10,7 @@ import { default as _knex } from 'knex'
 
 import type { BuilderPreProcessor, ResponsePreProcessor } from './base.js'
 import { KmoreBase } from './base.js'
-import { pagingPreProcessor } from './builder-processor/auto-paging.processor.js'
+import { pagingPreProcessor } from './builder-processor/paging.processor.js'
 import { createRefTables } from './builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
