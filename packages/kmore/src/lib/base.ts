@@ -136,6 +136,7 @@ export type ResponsePreProcessor<T = unknown> = (options: ResponsePreProcessorOp
 export type ExceptionHandler = (options: ExceptionHandlerOptions) => Promise<never>
 
 export interface ResponsePreProcessorOptions<Resp = unknown> {
+  kmore: KmoreBase
   kmoreQueryId: symbol
   kmoreTrxId: symbol | undefined
   response: Resp

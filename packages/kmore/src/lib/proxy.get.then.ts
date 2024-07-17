@@ -23,15 +23,10 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     propKey,
     resultPagerHandler,
     ctxBuilderPreProcessor,
-    ctxBuilderResultPreProcessor,
-    ctxExceptionHandler,
   } = options
   assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
-  const getThenProxy = async (
-    done?: (data: unknown) => unknown,
-    reject?: (data: unknown) => Error,
-  ) => {
+  const getThenProxy = async () => {
 
     let getThenProxyRet: Promise<unknown>
     let builder = origBuilder
@@ -42,17 +37,14 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
       const errMsg = 'kmoreQueryId should be defined, builder may not be a KmoreQueryBuilder'
       console.error(errMsg)
       const err = new Error(errMsg)
-      if (reject) {
-        return reject(err)
-      }
       throw err
     }
 
     const { builderPreProcessors } = kmore
-    const debug1 = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingOptions)?.value as PagingOptions
-    void debug1
+    const pagingOptions = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingOptions)?.value as PagingOptions
+    assert(pagingOptions, 'pagingOptions missing defined in builder')
 
-    if (debug1.enable && Array.isArray(builderPreProcessors) && builderPreProcessors.length > 0) {
+    if (pagingOptions.enable && Array.isArray(builderPreProcessors) && builderPreProcessors.length > 0) {
       for (const processor of builderPreProcessors) {
         assert(typeof processor === 'function', 'builderPreProcessors should be an array of functions')
         // eslint-disable-next-line no-await-in-loop
@@ -100,18 +92,15 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
 
     return processThenRet({
-      ctxBuilderResultPreProcessor,
-      ctxExceptionHandler,
       input: getThenProxyRet,
       kmore,
       kmoreQueryId,
       kmoreTrxId,
+      pagingOptions,
       rowLockLevel,
       transactionalProcessed,
       trxPropagated,
       trxPropagateOptions,
-      done,
-      reject,
     })
   }
   void Object.defineProperty(getThenProxy, KmoreProxyKey.getThenProxy, {
