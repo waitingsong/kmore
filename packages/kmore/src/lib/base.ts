@@ -5,7 +5,7 @@ import type {
   CtxExceptionHandler,
   KmoreQueryBuilder,
 } from './builder.types.js'
-import type { PageRawType, PageWrapType } from './paging.types.js'
+import type { PageRawType, PageWrapType, PagingOptions } from './paging.types.js'
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 import type {
   CaseType,
@@ -139,6 +139,7 @@ export interface ResponsePreProcessorOptions<Resp = unknown> {
   kmore: KmoreBase
   kmoreQueryId: symbol
   kmoreTrxId: symbol | undefined
+  pagingOptions: PagingOptions
   response: Resp
   transactionalProcessed: boolean | undefined
   trxPropagateOptions: TrxPropagateOptions | undefined

@@ -20,11 +20,7 @@ import { KmorePageKey } from './types.js'
 import { genKmoreTrxId } from './util.js'
 
 
-export async function pager<T = unknown>(
-  options: PagerOptions,
-  // proxyCreator: (options: CreateQueryBuilderGetProxyOptions) => KmoreQueryBuilder,
-): Promise<PageRawType<T> | PageWrapType<T> | undefined> {
-
+export async function pager<T = unknown>(options: PagerOptions): Promise<PageRawType<T> | PageWrapType<T> | undefined> {
   const { kmore } = options
 
   const { total, builderPager, pagingOptions } = await genBuilderForPaging(options)

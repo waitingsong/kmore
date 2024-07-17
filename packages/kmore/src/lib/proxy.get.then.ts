@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
+import { genError } from '@waiting/shared-core'
+
 import type { PagerOptions, ProxyGetHandlerOptions } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
@@ -26,7 +28,10 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
   } = options
   assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
-  const getThenProxy = async () => {
+  const getThenProxy = async (
+    done?: (data: unknown) => unknown, // valid when chain next then()
+    reject?: (data: unknown) => Error,
+  ) => {
 
     let getThenProxyRet: Promise<unknown>
     let builder = origBuilder
@@ -49,9 +54,6 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
         assert(typeof processor === 'function', 'builderPreProcessors should be an array of functions')
         // eslint-disable-next-line no-await-in-loop
         builder = (await processor({ builder, kmore })).builder
-
-        const debug = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingOptions)?.value as PagingOptions
-        void debug
       }
       // query response or response data
       // @ts-ignore
@@ -91,17 +93,27 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
     const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
 
-    return processThenRet({
-      input: getThenProxyRet,
-      kmore,
-      kmoreQueryId,
-      kmoreTrxId,
-      pagingOptions,
-      rowLockLevel,
-      transactionalProcessed,
-      trxPropagated,
-      trxPropagateOptions,
-    })
+    try {
+      const response = await processThenRet({
+        input: getThenProxyRet,
+        kmore,
+        kmoreQueryId,
+        kmoreTrxId,
+        pagingOptions,
+        rowLockLevel,
+        transactionalProcessed,
+        trxPropagated,
+        trxPropagateOptions,
+      })
+      done ? done(response) : response
+    }
+    catch (ex) {
+      if (reject) {
+        reject(ex)
+        return
+      }
+      throw ex
+    }
   }
   void Object.defineProperty(getThenProxy, KmoreProxyKey.getThenProxy, {
     ...defaultPropDescriptor,
