@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-import type { KmoreBase, PagerOptions, CreateQueryBuilderGetProxyOptions } from './base.js'
+import type { KmoreBase, PagerOptions } from './base.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
@@ -13,6 +13,7 @@ import type {
 import { builderApplyTransactingProxy } from './proxy.apply.js'
 import type { _PagingOptions } from './proxy.auto-paging.js'
 import { initPageTypeMapping } from './proxy.auto-paging.js'
+import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 import { KmorePageKey } from './types.js'
@@ -21,7 +22,7 @@ import { genKmoreTrxId } from './util.js'
 
 export async function pager<T = unknown>(
   options: PagerOptions,
-  proxyCreator: (options: CreateQueryBuilderGetProxyOptions) => KmoreQueryBuilder,
+  // proxyCreator: (options: CreateQueryBuilderGetProxyOptions) => KmoreQueryBuilder,
 ): Promise<PageRawType<T> | PageWrapType<T> | undefined> {
 
   const { kmore } = options
@@ -53,7 +54,8 @@ export async function pager<T = unknown>(
   }
 
   // const builderPagerPatched = createQueryBuilderGetProxy(kmore, builderPager)
-  const builderPagerPatched = proxyCreator({
+  // const builderPagerPatched = proxyCreator({
+  const builderPagerPatched = createQueryBuilderGetProxy({
     kmore,
     builder: builderPager,
     thenHandler: proxyGetThen,

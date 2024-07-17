@@ -8,8 +8,9 @@ import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
 
-import type { BuilderPreProcessor } from './base.js'
+import type { BuilderPreProcessor, ResponsePreProcessor } from './base.js'
 import { KmoreBase } from './base.js'
+import { pagingPreProcessor } from './builder-processor/auto-paging.processor.js'
 import { createRefTables } from './builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
@@ -104,6 +105,9 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
    */
   readonly wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
+  readonly builderPreProcessors: BuilderPreProcessor[]
+  readonly responsePreProcessors: ResponsePreProcessor[]
+
   constructor(options: KmoreFactoryOpts<D, Context>) {
     super()
 
@@ -129,6 +133,9 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
       // @ts-expect-error
       this.dict = void 0
     }
+
+    this.builderPreProcessors = options.builderPreProcessors ?? [pagingPreProcessor]
+    this.responsePreProcessors = options.responsePreProcessors ?? []
 
     /**
      * Table identifier case conversion,
@@ -333,6 +340,7 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    */
   trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
   builderPreProcessors?: BuilderPreProcessor[] | undefined
+  responsePreProcessors?: ResponsePreProcessor[] | undefined
 }
 
 export function KmoreFactory<D extends object, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {

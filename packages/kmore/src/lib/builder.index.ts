@@ -16,12 +16,13 @@ import type {
 } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import { extRefTableFnPropertyDummy } from './dummy.js'
+import type { PagingOptions } from './paging.types.js'
 import { builderApplyTransactingProxy } from './proxy.apply.js'
-import { extRefTableFnPropertyAutoPaging } from './proxy.auto-paging.js'
+import { extRefTableFnPropertyAutoPaging, initPagingOptions } from './proxy.auto-paging.js'
 import { createQueryBuilderGetProxy } from './proxy.get.js'
 import { proxyGetThen } from './proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
-import type { CaseType } from './types.js'
+import { KmorePageKey, type CaseType } from './types.js'
 
 
 export function createRefTables<
@@ -97,6 +98,16 @@ function extRefTableFnProperty(
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   let refTable = kmore.dbh(refName) as KmoreQueryBuilder
+
+  const pagingOpts: PagingOptions = {
+    ...initPagingOptions,
+    enable: false,
+  }
+  void Object.defineProperty(refTable, KmorePageKey.PagingOptions, {
+    ...defaultPropDescriptor,
+    writable: true,
+    value: pagingOpts,
+  })
 
   // refTable = extRefTableFnPropertyThen(kmore, refTable, ctx) // must before getProxy
   // refTable = createQueryBuilderGetProxy(kmore, refTable)

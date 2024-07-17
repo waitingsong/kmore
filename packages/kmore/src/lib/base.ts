@@ -6,6 +6,7 @@ import type {
   KmoreQueryBuilder,
 } from './builder.types.js'
 import type { PageRawType, PageWrapType } from './paging.types.js'
+import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 import type {
   CaseType,
   EventCallbacks,
@@ -40,6 +41,9 @@ export abstract class KmoreBase<Context = any> {
   readonly abstract trxMap: Map<symbol, KmoreTransaction>
 
   readonly abstract DbModel: any
+
+  readonly abstract builderPreProcessors: BuilderPreProcessor[]
+  readonly abstract responsePreProcessors: ResponsePreProcessor[]
 
   /**
    * Start a transaction.
@@ -121,5 +125,31 @@ export interface BuilderPreProcessorOptions {
 
 /**
  * Run before the builder is executed (.then() is calling)
+ * @returns builder as object key-value, avoid builder deferred execution when await builder
  */
-export type BuilderPreProcessor = (options: BuilderPreProcessorOptions) => Promise<KmoreQueryBuilder>
+export type BuilderPreProcessor = (options: BuilderPreProcessorOptions) => Promise<BuilderPreProcessorOptions>
+/**
+ * Run after the builder is executed (.then() is called)
+ */
+export type ResponsePreProcessor<T = unknown> = (options: ResponsePreProcessorOptions<T>) => Promise<T>
+
+export type ExceptionHandler = (options: ExceptionHandlerOptions) => Promise<never>
+
+export interface ResponsePreProcessorOptions<Resp = unknown> {
+  kmoreQueryId: symbol
+  kmoreTrxId: symbol | undefined
+  response: Resp
+  transactionalProcessed: boolean | undefined
+  trxPropagateOptions: TrxPropagateOptions | undefined
+  trxPropagated: boolean | undefined
+  /**
+   * Propagation rowlock level
+   * @default {@link RowLockLevel}
+   */
+  rowLockLevel: RowLockLevel | undefined
+}
+
+export interface ExceptionHandlerOptions extends Omit<ResponsePreProcessorOptions, 'response'> {
+  exception: unknown
+}
+
