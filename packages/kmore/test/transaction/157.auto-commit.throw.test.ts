@@ -30,7 +30,10 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto commit work on error', () => {
-    it('ignore rejection from .then()', async () => {
+    it('commit even reject in .then()', async () => {
+      const currCtime2 = await read(km)
+      console.info({ currCtime2 })
+
       const trx = await km.transaction({ trxActionOnEnd: 'commit' })
       assert(trx)
       const msg = 'debug test error'
@@ -47,9 +50,8 @@ describe(fileShortPath(import.meta.url), () => {
       catch (ex) {
         assert(ex instanceof Error)
         assert(ex.message === msg)
-        assert(! trx.isCompleted())
+        assert(trx.isCompleted())
 
-        const currCtime2 = await read(km)
         assert(currCtime2)
         assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
         return
