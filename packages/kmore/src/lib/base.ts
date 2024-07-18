@@ -68,7 +68,7 @@ export abstract class KmoreBase<Context = any> {
     ctx: unknown,
   ): Set<KmoreTransaction>
 
-  abstract finishTransaction(trx: KmoreTransaction | undefined): Promise<void>
+  abstract finishTransaction(trx: KmoreTransaction | undefined, action?: 'commit' | 'rollback'): Promise<void>
 
   abstract destroy(): Promise<void>
 

@@ -11,7 +11,7 @@ export async function trxOnExceptionProcessor(options: ExceptionHandlerOptions):
 
   const trx = kmore.getTrxByKmoreQueryId(kmoreQueryId)
   if (trx) { // also processed on event `query-error`
-    await kmore.finishTransaction(trx)
+    await kmore.finishTransaction(trx, 'rollback')
   }
   throw exception
 }

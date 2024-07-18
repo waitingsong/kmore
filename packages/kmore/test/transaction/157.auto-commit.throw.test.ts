@@ -30,7 +30,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto commit work on error', () => {
-    it('commit even reject in .then()', async () => {
+    it('rollback when reject in .then(), even trxActionOnEnd:"commit"', async () => {
       const currCtime2 = await read(km)
       console.info({ currCtime2 })
 

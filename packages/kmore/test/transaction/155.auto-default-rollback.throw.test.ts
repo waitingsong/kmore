@@ -30,7 +30,7 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto default(rollback) work', () => {
-    it('commit even throw in .then()', async () => {
+    it('rollback when throw in .then(), even trxActionOnEnd:"commit"', async () => {
       const currCtime2 = await read(km)
       const trx = await km.transaction()
       assert(trx)

@@ -253,12 +253,14 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
     return ret
   }
 
-  async finishTransaction(trx: KmoreTransaction | undefined): Promise<void> {
+  async finishTransaction(trx: KmoreTransaction | undefined, action?: 'commit' | 'rollback'): Promise<void> {
     if (! trx) { return }
     if (! trx.isCompleted()) {
       this.trxMap.delete(trx.kmoreTrxId)
     }
-    switch (trx.trxActionOnEnd) {
+
+    const op = action ?? trx.trxActionOnEnd
+    switch (op) {
       case 'rollback': {
         await trx.rollback()
         this.trxMap.delete(trx.kmoreTrxId)
