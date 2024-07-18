@@ -83,7 +83,7 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
 
   const pagingOpts: PagingOptions = {
     ...initPagingOptions,
-    enable: false,
+    ...pagingOptions,
   }
   void Object.defineProperty(builderPager, KmorePageKey.PagingOptions, {
     ...defaultPropDescriptor,
@@ -109,7 +109,10 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
 
   void Object.defineProperty(builderCounter, KmorePageKey.PagingOptions, {
     ...defaultPropDescriptor,
-    value: pagingOpts,
+    value: {
+      ...pagingOpts,
+      enable: false,
+    },
   })
   void Object.defineProperty(builderCounter, KmorePageKey.PagingBuilderType, {
     ...defaultPropDescriptor,
