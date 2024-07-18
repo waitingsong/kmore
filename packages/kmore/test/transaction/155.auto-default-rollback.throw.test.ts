@@ -43,7 +43,8 @@ describe(fileShortPath(import.meta.url), () => {
           })
       }
       catch (ex) {
-        assert(ex === msg)
+        assert(ex instanceof Error)
+        assert(ex.message === msg)
         assert(! trx.isCompleted())
 
         const currCtime2 = await read(km)

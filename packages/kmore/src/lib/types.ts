@@ -41,7 +41,7 @@ export type KmoreTransactionConfig = Knex.TransactionConfig & {
    * declarative transaction always rollback on end
    *
    * @default rollback
-   * @note Error from ONLY builder can be catched, from then() on builder not processed!
+   * @note Error from ONLY builder can be catch, from then() on builder not processed!
    * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
   trxActionOnEnd?: 'commit' | 'rollback' | 'none',
