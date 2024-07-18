@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
-import type { PagerOptions, ProxyGetHandlerOptions } from './base.js'
+import type { AsyncMethodType } from '@waiting/shared-types'
+
+import type { ProxyGetHandlerOptions } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
 import type { PagingOptions } from './paging.types.js'
 import { processThenRet } from './proxy.get.helper.js'
-import { createQueryBuilderGetProxy } from './proxy.get.js'
-import {
-  KmorePageKey,
-  KmoreProxyKey,
-} from './types.js'
+import { KmoreBuilderType, KmorePageKey, KmoreProxyKey } from './types.js'
 
 
 /**
@@ -21,8 +19,6 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     kmore,
     builder: origBuilder,
     propKey,
-    resultPagerHandler,
-    ctxBuilderPreProcessor,
   } = options
   assert(propKey === 'then', `propKey should be "then", but got: ${propKey.toString()}`)
 
@@ -31,7 +27,6 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     reject?: (data: unknown) => Error,
   ) => {
 
-    let getThenProxyRet: Promise<unknown>
     let builder = origBuilder
 
     const { kmoreQueryId } = builder
@@ -47,46 +42,18 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     const pagingOptions = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingOptions)?.value as PagingOptions
     assert(pagingOptions, 'pagingOptions missing defined in builder')
 
-    if (pagingOptions.enable && Array.isArray(builderPreProcessors) && builderPreProcessors.length > 0) {
+    const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
+
+    if (pagingOptions.enable && builderType !== KmoreBuilderType.counter && Array.isArray(builderPreProcessors)) {
       for (const processor of builderPreProcessors) {
         assert(typeof processor === 'function', 'builderPreProcessors should be an array of functions')
         // eslint-disable-next-line no-await-in-loop
         builder = (await processor({ builder, kmore })).builder
       }
-      // query response or response data
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      getThenProxyRet = Reflect.apply(builder['_ori_then'], builder, [])
     }
-    else {
-      builder = typeof ctxBuilderPreProcessor === 'function'
-        ? (await ctxBuilderPreProcessor(origBuilder)).builder
-        : origBuilder
-
-      if (resultPagerHandler && Object.hasOwn(builder, KmorePageKey.PagingOptions)
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        && builder[KmorePageKey.PagingOptions]?.enable === true
-        && ! Object.hasOwn(builder, KmorePageKey.PagingProcessed)
-      ) {
-      // pager()
-        const opts: PagerOptions = {
-          builder,
-          kmore,
-          ctxBuilderPreProcessor: options.ctxBuilderPreProcessor,
-          ctxBuilderResultPreProcessor: options.ctxBuilderResultPreProcessor,
-          ctxExceptionHandler: options.ctxExceptionHandler,
-        }
-
-        getThenProxyRet = resultPagerHandler(opts, createQueryBuilderGetProxy)
-      }
-      else {
-      // query response or response data
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        getThenProxyRet = Reflect.apply(builder['_ori_then'], builder, [])
-      }
-    }
+    // query response or response data
+    // @ts-ignore _ori_then
+    const getThenProxyRet = Reflect.apply(builder['_ori_then'] as AsyncMethodType, builder, [])
 
     const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
     const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder

@@ -8,7 +8,7 @@ import type {
   PagingMeta,
 } from '##/lib/paging.types.js'
 import { initPageTypeMapping, type _PagingOptions } from '##/lib/proxy.auto-paging.js'
-import { KmorePageKey } from '##/lib/types.js'
+import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
 
 
 export async function pagingPostProcessor(options: ResponsePreProcessorOptions): Promise<unknown> {
@@ -18,8 +18,8 @@ export async function pagingPostProcessor(options: ResponsePreProcessorOptions):
     return response
   }
 
-  const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as string | undefined
-  if (! builderType || builderType === 'pager') {
+  const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
+  if (! builderType || builderType !== KmoreBuilderType.pager) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return response
   }

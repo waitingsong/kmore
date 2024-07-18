@@ -3,12 +3,9 @@
 import assert from 'node:assert'
 
 import type { KmoreBase } from './base.js'
-import { pager } from './builder.auto-paging.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
 import type {
-  CtxBuilderPreProcessor,
-  CtxBuilderResultPreProcessor,
   CtxExceptionHandler,
   DbQueryBuilder,
   KmoreQueryBuilder,
@@ -57,8 +54,6 @@ export function createRefTables<
         refName,
         caseConvert,
         ctx2,
-        options?.ctxBuilderPreProcessor,
-        options?.ctxBuilderResultPreProcessor,
         options?.ctxExceptionHandler,
       ) as DbQueryBuilder<Context, D, P, CaseType>
     } // must dynamically!!
@@ -84,8 +79,6 @@ function extRefTableFnProperty(
   refName: string,
   caseConvert: CaseType,
   ctx: unknown,
-  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined,
-  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined,
   ctxExceptionHandler: CtxExceptionHandler | undefined,
 ): KmoreQueryBuilder {
 
@@ -115,10 +108,7 @@ function extRefTableFnProperty(
     kmore,
     builder: refTable,
     thenHandler: proxyGetThen,
-    ctxBuilderPreProcessor,
-    ctxBuilderResultPreProcessor,
     ctxExceptionHandler,
-    resultPagerHandler: pager,
   })
 
   refTable = builderApplyTransactingProxy(kmore, refTable, ctx)

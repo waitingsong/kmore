@@ -20,7 +20,7 @@ export type KmoreTransaction = Knex.Transaction & {
    * declarative transaction always rollback on end
    *
    * @default rollback
-   * @note Error from ONLY builder can be catched, from then() on builder not processed!
+   * @note Error from ONLY builder can be catch, from then() on builder not processed!
    * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
   trxActionOnEnd: NonNullable<KmoreTransactionConfig['trxActionOnEnd']>,
@@ -35,7 +35,7 @@ export type KmoreTransaction = Knex.Transaction & {
 export type KmoreTransactionConfig = Knex.TransactionConfig & {
   kmoreTrxId?: PropertyKey | undefined,
   /**
-   * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
+   * Auto transition action (rollback|commit|none) on builder error (Rejection or Exception),
    * declarative transaction always rollback on end
    *
    * @default rollback
@@ -245,6 +245,11 @@ export enum KmorePageKey {
 export enum KmoreProxyKey {
   getThenProxy = 'KmoreGetThenProxy',
   getThenProxyProcessed = 'KmoreGetThenProxyProcessed',
+}
+export enum KmoreBuilderType {
+  normal = 'normal',
+  counter = 'counter',
+  pager = 'pager',
 }
 
 

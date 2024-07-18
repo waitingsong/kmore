@@ -8,9 +8,6 @@ export function createQueryBuilderGetProxy(options: CreateQueryBuilderGetProxyOp
   const {
     kmore,
     thenHandler,
-    resultPagerHandler,
-    ctxBuilderPreProcessor,
-    ctxBuilderResultPreProcessor,
     ctxExceptionHandler,
   } = options
 
@@ -28,9 +25,6 @@ export function createQueryBuilderGetProxy(options: CreateQueryBuilderGetProxyOp
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       builder: options.builder,
       propKey: 'then',
-      resultPagerHandler,
-      ctxBuilderPreProcessor,
-      ctxBuilderResultPreProcessor,
       ctxExceptionHandler,
     }),
   })

@@ -47,8 +47,6 @@ export type KmoreQueryBuilder<
 
 export interface TbQueryBuilderOptions<Context> {
   ctx: Context
-  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
-  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
   ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 
@@ -110,8 +108,6 @@ export type SmartJoin<
 ) => KmoreQueryBuilder<D, CaseConvert, TResult2, TResult2[]>
 
 
-export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
-export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
 export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
 
 export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {

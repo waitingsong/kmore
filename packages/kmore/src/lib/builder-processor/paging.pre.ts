@@ -10,7 +10,7 @@ import { builderApplyTransactingProxy } from '##/lib/proxy.apply.js'
 import { initPagingOptions, type _PagingOptions } from '##/lib/proxy.auto-paging.js'
 import { proxyGetThen } from '##/lib/proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from '##/lib/smart-join.js'
-import { KmorePageKey } from '##/lib/types.js'
+import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
 import { genKmoreTrxId } from '##/lib/util.js'
 
 import { createQueryBuilderGetProxy } from '../proxy.get.js'
@@ -32,8 +32,6 @@ export async function pagingPreProcessor(options: BuilderPreProcessorOptions): P
     kmore,
     builder: builderPager,
     thenHandler: proxyGetThen,
-    ctxBuilderPreProcessor: void 0,
-    ctxBuilderResultPreProcessor: void 0,
     ctxExceptionHandler: void 0,
   })
   // const builderPagerSql = builderPagerPatched.toQuery()
@@ -81,7 +79,7 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
   const builderPager = cloneBuilder(kmore, builder)
   void Object.defineProperty(builderPager, KmorePageKey.PagingBuilderType, {
     ...defaultPropDescriptor,
-    value: 'pager',
+    value: KmoreBuilderType.pager,
   })
 
   const pagingOpts: PagingOptions = {
@@ -90,7 +88,6 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
   }
   void Object.defineProperty(builderPager, KmorePageKey.PagingOptions, {
     ...defaultPropDescriptor,
-    // writable: true,
     value: pagingOpts,
   })
 
@@ -113,9 +110,13 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
 
   void Object.defineProperty(builderCounter, KmorePageKey.PagingOptions, {
     ...defaultPropDescriptor,
-    // writable: true,
     value: pagingOpts,
   })
+  void Object.defineProperty(builderCounter, KmorePageKey.PagingBuilderType, {
+    ...defaultPropDescriptor,
+    value: KmoreBuilderType.counter,
+  })
+
 
   const total = await builderCounter
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -138,11 +139,6 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
   if (! total) {
     return ret
   }
-
-  void Object.defineProperty(builder, KmorePageKey.PagingBuilderType, {
-    ...defaultPropDescriptor,
-    value: 'counter',
-  })
 
   const offset = pagingOptions.pageSize * (pagingOptions.page - 1)
 

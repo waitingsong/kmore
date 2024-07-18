@@ -55,8 +55,6 @@ export async function pager<T = unknown>(options: PagerOptions): Promise<PageRaw
     kmore,
     builder: builderPager,
     thenHandler: proxyGetThen,
-    ctxBuilderPreProcessor: options.ctxBuilderPreProcessor,
-    ctxBuilderResultPreProcessor: options.ctxBuilderResultPreProcessor,
     ctxExceptionHandler: options.ctxExceptionHandler,
   })
 
