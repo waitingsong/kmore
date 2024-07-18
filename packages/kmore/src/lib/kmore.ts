@@ -10,7 +10,6 @@ import { default as _knex } from 'knex'
 
 import type { BuilderPreProcessor, ExceptionHandler, ResponsePreProcessor } from './base.js'
 import { KmoreBase } from './base.js'
-import { pagingPostProcessor, pagingPreProcessor } from './builder-processor/processor.index.js'
 import { createRefTables } from './builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
@@ -20,6 +19,7 @@ import {
   postProcessResponse,
   wrapIdentifier,
 } from './helper.js'
+import { pagingPostProcessor, pagingPreProcessor } from './processor/processor.index.js'
 import { createTrxProperties } from './proxy.trx.js'
 import type {
   EventCallbacks,
