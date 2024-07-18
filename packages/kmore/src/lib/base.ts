@@ -137,6 +137,7 @@ export type ExceptionHandler = (options: ExceptionHandlerOptions) => Promise<nev
 
 export interface ResponsePreProcessorOptions<Resp = unknown> {
   kmore: KmoreBase
+  builder: KmoreQueryBuilder
   kmoreQueryId: symbol
   kmoreTrxId: symbol | undefined
   pagingOptions: PagingOptions

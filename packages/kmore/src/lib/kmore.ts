@@ -135,7 +135,7 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
     }
 
     this.builderPreProcessors = options.builderPreProcessors ?? [pagingPreProcessor]
-    this.responsePreProcessors = options.responsePreProcessors ?? []
+    this.responsePreProcessors = options.responsePreProcessors ?? [pagingPostProcessor]
 
     /**
      * Table identifier case conversion,

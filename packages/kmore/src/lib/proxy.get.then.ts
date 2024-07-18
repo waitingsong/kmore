@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
-import { genError } from '@waiting/shared-core'
-
 import type { PagerOptions, ProxyGetHandlerOptions } from './base.js'
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
@@ -96,6 +94,7 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     try {
       const response = await processThenRet({
         input: getThenProxyRet,
+        builder,
         kmore,
         kmoreQueryId,
         kmoreTrxId,

@@ -10,7 +10,6 @@ import { KmoreProxyKey } from './types.js'
 
 
 interface ProcessThenRetOptions<Resp = unknown> extends Omit<CtxBuilderResultPreProcessorOptions<Resp>, 'response'> {
-  kmore: KmoreBase
   kmoreQueryId: symbol
   input: Promise<Resp>
   pagingOptions: PagingOptions
@@ -21,6 +20,7 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
 
   const {
     input,
+    builder,
     kmore,
     kmoreQueryId,
     kmoreTrxId,
@@ -37,15 +37,16 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
   try {
     let resp = await input
     const opts: ResponsePreProcessorOptions = {
+      response: resp,
+      builder,
       kmore,
       kmoreQueryId,
       kmoreTrxId,
       pagingOptions,
-      response: resp,
-      transactionalProcessed,
-      trxPropagateOptions,
-      trxPropagated,
       rowLockLevel,
+      transactionalProcessed,
+      trxPropagated,
+      trxPropagateOptions,
     }
 
     for (const processor of responsePreProcessors) {

@@ -16,6 +16,7 @@ import type {
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
+import type { KmoreBase } from './base.js'
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 
 
@@ -114,6 +115,8 @@ export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResu
 export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
 
 export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
+  builder: KmoreQueryBuilder
+  kmore: KmoreBase
   kmoreQueryId: symbol
   kmoreTrxId: symbol | undefined
   response: Resp

@@ -22,6 +22,8 @@ import { genKmoreTrxId } from '##/lib/util.js'
 import { createQueryBuilderGetProxy } from '../proxy.get.js'
 
 
+// #region Pre Processor
+
 export async function pagingPreProcessor(options: BuilderPreProcessorOptions): Promise<BuilderPreProcessorOptions> {
   const { kmore } = options
 
@@ -45,6 +47,8 @@ export async function pagingPreProcessor(options: BuilderPreProcessorOptions): P
 
   return { builder: builderPagerPatched, kmore }
 }
+
+// #region Post Processor
 
 export async function pagingPostProcessor(options: ResponsePreProcessorOptions): Promise<unknown> {
   const { pagingOptions, response } = options
