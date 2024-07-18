@@ -221,7 +221,7 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
   const { tb_user_ext } = km.refTables
 
   // insert
-  await tb_user_ext()
+  const foo = await tb_user_ext()
     .insert([
       { uid: 1, age: 10, address: 'address1' },
       { uid: 2, age: 10, address: 'address1' },
@@ -231,9 +231,14 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
       validateUserExtRows(rows)
       return rows
     })
+    .then((rows) => {
+      validateUserExtRows(rows)
+      return rows
+    })
     .catch((err: Error) => {
       assert(false, err.message)
     })
+  void foo
 
   const countRes = await km.refTables.tb_user_ext().count()
   assert(
