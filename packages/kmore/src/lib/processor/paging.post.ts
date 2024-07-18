@@ -24,7 +24,6 @@ export async function pagingPostProcessor(options: ResponsePreProcessorOptions):
     return response
   }
   const total = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingMetaTotal)?.value as bigint | undefined
-  assert(total, 'total should be set')
   assert(typeof total === 'bigint', 'total should be a bigint')
 
   const pagingOptions = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingOptions)?.value as _PagingOptions | undefined

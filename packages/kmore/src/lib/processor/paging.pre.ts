@@ -113,6 +113,7 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
   })
   void Object.defineProperty(builderCounter, KmorePageKey.PagingBuilderType, {
     ...defaultPropDescriptor,
+    writable: true,
     value: KmoreBuilderType.counter,
   })
 
@@ -129,12 +130,21 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
       return 0n
     })
 
+  void Object.defineProperty(builder, KmorePageKey.PagingMetaTotal, {
+    ...defaultPropDescriptor,
+    value: total,
+  })
+
   const ret: GenBuilderForPagingRetType = {
     total,
     pagingOptions,
   }
 
   if (! total) {
+    void Object.defineProperty(builder, KmorePageKey.PagingBuilderType, {
+      ...defaultPropDescriptor,
+      value: KmoreBuilderType.pager,
+    })
     return ret
   }
 

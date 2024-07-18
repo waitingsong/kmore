@@ -71,12 +71,10 @@ async function _getThenProxy(
         builder = (await processor({ builder, kmore })).builder
       }
     }
-    // query response or response data
-    // @ts-ignore _ori_then
-    const getThenProxyRet = Reflect.apply(builder['_ori_then'] as AsyncMethodType, builder, [])
 
-    const response = await processThenRet({
-      input: getThenProxyRet,
+    const total = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingMetaTotal)?.value as bigint | undefined
+    const opts = {
+      input: Promise.resolve([]),
       builder,
       kmore,
       kmoreQueryId,
@@ -85,7 +83,17 @@ async function _getThenProxy(
       transactionalProcessed,
       trxPropagated,
       trxPropagateOptions,
-    })
+    }
+    let response: unknown
+    if (total === 0n) {
+      response = await processThenRet(opts)
+    }
+    else {
+      // query response or response data
+      // @ts-ignore _ori_then
+      opts.input = Reflect.apply(builder['_ori_then'] as AsyncMethodType, builder, [])
+      response = await processThenRet(opts)
+    }
     return done ? done(response) : response
   }
   catch (ex) {
