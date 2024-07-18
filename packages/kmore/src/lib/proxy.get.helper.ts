@@ -109,6 +109,7 @@ function updateRespProperties(resp: unknown): void {
 }
 
 
+
 async function processTrxOnEx(
   kmore: KmoreBase,
   kmoreQueryId: symbol,

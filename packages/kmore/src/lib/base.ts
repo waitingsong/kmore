@@ -39,8 +39,15 @@ export abstract class KmoreBase<Context = any> {
 
   readonly abstract DbModel: any
 
+  /**
+   * @default [pagingPreProcessor]
+   */
   readonly abstract builderPreProcessors: BuilderPreProcessor[]
+  /**
+   * @default [pagingPostProcessor]
+   */
   readonly abstract responsePreProcessors: ResponsePreProcessor[]
+  readonly abstract exceptionHandlers: ExceptionHandler[]
 
   /**
    * Start a transaction.
@@ -135,6 +142,6 @@ export interface ResponsePreProcessorOptions<Resp = unknown> {
 }
 
 export interface ExceptionHandlerOptions extends Omit<ResponsePreProcessorOptions, 'response'> {
-  exception: unknown
+  exception: Error
 }
 

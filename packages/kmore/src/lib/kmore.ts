@@ -8,7 +8,7 @@ import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
 
-import type { BuilderPreProcessor, ResponsePreProcessor } from './base.js'
+import type { BuilderPreProcessor, ExceptionHandler, ResponsePreProcessor } from './base.js'
 import { KmoreBase } from './base.js'
 import { pagingPostProcessor, pagingPreProcessor } from './builder-processor/processor.index.js'
 import { createRefTables } from './builder.index.js'
@@ -105,8 +105,15 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
    */
   readonly wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
+  /**
+   * @default [pagingPreProcessor]
+   */
   readonly builderPreProcessors: BuilderPreProcessor[]
+  /**
+   * @default [pagingPostProcessor]
+   */
   readonly responsePreProcessors: ResponsePreProcessor[]
+  readonly exceptionHandlers: ExceptionHandler[]
 
   constructor(options: KmoreFactoryOpts<D, Context>) {
     super()
