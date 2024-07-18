@@ -212,9 +212,9 @@ describe(fileShortPath(import.meta.url), () => {
 function validatePagerRet(input: PageRawType<UserDTO> | undefined, len = 3): void {
   assert(input)
 
-  assert(Object.hasOwn(input, 'total'))
-  assert(Object.hasOwn(input, 'page'))
-  assert(Object.hasOwn(input, 'pageSize'))
+  assert(Object.hasOwn(input, 'total'), JSON.stringify(input))
+  assert(Object.hasOwn(input, 'page'), JSON.stringify(input))
+  assert(Object.hasOwn(input, 'pageSize'), JSON.stringify(input))
 
   const { total, page, pageSize } = input
   try {
