@@ -1,19 +1,13 @@
 import assert from 'node:assert'
 
-import type { BuilderPreProcessorOptions, KmoreBase, ResponsePreProcessorOptions } from '##/lib/base.js'
+import type { BuilderPreProcessorOptions, KmoreBase } from '##/lib/base.js'
 import { builderBindEvents } from '##/lib/builder.event.js'
 import { createBuilderProperties } from '##/lib/builder.props.js'
 import type { KmoreQueryBuilder } from '##/lib/builder.types.js'
 import { defaultPropDescriptor } from '##/lib/config.js'
-import type {
-  PageRawType,
-  PageWrapType,
-  PagingMeta,
-  PagingOptions,
-} from '##/lib/paging.types.js'
+import type { PagingOptions } from '##/lib/paging.types.js'
 import { builderApplyTransactingProxy } from '##/lib/proxy.apply.js'
-import { initPageTypeMapping, initPagingOptions, type _PagingOptions } from '##/lib/proxy.auto-paging.js'
-// import { initPageTypeMapping } from '##/lib/proxy.auto-paging.js'
+import { initPagingOptions, type _PagingOptions } from '##/lib/proxy.auto-paging.js'
 import { proxyGetThen } from '##/lib/proxy.get.then.js'
 import { extRefTableFnPropertySmartJoin } from '##/lib/smart-join.js'
 import { KmorePageKey } from '##/lib/types.js'
@@ -155,6 +149,11 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
   const b3 = builderPager
     .limit(pagingOptions.pageSize)
     .offset(offset >= 0 ? offset : 0) as unknown as KmoreQueryBuilder
+
+  void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
+    ...defaultPropDescriptor,
+    value: total,
+  })
 
   ret.builderPager = b3
   return ret

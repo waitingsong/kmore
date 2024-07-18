@@ -98,7 +98,6 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
         kmore,
         kmoreQueryId,
         kmoreTrxId,
-        pagingOptions,
         rowLockLevel,
         transactionalProcessed,
         trxPropagated,

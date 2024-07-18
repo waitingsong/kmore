@@ -5,14 +5,12 @@ import assert from 'node:assert'
 import type { KmoreBase, ResponsePreProcessorOptions } from './base.js'
 import type { CtxBuilderResultPreProcessorOptions } from './builder.types.js'
 import { defaultPropDescriptor } from './config.js'
-import type { PagingOptions } from './paging.types.js'
 import { KmoreProxyKey } from './types.js'
 
 
 interface ProcessThenRetOptions<Resp = unknown> extends Omit<CtxBuilderResultPreProcessorOptions<Resp>, 'response'> {
   kmoreQueryId: symbol
   input: Promise<Resp>
-  pagingOptions: PagingOptions
   transactionalProcessed: boolean | undefined
 }
 
@@ -24,7 +22,6 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
     kmore,
     kmoreQueryId,
     kmoreTrxId,
-    pagingOptions,
     rowLockLevel,
     transactionalProcessed,
     trxPropagated,
@@ -42,7 +39,6 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
       kmore,
       kmoreQueryId,
       kmoreTrxId,
-      pagingOptions,
       rowLockLevel,
       transactionalProcessed,
       trxPropagated,

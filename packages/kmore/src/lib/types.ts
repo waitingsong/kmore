@@ -240,6 +240,7 @@ export enum KmorePageKey {
    * @value 'counter' | 'pager'
    */
   PagingBuilderType = 'pagingType',
+  PagingMetaTotal = 'pagingMetaTotal',
 }
 export enum KmoreProxyKey {
   getThenProxy = 'KmoreGetThenProxy',
