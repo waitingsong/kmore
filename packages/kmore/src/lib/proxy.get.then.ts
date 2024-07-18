@@ -59,6 +59,10 @@ async function _getThenProxy(
   assert(pagingOptions, 'pagingOptions missing defined in builder')
 
   const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
+
+  const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
+  const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
+
   try {
     if (pagingOptions.enable && builderType !== KmoreBuilderType.counter && Array.isArray(builderPreProcessors)) {
       for (const processor of builderPreProcessors) {
@@ -70,9 +74,6 @@ async function _getThenProxy(
     // query response or response data
     // @ts-ignore _ori_then
     const getThenProxyRet = Reflect.apply(builder['_ori_then'] as AsyncMethodType, builder, [])
-
-    const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
-    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
 
     const response = await processThenRet({
       input: getThenProxyRet,
@@ -88,10 +89,43 @@ async function _getThenProxy(
     return done ? done(response) : response
   }
   catch (ex) {
+    assert(ex instanceof Error, 'ex should be an instance of Error')
+    const exception = ex
+
+    const opts = {
+      exception,
+      builder,
+      kmore,
+      kmoreQueryId,
+      kmoreTrxId,
+      rowLockLevel,
+      transactionalProcessed,
+      trxPropagated,
+      trxPropagateOptions,
+    }
+
+    const { exceptionProcessors } = kmore
+    if (exceptionProcessors.length) {
+      for (const processor of exceptionProcessors) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await processor(opts)
+        }
+        catch (ex2) {
+          opts.exception = ex2 as Error
+        }
+      }
+    }
+
+    if (opts.exception !== ex && ! opts.exception.cause) {
+      opts.exception.cause = ex
+    }
+
     if (reject) {
-      reject(ex)
+      reject(opts.exception)
       return
     }
-    throw ex
+    throw opts.exception
   }
 }
+

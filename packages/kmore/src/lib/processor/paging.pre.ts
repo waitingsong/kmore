@@ -32,7 +32,6 @@ export async function pagingPreProcessor(options: BuilderPreProcessorOptions): P
     kmore,
     builder: builderPager,
     thenHandler: proxyGetThen,
-    ctxExceptionHandler: void 0,
   })
   // const builderPagerSql = builderPagerPatched.toQuery()
   // console.info({ builderPageSql: builderPagerSql })

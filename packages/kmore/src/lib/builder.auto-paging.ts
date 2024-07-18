@@ -55,7 +55,6 @@ export async function pager<T = unknown>(options: PagerOptions): Promise<PageRaw
     kmore,
     builder: builderPager,
     thenHandler: proxyGetThen,
-    ctxExceptionHandler: options.ctxExceptionHandler,
   })
 
   // const builderPagerSql = builderPagerPatched.toQuery()

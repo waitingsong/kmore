@@ -47,7 +47,6 @@ export type KmoreQueryBuilder<
 
 export interface TbQueryBuilderOptions<Context> {
   ctx: Context
-  ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 
 
@@ -108,8 +107,6 @@ export type SmartJoin<
 ) => KmoreQueryBuilder<D, CaseConvert, TResult2, TResult2[]>
 
 
-export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
-
 export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
   builder: KmoreQueryBuilder
   kmore: KmoreBase
@@ -124,10 +121,6 @@ export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
    * @default {@link RowLockLevel}
    */
   rowLockLevel: RowLockLevel | undefined
-}
-
-export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
-  exception: unknown
 }
 
 

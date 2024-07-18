@@ -6,7 +6,6 @@ import type { KmoreBase } from './base.js'
 import { builderBindEvents } from './builder.event.js'
 import { createBuilderProperties } from './builder.props.js'
 import type {
-  CtxExceptionHandler,
   DbQueryBuilder,
   KmoreQueryBuilder,
   TbQueryBuilder,
@@ -54,7 +53,6 @@ export function createRefTables<
         refName,
         caseConvert,
         ctx2,
-        options?.ctxExceptionHandler,
       ) as DbQueryBuilder<Context, D, P, CaseType>
     } // must dynamically!!
 
@@ -79,7 +77,6 @@ function extRefTableFnProperty(
   refName: string,
   caseConvert: CaseType,
   ctx: unknown,
-  ctxExceptionHandler: CtxExceptionHandler | undefined,
 ): KmoreQueryBuilder {
 
   assert(caseConvert, 'caseConvert must be defined')
@@ -108,7 +105,6 @@ function extRefTableFnProperty(
     kmore,
     builder: refTable,
     thenHandler: proxyGetThen,
-    ctxExceptionHandler,
   })
 
   refTable = builderApplyTransactingProxy(kmore, refTable, ctx)

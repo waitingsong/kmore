@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  CtxExceptionHandler,
-  KmoreQueryBuilder,
-} from './builder.types.js'
+import type { KmoreQueryBuilder } from './builder.types.js'
 import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
 import type {
   CaseType,
@@ -95,19 +92,16 @@ export interface CreateQueryBuilderGetProxyOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
   thenHandler: (options: ProxyGetHandlerOptions) => KmoreQueryBuilder['then']
-  ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 
 export interface ProxyGetHandlerOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
   propKey: string | symbol
-  ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 export interface PagerOptions {
   kmore: KmoreBase
   builder: KmoreQueryBuilder
-  ctxExceptionHandler: CtxExceptionHandler | undefined
 }
 
 

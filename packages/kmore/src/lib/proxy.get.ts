@@ -4,38 +4,30 @@ import { defaultPropDescriptor } from './config.js'
 
 
 export function createQueryBuilderGetProxy(options: CreateQueryBuilderGetProxyOptions): KmoreQueryBuilder {
+  const { builder, kmore, thenHandler } = options
 
-  const {
-    kmore,
-    thenHandler,
-    ctxExceptionHandler,
-  } = options
-
-  void Object.defineProperty(options.builder, '_ori_then', {
+  void Object.defineProperty(builder, '_ori_then', {
     ...defaultPropDescriptor,
     writable: true,
-    value: options.builder.then,
+    value: builder.then,
   })
 
-  void Object.defineProperty(options.builder, 'then', {
+  void Object.defineProperty(builder, 'then', {
     ...defaultPropDescriptor,
     writable: true,
     value: thenHandler({ // proxyGetThen
       kmore,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      builder: options.builder,
+      builder,
       propKey: 'then',
-      ctxExceptionHandler,
     }),
   })
 
-  const ret = options.builder
-
-  void Object.defineProperty(ret, 'createQueryBuilderGetProxyKey', {
+  void Object.defineProperty(builder, 'createQueryBuilderGetProxyKey', {
     ...defaultPropDescriptor,
     value: Date.now(),
   })
 
-  return ret
+  return builder
 }
 
