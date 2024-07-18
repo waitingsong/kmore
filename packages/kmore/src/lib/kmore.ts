@@ -8,7 +8,7 @@ import type { Knex } from 'knex'
 // eslint-disable-next-line no-duplicate-imports, import/no-named-default
 import { default as _knex } from 'knex'
 
-import type { BuilderPreProcessor, ExceptionHandler, ResponsePreProcessor } from './base.js'
+import type { BuilderPreProcessor, ExceptionProcessor, ResponsePreProcessor } from './base.js'
 import { KmoreBase } from './base.js'
 import { createRefTables } from './builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
@@ -19,7 +19,7 @@ import {
   postProcessResponse,
   wrapIdentifier,
 } from './helper.js'
-import { pagingPostProcessor, pagingPreProcessor } from './processor/processor.index.js'
+import { pagingPostProcessor, pagingPreProcessor, trxOnExceptionProcessor } from './processor/processor.index.js'
 import { createTrxProperties } from './proxy.trx.js'
 import type {
   EventCallbacks,
@@ -113,7 +113,11 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
    * @default [pagingPostProcessor]
    */
   readonly responsePreProcessors: ResponsePreProcessor[]
-  readonly exceptionHandlers: ExceptionHandler[]
+  /**
+   * @default [trxOnExceptionProcessor]
+   */
+  readonly exceptionProcessors: ExceptionProcessor[]
+
 
   constructor(options: KmoreFactoryOpts<D, Context>) {
     super()
@@ -143,6 +147,7 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
 
     this.builderPreProcessors = options.builderPreProcessors ?? [pagingPreProcessor]
     this.responsePreProcessors = options.responsePreProcessors ?? [pagingPostProcessor]
+    this.exceptionProcessors = options.exceptionHandlers ?? [trxOnExceptionProcessor]
 
     /**
      * Table identifier case conversion,
@@ -346,8 +351,18 @@ export interface KmoreFactoryOpts<D, Ctx = unknown> {
    * @default rollback
    */
   trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
+  /**
+   * @default [pagingPreProcessor]
+   */
   builderPreProcessors?: BuilderPreProcessor[] | undefined
+  /**
+   * @default [pagingPostProcessor]
+   */
   responsePreProcessors?: ResponsePreProcessor[] | undefined
+  /**
+   * @default [trxOnExceptionProcessor]
+   */
+  exceptionHandlers?: ExceptionProcessor[] | undefined
 }
 
 export function KmoreFactory<D extends object, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {

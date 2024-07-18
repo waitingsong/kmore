@@ -47,7 +47,10 @@ export abstract class KmoreBase<Context = any> {
    * @default [pagingPostProcessor]
    */
   readonly abstract responsePreProcessors: ResponsePreProcessor[]
-  readonly abstract exceptionHandlers: ExceptionHandler[]
+  /**
+   * @default [trxOnExceptionProcessor]
+   */
+  readonly abstract exceptionProcessors: ExceptionProcessor[]
 
   /**
    * Start a transaction.
@@ -123,7 +126,7 @@ export type BuilderPreProcessor = (options: BuilderPreProcessorOptions) => Promi
  */
 export type ResponsePreProcessor<T = unknown> = (options: ResponsePreProcessorOptions<T>) => Promise<T>
 
-export type ExceptionHandler = (options: ExceptionHandlerOptions) => Promise<never>
+export type ExceptionProcessor = (options: ExceptionHandlerOptions) => Promise<never>
 
 export interface ResponsePreProcessorOptions<Resp = unknown> {
   kmore: KmoreBase
