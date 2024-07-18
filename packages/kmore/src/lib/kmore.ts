@@ -14,11 +14,7 @@ import { createRefTables } from './builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { initialConfig } from './config.js'
 import type { PostProcessInput } from './helper.js'
-import {
-  defaultWrapIdentifierIgnoreRule,
-  postProcessResponse,
-  wrapIdentifier,
-} from './helper.js'
+import { defaultWrapIdentifierIgnoreRule, postProcessResponse, wrapIdentifier } from './helper.js'
 import { pagingPostProcessor, pagingPreProcessor, trxOnExceptionProcessor } from './processor/processor.index.js'
 import { createTrxProperties } from './proxy.trx.js'
 import type {
