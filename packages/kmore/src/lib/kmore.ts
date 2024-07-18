@@ -5,7 +5,7 @@ import assert from 'node:assert'
 
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
-// eslint-disable-next-line no-duplicate-imports, import/no-named-default
+// eslint-disable-next-line import/no-extraneous-dependencies, import/no-named-default
 import { default as _knex } from 'knex'
 
 import type { BuilderPreProcessor, ExceptionProcessor, ResponsePreProcessor } from './base.js'
@@ -19,6 +19,7 @@ import { pagingPostProcessor, pagingPreProcessor, trxOnExceptionProcessor } from
 import { createTrxProperties } from './proxy.trx.js'
 import type {
   EventCallbacks,
+  KmoreFactoryOpts,
   KmoreTransaction,
   KmoreTransactionConfig,
   KnexConfig,
@@ -315,62 +316,6 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
 
 }
 
-export interface KmoreFactoryOpts<D, Ctx = unknown> {
-  config: KnexConfig
-  dict?: DbDict<D>
-  instanceId?: string | symbol
-  dbh?: Knex
-  dbId?: string
-  /**
-   * @docs https://knexjs.org/guide/interfaces.html#start
-   * @docs https://knexjs.org/guide/interfaces.html#query
-   * @docs https://knexjs.org/guide/interfaces.html#query-response
-   */
-  eventCallbacks?: EventCallbacks<Ctx> | undefined
-  /**
-   * Table identifier case conversion,
-   * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
-   * @default CaseType.snake
-   * @docs https://knexjs.org/guide/#wrapidentifier
-   */
-  wrapIdentifierCaseConvert?: CaseType | undefined
-
-  /**
-   * Rules ignoring table identifier case conversion,
-   * @docs https://knexjs.org/guide/#wrapidentifier
-   */
-  wrapIdentifierIgnoreRule?: WrapIdentifierIgnoreRule | undefined
-
-  /**
-   * Auto transaction action (rollback|commit|none) on error (Rejection or Exception),
-   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
-   * @default rollback
-   */
-  trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
-  /**
-   * @default [pagingPreProcessor]
-   */
-  builderPreProcessors?: BuilderPreProcessor[] | undefined
-  /**
-   * @default [pagingPostProcessor]
-   */
-  responsePreProcessors?: ResponsePreProcessor[] | undefined
-  /**
-   * @default [trxOnExceptionProcessor]
-   */
-  exceptionHandlers?: ExceptionProcessor[] | undefined
-}
-
-export function KmoreFactory<D extends object, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {
-  const km = new Kmore<D, Ctx>(options)
-  return km
-}
-
-export function createDbh(knexConfig: KnexConfig): Knex {
-  const inst = _knex.knex(knexConfig)
-  return inst
-}
-
 
 const fnKeys = [
   'CASE',
@@ -413,3 +358,7 @@ function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) =>
 }
 
 
+export function createDbh(knexConfig: KnexConfig): Knex {
+  const inst = _knex.knex(knexConfig)
+  return inst
+}

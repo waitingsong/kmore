@@ -2,8 +2,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import type { TraceContext, Span } from '@mwcp/otel'
 import { CaseType } from '@waiting/shared-types'
+import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
+import type { BuilderPreProcessor, ExceptionProcessor, ResponsePreProcessor } from './base.js'
 import type { KmoreQueryBuilder, QueryBuilderExtKey } from './builder.types.js'
 import type { TrxPropagateOptions } from './trx.types.js'
 
@@ -264,4 +266,52 @@ export interface BuilderInput {
   ctx?: unknown
   caseConvert?: CaseType | undefined
 }
+
+
+export interface KmoreFactoryOpts<D, Ctx = unknown> {
+  config: KnexConfig
+  dict?: DbDict<D>
+  instanceId?: string | symbol
+  dbh?: Knex
+  dbId?: string
+  /**
+   * @docs https://knexjs.org/guide/interfaces.html#start
+   * @docs https://knexjs.org/guide/interfaces.html#query
+   * @docs https://knexjs.org/guide/interfaces.html#query-response
+   */
+  eventCallbacks?: EventCallbacks<Ctx> | undefined
+  /**
+   * Table identifier case conversion,
+   * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
+   * @default CaseType.snake
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  wrapIdentifierCaseConvert?: CaseType | undefined
+
+  /**
+   * Rules ignoring table identifier case conversion,
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  wrapIdentifierIgnoreRule?: WrapIdentifierIgnoreRule | undefined
+
+  /**
+   * Auto transaction action (rollback|commit|none) on error (Rejection or Exception),
+   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * @default rollback
+   */
+  trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
+  /**
+   * @default [pagingPreProcessor]
+   */
+  builderPreProcessors?: BuilderPreProcessor[] | undefined
+  /**
+   * @default [pagingPostProcessor]
+   */
+  responsePreProcessors?: ResponsePreProcessor[] | undefined
+  /**
+   * @default [trxOnExceptionProcessor]
+   */
+  exceptionHandlers?: ExceptionProcessor[] | undefined
+}
+
 
