@@ -247,7 +247,6 @@ export enum KmoreProxyKey {
   getThenProxyProcessed = 'KmoreGetThenProxyProcessed',
 }
 export enum KmoreBuilderType {
-  normal = 'normal',
   counter = 'counter',
   pager = 'pager',
 }

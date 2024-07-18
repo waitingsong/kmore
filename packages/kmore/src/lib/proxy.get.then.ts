@@ -70,7 +70,7 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
         trxPropagated,
         trxPropagateOptions,
       })
-      done ? done(response) : response
+      return done ? done(response) : response
     }
     catch (ex) {
       if (reject) {

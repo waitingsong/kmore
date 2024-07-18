@@ -119,7 +119,6 @@ async function genBuilderForPaging(options: BuilderPreProcessorOptions): Promise
 
 
   const total = await builderCounter
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then((rows: { total?: number | string, [k: string]: unknown }[]) => {
       assert(Array.isArray(rows), 'rows should be an array, which is the result of count query of autoPaging')
       if (rows.length > 0) {
