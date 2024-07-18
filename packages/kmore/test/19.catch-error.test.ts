@@ -32,12 +32,12 @@ describe(fileShortPath(import.meta.url), () => {
           .select('uid')
           .where('uid', 1)
           .then(() => {
-            return Promise.reject(errorMsg)
+            const res = Promise.reject(errorMsg)
+            return res
           })
       }
       catch (ex) {
-        assert(ex instanceof Error)
-        assert(ex.message === errorMsg)
+        assert(ex === errorMsg)
         return
       }
       assert(false, 'Should throw error')
