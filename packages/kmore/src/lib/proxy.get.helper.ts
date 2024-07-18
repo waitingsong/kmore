@@ -25,7 +25,7 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
     ...options,
     response: resp,
   }
-  // @ts-expect-error
+  // @ts-ignore
   delete opts['input']
 
   for (const processor of responsePreProcessors) {
