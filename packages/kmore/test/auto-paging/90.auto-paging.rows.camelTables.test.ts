@@ -45,8 +45,10 @@ describe(fileShortPath(import.meta.url), () => {
       }
       catch (ex) {
         assert(ex instanceof Error)
-        assert(ex.message.includes('first() is not supported with autoPaging()'))
+        assert(ex.message.includes('first() is not supported with autoPaging()'), ex.message)
+        return
       }
+      assert(false, 'Should throw Error')
     })
 
     it('all', async () => {

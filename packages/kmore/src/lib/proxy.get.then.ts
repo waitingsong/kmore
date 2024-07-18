@@ -43,22 +43,21 @@ export function proxyGetThen(options: ProxyGetHandlerOptions): KmoreQueryBuilder
     assert(pagingOptions, 'pagingOptions missing defined in builder')
 
     const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
-
-    if (pagingOptions.enable && builderType !== KmoreBuilderType.counter && Array.isArray(builderPreProcessors)) {
-      for (const processor of builderPreProcessors) {
-        assert(typeof processor === 'function', 'builderPreProcessors should be an array of functions')
-        // eslint-disable-next-line no-await-in-loop
-        builder = (await processor({ builder, kmore })).builder
-      }
-    }
-    // query response or response data
-    // @ts-ignore _ori_then
-    const getThenProxyRet = Reflect.apply(builder['_ori_then'] as AsyncMethodType, builder, [])
-
-    const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
-    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
-
     try {
+      if (pagingOptions.enable && builderType !== KmoreBuilderType.counter && Array.isArray(builderPreProcessors)) {
+        for (const processor of builderPreProcessors) {
+          assert(typeof processor === 'function', 'builderPreProcessors should be an array of functions')
+          // eslint-disable-next-line no-await-in-loop
+          builder = (await processor({ builder, kmore })).builder
+        }
+      }
+      // query response or response data
+      // @ts-ignore _ori_then
+      const getThenProxyRet = Reflect.apply(builder['_ori_then'] as AsyncMethodType, builder, [])
+
+      const kmoreTrxId = kmore.getTrxByKmoreQueryId(kmoreQueryId)?.kmoreTrxId
+      const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
+
       const response = await processThenRet({
         input: getThenProxyRet,
         builder,
