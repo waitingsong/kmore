@@ -68,7 +68,7 @@ describe(fileShortPath(import.meta.url), () => {
         return
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
   })
 

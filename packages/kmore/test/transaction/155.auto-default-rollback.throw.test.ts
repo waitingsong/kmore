@@ -33,16 +33,17 @@ describe(fileShortPath(import.meta.url), () => {
     it('throw from .then()', async () => {
       const trx = await km.transaction()
       assert(trx)
+      const msg = 'debug test error'
 
       try {
         await update(km, trx, newTime1)
         await readWithoutThen(km, trx)
           .then(() => {
-            throw new Error('debug test error')
+            throw new Error(msg)
           })
       }
       catch (ex) {
-        assert(ex instanceof Error)
+        assert(ex === msg)
         assert(! trx.isCompleted())
 
         const currCtime2 = await read(km)
@@ -78,7 +79,7 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
 
