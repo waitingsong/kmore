@@ -51,6 +51,8 @@ export function trxTrace(options: TrxTraceOptions): void {
     attr,
   } = options
 
+  if (! span) { return }
+
   let attrs: Attributes = {}
   if (trxPropagateOptions) {
     const path = 'path' in trxPropagateOptions && trxPropagateOptions.path

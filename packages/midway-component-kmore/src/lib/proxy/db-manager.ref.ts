@@ -198,9 +198,6 @@ function proxyBuilder(options: ProxyBuilderOptions): KmoreQueryBuilder {
 
 function transacting(key: string, options: ProxyBuilderOptions): KmoreQueryBuilder {
   const { dbSourceManager, traceSvc, targetProperty } = options
-  if (! traceSvc.isStarted) {
-    return targetProperty
-  }
 
   // @ts-ignore
   assert(typeof targetProperty[key] === 'function', `targetProperty.${key} is not a function`)

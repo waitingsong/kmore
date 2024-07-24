@@ -168,7 +168,7 @@ export function TraceQueryRespEvent(options: TraceEventOptions): void {
   }
 
   traceSvc.addEvent(span, input, { logCpuUsage: false, logMemoryUsage: false })
-  traceSvc.endSpan(span)
+  traceSvc.endSpan({ span })
 
   queryUidSpanMap.delete(kmoreQueryId)
 }
@@ -206,8 +206,11 @@ export function TraceQueryExceptionEvent(options: TraceEventOptions): void {
     [AttrNames.LogLevel]: 'error',
   }
   traceSvc.setAttributes(span, attrs)
-  traceSvc.endSpan(span, {
-    code: SpanStatusCode.ERROR,
+  traceSvc.endSpan({
+    span,
+    spanStatusOptions: {
+      code: SpanStatusCode.ERROR,
+    },
     // @FIXME
     // error: exError ?? exData ?? new Error('unknown error'),
   })
@@ -256,7 +259,7 @@ export function traceFinishTrx(options: TraceFinishTrxOptions): void {
     kmoreTrxId: kmoreTrxId.toString(),
   }
   traceSvc.addEvent(span, event, { logCpuUsage: false, logMemoryUsage: false })
-  traceSvc.endSpan(span)
+  traceSvc.endSpan({ span })
   trxSpanMap.delete(kmoreTrxId)
 }
 
@@ -299,7 +302,7 @@ export function traceCommitRollbackTrx(options: TraceCommitRollbackTrxOptions): 
   }
   traceSvc.addEvent(span, event)
   if (stage === 'end') {
-    traceSvc.endSpan(span)
+    traceSvc.endSpan({ span })
     trxSpanMap.delete(kmoreTrxId)
   }
 }

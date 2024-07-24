@@ -34,10 +34,7 @@ export function proxyKnex(options: ProxyKnexOptions): ProxyKnexOptions['targetPr
   switch (options.propKey) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     case BuilderKeys.transaction: {
-      if (options.traceSvc.isStarted) {
-        return knexTransactionTracing(options)
-      }
-      return options.targetProperty
+      return knexTransactionTracing(options)
     }
 
     default:
@@ -119,11 +116,6 @@ function createProxyTrxCommitRollback(options: TrxCommitRollbackOptions): KmoreT
 
   assert(['commit', 'rollback'].includes(op), `unknown op: ${op}`)
   assert(typeof trx[op] === 'function', `trx.${op} is not a function`)
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (! traceSvc?.isStarted) {
-    return trx
-  }
 
   const backName = `__${op}__`
   // @ts-ignore
