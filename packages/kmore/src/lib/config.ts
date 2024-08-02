@@ -1,4 +1,5 @@
-import type { KmoreEvent, KnexConfig } from './types.js'
+import type { KmoreEvent } from './kmore.js'
+import type { KnexConfig } from './types.js'
 
 
 export const defaultPropDescriptor: PropertyDescriptor = {

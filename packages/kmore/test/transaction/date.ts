@@ -1,4 +1,5 @@
 
+export const nowTime = new Date()
 export const date0 = new Date().toLocaleDateString()
 export const currCtime = date0
 export const date1 = new Date('3000/1/1').toLocaleDateString()

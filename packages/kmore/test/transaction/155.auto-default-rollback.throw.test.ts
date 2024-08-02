@@ -30,22 +30,52 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto default(rollback) work', () => {
-    it('throw from .then()', async () => {
+    it('rollback when throw in .then(), even trxActionOnError:"commit"', async () => {
+      const currCtime2 = await read(km)
       const trx = await km.transaction()
       assert(trx)
+      const msg = 'debug test error'
 
       try {
         await update(km, trx, newTime1)
         await readWithoutThen(km, trx)
           .then(() => {
-            throw new Error('debug test error')
+            throw new Error(msg)
           })
       }
       catch (ex) {
         assert(ex instanceof Error)
-        assert(! trx.isCompleted())
+        assert(ex.message === msg)
+        assert(trx.isCompleted())
 
-        const currCtime2 = await read(km)
+        assert(currCtime2)
+        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
+        return
+      }
+      finally {
+        await trx.rollback()
+      }
+      assert(false, 'Should throw error')
+    })
+
+    it('rollback when return reject(error) in .then(), even trxActionOnError:"commit"', async () => {
+      const currCtime2 = await read(km)
+      const trx = await km.transaction()
+      assert(trx)
+      const msg = 'debug test error'
+
+      try {
+        await update(km, trx, newTime1)
+        await readWithoutThen(km, trx)
+          .then(() => {
+            return Promise.reject(new Error(msg))
+          })
+      }
+      catch (ex) {
+        assert(ex instanceof Error)
+        assert(ex.message === msg)
+        assert(trx.isCompleted())
+
         assert(currCtime2)
         assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
         return
@@ -78,7 +108,7 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
 

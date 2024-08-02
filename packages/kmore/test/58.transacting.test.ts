@@ -36,14 +36,14 @@ describe(fileShortPath(import.meta.url), () => {
         .where('uid', 1)
 
       const { kmoreTrxId } = trx
-      const qidMap = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(qidMap && qidMap.size > 0)
       assert(qidMap.has(kmoreQueryId))
 
       await trx.commit()
       assert(ret && Array.isArray(ret))
       assert(ret.length === 1)
-      const qidMap2 = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap2 = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(! qidMap2)
     })
 
@@ -59,7 +59,7 @@ describe(fileShortPath(import.meta.url), () => {
         .where('uid', 1)
 
       const { kmoreTrxId } = trx
-      const qidMap = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(qidMap && qidMap.size > 0)
       assert(qidMap.has(kmoreQueryId))
 
@@ -68,7 +68,7 @@ describe(fileShortPath(import.meta.url), () => {
       await trx.commit()
       assert(ret && Array.isArray(ret))
       assert(ret.length === 1)
-      const qidMap2 = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap2 = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(! qidMap2)
     })
 
@@ -84,13 +84,13 @@ describe(fileShortPath(import.meta.url), () => {
         .where('uid', 1)
 
       const { kmoreTrxId } = trx
-      const qidMap = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(qidMap && qidMap.size > 0)
       assert(qidMap.has(kmoreQueryId))
 
       await pm
       await trx.rollback()
-      const qidMap2 = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap2 = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(! qidMap2)
     })
 

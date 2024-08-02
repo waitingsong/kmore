@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
-import type { KmoreQueryBuilder } from './builder.types.js'
+import type { KmoreQueryBuilder } from './builder/builder.types.js'
+import { processJoinTableColumnAlias } from './builder/smart-join.js'
 import { initKmoreEvent } from './config.js'
-import { processJoinTableColumnAlias } from './smart-join.js'
+import type { EventCallbacks, Kmore, KmoreEvent } from './kmore.js'
 import type {
-  EventCallbacks,
-  KmoreEvent,
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,
@@ -15,14 +14,14 @@ import type {
 } from './types.js'
 
 
-export interface CallCbOptionsBase<Ctx = any> {
-  ctx: Ctx | undefined
+export interface CallCbOptionsBase {
+  ctx: Kmore | undefined
   dbId: string
-  cbs: EventCallbacks<Ctx> | undefined
+  cbs: EventCallbacks | undefined
   kmoreQueryId: symbol
 }
 
-export interface CallCbOnStartOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnStartOptions extends CallCbOptionsBase {
   builder: KmoreQueryBuilder
 }
 
@@ -43,7 +42,7 @@ export function callCbOnStart(options: CallCbOnStartOptions): void {
   }
 }
 
-export interface CallCbOnQueryOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnQueryOptions extends CallCbOptionsBase {
   data: OnQueryData
 }
 
@@ -63,7 +62,7 @@ export function callCbOnQuery(options: CallCbOnQueryOptions): void {
   }
 }
 
-export interface CallCbOnQueryRespOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnQueryRespOptions extends CallCbOptionsBase {
   _resp: QueryResponse
   respRaw: OnQueryRespRaw
 }
@@ -84,7 +83,7 @@ export function callCbOnQueryResp(options: CallCbOnQueryRespOptions): void {
   }
 }
 
-export interface CallCbOnQueryErrorOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnQueryErrorOptions extends CallCbOptionsBase {
   err: OnQueryErrorErr
   data: OnQueryErrorData
 }

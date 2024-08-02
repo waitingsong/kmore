@@ -28,10 +28,10 @@ describe(fileShortPath(import.meta.url), () => {
       assert(trx)
       const { kmoreTrxId } = trx
       assert(typeof kmoreTrxId === 'symbol')
-      assert(km.trxMap.has(kmoreTrxId))
+      assert(km.getTrxByTrxId(kmoreTrxId))
 
       await trx.commit()
-      assert(! km.trxMap.has(kmoreTrxId))
+      assert(! km.getTrxByTrxId(kmoreTrxId))
     })
 
     it('rollback', async () => {
@@ -39,10 +39,10 @@ describe(fileShortPath(import.meta.url), () => {
       assert(trx)
       const { kmoreTrxId } = trx
       assert(typeof kmoreTrxId === 'symbol')
-      assert(km.trxMap.has(kmoreTrxId))
+      assert(km.getTrxByTrxId(kmoreTrxId))
 
       await trx.rollback()
-      assert(! km.trxMap.has(kmoreTrxId))
+      assert(! km.getTrxByTrxId(kmoreTrxId))
     })
 
   })

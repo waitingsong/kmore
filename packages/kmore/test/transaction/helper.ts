@@ -15,7 +15,7 @@ export async function updateWithoutTrx(
     .where('uid', 1)
     .returning('ctime')
     .then(rows => rows?.[0]?.ctime as Date)
-    .then(ctime => ctime?.toLocaleDateString())
+    .then(ctime => ctime.toLocaleDateString())
 
   return str
 }

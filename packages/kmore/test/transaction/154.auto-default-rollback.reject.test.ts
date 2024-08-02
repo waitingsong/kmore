@@ -33,17 +33,19 @@ describe(fileShortPath(import.meta.url), () => {
     it('rejection from .then()', async () => {
       const trx = await km.transaction()
       assert(trx)
+      const msg = 'debug test error'
 
       try {
         await update(km, trx, newTime1)
         await readWithoutThen(km, trx)
           .then(() => {
-            return Promise.reject('debug test error')
+            return Promise.reject(msg)
           })
       }
       catch (ex) {
         assert(ex instanceof Error)
-        assert(! trx.isCompleted())
+        assert(ex.message === msg, ex.message)
+        assert(trx.isCompleted())
 
         const currCtime2 = await read(km)
         assert(currCtime2)
@@ -78,7 +80,7 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
     it('rollback by invalid sql query always, although auto commit. without tailing then()', async () => {
@@ -102,7 +104,7 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
     it('reuse tbUser', async () => {

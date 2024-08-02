@@ -1,9 +1,10 @@
 import assert from 'node:assert'
 
+import { defaultPropDescriptor } from '../config.js'
+import { KmorePageKey, SmartKey } from '../types.js'
+
 import type { KmoreQueryBuilder } from './builder.types.js'
-import { defaultPropDescriptor } from './config.js'
 import { genColumnMapping, patchWhereColumnAlias, splitScopedColumn } from './smart-join.helper.js'
-import { KmorePageKey, SmartKey } from './types.js'
 
 
 export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQueryBuilder {
@@ -46,8 +47,7 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
 }
 
 
-export function extRefTableFnPropertySmartJoin(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
-
+export function extRefTableFnPropertySmartJoin(refTable: KmoreQueryBuilder): void {
   Object.values(SmartKey).forEach((joinType) => {
     if (typeof refTable[joinType] === 'function') { return }
 
@@ -59,8 +59,6 @@ export function extRefTableFnPropertySmartJoin(refTable: KmoreQueryBuilder): Kmo
       ) => smartJoinBuilder(refTable, joinType, scopedColumnBeJoined, scopedColumn),
     })
   })
-
-  return refTable
 }
 
 function smartJoinBuilder(

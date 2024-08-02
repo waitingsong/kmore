@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 
 import type { PageRawType } from '##/index.js'
-import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
+import { initPagingMeta } from '##/lib/proxy/proxy.auto-paging.js'
 import type { UserDTO } from '#@/test.model.js'
 
 

@@ -27,29 +27,108 @@ describe(fileShortPath(import.meta.url), () => {
   beforeEach(async () => {
     await updateWithoutTrx(km, new Date())
   })
-  describe('Should work', () => {
-    it('auto none', async () => {
-      const trx = await km.transaction()
+  describe('Should auto (none) work', () => {
+    const msg = 'debug test error'
+
+    it('case 1', async () => {
+      const trx = await km.transaction({ trxActionOnError: 'none' })
       assert(trx)
       const tbUser = km.camelTables.tb_user()
       const { kmoreQueryId } = tbUser
-      const pm = tbUser
+
+      try {
+        await tbUser
+          .transacting(trx)
+          .forUpdate()
+          .select('*')
+          .where('uid', 1)
+          .then(() => {
+            return Promise.reject(msg)
+          })
+      }
+      catch (ex) {
+        assert(ex instanceof Error)
+        assert(ex.message === msg, ex.message)
+        assert(! trx.isCompleted())
+
+        const { kmoreTrxId } = trx
+        const qidMap = km.getQueryIdListByTrxId(kmoreTrxId)
+        assert(qidMap && qidMap.size > 0)
+        assert(qidMap.has(kmoreQueryId))
+        return
+      }
+      finally {
+        await trx.rollback()
+      }
+
+      assert(false, 'Should throw error')
+    })
+
+    it('case 2', async () => {
+      const trx = await km.transaction({ trxActionOnError: 'none' })
+      assert(trx)
+      const tbUser = km.camelTables.tb_user()
+      const { kmoreQueryId } = tbUser
+      const builder = tbUser
         .transacting(trx)
         .forUpdate()
         .select('*')
         .where('uid', 1)
 
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
+      const sql = builder.toString()
+      void sql
+      assert(sql, 'sql empty')
+      assert(sql === 'select * from "tb_user" where "uid" = 1 for update', sql)
+
       const { kmoreTrxId } = trx
-      const qidMap = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(qidMap && qidMap.size > 0)
       assert(qidMap.has(kmoreQueryId))
 
-      await pm
+      const ret = await builder
+      assert(Array.isArray(ret))
+      assert(ret.length === 1)
+
+      assert(trx.isCompleted() === false)
+
       await trx.rollback()
-      const qidMap2 = km.trxIdQueryMap.get(kmoreTrxId)
+      const qidMap2 = km.getQueryIdListByTrxId(kmoreTrxId)
       assert(! qidMap2)
     })
 
+    it('case 3', async () => {
+      const trx = await km.transaction({ trxActionOnError: 'none' })
+      assert(trx)
+      const tbUser = km.camelTables.tb_user()
+      const { kmoreQueryId } = tbUser
+      const builder = tbUser
+        .transacting(trx)
+
+      const builder2 = builder
+        .forUpdate()
+        .select('*')
+        .where('uid', 1)
+
+      // @ts-expect-error - no await
+      assert(builder2 === builder)
+
+      const { kmoreTrxId } = trx
+      const qidMap = km.getQueryIdListByTrxId(kmoreTrxId)
+      assert(qidMap && qidMap.size > 0)
+      assert(qidMap.has(kmoreQueryId))
+
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+      const ret = await builder2 as unknown as unknown[]
+      assert(Array.isArray(ret))
+      assert(ret.length === 1)
+
+      assert(trx.isCompleted() === false)
+
+      await trx.rollback()
+      const qidMap2 = km.getQueryIdListByTrxId(kmoreTrxId)
+      assert(! qidMap2)
+    })
 
   })
 

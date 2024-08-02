@@ -1,7 +1,18 @@
 
+export type {
+  BuilderProcessor,
+  BuilderProcessorOptions,
+  ExceptionProcessor,
+  ExceptionHandlerOptions,
+  ResponseProcessor,
+  ResponseProcessorOptions,
+  TransactionProcessor,
+  TransactionProcessorOptions,
+} from './kmore.js'
 export * from './kmore.js'
+export * from './kmore.factory.js'
 export * from './types.js'
-export * from './builder.types.js'
+export * from './builder/builder.types.js'
 export type { QueryBuilderExtMethod } from './knex.patch.types.js'
 export type {
   PagingOptions,

@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { fileShortPath } from '@waiting/shared-core'
 
 import { KmoreFactory, type PageRawType } from '##/index.js'
-import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
+import { initPagingMeta } from '##/lib/proxy/proxy.auto-paging.js'
 import { countTbUser, deleteRow } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
@@ -212,9 +212,9 @@ describe(fileShortPath(import.meta.url), () => {
 function validatePagerRet(input: PageRawType<UserDTO> | undefined, len = 3): void {
   assert(input)
 
-  assert(Object.hasOwn(input, 'total'))
-  assert(Object.hasOwn(input, 'page'))
-  assert(Object.hasOwn(input, 'pageSize'))
+  assert(Object.hasOwn(input, 'total'), JSON.stringify(input))
+  assert(Object.hasOwn(input, 'page'), JSON.stringify(input))
+  assert(Object.hasOwn(input, 'pageSize'), JSON.stringify(input))
 
   const { total, page, pageSize } = input
   try {

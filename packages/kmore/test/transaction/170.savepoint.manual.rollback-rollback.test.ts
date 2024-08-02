@@ -38,9 +38,9 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should savepoint() work', () => {
     it('normal', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: 'rollback' })
       assert(trx)
-      assert(trx.trxActionOnEnd === 'rollback')
+      assert(trx.trxActionOnError === 'rollback')
 
       const t1u = await update(km, trx, newTime1)
       console.log({ t1u, file: fileShortPath(import.meta.url) })
