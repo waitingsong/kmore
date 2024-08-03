@@ -5,6 +5,8 @@ import type { Application, IMidwayContainer, JsonResp } from '@mwcp/share'
 import { genCurrentDirname } from '@waiting/shared-core'
 import type { Response, SuperTest, Test } from 'supertest'
 
+import type { TrxStatusService } from '##/index.js'
+
 
 export const testDir = genCurrentDirname(import.meta.url)
 export const baseDir = join(testDir, '..')
@@ -35,6 +37,7 @@ export interface TestConfig {
   container: IMidwayContainer
   host: string
   httpRequest: SuperTest<Test>
+  trxStatusService: TrxStatusService
 }
 
 const testAppDir = join(testDir, 'fixtures', 'base-app')

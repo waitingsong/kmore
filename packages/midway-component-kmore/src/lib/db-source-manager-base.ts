@@ -15,7 +15,7 @@ import type {
 import type { DbConfig } from './types.js'
 
 
-export abstract class AbstractDbSourceManager<SourceName extends string = string, D extends object = object, Ctx extends Context = Context>
+export abstract class AbstractDbSourceManager<SourceName extends string = string, D extends object = object>
   extends DataSourceManager<Kmore | undefined> {
 
   // kmoreQueryId => QuerySpanInfo
@@ -23,16 +23,16 @@ export abstract class AbstractDbSourceManager<SourceName extends string = string
   // kmoreTrxId => QuerySpanInfo
   readonly trxSpanMap = new Map<symbol, QuerySpanInfo>()
 
-  declare dataSource: Map<SourceName, Kmore<D, Ctx>>
+  declare dataSource: Map<SourceName, Kmore<D>>
 
   declare getDataSource: <Db extends object = D>(dataSourceName: SourceName)
-  => string extends SourceName ? Kmore<Db, Ctx> | undefined : Kmore<Db, Ctx>
+  => string extends SourceName ? Kmore<Db> | undefined : Kmore<Db>
 
   declare createInstance: <Db extends object = D>(
-    config: DbConfig<D, Ctx>,
+    config: DbConfig<D>,
     clientName: SourceName,
     options?: CreateInstanceOptions,
-  ) => Promise<Kmore<Db, Ctx> | undefined>
+  ) => Promise<Kmore<Db> | undefined>
 
 
   abstract getDbConfigByDbId(dbId: SourceName): DbConfig | undefined
@@ -45,6 +45,7 @@ export abstract class AbstractDbSourceManager<SourceName extends string = string
 
   abstract getTrxSpanInfoByQueryId(sourceName: SourceName, queryId: symbol): QuerySpanInfo | undefined
 
+  abstract getWebContext(): Context | undefined
 }
 
 export interface CreateSpanOptions {

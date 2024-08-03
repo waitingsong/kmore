@@ -2,6 +2,12 @@
 import assert from 'node:assert'
 
 import {
+  type AsyncContextManager,
+  App,
+  ApplicationContext,
+  ASYNC_CONTEXT_KEY,
+  ASYNC_CONTEXT_MANAGER_KEY,
+  IMidwayContainer,
   Init,
   Inject,
   Logger as _Logger,
@@ -10,7 +16,6 @@ import {
 import { ILogger } from '@midwayjs/logger'
 import {
   Attributes,
-  OtelConfigKey,
   setSpan,
   Span,
   SpanKind,
@@ -18,18 +23,24 @@ import {
   TraceInit,
   TraceService,
 } from '@mwcp/otel'
-import { Context, MConfig } from '@mwcp/share'
+import { Application, Context, MConfig } from '@mwcp/share'
+import { genError } from '@waiting/shared-core'
 import {
-  EventCallbacks,
-  Kmore,
-  KmoreEvent,
+  type BuilderProcessorOptions,
+  type ResponseProcessorOptions,
+  type ExceptionHandlerOptions,
+  type KmoreFactoryOpts,
+  type QuerySpanInfo,
+  type EventCallbacks,
+  type KmoreEvent,
+  type Kmore,
+  type TransactionProcessorOptions,
   KmoreFactory,
-  KmoreFactoryOpts,
-  QuerySpanInfo,
   getCurrentTime,
 } from 'kmore'
 
 import { AbstractDbSourceManager } from './db-source-manager-base.js'
+import { genCallerKey } from './propagation/trx-status.helper.js'
 import {
   traceStartEvent,
   TraceQueryEvent,
@@ -38,18 +49,25 @@ import {
   TraceStartEventOptions,
   TraceEventOptions,
 } from './tracer-helper.js'
+import { TrxStatusService } from './trx-status.service.js'
 import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
 
 
 @Singleton()
-export class DbSourceManager<SourceName extends string = string, D extends object = object, Ctx extends Context = Context>
-  extends AbstractDbSourceManager<SourceName, D, Ctx> {
+export class DbSourceManager<SourceName extends string = string, D extends object = object>
+  extends AbstractDbSourceManager<SourceName, D> {
 
   @MConfig(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
+
+  @App() readonly app: Application
+  @ApplicationContext() readonly applicationContext: IMidwayContainer
 
   @_Logger() private readonly logger: ILogger
 
   @Inject() baseDir: string
+
+  @Inject() readonly trxStatusSvc: TrxStatusService
+  @Inject() readonly traceService: TraceService
 
   @TraceInit(`INIT ${ConfigKey.namespace}.DbSourceManager.init()`)
   @Init()
@@ -69,20 +87,49 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
     return dbConfig
   }
 
+  getWebContext(): Context | undefined {
+    try {
+      const contextManager: AsyncContextManager = this.applicationContext.get(
+        ASYNC_CONTEXT_MANAGER_KEY,
+      )
+      const ctx = contextManager.active().getValue(ASYNC_CONTEXT_KEY) as Context | undefined
+      return ctx
+    }
+    catch (ex) {
+      void ex
+      // console.warn(new Error('getWebContext() failed', { cause: ex }))
+      return void 0
+    }
+  }
+
+  getWebContextThenApp(): Context | Application {
+    try {
+      const webContext = this.getWebContext()
+      assert(webContext, 'getActiveContext() webContext should not be null, maybe this calling is not in a request context')
+      return webContext
+    }
+    catch (ex) {
+      console.warn('getWebContextThenApp() failed', ex)
+      return this.app
+    }
+  }
+
   /**
    * 创建单个实例
    */
   protected async createDataSource<Db extends object>(
-    config: DbConfig<Db, Ctx>,
+    config: DbConfig<Db>,
     dataSourceName: SourceName,
     cacheDataSource = true,
-  ): Promise<Kmore<Db, Ctx> | undefined> {
+  ): Promise<Kmore<Db> | undefined> {
 
     const cacheInst = cacheDataSource ? this.getDataSource<Db>(dataSourceName) : null
     if (cacheDataSource && cacheInst) {
       return cacheInst
     }
     const inst = await this._createDataSource(config, dataSourceName, cacheDataSource)
+    assert(inst, `createDataSource() failed: ${dataSourceName}`)
+    this.createProxy(inst)
     return inst
   }
 
@@ -114,10 +161,10 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
   ): Promise<Kmore | undefined> {
 
     const globalEventCbs: EventCallbacks = {
-      start: (event: KmoreEvent, ctx?: Ctx) => { this.cbOnStart(config, event, ctx) },
-      query: (event: KmoreEvent, ctx?: Ctx) => { this.cbOnQuery(config, event, ctx) },
-      queryResponse: (event: KmoreEvent, ctx?: Ctx) => { this.cbOnResp(config, event, ctx) },
-      queryError: (event: KmoreEvent, ctx?: Ctx) => this.cbOnError(config, event, ctx),
+      start: (event: KmoreEvent, ctx?: Kmore) => { this.cbOnStart(config, event, ctx) },
+      query: (event: KmoreEvent, ctx?: Kmore) => { this.cbOnQuery(config, event, ctx) },
+      queryResponse: (event: KmoreEvent, ctx?: Kmore) => { this.cbOnResp(config, event, ctx) },
+      queryError: (event: KmoreEvent, ctx?: Kmore) => this.cbOnError(config, event, ctx),
     }
     const opts: KmoreFactoryOpts<unknown> = {
       dbId: dataSourceName,
@@ -175,6 +222,7 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
         await dataSource.destroy()
         // @ts-expect-error
         this.dataSource.delete(dataSource.dbId)
+        this.trxStatusSvc.unregisterDbInstance(dataSource.dbId)
       }
       catch (ex: unknown) {
         this.logger.error(`Destroy knex connection failed with identifier: "${dataSource.instanceId.toString()}" :
@@ -183,8 +231,9 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
     }
   }
 
+  // #region event callbacks
 
-  protected cbOnStart(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
+  protected cbOnStart(dbConfig: DbConfig, event: KmoreEvent, ctx?: Kmore): void {
     assert(dbConfig)
     assert(event.type === 'start', event.type)
     assert(event.queryBuilder)
@@ -195,7 +244,7 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
     return cb?.(event, ctx)
   }
 
-  protected cbOnQuery(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
+  protected cbOnQuery(dbConfig: DbConfig, event: KmoreEvent, ctx?: Kmore): void {
     assert(dbConfig)
     assert(event.type === 'query', event.type)
     assert(event.data)
@@ -206,7 +255,7 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
     return cb?.(event, ctx)
   }
 
-  protected cbOnResp(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
+  protected cbOnResp(dbConfig: DbConfig, event: KmoreEvent, ctx?: Kmore): void {
     assert(dbConfig)
     assert(event.type === 'queryResponse', event.type)
     assert(event.respRaw)
@@ -217,7 +266,7 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
     return cb?.(event, ctx)
   }
 
-  protected async cbOnError(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): Promise<void> {
+  protected async cbOnError(dbConfig: DbConfig, event: KmoreEvent, ctx?: Kmore): Promise<void> {
     assert(dbConfig)
     assert(event.type === 'queryError', event.type)
 
@@ -227,16 +276,16 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
     return cb?.(event, ctx)
   }
 
+  // #region tracer
 
-  protected tracer(dbConfig: DbConfig, event: KmoreEvent, ctx?: Ctx): void {
+  protected tracer(dbConfig: DbConfig, event: KmoreEvent, ctx?: unknown): void {
     if (! ctx) { return }
     if (! dbConfig.enableTrace) { return }
 
     if (typeof dbConfig.sampleThrottleMs === 'undefined') {
       dbConfig.sampleThrottleMs = 3000
     }
-    const traceSvc = ctx[`_${OtelConfigKey.serviceName}`] as TraceService | undefined
-    if (! traceSvc) { return }
+    const traceSvc = this.traceService
 
     const { queryUidSpanMap } = this
     const opts: TraceEventOptions = {
@@ -306,15 +355,152 @@ export class DbSourceManager<SourceName extends string = string, D extends objec
 
   getTrxSpanInfoByQueryId(sourceName: SourceName, queryId: symbol): QuerySpanInfo | undefined {
     if (! this.trxSpanMap.size) { return }
-    const dataSource = this.getDataSource(sourceName)
-    assert(dataSource, `getTrxSpanInfoByQueryId() dataSource not found: ${sourceName}`)
+    const kmore = this.getDataSource(sourceName)
+    assert(kmore, `getTrxSpanInfoByQueryId() dataSource not found: ${sourceName}`)
 
-    const trx = dataSource.getTrxByKmoreQueryId(queryId)
+    const trx = kmore.getTrxByQueryId(queryId)
     if (! trx) { return }
     const querySpanInfo = this.trxSpanMap.get(trx.kmoreTrxId)
     return querySpanInfo
   }
 
+  // #region proxy
+
+  protected createProxy(db: Kmore): void {
+    // dbId is dbSourceName
+    this.trxStatusSvc.registerDbInstance(db.dbId, db)
+
+    db.builderPreProcessors.unshift(this.builderPreProcessor.bind(this))
+    db.builderPostProcessors.unshift(this.builderPostProcessor.bind(this))
+
+    db.responsePreProcessors.unshift(this.builderResultPreProcessor.bind(this))
+    db.exceptionProcessors.unshift(this.exceptionProcessor.bind(this))
+
+    db.transactionPostProcessors.unshift(this.transactionPostProcessors.bind(this))
+  }
+
+  // #region builder processor
+
+  builderPreProcessor(options: BuilderProcessorOptions): BuilderProcessorOptions {
+    const ret = this.builderPrePropagating(options)
+    return ret
+  }
+
+  builderPostProcessor(options: BuilderProcessorOptions): Promise<BuilderProcessorOptions > {
+    const ret = this.builderPostPropagating(options)
+    return ret
+  }
+
+  protected builderPrePropagating(options: BuilderProcessorOptions): BuilderProcessorOptions {
+    const { kmore, builder } = options
+
+    if (builder.trxPropagated) {
+      return options
+    }
+
+    const scope = this.getWebContextThenApp()
+    /* Call stack in bindBuilderPropagationData():
+      1 - TrxStatusService.bindBuilderPropagationData(trx - status.service.ts: 389)
+      2 - DbSourceManager.builderPrePropagating(db - source - manager.ts: 377)
+      3 - DbSourceManager.builderPreProcessor(db - source - manager.ts: 378)
+      4 - <anonymous>(builder.index.js: 67)
+      5 - extRefTableFnProperty(builder.index.js: 64)
+      6 - tb_user(builder.index.js: 28)
+      7 - UserRepo6.getUsers(70c.cache.repo.ts: 78) <-- call from here 6+1
+      8 - Clz.<computed>(aspectService.js: 92)
+    */
+    /*
+      1 - TrxStatusService.bindBuilderPropagationData (trx-status.service.ts:318)
+      2 - DbSourceManager.builderPrePropagating (db-source-manager.ts:404)
+      3 - DbSourceManager.builderPreProcessor (db-source-manager.ts:377)
+      4 - <anonymous> (builder.index.js:62)
+      5 - createQueryBuilder (builder.index.js:59)
+      6 - tb_user (builder.index.js:27)
+      7 - TrxRepo._update (101/101r.middle-trx-auto-action.repo.ts:46)  <-- call from here 6+1
+      8 - TrxRepo.commit (101/101r.middle-trx-auto-action.repo.ts:33)
+    */
+    this.trxStatusSvc.bindBuilderPropagationData(kmore.dbId, scope, builder, 6)
+    return options
+  }
+
+  protected async builderPostPropagating(options: BuilderProcessorOptions): Promise<BuilderProcessorOptions> {
+    const { builder } = options
+
+    if (builder.trxPropagated) {
+      return options
+    }
+
+    const scope = this.getWebContextThenApp()
+    await this.trxStatusSvc.propagating({
+      builder,
+      db: options.kmore,
+      dbSourceManager: this as unknown as AbstractDbSourceManager,
+      scope,
+    })
+
+    return options
+  }
+
+  async builderResultPreProcessor(options: ResponseProcessorOptions): Promise<ResponseProcessorOptions> {
+    if (options.kmoreTrxId && options.trxPropagated && options.trxPropagateOptions) {
+      const { builder, rowLockLevel } = options
+      if (rowLockLevel) {
+        // @FIXME
+        // this.trxStatusSvc.updateBuilderSpanRowlockLevelTag(kmoreQueryId, rowLockLevel)
+        void builder
+      }
+
+      // const { className, funcName } = options.trxPropagateOptions
+      // const callerKey = genCallerKey(className, funcName)
+      // assert(callerKey, 'callerKey is empty')
+
+      // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+    }
+
+    return options
+  }
+
+  // #region exception processor
+
+  async exceptionProcessor(options: ExceptionHandlerOptions): Promise<never> {
+    if (options.trxPropagated && options.trxPropagateOptions) {
+      const { kmore, builder, rowLockLevel } = options
+      if (rowLockLevel) {
+        // @FIXME
+        // this.trxStatusSvc.updateBuilderSpanRowlockLevelTag(kmoreQueryId, rowLockLevel)
+        void builder
+      }
+
+      const { className, funcName } = options.trxPropagateOptions
+      const callerKey = genCallerKey(className, funcName)
+      assert(callerKey, 'callerKey is empty')
+      // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
+      // if (tkey !== callerKey) {
+      const scope = this.getWebContextThenApp()
+      await this.trxStatusSvc.trxRollbackEntry(kmore.dbId, scope, callerKey)
+      // }
+    }
+
+    const err = genError({ error: options.exception, altMessage: '[kmore-component] DbManager#exceptionHandler' })
+    throw err
+  }
+
+  // #region transaction processor
+
+  async transactionPostProcessors(options: TransactionProcessorOptions): Promise<TransactionProcessorOptions> {
+    const ret = this.transactionPostProcessor(options)
+    return ret
+  }
+
+  protected async transactionPostProcessor(options: TransactionProcessorOptions): Promise<TransactionProcessorOptions> {
+    const { trx } = options
+    if (! trx.scope) {
+      const ctx = this.getWebContext()
+      assert(ctx, 'transactionPostProcessor() ctx is empty, maybe not in a request context, must define trx.scope')
+      trx.scope = ctx
+    }
+    return options
+  }
 }
 
 export interface CreateSpanOptions {

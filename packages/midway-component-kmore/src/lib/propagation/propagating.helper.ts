@@ -2,6 +2,8 @@ import type { Attributes } from '@mwcp/otel'
 import { AttrNames } from '@mwcp/otel'
 import type { KmoreTransaction, TrxPropagateOptions } from 'kmore'
 
+import type { AbstractDbSourceManager } from '../db-source-manager-base.js'
+
 import type { TrxStatusServiceBase } from './trx-status.base.js'
 import { trxTrace } from './trx-status.helper.js'
 
@@ -11,9 +13,10 @@ export function traceGenTrx(
   trx: KmoreTransaction,
   trxStatusSvc: TrxStatusServiceBase,
   trxPropagateOptions: TrxPropagateOptions,
+  dbSourceManager: AbstractDbSourceManager,
 ): void {
 
-  const querySpanInfo = trxStatusSvc.dbSourceManager.getSpanInfoByKmoreTrxId(trx.kmoreTrxId)
+  const querySpanInfo = dbSourceManager.getSpanInfoByKmoreTrxId(trx.kmoreTrxId)
   if (! querySpanInfo) { return }
 
   const event: Attributes = {

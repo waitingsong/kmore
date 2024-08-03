@@ -30,7 +30,7 @@ export class User2Controller {
     assert(db)
 
     const { tb_user } = db.camelTables
-    const user = await tb_user({ ctx: this.ctx })
+    const user = await tb_user()
       .select('*')
       .where({ uid })
 
@@ -43,7 +43,7 @@ export class User2Controller {
     assert(db)
 
     const { tb_user_ext } = db.camelTables
-    const user = await tb_user_ext({ ctx: this.ctx })
+    const user = await tb_user_ext()
       .select('*')
       .where({ uid })
 
@@ -56,7 +56,7 @@ export class User2Controller {
     assert(db)
 
     const { tb_user } = db.camelTables
-    const user = await tb_user({ ctx: this.ctx })
+    const user = await tb_user()
       .select('fake')
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

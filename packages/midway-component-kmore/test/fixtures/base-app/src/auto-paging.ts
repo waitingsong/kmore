@@ -25,8 +25,8 @@ export class UserPagingController {
   @Inject() readonly ctx: Context
   @Inject() dbManager: DbManager<'master', Db>
 
-  db: Kmore<Db, Context>
-  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  db: Kmore<Db>
+  tb_user: Kmore<Db>['camelTables']['tb_user']
 
   @Init()
   async init(): Promise<void> {

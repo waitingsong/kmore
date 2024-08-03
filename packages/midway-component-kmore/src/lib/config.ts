@@ -1,3 +1,4 @@
+import type { RowLockOptions } from 'kmore'
 import { PropagationType, RowLockLevel } from 'kmore'
 
 import type {
@@ -5,7 +6,6 @@ import type {
   MiddlewareConfig,
   MiddlewareOptions,
   KmorePropagationConfig as PropagationConfig,
-  TransactionalOptions,
 } from './types.js'
 
 
@@ -30,7 +30,7 @@ export const initDbConfig: DbConfig = {
   traceResponse: true,
 }
 
-export const initTransactionalOptions: TransactionalOptions = {
+export const initRowLockOptions: RowLockOptions = {
   /**
    * @default {@link RowLockLevel.ForShare}
    */
@@ -46,6 +46,6 @@ export const initPropagationConfig: PropagationConfig = {
    * @default PropagationType.REQUIRED,
    */
   propagationType: PropagationType.REQUIRED,
-  ...initTransactionalOptions,
+  ...initRowLockOptions,
 }
 

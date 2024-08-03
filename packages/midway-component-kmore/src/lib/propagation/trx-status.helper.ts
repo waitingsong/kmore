@@ -119,7 +119,7 @@ const skipMethods = ['truncate']
 export function linkBuilderWithTrx(
   builder: KmoreQueryBuilder,
   trx: KmoreTransaction,
-): KmoreQueryBuilder {
+): void {
 
   assert(trx, 'trx is undefined')
 
@@ -142,7 +142,6 @@ export function linkBuilderWithTrx(
   }
 
   builder.trxPropagated = true
-  return builder
 }
 
 function builderRowLock(

@@ -11,9 +11,9 @@ export async function genTrxSupports(
   trxPropagateOptions: TrxPropagateOptions,
 ): Promise<KmoreTransaction | undefined> {
 
-  const { db, builder } = options
+  const { db, builder, scope } = options
 
-  const trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(db)
+  const trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(scope, db)
   if (! trx) { return }
 
   const trxPropagated = !! trx.trxPropagateOptions
@@ -27,6 +27,7 @@ export async function genTrxSupports(
       trx,
       trxStatusSvc,
       trxPropagateOptions,
+      options.dbSourceManager,
     )
   }
 

@@ -14,25 +14,24 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
   const dbSourceManager = await container.getAsync(DbSourceManager)
 
   for (const [name, kmore] of dbSourceManager.dataSource.entries()) {
-    const trxSet = kmore.getTrxSetByCtx(ctx)
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (! trxSet?.size) { continue }
+    const trxSet = kmore.getTrxListByScope(ctx)
+    if (! trxSet.size) { continue }
 
     for (const trx of trxSet.values()) {
-      const { trxActionOnEnd, kmoreTrxId } = trx
+      const { trxActionOnError, kmoreTrxId } = trx
       if (! trx.isCompleted()) {
-        const msg = `[Kmore]: middleware auto transaction action: ${trxActionOnEnd} for ${name}: ${kmoreTrxId.toString()}`
+        const msg = `[Kmore]: middleware auto transaction action: ${trxActionOnError} for ${name}: ${kmoreTrxId.toString()}`
         ctx.logger.info(msg)
       }
       // void else
 
       if (trx.trxPropagateOptions) {
-        const msg = `[Kmore]: NOT processed transaction trx, middleware auto transaction action: ${trxActionOnEnd} for ${name}: ${kmoreTrxId.toString()}`
-        ctx.logger.warn(msg)
+        const msg = `[Kmore]: unprocessed transaction, middleware auto transaction action: ${trxActionOnError} for ${name}: ${kmoreTrxId.toString()}`
+        ctx.logger.info(msg)
       }
 
       // eslint-disable-next-line no-await-in-loop
-      await kmore.finishTransaction(trx)
+      await kmore.finishTransaction({ trx, scope: ctx })
 
       // eslint-disable-next-line no-await-in-loop
       const traceSvc = await container.getAsync(TraceService)
@@ -42,7 +41,7 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
           dbId: name,
           isAuto: true,
           kmoreTrxId,
-          trxAction: trxActionOnEnd,
+          trxAction: trxActionOnError,
           traceSvc,
           trxSpanMap: dbSourceManager.trxSpanMap,
         }
@@ -50,7 +49,7 @@ export async function rollbackAndCleanCtxTransactions(ctx: Context): Promise<voi
       }
     }
 
-    kmore.ctxTrxIdMap.delete(ctx)
   }
+
 }
 

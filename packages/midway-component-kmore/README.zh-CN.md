@@ -255,8 +255,8 @@ More examples of auto paging see [auto-paging](https://github.com/waitingsong/km
   export class UserRepo {
     @Inject() dbManager: DbManager<'master', Db>
 
-    ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-    ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+    ref_tb_user: Kmore<Db>['camelTables']['ref_tb_user']
+    ref_tb_user_ext: Kmore<Db>['camelTables']['ref_tb_user_ext']
 
     @Init()
     async init(): Promise<void> {
@@ -284,8 +284,8 @@ More examples of auto paging see [auto-paging](https://github.com/waitingsong/km
   export class UserRepo {
     @Inject() dbManager: DbManager<'master', Db>
 
-    ref_tb_user: Kmore<Db, Context>['camelTables']['ref_tb_user']
-    ref_tb_user_ext: Kmore<Db, Context>['camelTables']['ref_tb_user_ext']
+    ref_tb_user: Kmore<Db>['camelTables']['ref_tb_user']
+    ref_tb_user_ext: Kmore<Db>['camelTables']['ref_tb_user_ext']
 
     @Init()
     async init(): Promise<void> {
@@ -330,7 +330,7 @@ export interface Db {
 
 export const dbDict = genDbDict<Db>()
 
-const master: DbConfig<Db, Context> = {
+const master: DbConfig<Db> = {
   config: {
     client: 'pg',
     connection: {

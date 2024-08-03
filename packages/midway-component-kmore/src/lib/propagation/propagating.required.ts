@@ -14,13 +14,14 @@ export async function genTrxRequired(
   trxPropagateOptions: TrxPropagateOptions,
 ): Promise<KmoreTransaction> {
 
-  const { db, builder } = options
+  const { db, builder, scope } = options
+  assert(scope, 'scope is undefined')
 
   const key = genCallerKey(trxPropagateOptions.className, trxPropagateOptions.funcName)
-  let trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(db)
+  let trx: KmoreTransaction | undefined = trxStatusSvc.pickActiveTrx(scope, db)
   if (! trx) {
-    const pkey = trxStatusSvc.retrieveTopCallerKeyArrayByCallerKey(key).at(-1) ?? key
-    trx = await trxStatusSvc.startNewTrx(db, pkey)
+    const pkey = trxStatusSvc.retrieveTopCallerKeyArrayByCallerKey(db.dbId, scope, key).at(-1) ?? key
+    trx = await trxStatusSvc.startNewTrx(scope, db, pkey)
   }
   assert(trx, 'trx is undefined')
 
@@ -35,6 +36,7 @@ export async function genTrxRequired(
       trx,
       trxStatusSvc,
       trxPropagateOptions,
+      options.dbSourceManager,
     )
   }
 

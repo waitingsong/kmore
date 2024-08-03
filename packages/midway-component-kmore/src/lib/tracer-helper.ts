@@ -222,7 +222,7 @@ export interface TraceFinishTrxOptions {
   dbId: string
   isAuto: boolean
   kmoreTrxId: KmoreTransaction['kmoreTrxId']
-  trxAction: KmoreTransactionConfig['trxActionOnEnd']
+  trxAction: KmoreTransactionConfig['trxActionOnError']
   traceSvc: TraceService
   trxSpanMap: DbSourceManager['trxSpanMap']
 }
@@ -268,7 +268,7 @@ export interface TraceCommitRollbackTrxOptions {
   dbId: string
   kmoreTrxId: KmoreTransaction['kmoreTrxId']
   traceSvc: TraceService
-  trxAction: KmoreTransactionConfig['trxActionOnEnd']
+  trxAction: KmoreTransactionConfig['trxActionOnError']
   trxSpanMap: DbSourceManager['trxSpanMap']
 }
 export function traceCommitRollbackTrx(options: TraceCommitRollbackTrxOptions): void {

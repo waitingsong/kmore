@@ -26,7 +26,7 @@ export class UserThisController {
   @Inject() readonly ctx: Context
   @Inject() dbManager: DbManager<'master', Db>
 
-  tb_user: Kmore<Db, Context>['camelTables']['tb_user']
+  tb_user: Kmore<Db>['camelTables']['tb_user']
 
   @Init()
   async init(): Promise<void> {

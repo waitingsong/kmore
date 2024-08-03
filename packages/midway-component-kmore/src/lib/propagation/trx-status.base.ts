@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-
-import type { TraceService } from '@mwcp/otel'
+import type { TraceService, Span } from '@mwcp/otel'
+import type { ScopeType } from '@mwcp/share'
 import type { CallerInfo } from '@waiting/shared-core'
 import type {
   Kmore,
@@ -16,7 +16,7 @@ import type {
   TrxPropagateOptions,
 } from 'kmore'
 
-import type { DbSourceManager } from '../db-source-manager.js'
+import type { AbstractDbSourceManager } from '../db-source-manager-base.js'
 
 
 /**
@@ -26,59 +26,80 @@ export abstract class TrxStatusServiceBase {
 
   abstract readonly appDir: string
   abstract readonly traceSvc: TraceService
-  abstract readonly dbSourceManager: DbSourceManager
-
-  protected abstract readonly callerKeyFileMap: CallerKeyFileMap
-  protected abstract readonly callerKeyPropagationMap: CallerKeyPropagationMap
-  protected abstract readonly dbIdTrxIdMap: Map<string, symbol[]>
-  protected abstract readonly entryCallerKeyTrxMap: EntryCallerKeyTrxMap
-  protected abstract readonly callerTreeMap: CallerTreeMap
 
   abstract getName(): string
 
   abstract registerPropagation(options: RegisterTrxPropagateOptions): CallerKey
 
-  abstract retrieveTopCallerKeyFromCallStack(): CallerKey | undefined
+  abstract retrieveTopCallerKeyFromCallStack(dbSourceName: DbSourceName, scope: ScopeType, limit?: number): CallerKey | undefined
 
-  abstract retrieveFirstAncestorCallerKeyByCallerKey(key: CallerKey): CallerKey | undefined
-  abstract retrieveTopCallerKeyArrayByCallerKey(key: CallerKey): CallerKey[]
-  abstract retrieveUniqueTopCallerKey(key: CallerKey): CallerKey | undefined
+  abstract retrieveTopCallerKeyArrayByCallerKey(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): CallerKey[]
+  abstract retrieveUniqueTopCallerKey(dbSourceName: DbSourceName | undefined, scope: ScopeType, key: CallerKey): CallerKey | undefined
 
-  abstract isRegistered(key: CallerKey): boolean
+  abstract isRegistered(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): boolean
 
-  abstract bindBuilderPropagationData(builder: KmoreQueryBuilder, distance: number): KmoreQueryBuilder
+  // abstract bindBuilderPropagationData(
+  //   dbSourceName: DbSourceName,
+  //   scope: ScopeType,
+  //   builder: KmoreQueryBuilder,
+  //   distance: number,
+  // ): void
 
   abstract propagating(options: PropagatingOptions): Promise<PropagatingRet>
-  abstract trxCommitIfEntryTop(callerKey: CallerKey): Promise<void>
-  abstract trxRollbackEntry(callerKey: CallerKey): Promise<void>
+  abstract tryCommitTrxIfKeyIsEntryTop(dbSourceName: DbSourceName | undefined, scope: ScopeType, callerKey: CallerKey): Promise<void>
+  abstract trxRollbackEntry(dbSourceName: DbSourceName | undefined, scope: ScopeType, callerKey: CallerKey): Promise<void>
 
   abstract retrieveCallerInfo(distance: number): CallerInfo
 
-  abstract pickActiveTrx(db: Kmore): KmoreTransaction | undefined
+  abstract pickActiveTrx(scope: ScopeType, db: Kmore): KmoreTransaction | undefined
 
-  abstract startNewTrx(db: Kmore, callerKey: CallerKey): Promise<KmoreTransaction>
+  abstract startNewTrx(scope: ScopeType, db: Kmore, callerKey: CallerKey): Promise<KmoreTransaction>
 
-  abstract getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions | undefined
+  // abstract getPropagationOptions(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): RegisterTrxPropagateOptions | undefined
+  // abstract setPropagationOptions(dbSourceName: DbSourceName, key: CallerKey, options: RegisterTrxPropagateOptions): void
 
+  // @FIXME
+  // abstract getTrxRootSpan(trx: symbol | object): Span | undefined
+  // abstract setTrxRootSpan(trx: symbol | object, span: Span): void
+  // abstract delTrxRootSpan(trx: symbol | object): void
+
+  abstract cleanAfterRequestFinished(scope: ScopeType): void
 }
 
 
 export interface PropagatingOptions {
-  db: Kmore
   builder: KmoreQueryBuilder
+  db: Kmore
+  dbSourceManager: AbstractDbSourceManager
+  scope: ScopeType
 }
 export interface PropagatingRet {
-  builder: KmoreQueryBuilder
   /**
    * undefined if propagated already, trx present
    */
   kmoreTrxId: symbol | undefined
 }
 
-export type CallerKeyFileMap = Map<CallerKey, FilePath>
-export type CallerKeyPropagationMap = Map<CallerKey, RegisterTrxPropagateOptions>
+export type DbSourceName = string
+
+export type CallerKeyFileMapIndex = Map<ScopeType, SourceCallerKeyFileMap>
+type SourceCallerKeyFileMap = Map<DbSourceName, CallerKeyFileMap>
+type CallerKeyFileMap = Map<CallerKey, FilePath>
+
+export type CallerKeyPropagationMapIndex = Map<ScopeType, SourceCallerKeyPropagationMap>
+type SourceCallerKeyPropagationMap = Map<DbSourceName, CallerKeyPropagationMap>
+type CallerKeyPropagationMap = Map<CallerKey, RegisterTrxPropagateOptions>
+
+export type EntryCallerKeyTrxMapIndex = Map<ScopeType, EntryCallerKeyTrxMap>
 export type EntryCallerKeyTrxMap = Map<CallerKey, KmoreTransaction[]>
-export type CallerTreeMap = Map<CallerKey, CallerKeyArray>
+
+export type CallerTreeMapIndex = Map<ScopeType, SourceCallerTreeMap>
+type SourceCallerTreeMap = Map<DbSourceName, CallerTreeMap>
+type CallerTreeMap = Map<CallerKey, CallerKeyArray>
+
+
+export type TrxIdMapIndex = Map<ScopeType, DbIdTrxIdMap>
+type DbIdTrxIdMap = Map<DbSourceName, symbol[]>
 
 // type CallerKeySet = Set<CallerKey>
 export type CallerKeyArray = CallerKey[]
@@ -87,8 +108,9 @@ export type RegId = symbol
 
 export interface TraceEndOptions {
   kmoreTrxId: symbol
-  op: KmoreTransactionConfig['trxActionOnEnd']
+  op: KmoreTransactionConfig['trxActionOnError']
   trxPropagateOptions: TrxPropagateOptions | undefined
+  span: Span | undefined | false
 }
 
 
@@ -99,6 +121,8 @@ export type FuncName = string
 export type FilePath = string
 
 export interface RegisterTrxPropagateOptions {
+  dbSourceName: DbSourceName | undefined
+  scope: ScopeType
   type: PropagationType
   className: string
   funcName: string

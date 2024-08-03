@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { BaseConfig } from '@mwcp/share'
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
-import type { KmoreFactoryOpts, PropagationType, RowLockLevel } from 'kmore'
+import type { KmoreFactoryOpts, PropagationType, RowLockOptions } from 'kmore'
 
 
 export type {
@@ -27,6 +27,7 @@ export enum Msg {
   insufficientCallstacks = 'Insufficient call stacks by getCallerStack',
   callerKeyNotRegisteredOrNotEntry = 'callerKey is not registered or not entry caller',
   propagationConfigIsUndefined = 'propagationConfig is undefined',
+  registerPropagationFailed = 'registerPropagation() failed',
 }
 
 
@@ -50,7 +51,7 @@ export interface KmoreSourceConfig<SourceName extends string = string> {
   default?: DbConfig
 }
 export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
-export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
+export interface DbConfig<T = any> extends KmoreFactoryOpts<T> {
   /**
    * Enable open telemetry via @mwcp/otel
    * @default true
@@ -107,21 +108,11 @@ export enum KmoreAttrNames {
 /**
  * Transaction propagation config for declarative transaction
  */
-export interface KmorePropagationConfig extends TransactionalOptions {
+export interface KmorePropagationConfig extends RowLockOptions{
   /**
    * @default PropagationType.REQUIRED,
    */
   propagationType: PropagationType
-}
-export interface TransactionalOptions {
-  /**
-   * @default {@link RowLockLevel.ForShare}
-   */
-  readRowLockLevel: RowLockLevel
-  /**
-   * @default {@link RowLockLevel.ForUpdate}
-   */
-  writeRowLockLevel: RowLockLevel
 }
 
 
