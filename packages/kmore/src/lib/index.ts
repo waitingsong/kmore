@@ -23,6 +23,7 @@ export type {
 export * from './propagation.types.js'
 export { wrapIdentifier } from './helper.js'
 export {
+  type RowLockOptions,
   type TrxPropagateOptions,
   RowLockLevel,
 } from './trx.types.js'
