@@ -1,12 +1,14 @@
-import { Middleware } from '@midwayjs/core'
+import { Middleware, Inject } from '@midwayjs/core'
 import type { Context, IMiddleware, NextFunction } from '@mwcp/share'
 
-import { ConfigKey } from '##/lib/index.js'
-import { rollbackAndCleanCtxTransactions } from '##/util/database.js'
+import { ConfigKey, TrxStatusService } from '##/lib/index.js'
+import { processUnCommittedTransaction } from '##/util/database.js'
 
 
 @Middleware()
 export class KmoreMiddleware implements IMiddleware<Context, NextFunction> {
+
+  @Inject() readonly trxStatusSvc: TrxStatusService
 
   static getName(): string {
     const name = ConfigKey.middlewareName
@@ -19,7 +21,9 @@ export class KmoreMiddleware implements IMiddleware<Context, NextFunction> {
   }
 
   resolve() {
-    return middleware
+    return (ctx: Context, next: NextFunction) => {
+      return middleware(ctx, next, this.trxStatusSvc)
+    }
   }
 
 }
@@ -30,6 +34,7 @@ export class KmoreMiddleware implements IMiddleware<Context, NextFunction> {
 async function middleware(
   ctx: Context,
   next: NextFunction,
+  trxStatusService: TrxStatusService,
 ): Promise<void> {
 
   try {
@@ -40,7 +45,13 @@ async function middleware(
   //   throw ex
   // }
   finally {
-    await rollbackAndCleanCtxTransactions(ctx)
+    try {
+      await processUnCommittedTransaction(ctx)
+    }
+    catch (ex) {
+      console.error('error rollbackAndCleanCtxTransactions', ex)
+    }
+    trxStatusService.cleanAfterRequestFinished(ctx)
   }
 }
 

@@ -1,77 +1,93 @@
 import assert from 'node:assert'
-// import { isProxy } from 'node:util/types'
 
-import { Inject, Provide } from '@midwayjs/core'
-import { Attributes, AttrNames, TraceLogger, TraceService } from '@mwcp/otel'
-import { CallerInfo, genISO8601String, getCallerStack } from '@waiting/shared-core'
+import { ApplicationContext, IMidwayContainer, Inject, Singleton } from '@midwayjs/core'
+import { Attributes, AttrNames, TraceService } from '@mwcp/otel'
+import type { ScopeType } from '@mwcp/share'
+import { CallerInfo, genISO8601String } from '@waiting/shared-core'
 import {
   genKmoreTrxId,
   Kmore,
   KmoreQueryBuilder,
   KmoreTransaction,
+  KmoreTransactionConfig,
   PropagationType,
   QueryBuilderExtKey,
-  RowLockLevel,
+  TrxControl,
+  // RowLockLevel,
   TrxPropagateOptions,
 } from 'kmore'
 
-import { DbSourceManager } from './db-source-manager.js'
-import { genTrxRequired } from './propagation/propagating.required.js'
-import { genTrxSupports } from './propagation/propagating.supports.js'
+import { CallerService } from './caller.service.js'
+import { genCallerKey, linkBuilderWithTrx } from './propagation/trx-status.helper.js'
 import {
   CallerKey,
-  CallerKeyFileMap,
-  CallerKeyPropagationMap,
-  CallerTreeMap,
-  EntryCallerKeyTrxMap,
-  FilePath,
+  CallerKeyPropagationMapIndex,
+  DbSourceName,
+  EntryCallerKeyTrxMapIndex,
   PropagatingOptions,
   PropagatingRet,
   RegisterTrxPropagateOptions,
-  TraceEndOptions,
+  // TraceEndOptions,
   TransactionalEntryType,
-  TrxStatusServiceBase,
-} from './propagation/trx-status.base.js'
-import {
-  genCallerKey,
-  getSimpleCallers,
-  linkBuilderWithTrx,
-  trxTrace,
-} from './propagation/trx-status.helper.js'
-import { Msg } from './types.js'
+  StartNewTrxOptions,
+} from './propagation/trx-status.types.js'
+import { ConfigKey, Msg } from './types.js'
 
-
-const skipMethodNameSet = new Set([
-  'aopCallback.around',
-  'aopDispatchAsync',
-  'aroundAsync',
-  'aroundFactory',
-  'classDecoratorExecutor',
-  'createAsync',
-  'registerPropagation',
-  'retrieveTopCallerKeyFromCallStack',
-])
 
 /**
  * Declarative transaction status manager
  */
-@Provide()
-export class TrxStatusService extends TrxStatusServiceBase {
+@Singleton()
+export class TrxStatusService {
 
+  @ApplicationContext() readonly applicationContext: IMidwayContainer
   @Inject() readonly appDir: string
-  @Inject() readonly dbSourceManager: DbSourceManager
-  @Inject() readonly logger: TraceLogger
-  @Inject() readonly traceSvc: TraceService
+  // @Inject() readonly logger: TraceLogger
+  @Inject() protected readonly traceSvc: TraceService
+  @Inject() protected readonly callerSvc: CallerService
 
-  errorMsg = ''
-
-  protected readonly callerKeyFileMap: CallerKeyFileMap = new Map()
-  protected readonly callerKeyPropagationMap: CallerKeyPropagationMap = new Map()
-  protected readonly dbIdTrxIdMap = new Map<string, symbol[]>()
-  protected readonly entryCallerKeyTrxMap: EntryCallerKeyTrxMap = new Map()
-  protected readonly callerTreeMap: CallerTreeMap = new Map()
+  protected readonly dbInstanceList = new Map<string, Kmore>()
+  protected readonly callerKeyPropagationMapIndex: CallerKeyPropagationMapIndex = new Map()
+  protected readonly entryCallerKeyTrxMapIndex: EntryCallerKeyTrxMapIndex = new Map()
 
   getName(): string { return 'trxStatusService' }
+
+  // #region dbInstance
+
+  registerDbInstance(dbId: string, db: Kmore): void {
+    this.dbInstanceList.set(dbId, db)
+  }
+
+  /**
+   * If dbId is undefined or empty
+   * - return the only on instance
+   * - throw error if multiple instance exists
+   */
+  getDbInstance(dbId: string | undefined): Kmore | undefined {
+    if (dbId) {
+      return this.dbInstanceList.get(dbId)
+    }
+    if (this.dbInstanceList.size === 1) {
+      const iterator = this.dbInstanceList.values()
+      const firstValue = iterator.next().value as Kmore
+      return firstValue
+    }
+    throw new Error('getDbInstance(): dbId is undefined, but multiple instances exists')
+  }
+
+  getDbInstanceCount(): number {
+    return this.dbInstanceList.size
+  }
+
+  listDbInstanceNames(): DbSourceName[] {
+    return Array.from(this.dbInstanceList.keys())
+  }
+
+  unregisterDbInstance(dbId: string): void {
+    this.dbInstanceList.delete(dbId)
+  }
+
+  // #region registerPropagation()
 
   registerPropagation(options: RegisterTrxPropagateOptions): CallerKey {
     const event: Attributes = {
@@ -81,24 +97,32 @@ export class TrxStatusService extends TrxStatusServiceBase {
       [AttrNames.TrxPropagationWriteRowLockLevel]: options.writeRowLockLevel,
     }
 
+    const { scope } = options
+    assert(scope, 'scope required')
+
+    const dbInstance = this.getDbInstance(options.dbSourceName)
+    assert(dbInstance, `dbSourceName "${options.dbSourceName}" not found`)
+    const dbSourceName = dbInstance.dbId
+    options.dbSourceName = dbSourceName
+
     const key = genCallerKey(options.className, options.funcName)
-    const tkey = this.retrieveTopCallerKeyFromCallStack()
-    const type = this.getPropagationType(key)
+    const tkey = this.retrieveRegisteredTopCallerKeyFromCallStack(dbSourceName, scope)
+    const type = this.getPropagationType(dbSourceName, scope, key)
     if (type) {
       assert(
         type === options.type,
         `callerKey "${key}" has registered propagation "${type}", but want to register different "${options.type}"`,
       )
       if (tkey) { // has ancestor caller that registered
-        this.updateCallerTreeMap(tkey, key)
+        this.callerSvc.updateCallerTreeMap(dbSourceName, scope, tkey, key)
       }
       else { // getCallerStack will return insufficient sites if calling self without "await", so not top level caller
-        // this.updateCallerTreeMapWithExistsKey(key)
-        const msg = `${Msg.insufficientCallstacks}. Maybe calling async function without "await",
+        const prefix = `[@mwcp/${ConfigKey.namespace}] registerPropagation() error: `
+        const msg = prefix + `${Msg.insufficientCallstacks}. Maybe calling async function without "await",
         Result of Query Builder MUST be "await"ed within Transactional decorator method.
         callerKey: "${key}\n"
         `
-        this.errorMsg = msg
+        console.error(msg)
         const err = new Error(msg)
         this.traceSvc.setRootSpanWithError(err)
         throw err
@@ -108,85 +132,158 @@ export class TrxStatusService extends TrxStatusServiceBase {
     else {
       this.setPropagationOptions(key, options)
       if (tkey) { // has ancestor caller that registered
-        this.updateCallerTreeMap(tkey, key)
+        this.callerSvc.updateCallerTreeMap(dbSourceName, scope, tkey, key)
         event[AttrNames.TransactionalEntryType] = TransactionalEntryType.sub
       }
       else { // top level caller
-        this.updateCallerTreeMap(key, void 0)
+        this.callerSvc.updateCallerTreeMap(dbSourceName, scope, key, void 0)
         event[AttrNames.TransactionalEntryType] = TransactionalEntryType.top
       }
     }
 
-    trxTrace({
-      type: 'event',
-      appDir: this.appDir,
-      span: void 0,
-      traceSvc: this.traceSvc,
-      trxPropagateOptions: options,
-      attr: event,
-    })
-
     return key
   }
 
-  async trxCommitIfEntryTop(callerKey: CallerKey): Promise<void> {
-    let tkey = this.retrieveUniqueTopCallerKey(callerKey)
-    if (! tkey) {
-      const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
+  retrieveUniqueTopCallerKey(sourceName: DbSourceName | undefined, scope: ScopeType, key: CallerKey): CallerKey | undefined {
+    const dbInstance = this.getDbInstance(sourceName)
+    assert(dbInstance, `dbSourceName "${sourceName}" not found`)
+    const dbSourceName = dbInstance.dbId
+    assert(dbSourceName, 'dbSourceName is undefined')
 
-      if (! tkeyArr.length) {
-        const msg = `${Msg.callerKeyNotRegisteredOrNotEntry}: "${callerKey}".
-        Maybe calling async function without "await", or has been removed with former error.\n`
-        this.logger.error(msg)
-        throw new Error(msg)
-        // return
-      }
-      else if (tkeyArr.length > 1) { // multiple callings
-        this.removeLastKeyFromCallerTreeArray(callerKey)
-        return
-      }
-      tkey = tkeyArr[0]
-      assert(tkey, 'tkey is undefined')
-      if (tkey !== callerKey) { return }
-    }
-
-    if (callerKey !== tkey) {
-      this.removeLastKeyFromCallerTreeArray(callerKey)
-      return
-    }
-
-    const trxs = this.getTrxArrayByEntryKey(tkey)
-    if (! trxs?.length) {
-      this.cleanAfterTrx(tkey)
-      return
-    }
-
-    if (this.errorMsg) {
-      this.logger.error(`ROLLBACK when commit top entry for key: "${tkey}"`, this.errorMsg)
-      return this.trxRollbackEntry(callerKey)
-    }
-
-    for (let i = trxs.length - 1; i >= 0; i -= 1) {
-      const trx = trxs[i]
-      if (! trx) { continue }
-
-      const { trxPropagateOptions } = trx
-      // eslint-disable-next-line no-await-in-loop
-      await trx.commit()
-      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
-
-      this.traceEnd({
-        op: 'commit',
-        kmoreTrxId: trx.kmoreTrxId,
-        trxPropagateOptions,
-      })
-    }
-    this.cleanAfterTrx(tkey)
+    return this.callerSvc.retrieveUniqueTopCallerKey(dbSourceName, scope, key)
   }
 
-  async trxRollbackEntry(callerKey: CallerKey): Promise<void> {
-    // const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey) ?? callerKey
-    const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(callerKey)
+  /**
+   * Is decorator `Transactional()` registered with current scope and callerKey
+   */
+  isRegistered(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): boolean {
+    const sourceNameMap = this.callerKeyPropagationMapIndex.get(scope)
+    if (! sourceNameMap?.size) { return false }
+
+    const callerKeyPropagationMap = sourceNameMap.get(dbSourceName)
+    if (! callerKeyPropagationMap?.size) { return false }
+
+    return callerKeyPropagationMap.has(key)
+  }
+
+  // retrieveUpLatestCallerKey(options: DecoratorExecutorOptions): CallerKey | undefined {
+  //   const key = genCallerKey(options.className, options.funcName)
+  // }
+
+  // #region startNewTrx()
+
+  async startNewTrx(this: TrxStatusService, options: StartNewTrxOptions): Promise<KmoreTransaction> {
+    const { db, scope, kmoreTrxId: trxId, trxPropagateOptions } = options
+    const callerKey = trxPropagateOptions.key
+    const kmoreTrxId = trxId ?? genKmoreTrxId('trx-', callerKey)
+    assert(kmoreTrxId, `kmoreTrxId is undefined for callerKey "${callerKey}"`)
+
+    const dbSourceName = db.dbId
+    assert(dbSourceName, 'dbSourceName is undefined on db')
+
+    const config: KmoreTransactionConfig = {
+      trxActionOnError: TrxControl.Rollback,
+      ...options,
+      kmoreTrxId,
+    }
+
+    const trx: KmoreTransaction = await db.transaction(config)
+    assert(
+      trx.kmoreTrxId === kmoreTrxId,
+      `trx.kmoreTrxId "${trx.kmoreTrxId.toString()}" not equal to kmoreTrxId "${kmoreTrxId.toString()}"`,
+    )
+
+    if (! trx.trxPropagateOptions) {
+      Object.defineProperty(trx, QueryBuilderExtKey.trxPropagateOptions, {
+        value: trxPropagateOptions,
+      })
+    }
+
+    const { entryKey } = options.trxPropagateOptions
+    try {
+      this.updateEntryCallerKeyTrxMap(dbSourceName, scope, entryKey, trx)
+    }
+    catch (ex) {
+      await trx.rollback()
+      throw ex
+    }
+    return trx
+  }
+
+
+  // #region Trx Commit
+
+  /**
+   * Only top caller can commit
+   */
+  async tryCommitTrxIfKeyIsEntryTop(sourceName: DbSourceName | undefined, scope: ScopeType, callerKey: CallerKey): Promise<void> {
+    const dbInstance = this.getDbInstance(sourceName)
+    assert(dbInstance, `dbSourceName "${sourceName}" not found`)
+    const dbSourceName = dbInstance.dbId
+
+    assert(callerKey, 'tryCommitTrxIfKeyIsEntryTop(): callerKey is undefined')
+    const tkey = this.retrieveUniqueTopCallerKey(dbSourceName, scope, callerKey)
+    if (! tkey) { // multiple callings
+      this.callerSvc.removeLastKeyFromCallerTreeArray(dbSourceName, scope, callerKey)
+      return
+    }
+    if (tkey !== callerKey) { return }
+
+    // if (! tkey) {
+    //   const tkeyArr = this.retrieveTopCallerKeyArrayByCallerKey(scope, callerKey)
+
+    //   if (! tkeyArr.length) {
+    //     const msg = `${Msg.callerKeyNotRegisteredOrNotEntry}: "${callerKey}".
+    //     Maybe calling async function without "await", or has been removed with former error.\n`
+    //     // @FIXME
+    //     // this.logger.error(msg)
+    //     throw new Error(msg)
+    //     // return
+    //   }
+    //   else if (tkeyArr.length > 1) { // multiple callings
+    //     this.removeLastKeyFromCallerTreeArray(scope, callerKey)
+    //     return
+    //   }
+    //   tkey = tkeyArr[0]
+    //   assert(tkey, 'tkey is undefined')
+    //   if (tkey !== callerKey) { return }
+    // }
+    // if (callerKey !== tkey) {
+    //   this.removeLastKeyFromCallerTreeArray(scope, callerKey)
+    //   return
+    // }
+
+    const trxs = this.getTrxArrayByEntryKey(dbSourceName, scope, tkey)
+    if (! trxs?.length) {
+      this.cleanAfterTrx(void 0, scope, tkey)
+      return
+    }
+
+    // Delay for commit, prevent from method returning Promise or calling Knex builder without `await`!
+    // await sleep(0)
+    for (let i = trxs.length - 1; i >= 0; i -= 1) {
+      const trx = trxs[i]
+      assert(trx, 'trx is undefined when tryCommitTrxIfKeyIsEntryTop()')
+
+      assert(trx.dbId === dbSourceName, `trx.dbId "${trx.dbId}" not equal to dbSourceName2 "${dbSourceName}"`)
+
+      // eslint-disable-next-line no-await-in-loop
+      await trx.commit()
+      this.removeTrxFromEntryCallerKeyTrxMap(dbSourceName, scope, trx.kmoreTrxId)
+      this.cleanAfterTrx(dbSourceName, scope, tkey)
+
+    }
+  }
+
+  // #region Trx Rollback
+
+  async trxRollbackEntry(sourceName: DbSourceName | undefined, scope: ScopeType, callerKey: CallerKey): Promise<void> {
+    const dbInstance = this.getDbInstance(sourceName)
+    assert(dbInstance, `dbSourceName "${sourceName}" not found`)
+    const dbSourceName = dbInstance.dbId
+    assert(dbSourceName, 'dbSourceName is undefined')
+
+    const tkeyArr = this.callerSvc.retrieveTopCallerKeyArrayByCallerKey(dbSourceName, scope, callerKey)
     let tkey = callerKey
     if (tkeyArr.length > 0) {
       const key = tkeyArr.at(-1) // pick last one
@@ -195,146 +292,77 @@ export class TrxStatusService extends TrxStatusServiceBase {
       }
     }
 
-    const trxs = this.getTrxArrayByEntryKey(tkey)
+    const trxs = this.getTrxArrayByEntryKey(dbSourceName, scope, tkey)
     if (! trxs?.length) {
-      this.cleanAfterTrx(tkey)
+      this.cleanAfterTrx(void 0, scope, tkey)
       return
     }
 
-    for (let i = 0, len = trxs.length; i < len; i += 1) {
-      const trx = trxs[i]
-      if (! trx) { continue }
-
-      const { trxPropagateOptions } = trx
+    for (const trx of trxs) {
       try {
         // eslint-disable-next-line no-await-in-loop
         await trx.rollback()
       }
       catch (ex) {
         const msg = `ROLLBACK failed for key: "${tkey}". This error will be ignored, continue next trx rollback.`
-        this.logger.error(msg, ex)
+        console.warn(msg, ex)
+        // @FIXME
+        // this.logger.error(msg, ex)
       }
-      this.removeTrxIdFromDbIdMap(trx.dbId, trx.kmoreTrxId)
-
-      this.traceEnd({
-        op: 'rollback',
-        kmoreTrxId: trx.kmoreTrxId,
-        trxPropagateOptions,
-      })
-    }
-
-    this.cleanAfterTrx(tkey)
-  }
-
-
-  retrieveTopCallerKeyFromCallStack(limit = 128): CallerKey | undefined {
-    const callers = getSimpleCallers(limit)
-    if (! callers.length) { return }
-
-    for (let i = callers.length - 1; i > 1; i -= 1) {
-      const caller = callers[i]
-      if (! caller) { continue }
-      if (! caller.className || ! caller.funcName) { continue }
-      if (caller.funcName.includes('Clz.<')) { continue }
-      if (caller.path.startsWith('node:internal')) { continue }
-      if (skipMethodNameSet.has(caller.methodName)) { continue }
-
-      const key = genCallerKey(caller.className, caller.funcName)
-      if (this.isRegistered(key)) {
-        return key
-      }
+      this.cleanAfterTrx(dbSourceName, scope, tkey)
     }
   }
 
-  retrieveFirstAncestorCallerKeyByCallerKey(key: CallerKey): CallerKey | undefined {
-    if (! this.callerTreeMap.size) { return }
 
-    let ret: CallerKey | undefined
-    for (const [pkey, arr] of this.callerTreeMap.entries()) {
-      if (arr.includes(key)) {
-        ret = pkey
-      }
-    }
-    return ret
-  }
-
-  retrieveTopCallerKeyArrayByCallerKey(key: CallerKey): CallerKey[] {
-    const ret: CallerKey[] = []
-    if (! this.callerTreeMap.size) {
-      return ret
-    }
-
-    for (const [tkey, arr] of this.callerTreeMap.entries()) {
-      if (! arr.includes(key)) { continue }
-
-      arr.forEach((kk) => {
-        if (kk === tkey) {
-          ret.push(tkey)
-        }
-      })
-    }
-    return ret
-  }
-
-  retrieveUniqueTopCallerKey(key: CallerKey): CallerKey | undefined {
-    if (! this.callerTreeMap.size) { return }
-
-    let ret: CallerKey | undefined
-    for (const [tkey, arr] of this.callerTreeMap.entries()) {
-      if (! arr.includes(key)) { continue }
-
-      for (const kk of arr) {
-        if (kk !== tkey) { continue }
-        if (ret) { // duplicate
-          return
-        }
-        else {
-          ret = tkey
-        }
-      }
-    }
-    return ret
-  }
-
+  // #region Propagation
 
   bindBuilderPropagationData(
+    dbSourceName: DbSourceName,
     builder: KmoreQueryBuilder,
     distance = 0,
-  ): KmoreQueryBuilder {
+  ): void {
 
     if (builder.trxPropagated) {
-      return builder
+      return
     }
 
-    const count = this.getPropagationOptionsCount()
+    const { scope } = builder
+    assert(scope, 'scope is undefined')
+
+    const count = this.getPropagationOptionsCount(dbSourceName, scope)
     if (! count) {
-      return builder
+      return
     }
 
     let callerInfo: CallerInfo | undefined
     try {
-      callerInfo = this.retrieveCallerInfo(distance + 1)
+      callerInfo = this.callerSvc.retrieveCallerInfo(distance + 1)
       if (! callerInfo.className || ! callerInfo.funcName) {
-        return builder
+        return
       }
     }
     catch (ex) {
       console.warn('[@mwcp/kmore] retrieveCallerInfo failed', ex)
-      return builder
+      return
     }
 
     const key = genCallerKey(callerInfo.className, callerInfo.funcName)
-    const propagatingOptions = this.getPropagationOptions(key)
-    if (! propagatingOptions?.type) {
-      return builder
-    }
+    builder.callerKey = key
+
+    const isRegistered = this.isRegistered(dbSourceName, scope, key)
+    if (! isRegistered) { return }
+    const propagatingOptions = this.getPropagationOptions(dbSourceName, scope, key)
+    if (! propagatingOptions?.type) { return }
     const { readRowLockLevel, writeRowLockLevel } = propagatingOptions
 
-    this.validateCallerKeyUnique(key, callerInfo.path)
-    this.callerKeyFileMap.set(key, callerInfo.path)
+    this.callerSvc.validateCallerKeyUnique(dbSourceName, scope, key, callerInfo.path)
+    this.callerSvc.setFilepathToCallerKeyFileMapIndex(dbSourceName, scope, key, callerInfo.path)
 
     // const entryKey = this.retrieveFirstAncestorCallerKeyByCallerKey(key) ?? ''
-    const entryKey = this.retrieveTopCallerKeyArrayByCallerKey(key).at(-1) ?? ''
+    const arr = this.callerSvc.retrieveTopCallerKeyArrayByCallerKey(dbSourceName, scope, key)
+    const entryKey = arr.at(-1) ?? ''
+
+    assert(entryKey, 'entryKey is undefined')
 
     const value: TrxPropagateOptions = {
       entryKey,
@@ -349,42 +377,57 @@ export class TrxStatusService extends TrxStatusServiceBase {
       column: callerInfo.column,
       readRowLockLevel,
       writeRowLockLevel,
+      scope,
     }
     Object.freeze(value)
     void Object.defineProperty(builder, QueryBuilderExtKey.trxPropagateOptions, {
       value,
     })
 
-    return builder
   }
 
-
   async propagating(options: PropagatingOptions): Promise<PropagatingRet> {
-    const { trxPropagateOptions, trxPropagated } = options.builder
-    assert(trxPropagateOptions, 'trxPropagateOptions is undefined')
+    const { db, builder } = options
 
-    if (trxPropagated) {
-      return {
-        builder: options.builder,
-        kmoreTrxId: void 0,
-      }
+    const { scope } = builder
+    assert(scope, 'propagating(): scope is undefined')
+
+    const ret: PropagatingRet = {
+      kmoreTrxId: void 0,
     }
 
-    let trxId: symbol | undefined
-    let ret: PropagatingRet
+    const count = this.getPropagationOptionsCount(db.dbId, scope)
+    if (! count) {
+      return ret
+    }
+
+    const { trxPropagateOptions, trxPropagated, callerKey } = builder
+    if (trxPropagated) {
+      return ret
+    }
+    assert(callerKey, 'propagating(): callerKey is undefined')
+    const propagatingOptions = this.getPropagationOptions(db.dbId, scope, callerKey)
+    if (! propagatingOptions?.type) {
+      return ret
+    }
+    assert(trxPropagateOptions, 'propagating(): trxPropagateOptions is undefined')
 
     switch (trxPropagateOptions.type) {
       case PropagationType.REQUIRED: {
-        const trx = await genTrxRequired(this, options, trxPropagateOptions)
-        ret = this.builderLinkTrx(options, trx)
-        trxId = trx.kmoreTrxId
+        const trx = await this._propagatingRequired(options, trxPropagateOptions)
+        db.linkQueryIdToTrxId(builder.kmoreQueryId, trx.kmoreTrxId)
+        this.builderLinkTrx(options, trx)
+        ret.kmoreTrxId = trx.kmoreTrxId
         break
       }
 
       case PropagationType.SUPPORTS: {
-        const trx = await genTrxSupports(this, options, trxPropagateOptions)
-        ret = this.builderLinkTrx(options, trx)
-        trxId = trx?.kmoreTrxId
+        const trx = await this._propagatingSupports(options, trxPropagateOptions)
+        if (trx) {
+          db.linkQueryIdToTrxId(builder.kmoreQueryId, trx.kmoreTrxId)
+        }
+        this.builderLinkTrx(options, trx)
+        ret.kmoreTrxId = trx?.kmoreTrxId
         break
       }
 
@@ -392,192 +435,172 @@ export class TrxStatusService extends TrxStatusServiceBase {
         throw new Error(`Not implemented propagation type "${trxPropagateOptions.type}"`)
     }
 
-    // this.updateBuilderSpanTag(options.builder) // span not exists this time
-    this.updateTrxSpanTag(trxId)
     return ret
   }
 
-  isRegistered(key: CallerKey): boolean {
-    return this.callerKeyPropagationMap.has(key)
-  }
+  protected async _propagatingRequired(options: PropagatingOptions, trxPropagateOptions: TrxPropagateOptions): Promise<KmoreTransaction> {
+    const { db, builder } = options
+    const { scope } = builder
+    assert(scope, 'scope is undefined')
 
-  retrieveCallerInfo(distance = 0): CallerInfo {
-    const callerInfo = getCallerStack(distance + 1, false)
-    return callerInfo
-  }
+    const dbSourceName = db.dbId
+    assert(scope === trxPropagateOptions.scope, 'scope !== trxPropagateOptions.scope')
 
-  pickActiveTrx(db: Kmore): KmoreTransaction | undefined {
-    const trxId = this.getActiveTrxId(db.dbId)
-    if (trxId) {
-      const trx = db.getTrxByKmoreTrxId(trxId)
-      assert(trx, `trxId "${trxId.toString()}" not found in dbId "${db.dbId}"`)
-      return trx
+    let trx = this.getCurrentTrx(dbSourceName, scope, trxPropagateOptions.entryKey)
+    if (! trx) {
+      trx = await this.startNewTrx({
+        scope,
+        db,
+        trxPropagateOptions,
+      })
     }
+    assert(trx, 'trx is undefined')
+    return trx
   }
 
-  async startNewTrx(db: Kmore, callerKey: CallerKey): Promise<KmoreTransaction> {
-    const kmoreTrxId = genKmoreTrxId('trx-', callerKey)
-    assert(kmoreTrxId, `kmoreTrxId is undefined for callerKey "${callerKey}"`)
+  // @Trace<TrxStatusService['_propagatingRequired']>({
+  //   scope: ([options, trxPropagateOptions]: [PropagatingOptions, TrxPropagateOptions]) => {
+  //   },
+  // })
+  protected async _propagatingSupports(options: PropagatingOptions, trxPropagateOptions: TrxPropagateOptions): Promise<KmoreTransaction | undefined> {
+    const { db, builder } = options
+    const { scope } = builder
+    assert(scope, 'scope is undefined')
+    const dbSourceName = db.dbId
 
-    const trx: KmoreTransaction = await db.transaction({ kmoreTrxId, trxActionOnEnd: 'rollback' })
-    assert(
-      trx.kmoreTrxId === kmoreTrxId,
-      `trx.kmoreTrxId "${trx.kmoreTrxId.toString()}" not equal to kmoreTrxId "${kmoreTrxId.toString()}"`,
-    )
-    try {
-      this.updateEntryCallerKeyTrxMap(callerKey, trx)
-      this.setActiveTrxId(db.dbId, trx.kmoreTrxId)
-    }
-    catch (ex) {
-      await trx.rollback()
-      throw ex
+    const key = genCallerKey(trxPropagateOptions.className, trxPropagateOptions.funcName)
+    const trx = this.getCurrentTrx(dbSourceName, scope, key)
+    if (! trx) { return }
+
+    const trxPropagated = !! trx.trxPropagateOptions
+
+    if (! trxPropagated) {
+      Object.defineProperty(trx, QueryBuilderExtKey.trxPropagateOptions, {
+        value: trxPropagateOptions,
+      })
     }
     return trx
   }
 
-  updateBuilderSpanRowlockLevelTag(kmoreQueryId: symbol, rowLockLevel: RowLockLevel): void {
-    const querySpanInfo = this.dbSourceManager.getSpanInfoByKmoreQueryId(kmoreQueryId)
-    if (querySpanInfo) {
-      const attr: Attributes = {
-        rowLockLevel,
-      }
-      trxTrace({
-        type: 'tag',
-        appDir: this.appDir,
-        span: querySpanInfo.span,
-        traceSvc: this.traceSvc,
-        attr,
-      })
+  // #region clean
+
+  cleanAfterRequestFinished(scope: ScopeType): void {
+    this.callerSvc.deleteCallerKeyFileMapIndex(scope)
+    this.callerKeyPropagationMapIndex.delete(scope)
+    this.removeEntryCallerKeyTrxMap(scope)
+    this.callerSvc.deleteCallerTreeMapIndex(scope)
+  }
+
+  protected cleanAfterTrx(dbSourceName: DbSourceName | undefined, scope: ScopeType, callerKey: CallerKey): void {
+    this.entryCallerKeyTrxMapIndex.delete(scope)
+    this.callerSvc.deleteCallerTreeMapIndex(scope)
+    if (dbSourceName) {
+      this.delPropagationOptions(dbSourceName, scope, callerKey)
+      this.callerSvc.delFilepathFromCallerKeyFileMapIndex(dbSourceName, scope, callerKey)
+      // @FIXME
+      // this.removeTrxFromEntryCallerKeyTrxMap(dbSourceName, scope, callerKey)
     }
   }
 
-
-  // #region protected methods
-
-  protected traceEnd(options: TraceEndOptions): void {
-    const { kmoreTrxId, op, trxPropagateOptions } = options
-    if (! trxPropagateOptions) { return }
-
-    const attr: Attributes = {
-      event: AttrNames.TransactionalEnd,
-      kmoreTrxId: kmoreTrxId.toString(),
-      op,
-    }
-    trxTrace({
-      type: 'event',
-      appDir: this.appDir,
-      span: void 0,
-      traceSvc: this.traceSvc,
-      trxPropagateOptions,
-      attr,
-    })
-  }
-
-  protected getActiveTrxId(dbId: string): symbol | undefined {
-    return this.dbIdTrxIdMap.get(dbId)?.at(-1)
-  }
-
-  /**
-   * Append new trxId to dbIdTrxIdMap,
-   * - If exists at last, skip append
-   * - If exists in other position, throw Error
-   */
-  protected setActiveTrxId(dbId: string, trxId: symbol): void {
-    let arr = this.dbIdTrxIdMap.get(dbId)
-    if (! arr) {
-      arr = []
-      this.dbIdTrxIdMap.set(dbId, arr)
-    }
-
-    if (arr.at(-1) === trxId) {
-      console.info(`dbId "${dbId}" trxId "${trxId.toString()}" already in last position, skip append`)
-      return
-    }
-    else if (arr.includes(trxId)) {
-      throw new Error(`dbId "${dbId}" trxId "${trxId.toString()}" already in array`)
-    }
-
-    arr.push(trxId)
-  }
-
+  // #region builder
 
   protected builderLinkTrx(
     options: PropagatingOptions,
     trx: KmoreTransaction | undefined,
-  ): PropagatingRet {
-
-    const builder = trx ? linkBuilderWithTrx(options.builder, trx) : options.builder
-    const ret: PropagatingRet = {
-      builder,
-      kmoreTrxId: trx?.kmoreTrxId,
-    }
-    return ret
-  }
-
-  protected updateTrxSpanTag(trxId?: symbol): void {
-    if (! trxId) { return }
-
-    const querySpanInfo = this.dbSourceManager.trxSpanMap.get(trxId)
-    if (querySpanInfo) {
-      const attr: Attributes = {
-        [AttrNames.TrxPropagated]: true,
-      }
-      trxTrace({
-        type: 'tag',
-        appDir: this.appDir,
-        span: querySpanInfo.span,
-        traceSvc: this.traceSvc,
-        attr,
-      })
-    }
-  }
-
-  protected getPropagationType(key: CallerKey): PropagationType | undefined {
-    const options = this.callerKeyPropagationMap.get(key)
-    return options?.type
-  }
-
-  getPropagationOptions(key: CallerKey): RegisterTrxPropagateOptions | undefined {
-    const options = this.callerKeyPropagationMap.get(key)
-    return options
-  }
-
-  getPropagationOptionsCount(): number {
-    return this.callerKeyPropagationMap.size
-  }
-
-  protected setPropagationOptions(
-    key: CallerKey,
-    options: RegisterTrxPropagateOptions,
   ): void {
 
-    this.callerKeyPropagationMap.set(key, options)
+    trx && linkBuilderWithTrx(options.builder, trx)
   }
 
-  protected delPropagationOptions(key: CallerKey): void {
-    this.callerKeyPropagationMap.delete(key)
+  // #region entryCallerKeyTrxMapIndex
+
+  protected getTrxArrayByEntryKey(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): KmoreTransaction[] | undefined {
+    const sourceNameMap = this.entryCallerKeyTrxMapIndex.get(scope)
+    if (! sourceNameMap?.size) { return }
+    return sourceNameMap.get(dbSourceName)?.get(key)
   }
 
-  protected validateCallerKeyUnique(key: CallerKey, path: FilePath): void {
-    const ret = this.callerKeyFileMap.get(key)
-    if (! ret) { return }
-    assert(ret === path, `callerKey "${key}" must unique in all project, but in files:
-      - ${path}
-      - ${ret}
-      Should use different className or funcName`)
-  }
-
-  protected getTrxArrayByEntryKey(key: CallerKey): KmoreTransaction[] | undefined {
-    return this.entryCallerKeyTrxMap.get(key)
-  }
-
-  protected updateEntryCallerKeyTrxMap(key: CallerKey, trx: KmoreTransaction): void {
-    let arr = this.getTrxArrayByEntryKey(key)
-    if (! arr) {
-      arr = []
-      this.entryCallerKeyTrxMap.set(key, arr)
+  protected getCurrentTrxByEntryKey(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): KmoreTransaction | undefined {
+    const sourceNameMap = this.entryCallerKeyTrxMapIndex.get(scope)
+    if (! sourceNameMap?.size) { return }
+    const trxArr = sourceNameMap.get(dbSourceName)?.get(key)
+    if (! trxArr?.length) { return }
+    for (const trx of trxArr) {
+      if (! trx.isCompleted()) {
+        return trx
+      }
     }
-    arr.push(trx)
+  }
+
+  protected updateEntryCallerKeyTrxMap(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey, trx: KmoreTransaction): void {
+    let sourceNameMap = this.entryCallerKeyTrxMapIndex.get(scope)
+    if (! sourceNameMap) {
+      sourceNameMap = new Map()
+      this.entryCallerKeyTrxMapIndex.set(scope, sourceNameMap)
+    }
+
+    let callerKeyTrxArrayMap = sourceNameMap.get(dbSourceName)
+    if (! callerKeyTrxArrayMap) {
+      callerKeyTrxArrayMap = new Map()
+      sourceNameMap.set(dbSourceName, callerKeyTrxArrayMap)
+    }
+
+    let trxArr = callerKeyTrxArrayMap.get(key)
+    if (! trxArr) {
+      trxArr = []
+      callerKeyTrxArrayMap.set(key, trxArr)
+    }
+    trxArr.push(trx)
+  }
+
+  protected removeEntryCallerKeyTrxMap(scope: ScopeType): void {
+    this.entryCallerKeyTrxMapIndex.delete(scope)
+  }
+
+  protected cleanEntryCallerKeyTrxMapByKey(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): void {
+    const sourceNameMap = this.entryCallerKeyTrxMapIndex.get(scope)
+    if (! sourceNameMap?.size) { return }
+
+    const callerKeyTrxArrayMap = sourceNameMap.get(dbSourceName)
+    if (! callerKeyTrxArrayMap?.size) { return }
+
+    callerKeyTrxArrayMap.delete(key)
+  }
+
+  protected removeTrxFromEntryCallerKeyTrxMap(dbSourceName: DbSourceName, scope: ScopeType, trxId: symbol): void {
+    const sourceNameMap = this.entryCallerKeyTrxMapIndex.get(scope)
+    if (! sourceNameMap?.size) { return }
+
+    const callerKeyTrxArrayMap = sourceNameMap.get(dbSourceName)
+    if (! callerKeyTrxArrayMap?.size) { return }
+
+    for (const trxArr of callerKeyTrxArrayMap.values()) {
+      const pos = trxArr.findIndex(trx => trx.kmoreTrxId === trxId)
+      if (pos === -1) { continue }
+      trxArr.splice(pos, 1)
+    }
+  }
+
+
+  // #region dbIdTrxIdMapIndex
+
+  getCurrentTrxId(dbSourceName: DbSourceName, scope: ScopeType, callerKey: CallerKey): symbol | undefined {
+    const trx = this.getCurrentTrx(dbSourceName, scope, callerKey)
+    return trx?.kmoreTrxId
+  }
+
+  getCurrentTrx(dbSourceName: DbSourceName, scope: ScopeType, callerKey: CallerKey): KmoreTransaction | undefined {
+    const trx = this.getCurrentTrxByEntryKey(dbSourceName, scope, callerKey)
+    if (trx) {
+      return trx
+    }
+
+    const entryKey = this.callerSvc.retrieveFirstAncestorCallerKeyByCallerKey(dbSourceName, scope, callerKey)
+    if (! entryKey) { return }
+    const trx2 = this.getCurrentTrxByEntryKey(dbSourceName, scope, entryKey)
+    if (trx2) {
+      return trx2
+    }
   }
 
 
@@ -585,76 +608,64 @@ export class TrxStatusService extends TrxStatusServiceBase {
   //   return this.callerTreeMap.get(entryKey)
   // }
 
-  protected updateCallerTreeMap(entryKey: CallerKey, value: CallerKey | undefined): void {
-    assert(entryKey, 'entryKey is undefined')
-    let arr = this.callerTreeMap.get(entryKey)
-    if (! arr) {
-      arr = [entryKey]
-      this.callerTreeMap.set(entryKey, arr)
-    }
-    if (arr.length > 1024) {
-      throw new Error(`callerTreeMap entryKey "${entryKey}" length > 1024, maybe circular reference`)
-    }
-    value && arr.push(value)
+
+  // #region callerKeyPropagationMapIndex
+
+  protected getPropagationOptions(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): RegisterTrxPropagateOptions | undefined {
+    const sourceNameMap = this.callerKeyPropagationMapIndex.get(scope)
+    if (! sourceNameMap?.size) { return }
+    const options = sourceNameMap.get(dbSourceName)?.get(key)
+    return options
   }
 
-  protected updateCallerTreeMapWithExistsKey(entryKey: CallerKey): void {
-    assert(entryKey, 'entryKey is undefined')
-    const arr = this.callerTreeMap.get(entryKey)
-    if (! arr) {
-      throw new Error(`entryKey "${entryKey}" not exists in callerTreeMap, but should exists for multiple entry`)
+  protected setPropagationOptions(
+    key: CallerKey,
+    options: RegisterTrxPropagateOptions,
+  ): void {
+
+    const { dbSourceName, scope } = options
+    assert(dbSourceName, 'dbSourceName is undefined')
+    assert(scope, 'scope is undefined')
+
+    let sourceNameMap = this.callerKeyPropagationMapIndex.get(scope)
+    if (! sourceNameMap) {
+      sourceNameMap = new Map()
+      this.callerKeyPropagationMapIndex.set(scope, sourceNameMap)
     }
-    else if (! arr.includes(entryKey)) {
-      throw new Error(`entryKey "${entryKey}" not in callerTreeMap, but should exists for multiple entry`)
+
+    let callerKeyPropagationMap = sourceNameMap.get(dbSourceName)
+    if (! callerKeyPropagationMap) {
+      callerKeyPropagationMap = new Map()
+      sourceNameMap.set(dbSourceName, callerKeyPropagationMap)
     }
-    arr.push(entryKey)
+    callerKeyPropagationMap.set(key, options)
   }
 
-  protected delLastCallerKeyFromCallerTreeMap(entryKey: CallerKey, key: CallerKey): void {
-    const arr = this.callerTreeMap.get(entryKey)
-    if (! arr?.length) { return }
-    const pos = arr.lastIndexOf(key)
-    if (pos === -1) { return }
-    arr.splice(pos, 1)
+  protected getPropagationOptionsCount(dbSourceName: DbSourceName, scope: ScopeType): number {
+    const sourceNameMap = this.callerKeyPropagationMapIndex.get(scope)
+    return sourceNameMap?.get(dbSourceName)?.size ?? 0
   }
 
-
-  protected removeTrxIdFromDbIdMap(dbId: string, trxId: symbol): void {
-    const trxIds = this.dbIdTrxIdMap.get(dbId)
-    if (! trxIds) { return }
-    const index = trxIds.indexOf(trxId)
-    if (index === -1) { return }
-    trxIds.splice(index, 1)
+  protected getPropagationType(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): PropagationType | undefined {
+    const options = this.getPropagationOptions(dbSourceName, scope, key)
+    return options?.type
   }
 
-  /**
-   * If key is not the last one, throw error
-   */
-  protected removeLastKeyFromCallerTreeArray(key: CallerKey): void {
-    if (! this.callerTreeMap.size) { return }
+  protected delPropagationOptions(dbSourceName: DbSourceName, scope: ScopeType, key: CallerKey): void {
+    this.callerKeyPropagationMapIndex.get(scope)?.get(dbSourceName)?.delete(key)
+  }
 
-    for (const [tkey, arr] of this.callerTreeMap.entries()) {
-      if (! arr.includes(key)) { continue }
-      const lastKey = arr.at(-1)
-      assert(lastKey, 'callerTreeMap lastKey is undefined, during trx commit/rollback')
+  protected retrieveRegisteredTopCallerKeyFromCallStack(dbSourceName: DbSourceName, scope: ScopeType, limit = 128): CallerKey | undefined {
+    const callers = this.callerSvc.retrieveTopCallerKeyFromCallStack(limit)
+    if (! callers.length) { return }
 
-      if (lastKey !== key) {
-        throw new Error(`callerTreeMap callerKey "${key}" is not the last one, can not remove, during trx commit/rollback
-        - tkey: "${tkey}"
-        - last: "${lastKey}"
-        `)
+    for (const key of callers) {
+      assert(key, 'retrieveRegisteredTopCallerKeyFromCallStack() key is undefined')
+      if (this.isRegistered(dbSourceName, scope, key)) {
+        return key
       }
-      arr.pop()
-      return
     }
   }
-
-  protected cleanAfterTrx(callerKey: CallerKey): void {
-    this.entryCallerKeyTrxMap.delete(callerKey)
-    this.callerTreeMap.delete(callerKey)
-    this.delPropagationOptions(callerKey)
-  }
-
 
 }
 

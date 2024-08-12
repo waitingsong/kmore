@@ -6,7 +6,7 @@ import { createApp, close, createHttpRequest } from '@midwayjs/mock'
 import type { Application } from '@mwcp/share'
 import type { Suite } from 'mocha'
 
-import { ConfigKey } from '##/index.js'
+import { ConfigKey, TrxStatusService } from '##/index.js'
 
 import { kmoreConfig } from './config.unittest.js'
 import { initDb } from './helper.js'
@@ -70,6 +70,7 @@ async function updateConfig(mockApp: Application, config: TestConfig): Promise<v
 
   config.container = mockApp.getApplicationContext()
   // const svc = await testConfig.container.getAsync(TaskQueueService)
+  config.trxStatusService = await testConfig.container.getAsync(TrxStatusService)
 }
 
 async function updateConfig2(mockApp: Application, config: TestConfig): Promise<void> {

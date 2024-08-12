@@ -1,16 +1,17 @@
-import assert from 'assert'
+import assert from 'node:assert'
 
 import type { DecoratorExecutorParamBase, DecoratorMetaDataPayload } from '@mwcp/share'
 import { deepmerge } from '@mwcp/share'
+import { genError } from '@waiting/shared-core'
 import { PropagationType } from 'kmore'
 
-import { initTransactionalOptions } from '##/lib/config.js'
-import type { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.base.js'
+import { initRowLockOptions } from '##/lib/config.js'
 import { genCallerKey } from '##/lib/propagation/trx-status.helper.js'
-import { TrxStatusService } from '##/lib/trx-status.service.js'
+import type { CallerKey, RegisterTrxPropagateOptions } from '##/lib/propagation/trx-status.types.js'
+import type { TrxStatusService } from '##/lib/trx-status.service.js'
 import { ConfigKey, Msg } from '##/lib/types.js'
 
-import type { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, TransactionalArgs } from './transactional.types.js'
+import type { DecoratorExecutorOptions, GenDecoratorExecutorOptionsExt, TransactionalOptions } from './transactional.types.js'
 
 
 export async function genDecoratorExecutorOptionsAsync<T extends object>(
@@ -18,34 +19,37 @@ export async function genDecoratorExecutorOptionsAsync<T extends object>(
   optionsExt: GenDecoratorExecutorOptionsExt,
 ): Promise<DecoratorExecutorOptions> {
 
-  const { mergedDecoratorParam, webContext } = optionsBase
-
-  assert(webContext, 'webContext is undefined')
-  assert(webContext.requestContext, 'webContext.requestContext is undefined')
+  const { mergedDecoratorParam } = optionsBase
 
   assert(optionsExt.propagationConfig, Msg.propagationConfigIsUndefined)
 
-  const initArgs = {
+  const initArgs: TransactionalOptions = {
+    dbSourceName: void 0,
     propagationType: PropagationType.REQUIRED,
-    propagationOptions: {
-      ...initTransactionalOptions,
+    rowLockOptions: {
+      ...initRowLockOptions,
     },
   }
 
-  const trxStatusSvc = await webContext.requestContext.getAsync(TrxStatusService)
-  assert(trxStatusSvc, 'trxStatusSvc is undefined')
+  assert(optionsExt.trxStatusSvc, 'genDecoratorExecutorOptionsAsync() optionsExt.trxStatusSvc is undefined')
 
   const args = deepmerge.all([
     initArgs,
     mergedDecoratorParam ?? {},
-  ]) as DecoratorMetaDataPayload<TransactionalArgs>
+  ]) as DecoratorMetaDataPayload<TransactionalOptions>
 
   const ret: DecoratorExecutorOptions = {
     ...optionsBase,
     ...optionsExt,
     mergedDecoratorParam: args,
-    trxStatusSvc,
   }
+
+  const { dbSourceName } = args
+  if (! dbSourceName) {
+    const dbInstanceCount = ret.trxStatusSvc.getDbInstanceCount()
+    assert(dbInstanceCount <= 1, 'genDecoratorExecutorOptionsAsync(): dbSourceName is undefined, but multiple dbSources found')
+  }
+
   return ret
 }
 
@@ -57,12 +61,12 @@ export async function before(options: DecoratorExecutorOptions): Promise<void> {
     trxStatusSvc,
   } = options
 
-  assert(mergedDecoratorParam?.propagationOptions, 'mergedDecoratorParam.propagationOptions is undefined')
+  assert(mergedDecoratorParam?.rowLockOptions, 'mergedDecoratorParam.rowLockOptions is undefined')
 
   const type = mergedDecoratorParam.propagationType
   assert(type, 'propagationType is undefined')
 
-  const { readRowLockLevel, writeRowLockLevel } = mergedDecoratorParam.propagationOptions
+  const { readRowLockLevel, writeRowLockLevel } = mergedDecoratorParam.rowLockOptions
   assert(readRowLockLevel, 'readRowLockLevel is undefined')
   assert(writeRowLockLevel, 'writeRowLockLevel is undefined')
 
@@ -70,6 +74,8 @@ export async function before(options: DecoratorExecutorOptions): Promise<void> {
   assert(className, 'instance.constructor.name is undefined')
 
   const opts: RegisterTrxPropagateOptions = {
+    dbSourceName: mergedDecoratorParam.dbSourceName, // can be undefined if only one dbSource
+    scope: options.scope,
     type,
     className,
     funcName: methodName,
@@ -86,14 +92,11 @@ export async function before(options: DecoratorExecutorOptions): Promise<void> {
     options.callerKey = callerKey
   }
   catch (ex) {
-    const prefix = `[@mwcp/${ConfigKey.namespace}] registerPropagation error`
-    const msg = ex instanceof Error && ex.message.includes(Msg.insufficientCallstacks)
-      ? `${prefix}. ${Msg.insufficientCallstacks}`
-      : prefix
-    console.error(msg, ex)
-    const error = new Error(msg, { cause: ex })
+    // console.error(msg, ex)
+    const error = genError({ error: ex, altMessage: Msg.registerPropagationFailed })
     const key = genCallerKey(opts.className, opts.funcName)
     options.callerKey = key
+    options.error = error
     throw error
   }
   assert(callerKey, `[@mwcp/${ConfigKey.namespace}] generate callerKey failed`)
@@ -101,20 +104,31 @@ export async function before(options: DecoratorExecutorOptions): Promise<void> {
 
 
 export async function afterReturn(options: DecoratorExecutorOptions): Promise<void> {
-  const { trxStatusSvc, callerKey } = options
+  const { trxStatusSvc, callerKey, mergedDecoratorParam } = options
 
   if (! callerKey) { return }
   assert(! options.error, `[@mwcp/${ConfigKey.namespace}] options.error is not undefined in afterAsync().
   It should be handled in after() lifecycle redirect to afterThrow() with errorExt.
   Error: ${options.error?.message}`)
 
-  const tkey = trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
-  if (tkey && tkey === callerKey) {
-    // Delay for commit, prevent from method returning Promise or calling Knex builder without `await`!
-    // await sleep(0)
-    // only top caller can commit
-    await trxStatusSvc.trxCommitIfEntryTop(tkey)
-  }
-
+  await trxStatusSvc.tryCommitTrxIfKeyIsEntryTop(mergedDecoratorParam?.dbSourceName, options.scope, callerKey)
 }
 
+
+export function afterThrow(options: DecoratorExecutorOptions, trxStatusService: TrxStatusService): never | Promise<never> {
+  const { error } = options
+  assert(error instanceof Error, `[@mwcp/${ConfigKey.namespace}] ${ConfigKey.Transactional}() afterThrow error is not instance of Error`)
+
+  const { callerKey, mergedDecoratorParam } = options
+  const key = callerKey ?? genCallerKey(options.instanceName, options.methodName)
+  const tkey = trxStatusService.retrieveUniqueTopCallerKey(mergedDecoratorParam?.dbSourceName, options.scope, key)
+
+  if (tkey && tkey === key) {
+    if (options.methodIsAsyncFunction) {
+      return trxStatusService.trxRollbackEntry(mergedDecoratorParam?.dbSourceName, options.scope, key).then(() => {
+        throw error
+      })
+    }
+  }
+  throw error
+}

@@ -15,6 +15,12 @@ export const apiBase = {
   methodDecorator: '/method_decorator',
   propagationOverride: '/method_propagation_override_class',
   decorator: '/decorator',
+
+  trx_manual: '/trx_manual',
+  user: '/user',
+  middle_trx_auto_action: '/middle_trx_auto_action',
+  trx_error: '/trx_error',
+  transactional_simple: '/transactional_simple',
 }
 
 export const apiMethod = {
@@ -23,12 +29,15 @@ export const apiMethod = {
   component: 'component',
 
   get: 'get',
+  commit: 'commit',
+  rollback: 'rollback',
   delete: 'delete',
   controllerUpdate: 'controller_update',
   controllerUpdateDelOneByOne: 'controller_update_delete_one_by_one',
   returnReject: 'return_reject',
   selfUpdateDel: 'self_update_delete',
   selfReturnMissingAwait: 'self_return_missing_await',
+  fast_self_return_missing_await: 'fast_self_return_missing_await',
   selfReturnPromise: 'self_return_promise',
   separateTrx: 'separate_trx',
   sibling: 'sibling',
@@ -43,4 +52,6 @@ export const apiMethod = {
   cacheableWithClassTransactional: 'cacheable_with_class_transactional',
   cacheableAfterMethodTransactional: 'cacheable_after_method_transactional',
   cacheableBeforeMethodTransactional: 'cacheable_before_method_transactional',
+
+  close_early: 'close_early',
 }

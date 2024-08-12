@@ -1,7 +1,6 @@
 import * as info from '@midwayjs/info'
 import * as koa from '@midwayjs/koa'
 import * as swagger from '@midwayjs/swagger'
-import * as cache from '@mwcp/cache'
 import * as otel from '@mwcp/otel'
 import * as share from '@mwcp/share'
 
@@ -19,7 +18,6 @@ if (CI) {
   useComponents.push(koa)
   useComponents.push(info)
   useComponents.push(swagger)
-  useComponents.push(cache)
 }
 useComponents.push(share)
 

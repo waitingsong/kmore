@@ -18,7 +18,7 @@ import type {
   TrxCallerInfo,
   CallerKey,
   RegisterTrxPropagateOptions,
-} from './trx-status.base.js'
+} from './trx-status.types.js'
 
 
 export function genCallerKey(className: string, funcName: string): CallerKey {
@@ -29,7 +29,7 @@ export function genCallerKey(className: string, funcName: string): CallerKey {
   assert(name1, 'className is empty')
   assert(name2, 'funcName is empty')
   const key = `${name1}:${name2}`
-  return key as CallerKey
+  return key
 }
 
 export interface TrxTraceOptions {
@@ -119,7 +119,7 @@ const skipMethods = ['truncate']
 export function linkBuilderWithTrx(
   builder: KmoreQueryBuilder,
   trx: KmoreTransaction,
-): KmoreQueryBuilder {
+): void {
 
   assert(trx, 'trx is undefined')
 
@@ -142,7 +142,6 @@ export function linkBuilderWithTrx(
   }
 
   builder.trxPropagated = true
-  return builder
 }
 
 function builderRowLock(

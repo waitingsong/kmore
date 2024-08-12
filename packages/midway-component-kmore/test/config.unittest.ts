@@ -73,27 +73,24 @@ export const kmoreConfig: Config<'master'> = {
   },
 }
 
-function cbOnStart(event: KmoreEvent, ctx?: Context): void {
-  assert(ctx)
+function cbOnStart(event: KmoreEvent): void {
   assert(event.type === 'start', event.type)
   assert(event.queryBuilder)
   assert(! event.data)
   assert(! event.respRaw)
 }
 
-function cbOnQuery(event: KmoreEvent, ctx?: Context): void {
-  assert(ctx)
+function cbOnQuery(event: KmoreEvent): void {
   assert(event.type === 'query', event.type)
-  assert(! event.queryBuilder)
+  assert(event.queryBuilder)
   assert(event.data)
   assert(! event.respRaw)
 }
 
 
-function cbOnResp(event: KmoreEvent, ctx?: Context): void {
-  assert(ctx)
+function cbOnResp(event: KmoreEvent): void {
   assert(event.type === 'queryResponse', event.type)
-  assert(! event.queryBuilder)
+  assert(event.queryBuilder)
   assert(! event.data)
   assert(event.respRaw)
 }

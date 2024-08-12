@@ -5,8 +5,8 @@ import { CaseType } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
 import type { QueryBuilderExtKey } from './builder/builder.types.js'
-import type { TrxControl, TrxPropagateOptions } from './trx.types.js'
 import type { TrxCommitRollbackHook } from './hook/hook.types.js'
+import type { TrxControl, TrxPropagateOptions } from './trx.types.js'
 
 
 export { CaseType }

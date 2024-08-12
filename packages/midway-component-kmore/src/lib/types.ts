@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { BaseConfig } from '@mwcp/share'
 import type { MiddlewareConfig as MWConfig } from '@waiting/shared-types'
-import type { KmoreFactoryOpts, PropagationType, RowLockLevel } from 'kmore'
+import type { KmoreFactoryOpts, PropagationType, RowLockOptions } from 'kmore'
 
 
-export type {
-  QuerySpanInfo,
-  WrapIdentifierIgnoreRule,
-} from 'kmore'
+export type { WrapIdentifierIgnoreRule } from 'kmore'
 
 
 export enum ConfigKey {
@@ -27,17 +24,11 @@ export enum Msg {
   insufficientCallstacks = 'Insufficient call stacks by getCallerStack',
   callerKeyNotRegisteredOrNotEntry = 'callerKey is not registered or not entry caller',
   propagationConfigIsUndefined = 'propagationConfig is undefined',
+  registerPropagationFailed = 'registerPropagation() failed',
 }
 
 
-export interface Config<SourceName extends string = string>
-  extends BaseConfig, KmoreSourceConfig<SourceName> {
-
-  /**
-   * @default false
-   */
-  enableDefaultRoute: boolean
-}
+export interface Config<SourceName extends string = string> extends BaseConfig, KmoreSourceConfig<SourceName> { }
 
 export interface MiddlewareOptions {
   debug: boolean
@@ -50,7 +41,7 @@ export interface KmoreSourceConfig<SourceName extends string = string> {
   default?: DbConfig
 }
 export type DataSource<SourceName extends string = string> = Record<SourceName, DbConfig>
-export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
+export interface DbConfig<T = any> extends KmoreFactoryOpts<T> {
   /**
    * Enable open telemetry via @mwcp/otel
    * @default true
@@ -58,45 +49,47 @@ export interface DbConfig<T = any, Ctx = any> extends KmoreFactoryOpts<T, Ctx> {
   enableTrace?: boolean
   /**
    * Whether add event on span
-   * @default true
+   * @default all
    */
-  traceEvent?: boolean
+  traceEvents?: Set<KmoreAttrNames> | 'all'
   /**
    * Tracing database connection (including connection secret!)
    * @default false
    */
   traceInitConnection?: boolean
   /**
-   * Tracing query response (respRaw.response),
-   * @default true
-   * @description tracing if true of if query cost > sampleThrottleMs
-   */
-  traceResponse?: boolean
-  /**
    * 强制采样请求处理时间（毫秒）阈值
    * 负数不采样
+   * @description NOT used currently
    * @default 3000
    */
   sampleThrottleMs?: number
 }
 
+
 export enum KmoreAttrNames {
-  QueryBuilderStart = 'query.builder.start',
+  BuilderCompile = 'builder.compile',
+  QueryStart = 'query.start',
+  QueryQuerying = 'query.querying',
+  QueryResponse = 'query.response',
+  QueryError = 'query.error',
 
-  TrxBegin = 'trx.begin',
-  TrxBeginStart = 'trx.begin.start',
-  TrxBeginEnd = 'trx.begin.end',
+  // TrxCreate = 'trx.create',
+  TrxCreateStart = 'trx.create.start',
+  TrxCreateEnd = 'trx.create.end',
 
-  TrxCommit = 'trx.commit',
+  // TrxCommit = 'trx.commit',
   TrxCommitStart = 'trx.commit.start',
   TrxCommitEnd = 'trx.commit.end',
 
-  TrxRollback = 'trx.rollback',
+  // TrxRollback = 'trx.rollback',
   TrxRollbackStart = 'trx.rollback.start',
   TrxRollbackEnd = 'trx.rollback.end',
 
   TrxTransacting = 'trx.transacting',
-  TrxEndWith = 'trx.end',
+
+  // TrxHookPre = 'trx.hook.pre',
+  // TrxHookPost = 'trx.hook.post',
 
   getDataSourceStart = 'getDataSource.start',
   getDataSourceEndFromCache = 'getDataSource.end.fromCache',
@@ -107,21 +100,23 @@ export enum KmoreAttrNames {
 /**
  * Transaction propagation config for declarative transaction
  */
-export interface KmorePropagationConfig extends TransactionalOptions {
+export interface KmorePropagationConfig extends RowLockOptions {
   /**
    * @default PropagationType.REQUIRED,
    */
   propagationType: PropagationType
 }
-export interface TransactionalOptions {
-  /**
-   * @default {@link RowLockLevel.ForShare}
-   */
-  readRowLockLevel: RowLockLevel
-  /**
-   * @default {@link RowLockLevel.ForUpdate}
-   */
-  writeRowLockLevel: RowLockLevel
+
+
+
+export interface ConnectionConfig {
+  host: string
+  port?: number
+  user: string
+  password: string
+  database: string
+  domain?: string
+  instanceName?: string
+  debug?: boolean
+  requestTimeout?: number
 }
-
-
