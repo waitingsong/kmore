@@ -23,7 +23,7 @@ A SQL query builder based on [Knex](https://knexjs.org/) with powerful TypeScrip
 ```sh
 npm i kmore && npm i -D kmore-cli
 // for Midway.js
-npm i @mw-components/kmore && npm i -D kmore-cli
+npm i @mwcp/kmore && npm i -D kmore-cli
 
 # Then add one of the following:
 npm install pg
@@ -112,7 +112,7 @@ await km.dbh.schema
 
 #### Snake style
 ```ts
-// auto generated accessors tb_user() and tb_user_detail()
+// auto generated accessor tb_user() and tb_user_detail()
 const { tb_user, tb_user_detail } = km.refTables
 
 await tb_user()

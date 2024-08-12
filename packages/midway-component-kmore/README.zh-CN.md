@@ -25,7 +25,7 @@
 
 ## Note
 
-ESM build only, requires `@midwayjs >= 3.12` and set `"type": "module"` in `packages.json`
+ESM build only, requires `@midwayjs >= 3.16` and set `"type": "module"` in `packages.json`
 
 ## 安装
 ```sh
@@ -120,16 +120,16 @@ await km.dbh.schema
 #### Snake style
 ```ts
 // auto generated accessor tb_user() and tb_user_detail()
-const { ref_tb_user, ref_tb_user_detail } = km.refTables
+const { tb_user, tb_user_detail } = km.refTables
 
-await ref_tb_user()
+await tb_user()
   .insert([
     { user_name: 'user1', ctime: new Date() }, // ms
     { user_name: 'user2', ctime: 'now()' }, // μs
   ])
   .then()
 
-const affectedRows = await ref_tb_user_detail()
+const affectedRows = await tb_user_detail()
   .insert([
     { uid: 1, age: 10, user_address: 'address1' },
     { uid: 2, age: 10, user_address: 'address1' },
@@ -143,7 +143,7 @@ const affectedRows = await ref_tb_user_detail()
 import { RecordCamelKeys } from '@waiting/shared-types'
 
 // auto generated accessor tb_user() and tb_user_detail() 
-const { ref_tb_user, ref_tb_user_detail } = km.camelTables
+const { tb_user, tb_user_detail } = km.camelTables
 
 interface UserDO {
   user_name: string
@@ -151,7 +151,7 @@ interface UserDO {
 }
 type UserDTO = RecordCamelKeys<UserDO>
 
-const users: UserDTO[] = await ref_tb_user()
+const users: UserDTO[] = await tb_user()
   .insert([
     { userName: 'user1', ctime: new Date() }, // ms
     { userName: 'user2', ctime: 'now()' }, // μs
@@ -165,7 +165,7 @@ const users: UserDTO[] = await ref_tb_user()
 const uid = 1
 
 // tb_user JOIN tb_user_ext ON tb_user_ext.uid = tb_user.uid
-const ret = await km.camelTables.ref_tb_user()
+const ret = await km.camelTables.tb_user()
   .smartJoin(
     'tb_user_ext.uid',
     'tb_user.uid',
@@ -195,7 +195,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     page: 2,      // default 1
     pageSize: 20, // default 10
   }
-  const users = await tables.ref_tb_user().autoPaging(options)
+  const users = await tables.tb_user().autoPaging(options)
   assert(Array.isArray(users))
   assert(users.length)
 
@@ -215,7 +215,7 @@ More examples of join see [joint-table](https://github.com/waitingsong/kmore/blo
     page: 2,      // default 1
     pageSize: 20, // default 10
   }
-  const users = await tables.ref_tb_user().autoPaging(options, true)
+  const users = await tables.tb_user().autoPaging(options, true)
   assert(! Array.isArray(users))
   assert(Array.isArray(users.rows))
   assert(users.rows.length)
@@ -248,32 +248,33 @@ More examples of auto paging see [auto-paging](https://github.com/waitingsong/km
 - 类装饰器 Class decorator
 
   ```ts
-  import { Init, Inject } from '@midwayjs/core'
+  import { Init, Inject, Singleton } from '@midwayjs/core'
   import { Transactional } from '@mwcp/kmore'
 
   @Transactional()  // <-- 
+  @Singleton()
   export class UserRepo {
     @Inject() dbManager: DbManager<'master', Db>
 
-    ref_tb_user: Kmore<Db>['camelTables']['ref_tb_user']
-    ref_tb_user_ext: Kmore<Db>['camelTables']['ref_tb_user_ext']
+    tb_user: Kmore<Db>['camelTables']['tb_user']
+    tb_user_ext: Kmore<Db>['camelTables']['tb_user_ext']
 
     @Init()
     async init(): Promise<void> {
       const db = this.dbManager.getDataSource('master')
       assert(db)
-      this.ref_tb_user = db.camelTables.ref_tb_user
-      this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+      this.tb_user = db.camelTables.tb_user
+      this.tb_user_ext = db.camelTables.tb_user_ext
     }
 
     async getUsers(): Promise<UserDTO[]> {
-      const users = await this.ref_tb_user()
+      const users = await this.tb_user()
       return users
     }
 
     // will throw error
     wrongUsage() {
-      return this.ref_tb_user()
+      return this.tb_user()
     }
   }
   ```
@@ -281,23 +282,24 @@ More examples of auto paging see [auto-paging](https://github.com/waitingsong/km
 - 方法装饰器 Method decorator
 
   ```ts
+  @Singleton()
   export class UserRepo {
     @Inject() dbManager: DbManager<'master', Db>
 
-    ref_tb_user: Kmore<Db>['camelTables']['ref_tb_user']
-    ref_tb_user_ext: Kmore<Db>['camelTables']['ref_tb_user_ext']
+    tb_user: Kmore<Db>['camelTables']['tb_user']
+    tb_user_ext: Kmore<Db>['camelTables']['tb_user_ext']
 
     @Init()
     async init(): Promise<void> {
       const db = this.dbManager.getDataSource('master')
       assert(db)
-      this.ref_tb_user = db.camelTables.ref_tb_user
-      this.ref_tb_user_ext = db.camelTables.ref_tb_user_ext
+      this.tb_user = db.camelTables.tb_user
+      this.tb_user_ext = db.camelTables.tb_user_ext
     }
 
     @Transactional()  // <--
     async getUsers(): Promise<UserDTO[]> {
-      const users = await this.ref_tb_user()
+      const users = await this.tb_user()
       return users
     }
   }
@@ -342,8 +344,6 @@ const master: DbConfig<Db> = {
     },
   },
   dict: dbDict,
-  sampleThrottleMs: 500,
-  enableTrace: true, // open telemetry
 }
 export const kmoreConfig: KmoreSourceConfig = {
   dataSource: {
@@ -355,9 +355,10 @@ export const kmoreConfig: KmoreSourceConfig = {
 
 ### Usage
 ```ts
-import { Init, Inject } from '@midwayjs/decorator'
+import { Init, Inject, Singleton } from '@midwayjs/core'
 
 @Provide()
+@Singleton()
 export class UserRepo {
 
   @Inject() dbManager: DbManager<'master' | 'slave', Db>
@@ -370,8 +371,8 @@ export class UserRepo {
   }
 
   async getUser(uid: number): Promise<UserDTO | undefined> {
-    const { ref_tb_user } = this.db.camelTables
-    const user = await ref_tb_user()
+    const { tb_user } = this.db.camelTables
+    const user = await tb_user()
       .where({ uid })
       .then(rows => rows[0])
     return user
