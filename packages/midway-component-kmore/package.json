@@ -39,12 +39,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/otel": "^32.0.0",
+    "@mwcp/otel": "^37.0.0",
     "kmore": "^64.0.0",
     "knex": "^3.1.0"
   },
   "devDependencies": {
-    "@mwcp/cache": "^32.0.0",
+    "@mwcp/cache": "^37.0.0",
     "kmore-cli": "^64.0.0",
     "kmore-types": "^64.0.0"
   },
