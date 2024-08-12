@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory, KmoreTransaction } from '##/index.js'
+import { KmoreFactory, KmoreTransaction, TrxControl } from '##/index.js'
 import { config } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
@@ -38,9 +38,9 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should savepoint() work', () => {
     it('normal', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Rollback })
       assert(trx)
-      assert(trx.trxActionOnEnd === 'rollback')
+      assert(trx.trxActionOnError === TrxControl.Rollback)
 
       const t1u = await update(km, trx, newTime1)
       console.log({ t1u, file: fileShortPath(import.meta.url) })

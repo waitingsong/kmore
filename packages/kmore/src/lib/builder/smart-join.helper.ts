@@ -54,11 +54,9 @@ export function splitScopedColumn(input: string): [string, string] {
 export function patchWhereColumnAlias(
   builder: KmoreQueryBuilder,
   aliasMap = new Map<string, string>(),
-): KmoreQueryBuilder {
+): void {
 
-  if (! aliasMap.size) {
-    return builder
-  }
+  if (! aliasMap.size) { return }
 
   const { dbDict } = builder
   assert(dbDict, 'builder.dict undefined')
@@ -109,8 +107,5 @@ export function patchWhereColumnAlias(
         statement,
       })
     })
-
   }
-
-  return builder
 }

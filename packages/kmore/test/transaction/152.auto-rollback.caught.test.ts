@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '##/index.js'
+import { KmoreFactory, TrxControl } from '##/index.js'
 import { config } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
@@ -31,19 +31,21 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should auto rollback work on error', () => {
     it('error from .then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Rollback })
       assert(trx)
+      const msg = 'debug test error'
 
       try {
         await update(km, trx, newTime1)
         await readWithoutThen(km, trx)
           .then(() => {
-            return Promise.reject('debug test error')
+            return Promise.reject(msg)
           })
       }
       catch (ex) {
         assert(ex instanceof Error)
-        assert(! trx.isCompleted())
+        assert(ex.message === msg, ex.message)
+        assert(trx.isCompleted())
 
         const currCtime2 = await read(km)
         assert(currCtime2)
@@ -57,7 +59,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('rollback by invalid sql query always, although auto commit. with tailing then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Rollback })
       assert(trx)
 
       try {
@@ -78,11 +80,11 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
     it('rollback by invalid sql query always, although auto commit. without tailing then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Rollback })
       assert(trx)
 
       try {
@@ -106,7 +108,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('reuse tbUser', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Rollback })
       assert(trx)
 
       const tbUser = km.camelTables.tb_user()
@@ -120,7 +122,7 @@ describe(fileShortPath(import.meta.url), () => {
           })
           .where('uid', 1)
 
-        // resuse tbuser
+        // reuse tbUser
         await tbUser
           .transacting(trx)
           .forUpdate()

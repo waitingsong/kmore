@@ -221,7 +221,7 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
   const { tb_user_ext } = km.refTables
 
   // insert
-  await tb_user_ext()
+  const foo = await tb_user_ext()
     .insert([
       { uid: 1, age: 10, address: 'address1' },
       { uid: 2, age: 10, address: 'address1' },
@@ -231,11 +231,19 @@ async function initUserExt(km: Kmore<Db>): Promise<void> {
       validateUserExtRows(rows)
       return rows
     })
+    .then((rows) => {
+      validateUserExtRows(rows)
+      return rows
+    })
     .catch((err: Error) => {
       assert(false, err.message)
     })
+  void foo
 
   const countRes = await km.refTables.tb_user_ext().count()
+  // .then((data) => {
+  //   return Promise.resolve(data)
+  // })
   assert(
     countRes?.[0] && countRes[0]['count'] === '2',
     'Should count be "2"',
@@ -327,7 +335,7 @@ async function setTimeZone(dbh: Knex, zone: string): Promise<string> {
 
 export async function deleteRow(
   kmore: Kmore<Db>,
-  tables: DbQueryBuilder<unknown, Db, '', CaseType.camel>,
+  tables: DbQueryBuilder<Db, '', CaseType.camel>,
   trx: KmoreTransaction,
   uid: number,
 ): Promise<void> {

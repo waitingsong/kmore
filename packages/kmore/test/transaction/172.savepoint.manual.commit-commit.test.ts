@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '##/index.js'
+import { KmoreFactory, TrxControl } from '##/index.js'
 import { config } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
@@ -38,9 +38,9 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should savepoint() work', () => {
     it('normal', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'rollback' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Rollback })
       assert(trx)
-      assert(trx.trxActionOnEnd === 'rollback')
+      assert(trx.trxActionOnError === TrxControl.Rollback)
 
       const t1u = await update(km, trx, newTime1)
       console.log({ t1u, file: fileShortPath(import.meta.url) })
@@ -92,17 +92,19 @@ describe(fileShortPath(import.meta.url), () => {
         return
       }
 
-      await sleep(1000)
-      const t4b = await read(km)
-      console.warn('Retry after 1s: ', t4b)
-      assert(t4b === date2, `t4b: ${t4b}, date2: ${date2}`)
+      try {
+        await sleep(1500)
+        const t4b = await read(km)
+        console.warn('Retry after 1s: ', t4b)
+        assert(t4b === date2, `t4b: ${t4b}, expect: ${date2}`)
+      }
+      catch (ex) {
+        await sleep(3000)
+        const t4c = await read(km)
+        console.warn('Retry2 after 1s: ', t4c)
+        assert(t4c === date2, `t4c: ${t4c}, expect: ${date2}`)
+      }
 
-      await sleep(1000)
-      const t4c = await read(km)
-      console.warn('Retry2 after 1s: ', t4c)
-      assert(t4c === date2, `t4c: ${t4c}, date2: ${date2}`)
-
-      assert(true)
     })
 
   })

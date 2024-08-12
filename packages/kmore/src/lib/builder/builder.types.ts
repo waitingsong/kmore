@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
+import type { ScopeType } from '@mwcp/share'
 import type {
   CaseConvertTable,
   CaseType,
@@ -16,24 +17,23 @@ import type {
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 
-import type { RowLockLevel, TrxPropagateOptions } from './trx.types.js'
+import type { RowLockLevel, TrxPropagateOptions } from '../trx.types.js'
 
 
 export type DbQueryBuilder<
-  Context,
   D extends object,
   Prefix extends string,
   CaseConvert extends CaseType,
 > = {
   /** prefix_tb_name: () => knex('tb_name') */
   [tb in keyof D as `${Prefix}${tb & string}`]: D[tb] extends object
-    ? TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>, Context>
+    ? TbQueryBuilder<D, CaseConvert, CaseConvertTable<D[tb], CaseConvert>>
     : never
 }
 
 
-export type TbQueryBuilder<D extends object, CaseConvert extends CaseType, TRecord extends object, Context>
-  = (options?: Partial<TbQueryBuilderOptions<Context>>) => KmoreQueryBuilder<D, CaseConvert, TRecord, TRecord[]>
+export type TbQueryBuilder<D extends object, CaseConvert extends CaseType, TRecord extends object>
+  = () => KmoreQueryBuilder<D, CaseConvert, TRecord, TRecord[]>
 
 
 export type KmoreQueryBuilder<
@@ -44,12 +44,9 @@ export type KmoreQueryBuilder<
 > = QueryBuilder<D, CaseConvert, TRecord, TResult>
 
 
-export interface TbQueryBuilderOptions<Context> {
-  ctx: Context
-  ctxBuilderPreProcessor: CtxBuilderPreProcessor | undefined
-  ctxBuilderResultPreProcessor: CtxBuilderResultPreProcessor | undefined
-  ctxExceptionHandler: CtxExceptionHandler | undefined
-}
+// export interface TbQueryBuilderOptions<Context> {
+//   ctx: Context
+// }
 
 
 export enum QueryBuilderExtKey {
@@ -63,6 +60,8 @@ export enum QueryBuilderExtKey {
   trxPropagateOptions = 'trxPropagateOptions',
   trxPropagated = 'trxPropagated',
   rowLockLevel = 'rowLockLevel',
+  callerKey = 'callerKey',
+  scope = 'scope',
 }
 export interface QueryBuilderExtName<D extends object = object> {
   caseConvert: CaseType
@@ -70,6 +69,7 @@ export interface QueryBuilderExtName<D extends object = object> {
   dbDict: DbDict<D>
   dbId: string
   _tablesJoin: string[]
+  callerKey: string | undefined
   pagingType?: 'counter' | 'pager'
   trxPropagateOptions?: TrxPropagateOptions
   trxPropagated?: boolean
@@ -79,6 +79,11 @@ export interface QueryBuilderExtName<D extends object = object> {
    */
   rowLockLevel: RowLockLevel | undefined
   transactionalProcessed: boolean | undefined
+  /**
+   * Used for transaction operation, e.g. trx.commit()
+   * @default kmoreQueryId
+   */
+  scope: ScopeType | undefined
 }
 
 
@@ -107,29 +112,6 @@ export type SmartJoin<
   scopedColumn: C1 extends C2 ? never : C1,
   // @ts-expect-error
 ) => KmoreQueryBuilder<D, CaseConvert, TResult2, TResult2[]>
-
-
-export type CtxBuilderPreProcessor = (builder: KmoreQueryBuilder) => Promise<{ builder: KmoreQueryBuilder }>
-export type CtxBuilderResultPreProcessor<T = unknown> = (options: CtxBuilderResultPreProcessorOptions<T>) => Promise<T>
-export type CtxExceptionHandler = (options: CtxExceptionHandlerOptions) => Promise<never>
-
-export interface CtxBuilderResultPreProcessorOptions<Resp = unknown> {
-  kmoreQueryId: symbol
-  kmoreTrxId: symbol | undefined
-  response: Resp
-  transactionalProcessed: boolean | undefined
-  trxPropagateOptions: TrxPropagateOptions | undefined
-  trxPropagated: boolean | undefined
-  /**
-   * Propagation rowlock level
-   * @default {@link RowLockLevel}
-   */
-  rowLockLevel: RowLockLevel | undefined
-}
-
-export interface CtxExceptionHandlerOptions extends Omit<CtxBuilderResultPreProcessorOptions, 'response'> {
-  exception: unknown
-}
 
 
 export interface QueryBuilder<

@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '##/index.js'
+import { KmoreFactory, TrxControl } from '##/index.js'
 import { config } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
@@ -30,24 +30,28 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto commit work on error', () => {
-    it('ignore rejection from .then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+    it('rollback when reject in .then(), even trxActionOnError:"commit"', async () => {
+      const currCtime2 = await read(km)
+      console.info({ currCtime2 })
+
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
+      const msg = 'debug test error'
 
       try {
         await update(km, trx, newTime1)
 
-        // NOTE: error from builder or ONLY fisrt builder.then() can be catched !
+        // NOTE: error from builder or ONLY first builder.then() can be catch !
         await readWithoutThen(km, trx)
           .then(() => {
-            throw new Error('debug test error')
+            throw new Error(msg)
           })
       }
       catch (ex) {
         assert(ex instanceof Error)
-        assert(! trx.isCompleted())
+        assert(ex.message === msg)
+        assert(trx.isCompleted())
 
-        const currCtime2 = await read(km)
         assert(currCtime2)
         assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
         return
@@ -59,7 +63,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('rollback by invalid sql query always, although auto commit. with tailing then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
 
       try {
@@ -80,11 +84,11 @@ describe(fileShortPath(import.meta.url), () => {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
     it('rollback by invalid sql query always, although auto commit. without tailing then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
 
       try {
@@ -108,7 +112,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('reuse tbUser', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
 
       const tbUser = km.camelTables.tb_user()

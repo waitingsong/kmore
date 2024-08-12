@@ -3,53 +3,54 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'node:assert'
 
+import type { ScopeType } from '@mwcp/share'
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
-// eslint-disable-next-line no-duplicate-imports, import/no-named-default
+// eslint-disable-next-line import/no-extraneous-dependencies, import/no-named-default
 import { default as _knex } from 'knex'
 
-import { KmoreBase } from './base.js'
-import { createRefTables } from './builder.index.js'
-import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
+import { createRefTables } from './builder/builder.index.js'
+import type { DbQueryBuilder, KmoreQueryBuilder } from './builder/builder.types.js'
 import { initialConfig } from './config.js'
 import type { PostProcessInput } from './helper.js'
-import {
-  defaultWrapIdentifierIgnoreRule,
-  postProcessResponse,
-  wrapIdentifier,
-} from './helper.js'
-import { createTrxProperties } from './proxy.trx.js'
+import { defaultWrapIdentifierIgnoreRule, postProcessResponse, wrapIdentifier } from './helper.js'
+import { genHookList } from './hook/hook.helper.js'
+import type { HookList, TransactionHookOptions, TransactionPreHookOptions } from './hook/hook.types.js'
+import { createTrxProxy } from './proxy/proxy.index.js'
+import { TrxControl } from './trx.types.js'
 import type {
-  EventCallbacks,
+  EventType,
   KmoreTransaction,
   KmoreTransactionConfig,
   KnexConfig,
-  QueryContext,
+  OnQueryData,
+  OnQueryErrorData,
+  OnQueryErrorErr,
+  OnQueryRespRaw,
   TrxIdQueryMap,
   WrapIdentifierIgnoreRule,
 } from './types.js'
 import { CaseType } from './types.js'
-import { genKmoreTrxId } from './util.js'
 
 
-export class Kmore<D extends object = any, Context = any> extends KmoreBase<Context> {
+export class Kmore<D extends object = any> {
 
   /**
    * Original table names, without case conversion.
    */
-  readonly refTables: DbQueryBuilder<Context, D, '', CaseType.none>
+  readonly refTables: DbQueryBuilder<D, '', CaseType.none>
 
   /**
    * Create a table reference function property with camel case conversion.
    */
-  readonly camelTables: DbQueryBuilder<Context, D, '', CaseType.camel>
+  readonly camelTables: DbQueryBuilder<D, '', CaseType.camel>
 
   // readonly pascalTables: DbQueryBuilder<D, '', CaseType.pascal>
 
   /**
    * Create a table reference function property with snake case conversion.
    */
-  readonly snakeTables: DbQueryBuilder<Context, D, '', CaseType.snake>
+  readonly snakeTables: DbQueryBuilder<D, '', CaseType.snake>
 
   /**
   * Generics parameter, do NOT access as variable!
@@ -76,26 +77,26 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
   readonly Dict: DbDict<D>
 
   readonly postProcessResponseSet = new Set<typeof postProcessResponse>()
-  readonly trxActionOnEnd: KmoreTransactionConfig['trxActionOnEnd'] = 'rollback'
+  readonly trxActionOnError: KmoreTransactionConfig['trxActionOnError'] = TrxControl.Rollback
   /**
-   * kmoreTrxId => trx
+   * Map<scope, Set<trxId>>
    */
-  readonly trxMap = new Map<symbol, KmoreTransaction>()
+  protected readonly scopeTrxIdMap = new Map<ScopeType, Set<symbol>>()
   /**
-   * kmoreTrxId => Set<kmoreQueryId>
+   * Map<trxId, transaction>
    */
-  readonly trxIdQueryMap: TrxIdQueryMap = new Map()
+  protected readonly trxMap = new Map<symbol, KmoreTransaction>()
   /**
-   * context => Set<kmoreTrxId>
+   * Map<trxId, Set<queryId>>
    */
-  readonly ctxTrxIdMap = new WeakMap<object, Set<symbol>>()
+  protected readonly trxIdQueryIdList: TrxIdQueryMap = new Map()
 
   readonly config: KnexConfig
   readonly dict: unknown extends D ? undefined : DbDict<D>
   readonly dbId: string
   readonly dbh: Knex
   readonly instanceId: string | symbol
-  readonly eventCallbacks: EventCallbacks<Context> | undefined
+  readonly eventCallbacks: EventCallbacks | undefined
   readonly wrapIdentifierCaseConvert: CaseType
   /**
    * Rules ignoring table identifier case conversion,
@@ -103,9 +104,9 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
    */
   readonly wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
-  constructor(options: KmoreFactoryOpts<D, Context>) {
-    super()
+  readonly hookList: HookList
 
+  constructor(options: KmoreFactoryOpts<D>) {
     const dbId = options.dbId ? options.dbId : Date.now().toString()
     this.dbId = dbId
     this.instanceId = options.instanceId ? options.instanceId : Symbol(`${dbId}-` + Date.now().toString())
@@ -129,6 +130,8 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
       this.dict = void 0
     }
 
+    this.hookList = genHookList(options.hookList)
+
     /**
      * Table identifier case conversion,
      * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
@@ -137,133 +140,214 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
 
     this.wrapIdentifierIgnoreRule = options.wrapIdentifierIgnoreRule ?? defaultWrapIdentifierIgnoreRule
 
-    if (! this.config.wrapIdentifier) {
-      if (this.wrapIdentifierCaseConvert === CaseType.none) {
-        this.config.wrapIdentifier = defaultGlobalWrapIdentifier
-      }
-      else {
-        this.config.wrapIdentifier = wrapIdentifier
-      }
+    Reflect.apply(fnConstructor, this, [])
+
+    if (options.trxActionOnError) {
+      this.trxActionOnError = options.trxActionOnError
     }
 
-    this.postProcessResponseSet.add(postProcessResponse)
-    if (typeof this.config.postProcessResponse === 'function') {
-      const fn = this.config.postProcessResponse
-      this.postProcessResponseSet.add(fn)
-    }
-    delete this.config.postProcessResponse
-    this.config.postProcessResponse = (
-      result: PostProcessInput,
-      queryContext?: QueryContext,
-    ) => this.postProcessResponse(result, queryContext)
-
-    if (options.trxActionOnEnd) {
-      this.trxActionOnEnd = options.trxActionOnEnd
-    }
-
-    this.refTables = createRefTables<D, Context, ''>(this, '', CaseType.none) as DbQueryBuilder<Context, D, '', CaseType.none>
-    this.camelTables = createRefTables<D, Context, ''>(this, '', CaseType.camel) as DbQueryBuilder<Context, D, '', CaseType.camel>
+    this.refTables = createRefTables<D, ''>(this, '', CaseType.none) as DbQueryBuilder<D, '', CaseType.none>
+    this.camelTables = createRefTables<D, ''>(this, '', CaseType.camel) as DbQueryBuilder<D, '', CaseType.camel>
     // this.pascalTables = this.createRefTables<''>('', CaseType.pascal)
-    this.snakeTables = createRefTables<D, Context, ''>(this, '', CaseType.snake) as DbQueryBuilder<Context, D, '', CaseType.snake>
-
+    this.snakeTables = createRefTables<D, ''>(this, '', CaseType.snake) as DbQueryBuilder<D, '', CaseType.snake>
 
     this.dbh = options.dbh ? options.dbh : createDbh(this.config)
   }
+
+  // #region scopeTrxIdMap
+
+  getTrxIdsByScope(scope: ScopeType): Set<symbol> | undefined {
+    return this.scopeTrxIdMap.get(scope)
+  }
+
+  getTrxListByScope(scope: ScopeType): Set<KmoreTransaction> {
+    const ret = new Set<KmoreTransaction>()
+    assert(scope, 'scope must be defined')
+
+    const trxIds = this.getTrxIdsByScope(scope)
+    if (! trxIds?.size) {
+      return ret
+    }
+
+    trxIds.forEach((trxId) => {
+      const trx = this.trxMap.get(trxId)
+      trx && ret.add(trx)
+    })
+    return ret
+  }
+
+  linkTrxIdToScope(kmoreTrxId: symbol, scope: ScopeType): void {
+    assert(kmoreTrxId, 'kmoreTrxId must be defined')
+    assert(scope, 'scope must be defined')
+
+    let st = this.getTrxIdsByScope(scope)
+    if (! st) {
+      st = new Set()
+      this.scopeTrxIdMap.set(scope, st)
+    }
+    st.has(kmoreTrxId) || st.add(kmoreTrxId)
+  }
+
+  unlinkTrxIdFromScope(trxId: symbol, scope: ScopeType | undefined): void {
+    assert(trxId, 'trxId must be defined')
+    if (scope) {
+      const st = this.getTrxIdsByScope(scope)
+      if (st) {
+        st.delete(trxId)
+      }
+    }
+    else {
+      for (const st of this.scopeTrxIdMap.values()) {
+        st.has(trxId) && st.delete(trxId)
+      }
+    }
+  }
+
+  // #region trxMap
+
+  getTrxByTrxId(id: symbol): KmoreTransaction | undefined {
+    return this.trxMap.get(id)
+  }
+
+  setTrx(trx: KmoreTransaction): void {
+    const { kmoreTrxId } = trx
+    assert(kmoreTrxId, 'kmoreTrxId must be defined')
+    this.trxMap.set(kmoreTrxId, trx)
+  }
+
+  removeTrxByTrxId(trxId: symbol): void {
+    this.trxMap.delete(trxId)
+  }
+
+  // #region trxIdQueryIdList
+
+  getQueryIdListByTrxId(trxId: symbol): Set<symbol> | undefined {
+    return this.trxIdQueryIdList.get(trxId)
+  }
+
+  linkQueryIdToTrxId(queryId: symbol, trxId: symbol): void {
+    let st = this.getQueryIdListByTrxId(trxId)
+    if (! st) {
+      st = new Set()
+      this.trxIdQueryIdList.set(trxId, st)
+    }
+    st.add(queryId)
+  }
+
+  unlinkQueryIdFromTrxId(queryId: symbol, trxId: symbol | undefined): void {
+    if (trxId) {
+      const st = this.getQueryIdListByTrxId(trxId)
+      if (st) {
+        st.delete(queryId)
+      }
+    }
+    else {
+      for (const st of this.trxIdQueryIdList.values()) {
+        st.has(queryId) && st.delete(queryId)
+      }
+    }
+  }
+
+  removeTrxIdFromTrxIdQueryIdList(trxId: symbol): void {
+    this.trxIdQueryIdList.delete(trxId)
+  }
+
+  getTrxByQueryId(queryId: symbol, scope?: ScopeType | undefined): KmoreTransaction | undefined {
+    if (scope) {
+      const st = this.getTrxIdsByScope(scope)
+      if (st) {
+        for (const trxId of st) {
+          const st2 = this.getQueryIdListByTrxId(trxId)
+          const found = st2?.has(queryId)
+          if (found) {
+            return this.getTrxByTrxId(trxId)
+          }
+        }
+      }
+    }
+
+    for (const trxId of this.trxMap.keys()) {
+      const st = this.getQueryIdListByTrxId(trxId)
+      const found = st?.has(queryId)
+      if (found) {
+        return this.getTrxByTrxId(trxId)
+      }
+    }
+  }
+
+  removeTrxIdCache(trxId: symbol, scope: ScopeType | undefined): void {
+    const trx = this.getTrxByTrxId(trxId)
+    if (! trx) { return }
+    this.unlinkTrxIdFromScope(trxId, scope)
+    this.removeTrxIdFromTrxIdQueryIdList(trxId)
+    this.removeTrxByTrxId(trxId)
+  }
+
+  // #region transaction
 
   /**
    * Start a transaction.
    */
   async transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction> {
-    const kmoreTrxId = config?.kmoreTrxId ?? genKmoreTrxId(config?.kmoreTrxId)
-    delete config?.kmoreTrxId
-    const trx = await this.dbh.transaction(void 0, config) as KmoreTransaction
 
-    const trxActionOnEnd: KmoreTransactionConfig['trxActionOnEnd'] = config?.trxActionOnEnd
-      ?? this.trxActionOnEnd ?? 'rollback'
+    const config2 = Object.assign({ trxActionOnError: this.trxActionOnError }, config)
 
-    const ret = createTrxProperties({
+    let opts: TransactionPreHookOptions = {
       kmore: this,
-      kmoreTrxId,
-      trx,
-      trxActionOnEnd,
-    })
-    return ret
-  }
-
-  getTrxByKmoreQueryId(kmoreQueryId: symbol): KmoreTransaction | undefined {
-    for (const [trxId, queryIdSet] of this.trxIdQueryMap.entries()) {
-      if (queryIdSet.has(kmoreQueryId)) {
-        const trx = this.trxMap.get(trxId)
-        if (trx) {
-          return trx
-        }
+      config: config2,
+    }
+    const { transactionPreHooks } = this.hookList
+    if (transactionPreHooks.length) {
+      for (const fn of transactionPreHooks) {
+        // eslint-disable-next-line no-await-in-loop
+        opts = await fn(opts)
       }
     }
-  }
 
-  getTrxByKmoreTrxId(id: symbol): KmoreTransaction | undefined {
-    return this.trxMap.get(id)
-  }
-
-  setCtxTrxIdMap(
-    ctx: unknown,
-    kmoreTrxId: symbol,
-  ): void {
-
-    assert(ctx, 'ctx must be defined')
-    assert(kmoreTrxId, 'kmoreTrxId must be defined')
-    assert(typeof ctx === 'object')
-
-    if (! this.ctxTrxIdMap.get(ctx)) {
-      this.ctxTrxIdMap.set(ctx, new Set())
-    }
-    this.ctxTrxIdMap.get(ctx)?.add(kmoreTrxId)
-  }
-
-  getTrxSetByCtx(ctx: unknown): Set<KmoreTransaction> {
-
-    const ret = new Set<KmoreTransaction>()
-    if (! ctx || typeof ctx !== 'object') {
-      return ret
-    }
-    const trxIdMap = this.ctxTrxIdMap.get(ctx)
-    trxIdMap?.forEach((kmoreTrxId) => {
-      const trx = this.trxMap.get(kmoreTrxId)
-      if (trx) {
-        ret.add(trx)
-      }
+    let trx = await this.dbh.transaction(void 0, opts.config) as KmoreTransaction
+    trx = createTrxProxy({
+      kmore: this,
+      config: opts.config,
+      transaction: trx,
     })
-    return ret
+
+    const { transactionPostHooks } = this.hookList
+    let opts2: TransactionHookOptions = {
+      kmore: this,
+      trx: trx,
+      config: opts.config,
+    }
+    if (transactionPostHooks.length) {
+      for (const fn of transactionPostHooks) {
+        // eslint-disable-next-line no-await-in-loop
+        opts2 = await fn(opts2)
+      }
+    }
+
+    this.setTrx(trx)
+    return trx
   }
 
-  async finishTransaction(trx: KmoreTransaction | undefined): Promise<void> {
+  async finishTransaction(options: FinishTransactionOptions): Promise<void> {
+    const { trx, action } = options
     if (! trx) { return }
-    if (! trx.isCompleted()) {
-      this.trxMap.delete(trx.kmoreTrxId)
-    }
-    switch (trx.trxActionOnEnd) {
-      case 'rollback': {
+
+    const op = action ?? trx.trxActionOnError
+    switch (op) {
+      case TrxControl.Rollback: {
         await trx.rollback()
-        this.trxMap.delete(trx.kmoreTrxId)
-        this.trxIdQueryMap.delete(trx.kmoreTrxId)
         break
       }
 
-      case 'commit': {
+      case TrxControl.Commit: {
         await trx.commit()
-        this.trxMap.delete(trx.kmoreTrxId)
-        this.trxIdQueryMap.delete(trx.kmoreTrxId)
         break
       }
 
       default:
         break
     }
-  }
-
-  finishTransactionByQueryId(kmoreQueryId: symbol): Promise<void> {
-    const trx = this.getTrxByKmoreQueryId(kmoreQueryId)
-    return this.finishTransaction(trx)
+    // this.removeTrxIdCache(trx.kmoreTrxId, scope) // called by trx.rollback() or trx.commit()
   }
 
 
@@ -299,48 +383,26 @@ export class Kmore<D extends object = any, Context = any> extends KmoreBase<Cont
 
 }
 
-export interface KmoreFactoryOpts<D, Ctx = unknown> {
-  config: KnexConfig
-  dict?: DbDict<D>
-  instanceId?: string | symbol
-  dbh?: Knex
-  dbId?: string
-  /**
-   * @docs https://knexjs.org/guide/interfaces.html#start
-   * @docs https://knexjs.org/guide/interfaces.html#query
-   * @docs https://knexjs.org/guide/interfaces.html#query-response
-   */
-  eventCallbacks?: EventCallbacks<Ctx> | undefined
-  /**
-   * Table identifier case conversion,
-   * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
-   * @default CaseType.snake
-   * @docs https://knexjs.org/guide/#wrapidentifier
-   */
-  wrapIdentifierCaseConvert?: CaseType | undefined
+function fnConstructor(this: Kmore) {
+  if (! this.config.wrapIdentifier) {
+    if (this.wrapIdentifierCaseConvert === CaseType.none) {
+      this.config.wrapIdentifier = defaultGlobalWrapIdentifier
+    }
+    else {
+      this.config.wrapIdentifier = wrapIdentifier
+    }
+  }
 
-  /**
-   * Rules ignoring table identifier case conversion,
-   * @docs https://knexjs.org/guide/#wrapidentifier
-   */
-  wrapIdentifierIgnoreRule?: WrapIdentifierIgnoreRule | undefined
-
-  /**
-   * Auto transaction action (rollback|commit|none) on error (Rejection or Exception),
-   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
-   * @default rollback
-   */
-  trxActionOnEnd?: KmoreTransactionConfig['trxActionOnEnd']
-}
-
-export function KmoreFactory<D extends object, Ctx = unknown>(options: KmoreFactoryOpts<D, Ctx>): Kmore<D, Ctx> {
-  const km = new Kmore<D, Ctx>(options)
-  return km
-}
-
-export function createDbh(knexConfig: KnexConfig): Knex {
-  const inst = _knex.knex(knexConfig)
-  return inst
+  this.postProcessResponseSet.add(postProcessResponse)
+  if (typeof this.config.postProcessResponse === 'function') {
+    const fn = this.config.postProcessResponse
+    this.postProcessResponseSet.add(fn)
+  }
+  delete this.config.postProcessResponse
+  this.config.postProcessResponse = (
+    result: PostProcessInput,
+    queryContext?: QueryContext,
+  ) => this.postProcessResponse(result, queryContext)
 }
 
 
@@ -385,3 +447,152 @@ function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) =>
 }
 
 
+export function createDbh(knexConfig: KnexConfig): Knex {
+  const inst = _knex.knex(knexConfig)
+  return inst
+}
+
+
+export interface KmoreFactoryOpts<D> {
+  config: KnexConfig
+  dict?: DbDict<D>
+  instanceId?: string | symbol
+  dbh?: Knex
+  dbId?: string
+  /**
+   * @docs https://knexjs.org/guide/interfaces.html#start
+   * @docs https://knexjs.org/guide/interfaces.html#query
+   * @docs https://knexjs.org/guide/interfaces.html#query-response
+   */
+  eventCallbacks?: EventCallbacks | undefined
+  /**
+   * Table identifier case conversion,
+   * If not CaseType.none, will ignore value of `KnexConfig['wrapIdentifier']`
+   * @default CaseType.snake
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  wrapIdentifierCaseConvert?: CaseType | undefined
+
+  /**
+   * Rules ignoring table identifier case conversion,
+   * @docs https://knexjs.org/guide/#wrapidentifier
+   */
+  wrapIdentifierIgnoreRule?: WrapIdentifierIgnoreRule | undefined
+
+  /**
+   * Auto transaction action (rollback|commit|none) on error (Rejection or Exception),
+   * @CAUTION **Will always rollback if query error in database even though this value set to 'commit'**
+   * @default rollback
+   */
+  trxActionOnError?: KmoreTransactionConfig['trxActionOnError']
+  hookList?: Partial<HookList> | undefined
+}
+
+/**
+ * @docs https://knexjs.org/guide/interfaces.html#query-response
+ */
+export type EventCallbackType = Exclude<EventType, 'unknown'>
+/**
+ * @docs https://knexjs.org/guide/interfaces.html#query-response
+ */
+export type EventCallbacks = Partial<EventCallbackList>
+export interface EventCallbackList {
+  start: (event: KmoreEvent, ctx: Kmore) => void
+  query: (event: KmoreEvent, ctx: Kmore) => void
+  queryResponse: (event: KmoreEvent, ctx: Kmore) => void
+  queryError: (event: KmoreEvent, ctx: Kmore) => Promise<void>
+  /**
+   * Fire a single "end" event on the builder when
+   * all queries have successfully completed.
+   */
+  // end: () => void
+  /**
+   * Triggered after event 'queryError'
+   */
+  // error: (ex: Error) => void
+}
+// export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
+
+export interface KmoreEvent<T = unknown> {
+  dbId: string
+  type: EventType
+  /** __knexUid */
+  kUid: string
+  /** __knexQueryUid */
+  queryUid: string // 'mXxtvuJLHkZI816UZic57'
+  kmoreQueryId: symbol
+  /**
+   * @description Note: may keep value of the latest transaction id,
+   * even if no transaction this query!
+   * __knexTxId
+   *
+   */
+  trxId: string | undefined
+  /** select, raw */
+  method: string
+  /** SELECT, DROP */
+  command: string | undefined
+  data: OnQueryData | undefined
+  respRaw: OnQueryRespRaw<T> | undefined
+  exData: OnQueryErrorData | undefined
+  exError: OnQueryErrorErr | undefined
+  queryBuilder: KmoreQueryBuilder
+  timestamp: number
+}
+
+
+export interface EventCallbackOptions<R = unknown> {
+  ctx: Kmore
+  event?: KmoreEvent<R>
+}
+/**
+ * @docs https://knexjs.org/guide/interfaces.html#query-response
+ */
+// export type EventCallback<Ctx = any> = (event: KmoreEvent, ctx?: Ctx) => Promise<void>
+
+
+
+export interface CreateProxyThenOptions {
+  kmore: Kmore
+  builder: KmoreQueryBuilder
+}
+export type ProxyThenRunnerOptions = CreateProxyThenOptions & ProxyRunnerExtraOptions
+
+// #region proxy
+
+export interface CreateProxyTrxOptions {
+  kmore: Kmore
+  config: KmoreTransactionConfig
+  transaction: KmoreTransaction
+}
+export type ProxyCommitRunnerOptions = CreateProxyTrxOptions & { args: unknown[] }
+
+export interface ProxyRunnerExtraOptions {
+  done: undefined | ((data: unknown) => unknown) // valid when chain next then()
+  reject: undefined | ((data: unknown) => Error) // valid when chain next then()
+  transaction?: KmoreTransaction | undefined
+}
+
+export interface PagerOptions {
+  kmore: Kmore
+  builder: KmoreQueryBuilder
+}
+
+export interface FinishTransactionOptions {
+  trx: KmoreTransaction | undefined
+  action?: TrxControl
+  scope?: ScopeType | undefined
+}
+
+export interface QueryContext {
+  wrapIdentifierCaseConvert: CaseType
+  /**
+   * Rules ignoring table identifier case conversion,
+   */
+  wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule | undefined
+  postProcessResponseCaseConvert: CaseType
+  kmoreQueryId: symbol
+  columns: Record<string, string>[]
+  kmore: Kmore
+  builder: KmoreQueryBuilder
+}

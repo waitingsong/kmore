@@ -16,6 +16,11 @@ export interface PagingOptions {
    * @default 10
    */
   pageSize: number
+
+  /**
+   * @default false
+   */
+  wrapOutput?: boolean
 }
 
 /**

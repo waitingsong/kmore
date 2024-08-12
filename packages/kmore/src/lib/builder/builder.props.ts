@@ -1,20 +1,33 @@
 import assert from 'node:assert'
 
+import { defaultPropDescriptor } from '../config.js'
+import type { PagingOptions } from '../paging.types.js'
+import { initPagingOptions } from '../proxy/proxy.auto-paging.js'
+import { KmorePageKey, type CaseType } from '../types.js'
+
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { QueryBuilderExtKey } from './builder.types.js'
-import { defaultPropDescriptor } from './config.js'
-import type { CaseType } from './types.js'
 
 
-export function createBuilderProperties(
+export function UpdateBuilderProperties(
   refTable: KmoreQueryBuilder,
   caseConvert: CaseType,
   kmoreQueryId: symbol,
   dict: unknown,
   dbId: string,
-): KmoreQueryBuilder {
+): void {
 
   assert(caseConvert, 'caseConvert must be defined')
+
+  const pagingOpts: PagingOptions = {
+    ...initPagingOptions,
+    enable: false,
+  }
+  void Object.defineProperty(refTable, KmorePageKey.PagingOptions, {
+    ...defaultPropDescriptor,
+    writable: true,
+    value: pagingOpts,
+  })
 
   void Object.defineProperty(refTable, QueryBuilderExtKey.kmoreQueryId, {
     ...defaultPropDescriptor,
@@ -42,6 +55,16 @@ export function createBuilderProperties(
     value: dbId,
   })
 
-  return refTable
+  void Object.defineProperty(refTable, QueryBuilderExtKey.callerKey, {
+    ...defaultPropDescriptor,
+    writable: true,
+    value: '',
+  })
+
+  void Object.defineProperty(refTable, QueryBuilderExtKey.scope, {
+    ...defaultPropDescriptor,
+    writable: true,
+    value: void 0,
+  })
 }
 

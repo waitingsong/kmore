@@ -11,9 +11,10 @@ import type { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waitin
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Knex } from 'knex'
 
+import type { QueryContext } from '##/index.js' // skip cyclic import check
+
 import type {
   KnexConfig,
-  QueryContext,
   WrapIdentifierIgnoreRule,
 } from './types.js'
 import {

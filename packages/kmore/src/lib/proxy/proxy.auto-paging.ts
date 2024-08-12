@@ -1,9 +1,9 @@
 import assert from 'node:assert'
 
-import type { KmoreQueryBuilder } from './builder.types.js'
-import { defaultPropDescriptor } from './config.js'
-import type { PageWrapType, PagingMeta, PagingOptions } from './paging.types.js'
-import { KmorePageKey } from './types.js'
+import type { KmoreQueryBuilder } from '../builder/builder.types.js'
+import { defaultPropDescriptor } from '../config.js'
+import type { PageWrapType, PagingMeta, PagingOptions } from '../paging.types.js'
+import { KmorePageKey } from '../types.js'
 
 
 export const initPagingOptions: _PagingOptions = {
@@ -30,7 +30,7 @@ export interface _PagingOptions extends PagingOptions {
   wrapOutput: boolean
 }
 
-export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): KmoreQueryBuilder {
+export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): void {
   assert(
     typeof refTable[KmorePageKey.AutoPaging] !== 'function',
     'extRefTableFnPropertyAutoPaging() can only be called once',
@@ -44,8 +44,6 @@ export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): Km
       wrapOutput?: boolean,
     ) => autoPagingBuilder(options, wrapOutput ?? false, refTable),
   })
-
-  return refTable
 }
 
 function autoPagingBuilder(
@@ -54,9 +52,9 @@ function autoPagingBuilder(
   queryBuilder: KmoreQueryBuilder,
 ): KmoreQueryBuilder {
 
-  if (Object.hasOwn(queryBuilder, KmorePageKey.PagingOptions)) {
-    throw new Error('autoPaging() can only be called once')
-  }
+  const pagingOptions = Object.getOwnPropertyDescriptor(queryBuilder, KmorePageKey.PagingOptions)?.value as _PagingOptions | undefined
+
+  assert(! pagingOptions?.enable, 'autoPaging() can be called only once')
 
   const opts: _PagingOptions = {
     ...initPagingOptions,

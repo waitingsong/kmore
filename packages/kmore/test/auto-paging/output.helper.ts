@@ -39,7 +39,7 @@ export function validateOptionsPageRet(input: PageRawType<UserDTO>, expect: Pagi
   assert(typeof page === 'number')
   assert(typeof pageSize === 'number')
 
-  assert(pageSize === expect.pageSize)
+  assert(pageSize === expect.pageSize, `pageSize: ${pageSize} !== expect.pageSize: ${expect.pageSize}`)
   assert(total === expect.total, `total: ${total} !== expect.total: ${expect.total}`)
   assert(input.length <= expect.pageSize)
 }

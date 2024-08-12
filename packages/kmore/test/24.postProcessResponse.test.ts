@@ -10,7 +10,7 @@ import type { Db, Context } from './test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
-  let km: Kmore<Db, Context>
+  let km: Kmore<Db>
 
   const configWithPostCb = {
     ...config,

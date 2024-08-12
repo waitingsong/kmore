@@ -5,7 +5,7 @@ import assert from 'node:assert'
 import { fileShortPath } from '@waiting/shared-core'
 
 import { KmoreFactory, type PageRawType } from '##/index.js'
-import { initPagingMeta } from '##/lib/proxy.auto-paging.js'
+import { initPagingMeta } from '##/lib/proxy/proxy.auto-paging.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { UserDo, UserDTO } from '#@/test.model.js'
 

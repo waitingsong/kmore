@@ -1,7 +1,18 @@
 import type { PropagationType } from './propagation.types.js'
 
 
-export interface TrxPropagateOptions {
+export interface RowLockOptions {
+  /**
+   * @default ForShare
+   */
+  readRowLockLevel: RowLockLevel
+  /**
+   * @default ForUpdate
+   */
+  writeRowLockLevel: RowLockLevel
+}
+
+export interface TrxPropagateOptions extends RowLockOptions {
   entryKey: string
   key: string
   dbId: string
@@ -12,14 +23,7 @@ export interface TrxPropagateOptions {
   methodName: string
   line: number
   column: number
-  /**
-   * @default {@link RowLockLevel.ForShare}
-   */
-  readRowLockLevel: RowLockLevel
-  /**
-   * @default {@link RowLockLevel.ForUpdate}
-   */
-  writeRowLockLevel: RowLockLevel
+  scope: symbol | object
 }
 
 /**
@@ -31,4 +35,8 @@ export enum RowLockLevel {
   None = 'None',
 }
 
+export enum TrxControl {
+  Commit = 'commit',
+  Rollback = 'rollback',
+}
 

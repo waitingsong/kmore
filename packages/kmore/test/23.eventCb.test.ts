@@ -12,7 +12,7 @@ import type { Db, Context } from './test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
-  let km: Kmore<Db, Context>
+  let km: Kmore<Db>
 
   before(() => {
     const cbs: EventCallbacks = {
@@ -33,14 +33,9 @@ describe(fileShortPath(import.meta.url), () => {
       const { refTables } = km
       const { tb_user } = km.refTables
 
-      const ctx: Context = {
-        uid: 9,
-        ver: '1',
-      }
-
       // validate insert result
-      const countRes = await km.refTables.tb_user({ ctx }).count()
-      const ret = await km.refTables.tb_user({ ctx }).select('*')
+      const countRes = await km.refTables.tb_user().count()
+      const ret = await km.refTables.tb_user().select('*')
       assert(
         ret.length === 3,
         `Should count be "3", but got ${JSON.stringify(ret)}`,
@@ -50,7 +45,7 @@ describe(fileShortPath(import.meta.url), () => {
         `Should count be "3", but got ${JSON.stringify(ret)}`,
       )
 
-      await tb_user({ ctx }).select('*')
+      await tb_user().select('*')
         .then((rows) => {
           validateUserRows(rows)
           return rows
@@ -65,30 +60,24 @@ describe(fileShortPath(import.meta.url), () => {
 
 })
 
-function cbOnStart(event: KmoreEvent, ctx?: Context): void {
-  assert(ctx)
-  assert(ctx.uid === 9)
+function cbOnStart(event: KmoreEvent): void {
   assert(event.type === 'start', event.type)
   assert(event.queryBuilder)
   assert(! event.data)
   assert(! event.respRaw)
 }
 
-function cbOnQuery(event: KmoreEvent, ctx?: Context): void {
-  assert(ctx)
-  assert(ctx.uid === 9)
+function cbOnQuery(event: KmoreEvent): void {
   assert(event.type === 'query', event.type)
-  assert(! event.queryBuilder)
+  assert(event.queryBuilder)
   assert(event.data)
   assert(! event.respRaw)
 }
 
 
-function cbOnResp(event: KmoreEvent, ctx?: Context): void {
-  assert(ctx)
-  assert(ctx.uid === 9)
+function cbOnResp(event: KmoreEvent): void {
   assert(event.type === 'queryResponse', event.type)
-  assert(! event.queryBuilder)
+  assert(event.queryBuilder)
   assert(! event.data)
   assert(event.respRaw)
 }

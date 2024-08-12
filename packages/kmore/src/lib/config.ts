@@ -1,4 +1,5 @@
-import type { KmoreEvent, KnexConfig } from './types.js'
+import type { KmoreEvent } from './kmore.js'
+import type { KnexConfig } from './types.js'
 
 
 export const defaultPropDescriptor: PropertyDescriptor = {
@@ -8,7 +9,7 @@ export const defaultPropDescriptor: PropertyDescriptor = {
 } as const
 
 
-export const initKmoreEvent: Omit<KmoreEvent, 'kmoreQueryId'> = {
+export const initKmoreEvent: Omit<KmoreEvent, 'kmoreQueryId' | 'queryBuilder'> = {
   dbId: '',
   type: 'unknown',
   kUid: '',
@@ -20,7 +21,6 @@ export const initKmoreEvent: Omit<KmoreEvent, 'kmoreQueryId'> = {
   respRaw: void 0,
   exData: void 0,
   exError: void 0,
-  queryBuilder: void 0,
   timestamp: Date.now(),
 }
 

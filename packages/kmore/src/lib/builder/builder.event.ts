@@ -1,32 +1,37 @@
 import assert from 'node:assert'
 
-import type { KmoreBase } from './base.js'
-import type { KmoreQueryBuilder } from './builder.types.js'
-import type { CallCbOptionsBase } from './event.js'
+import type { CallCbOptionsBase } from '../event.js'
 import {
   callCbOnQuery,
   callCbOnQueryError,
   callCbOnQueryResp,
   callCbOnStart,
-} from './event.js'
+} from '../event.js'
+import type { Kmore, QueryContext } from '../kmore.js'
 import type {
   CaseType,
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,
   OnQueryRespRaw,
-  QueryContext,
   QueryResponse,
-} from './types.js'
+} from '../types.js'
+
+import type { KmoreQueryBuilder } from './builder.types.js'
 
 
-export function builderBindEvents(
-  kmore: KmoreBase,
-  refTable: KmoreQueryBuilder,
-  caseConvert: CaseType,
-  ctx: unknown,
-  kmoreQueryId: symbol,
-): KmoreQueryBuilder {
+interface BuilderBindEventsOptions {
+  kmore: Kmore
+  builder: KmoreQueryBuilder
+  caseConvert: CaseType
+}
+
+export function builderBindEvents(options: BuilderBindEventsOptions): KmoreQueryBuilder {
+  const {
+    kmore,
+    builder: refTable,
+    caseConvert,
+  } = options
 
   assert(caseConvert, 'caseConvert must be defined')
 
@@ -34,14 +39,14 @@ export function builderBindEvents(
     wrapIdentifierCaseConvert: kmore.wrapIdentifierCaseConvert,
     wrapIdentifierIgnoreRule: kmore.wrapIdentifierIgnoreRule,
     postProcessResponseCaseConvert: caseConvert,
-    kmoreQueryId,
+    kmoreQueryId: refTable.kmoreQueryId,
     columns: [],
+    kmore,
+    builder: refTable,
   }
   const opts: CallCbOptionsBase = {
-    ctx,
-    dbId: kmore.dbId,
-    cbs: kmore.eventCallbacks,
-    kmoreQueryId,
+    kmore,
+    builder: refTable,
   }
 
   const refTable2 = refTable
@@ -81,8 +86,8 @@ export function builderBindEvents(
     .on(
       'query-error',
       async (err: OnQueryErrorErr, data: OnQueryErrorData) => {
-        const trx = kmore.getTrxByKmoreQueryId(kmoreQueryId)
-        await kmore.finishTransaction(trx)
+        const trx = kmore.getTrxByQueryId(opts.builder.kmoreQueryId)
+        await kmore.finishTransaction({ trx })
         return callCbOnQueryError({
           ...opts,
           err,

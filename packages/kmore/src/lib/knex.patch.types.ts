@@ -3,13 +3,10 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import type {
-  CaseType,
-  UnwrapArrayMember,
-} from '@waiting/shared-types'
+import type { CaseType, UnwrapArrayMember } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import type { KmoreQueryBuilder, QueryBuilder, SmartJoin } from './builder.types.js'
+import type { KmoreQueryBuilder, QueryBuilder, SmartJoin } from './builder/builder.types.js'
 import type * as DeferredKeySelectionNS from './knex.deferred-key-selection-ns.types.js'
 import type { ArrayIfAlready, ArrayMember, ComparisonOperator, Dict, IncompatibleToAlt, SafePartial } from './knex.types.js'
 import type { AddPagingMeta, CalcPagingCat, PagingCategory, PagingOptions } from './paging.types.js'

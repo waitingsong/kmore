@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert'
 
-import type { KmoreQueryBuilder } from './builder.types.js'
+import type { KmoreQueryBuilder } from './builder/builder.types.js'
+import { processJoinTableColumnAlias } from './builder/smart-join.js'
 import { initKmoreEvent } from './config.js'
-import { processJoinTableColumnAlias } from './smart-join.js'
+import type { EventCallbacks, Kmore, KmoreEvent } from './kmore.js'
 import type {
-  EventCallbacks,
-  KmoreEvent,
   OnQueryData,
   OnQueryErrorData,
   OnQueryErrorErr,
@@ -15,20 +14,19 @@ import type {
 } from './types.js'
 
 
-export interface CallCbOptionsBase<Ctx = any> {
-  ctx: Ctx | undefined
-  dbId: string
-  cbs: EventCallbacks<Ctx> | undefined
-  kmoreQueryId: symbol
-}
-
-export interface CallCbOnStartOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOptionsBase {
+  kmore: Kmore
   builder: KmoreQueryBuilder
 }
 
-export function callCbOnStart(options: CallCbOnStartOptions): void {
+// export interface CallCbOnStartOptions extends CallCbOptionsBase {
+//   builder: KmoreQueryBuilder
+// }
+
+export function callCbOnStart(options: CallCbOptionsBase): void {
+  const { kmore, builder } = options
   const queryBuilder = processJoinTableColumnAlias(options.builder)
-  const cb: EventCallbacks['start'] = options.cbs?.start
+  const cb: EventCallbacks['start'] = kmore.eventCallbacks?.start
 
   if (typeof cb === 'function') {
     const event = processKnexOnEvent({
@@ -36,61 +34,64 @@ export function callCbOnStart(options: CallCbOnStartOptions): void {
       data: void 0,
       queryUid: '',
       queryBuilder,
-      kmoreQueryId: options.kmoreQueryId,
+      kmoreQueryId: builder.kmoreQueryId,
     })
-    event.dbId = options.dbId
-    cb(event, options.ctx); return
+    event.dbId = kmore.dbId
+    cb(event, kmore)
   }
 }
 
-export interface CallCbOnQueryOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnQueryOptions extends CallCbOptionsBase {
   data: OnQueryData
 }
 
 export function callCbOnQuery(options: CallCbOnQueryOptions): void {
-  const cb: EventCallbacks['query'] = options.cbs?.query
+  const { kmore, builder } = options
+  const cb: EventCallbacks['query'] = kmore.eventCallbacks?.query
   if (typeof cb === 'function') {
     const queryUid = pickQueryUidFrom(options.data)
     const event = processKnexOnEvent({
       type: 'query',
       data: options.data,
       queryUid,
-      queryBuilder: void 0,
-      kmoreQueryId: options.kmoreQueryId,
+      queryBuilder: builder,
+      kmoreQueryId: builder.kmoreQueryId,
     })
-    event.dbId = options.dbId
-    cb(event, options.ctx); return
+    event.dbId = kmore.dbId
+    cb(event, kmore); return
   }
 }
 
-export interface CallCbOnQueryRespOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnQueryRespOptions extends CallCbOptionsBase {
   _resp: QueryResponse
   respRaw: OnQueryRespRaw
 }
 
 export function callCbOnQueryResp(options: CallCbOnQueryRespOptions): void {
-  const cb: EventCallbacks['queryResponse'] = options.cbs?.queryResponse
+  const { kmore, builder } = options
+  const cb: EventCallbacks['queryResponse'] = kmore.eventCallbacks?.queryResponse
   if (typeof cb === 'function') {
     const queryUid = pickQueryUidFrom(options.respRaw)
     const event = processKnexOnEvent({
       type: 'queryResponse',
       respRaw: options.respRaw,
       queryUid,
-      queryBuilder: void 0,
-      kmoreQueryId: options.kmoreQueryId,
+      queryBuilder: builder,
+      kmoreQueryId: builder.kmoreQueryId,
     })
-    event.dbId = options.dbId
-    cb(event, options.ctx); return
+    event.dbId = kmore.dbId
+    cb(event, kmore)
   }
 }
 
-export interface CallCbOnQueryErrorOptions<Ctx = any> extends CallCbOptionsBase<Ctx> {
+export interface CallCbOnQueryErrorOptions extends CallCbOptionsBase {
   err: OnQueryErrorErr
   data: OnQueryErrorData
 }
 
 export function callCbOnQueryError(options: CallCbOnQueryErrorOptions): void | Promise<void> {
-  const cb: EventCallbacks['queryError'] = options.cbs?.queryError
+  const { kmore, builder } = options
+  const cb: EventCallbacks['queryError'] = kmore.eventCallbacks?.queryError
   if (typeof cb === 'function') {
     const queryUid = pickQueryUidFrom(options.data)
     const event = processKnexOnEvent({
@@ -98,11 +99,11 @@ export function callCbOnQueryError(options: CallCbOnQueryErrorOptions): void | P
       exError: options.err,
       exData: options.data,
       queryUid,
-      queryBuilder: void 0,
-      kmoreQueryId: options.kmoreQueryId,
+      queryBuilder: builder,
+      kmoreQueryId: builder.kmoreQueryId,
     })
-    event.dbId = options.dbId
-    return cb(event, options.ctx)
+    event.dbId = builder.dbId
+    return cb(event, kmore)
   }
 }
 

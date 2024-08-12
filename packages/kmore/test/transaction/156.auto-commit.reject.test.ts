@@ -3,11 +3,11 @@ import assert from 'node:assert'
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '##/index.js'
+import { KmoreFactory, TrxControl } from '##/index.js'
 import { config } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
-import { currCtime, newTime1 } from './date.js'
+import { currCtime, newTime1, date1, nowTime } from './date.js'
 import { read, readInvalid, readWithoutThen, update, updateWithoutTrx } from './helper.js'
 
 
@@ -30,34 +30,37 @@ describe(fileShortPath(import.meta.url), () => {
   })
 
   describe('Should auto commit work on error', () => {
-    it('ignore rejection from .then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+    it('rejection from .then()', async () => {
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
+      const msg = 'debug test error'
 
       try {
         await update(km, trx, newTime1)
         await readWithoutThen(km, trx)
           .then(() => {
-            return Promise.reject('debug test error')
+            return Promise.reject(msg)
           })
       }
       catch (ex) {
         assert(ex instanceof Error)
-        assert(! trx.isCompleted())
+        assert(ex.message === msg, ex.message)
+        assert(trx.isCompleted())
 
         const currCtime2 = await read(km)
         assert(currCtime2)
-        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
+        assert(currCtime2 === date1, `currTime: ${currCtime2}, expect: ${date1}`)
         return
       }
       finally {
         await trx.rollback()
+        await updateWithoutTrx(km, nowTime)
       }
       assert(false, 'Should throw error')
     })
 
     it('rollback by invalid sql query always, although auto commit. with tailing then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
 
       try {
@@ -71,18 +74,18 @@ describe(fileShortPath(import.meta.url), () => {
 
         const currCtime2 = await read(km)
         assert(currCtime2)
-        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
+        assert(currCtime2 === currCtime, `currTime2: ${currCtime2}, expect: ${currCtime}`)
         return
       }
       finally {
         await trx.rollback()
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
 
     it('rollback by invalid sql query always, although auto commit. without tailing then()', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
 
       try {
@@ -95,7 +98,7 @@ describe(fileShortPath(import.meta.url), () => {
 
         const currCtime2 = await read(km)
         assert(currCtime2)
-        assert(currCtime === currCtime2, `time1: ${currCtime}, time2: ${currCtime2}`)
+        assert(currCtime2 === currCtime, `currTime2: ${currCtime2}, expect: ${currCtime}`)
         return
       }
       finally {
@@ -106,7 +109,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('reuse tbUser', async () => {
-      const trx = await km.transaction({ trxActionOnEnd: 'commit' })
+      const trx = await km.transaction({ trxActionOnError: TrxControl.Commit })
       assert(trx)
 
       const tbUser = km.camelTables.tb_user()
@@ -120,7 +123,7 @@ describe(fileShortPath(import.meta.url), () => {
           })
           .where('uid', 1)
 
-        // resuse tbuser
+        // reuse tbUser
         await tbUser
           .transacting(trx)
           .forUpdate()
@@ -145,6 +148,7 @@ describe(fileShortPath(import.meta.url), () => {
       }
       finally {
         await trx.rollback()
+        await updateWithoutTrx(km, nowTime)
       }
 
       assert(false, 'Should throw error')

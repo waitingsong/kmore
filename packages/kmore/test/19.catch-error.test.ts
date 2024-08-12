@@ -32,12 +32,13 @@ describe(fileShortPath(import.meta.url), () => {
           .select('uid')
           .where('uid', 1)
           .then(() => {
-            return Promise.reject(errorMsg)
+            const res = Promise.reject(errorMsg)
+            return res
           })
       }
       catch (ex) {
-        assert(ex instanceof Error)
-        assert(ex.message === errorMsg)
+        assert(ex instanceof Error, `ex type: ${typeof ex}`)
+        assert(ex.message === errorMsg, ex.message)
         return
       }
       assert(false, 'Should throw error')
@@ -68,7 +69,7 @@ describe(fileShortPath(import.meta.url), () => {
         return
       }
 
-      assert(false, 'Should error be catched, but not')
+      assert(false, 'Should error be catch, but not')
     })
   })
 

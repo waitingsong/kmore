@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import type { TraceContext, Span } from '@mwcp/otel'
+import type { ScopeType } from '@mwcp/share'
 import { CaseType } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
-import type { KmoreQueryBuilder, QueryBuilderExtKey } from './builder.types.js'
-import type { TrxPropagateOptions } from './trx.types.js'
+import type { QueryBuilderExtKey } from './builder/builder.types.js'
+import type { TrxControl, TrxPropagateOptions } from './trx.types.js'
+import type { TrxCommitRollbackHook } from './hook/hook.types.js'
 
 
 export { CaseType }
@@ -13,36 +14,41 @@ export { CaseType }
 export type KnexConfig = Knex.Config
 export type KmoreTransaction = Knex.Transaction & {
   dbId: string,
-  hrtime: bigint,
+  ctime: Date,
   kmoreTrxId: symbol,
+  scope: ScopeType | undefined,
   /**
    * Auto transaction action (rollback|commit|none) on builder error (Rejection or Exception),
    * declarative transaction always rollback on end
    *
    * @default rollback
-   * @note Error from ONLY builder can be catched, from then() on builder not processed!
+   * @note Error from ONLY builder can be catch, from then() on builder not processed!
    * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
-  trxActionOnEnd: NonNullable<KmoreTransactionConfig['trxActionOnEnd']>,
+  trxActionOnError: NonNullable<KmoreTransactionConfig['trxActionOnError']>,
 
   [QueryBuilderExtKey.trxPropagateOptions]?: TrxPropagateOptions,
 
+  processingHooks: Set<TrxCommitRollbackHook>,
+
   savepoint: (
-    id?: PropertyKey,
+    id?: symbol,
     config?: KmoreTransactionConfig,
   ) => Promise<KmoreTransaction>,
 }
 export type KmoreTransactionConfig = Knex.TransactionConfig & {
-  kmoreTrxId?: PropertyKey | undefined,
+  kmoreTrxId?: symbol | undefined,
   /**
-   * Auto transction action (rollback|commit|none) on builder error (Rejection or Exception),
+   * Auto transition action (rollback|commit|none) on builder error (Rejection or Exception),
    * declarative transaction always rollback on end
    *
    * @default rollback
-   * @note Error from ONLY builder can be catched, from then() on builder not processed!
+   * @note Error from ONLY builder can be catch, from then() on builder not processed!
    * @CAUTION **Will always rollback if query error inner database even though this value set to 'commit'**
    */
-  trxActionOnEnd?: 'commit' | 'rollback' | 'none',
+  trxActionOnError?: TrxControl | 'none',
+  scope?: ScopeType | undefined,
+  trxPropagateOptions?: TrxPropagateOptions | undefined,
 }
 export enum EnumClient {
   betterSqlite3 = 'better-sqlite3',
@@ -69,44 +75,6 @@ export type WrapIdentifierIgnoreRule = (string | RegExp)[]
 
 
 export type EventType = 'query' | 'queryError' | 'queryResponse' | 'start' | 'unknown'
-
-export interface KmoreEvent<T = unknown> {
-  dbId: string
-  type: EventType
-  /** __knexUid */
-  kUid: string
-  /** __knexQueryUid */
-  queryUid: string // 'mXxtvuJLHkZI816UZic57'
-  kmoreQueryId: symbol
-  /**
-   * @description Note: may keep value of the latest transaction id,
-   * even if no transaction this query!
-   * __knexTxId
-   *
-   */
-  trxId: string | undefined
-  /** select, raw */
-  method: string
-  /** SELECT, DROP */
-  command: string | undefined
-  data: OnQueryData | undefined
-  respRaw: OnQueryRespRaw<T> | undefined
-  exData: OnQueryErrorData | undefined
-  exError: OnQueryErrorErr | undefined
-  queryBuilder: KmoreQueryBuilder | undefined // when event is 'start
-  timestamp: number
-}
-
-export interface QueryContext {
-  wrapIdentifierCaseConvert: CaseType
-  /**
-   * Rules ignoring table identifier case conversion,
-   */
-  wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule | undefined
-  postProcessResponseCaseConvert: CaseType
-  kmoreQueryId: symbol
-  columns: Record<string, string>[]
-}
 
 export interface OnQueryData {
   __knexUid: string // "__knexUid3"
@@ -190,48 +158,6 @@ export interface OnQueryErrorErr {
 }
 
 
-export interface QuerySpanInfo {
-  span: Span
-  timestamp: number
-  traceContext?: TraceContext
-}
-
-export interface EventCallbackOptions<Ctx = unknown, R = unknown> {
-  ctx: Ctx
-  event?: KmoreEvent<R>
-}
-/**
- * @docs https://knexjs.org/guide/interfaces.html#query-response
- */
-// export type EventCallback<Ctx = any> = (event: KmoreEvent, ctx?: Ctx) => Promise<void>
-
-
-/**
- * @docs https://knexjs.org/guide/interfaces.html#query-response
- */
-export type EventCallbackType = Exclude<EventType, 'unknown'>
-/**
- * @docs https://knexjs.org/guide/interfaces.html#query-response
- */
-export type EventCallbacks<Ctx = any> = Partial<EventCallbackList<Ctx>>
-export interface EventCallbackList<Ctx = any> {
-  start: (event: KmoreEvent, ctx?: Ctx) => void
-  query: (event: KmoreEvent, ctx?: Ctx) => void
-  queryResponse: (event: KmoreEvent, ctx?: Ctx) => void
-  queryError: (event: KmoreEvent, ctx?: Ctx) => Promise<void>
-  /**
-   * Fire a single "end" event on the builder when
-   * all queries have successfully completed.
-   */
-  // end: () => void
-  /**
-   * Triggered after event 'queryError'
-   */
-  // error: (ex: Error) => void
-}
-// export type EventCallbacks<Ctx = any> = Partial<Record<EventCallbackType, EventCallback<Ctx>>>
-
-
 export enum KmorePageKey {
   AutoPaging = 'autoPaging',
   PagingOptions = '_pagingOptions',
@@ -240,23 +166,43 @@ export enum KmorePageKey {
    * @value 'counter' | 'pager'
    */
   PagingBuilderType = 'pagingType',
+  PagingMetaTotal = 'pagingMetaTotal',
 }
 export enum KmoreProxyKey {
-  getThenProxy = 'KmoreGetThenProxy',
   getThenProxyProcessed = 'KmoreGetThenProxyProcessed',
+
+  then = 'then',
+  _ori_then = '_ori_then',
+
+  commit = 'commit',
+  _ori_commit = '_ori_commit',
+
+  rollback = 'rollback',
+  _ori_rollback = '_ori_rollback',
+
+  savepoint = 'savepoint',
+  _ori_savepoint = '_ori_savepoint',
+
+  transacting = 'transacting',
+  _ori_transacting = '_ori_transacting',
+}
+export enum KmoreBuilderType {
+  counter = 'counter',
+  pager = 'pager',
 }
 
 
 /**
- * kmoreTrxId => Set<kmoreQueryId>
+ * Map<trxId, Set<queryId>>
  */
 export type TrxIdQueryMap = Map<symbol, Set<symbol>>
 
 export type TrxSavePointCallback = (trx: KmoreTransaction) => Promise<unknown>
 
 
-export interface BuilderInput {
-  ctx?: unknown
-  caseConvert?: CaseType | undefined
-}
+// export interface BuilderInput {
+//   ctx?: unknown
+//   caseConvert?: CaseType | undefined
+// }
+
 
