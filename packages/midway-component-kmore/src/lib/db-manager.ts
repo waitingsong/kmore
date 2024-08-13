@@ -1,16 +1,19 @@
 import assert from 'node:assert'
 
 import { Inject, Singleton } from '@midwayjs/core'
-import { SpanKind, Trace } from '@mwcp/otel'
+import { Attributes, SpanKind, Trace } from '@mwcp/otel'
+import { MConfig } from '@mwcp/share'
 import type { Kmore } from 'kmore'
 
 import { DbSourceManager } from './db-source-manager.js'
-import { ConfigKey } from './types.js'
+import { eventNeedTrace, genCommonAttr } from './trace.helper.js'
+import { ConfigKey, DbConfig, KmoreAttrNames, type KmoreSourceConfig } from './types.js'
 
 
 @Singleton()
 export class DbManager<SourceName extends string = string, D extends object = object> {
 
+  @MConfig(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
   @Inject() protected readonly dbSourceManager: DbSourceManager<SourceName>
 
   getName(): string { return 'dbManager' }
@@ -22,12 +25,35 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     return this.dbSourceManager.isConnected(dataSourceName)
   }
 
+  getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
+    assert(dbId)
+    const dbConfig = this.sourceConfig.dataSource[dbId]
+    return dbConfig
+  }
+
   @Trace<DbManager['getDataSource']>({
-    spanName: ([dataSourceName]) => `dbManager.getDataSource():${dataSourceName}`,
+    spanName: () => `DbManager getDataSource`,
     startActiveSpan: false,
     kind: SpanKind.INTERNAL,
+    before([dataSourceName]) {
+      const dbConfig = this.getDbConfigByDbId(dataSourceName)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
+
+      const attrs: Attributes = {
+        dbId: dataSourceName,
+      }
+      const events = genCommonAttr(KmoreAttrNames.getDataSourceStart)
+      return { attrs, events }
+    },
+    after([dataSourceName]) {
+      const dbConfig = this.getDbConfigByDbId(dataSourceName)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
+
+      const events = genCommonAttr(KmoreAttrNames.getDataSourceEnd)
+      return { events }
+    },
   })
-  getDataSource<Db extends object = D>(dataSourceName: SourceName): Kmore<Db> {
+  getDataSource<Db extends object = D>(this: DbManager<SourceName, Db>, dataSourceName: SourceName): Kmore<Db> {
     const db = this.dbSourceManager.getDataSource(dataSourceName)
     assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
     return db as Kmore<Db>

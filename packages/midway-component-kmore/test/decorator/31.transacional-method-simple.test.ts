@@ -67,11 +67,12 @@ describe(fileShortPath(import.meta.url), () => {
 
       const opt1: AssertsOptions = {
         traceId,
-        operationName: 'dbManager.getDataSource():master',
+        operationName: 'DbManager getDataSource',
         tags: {
           'caller.class': 'DbManager',
           'caller.method': 'getDataSource',
           'span.kind': 'internal',
+          dbId: 'master',
         },
       }
       assertsSpan(span1, opt1)
