@@ -96,8 +96,8 @@ export class DbHookTrx<SourceName extends string = string> {
       return { attrs, events }
     },
   })
-  async transactionPreHook(this: DbHookTrx, options: TransactionPreHookOptions): Promise<TransactionPreHookOptions> {
-    return options
+  async transactionPreHook(this: DbHookTrx, options: TransactionPreHookOptions): Promise<void> {
+    void options
   }
 
   // #region transactionPostHook
@@ -137,10 +137,9 @@ export class DbHookTrx<SourceName extends string = string> {
       return { attrs, events }
     },
   })
-  async transactionPostHook(this: DbHookTrx, options: TransactionHookOptions): Promise<TransactionHookOptions> {
+  async transactionPostHook(this: DbHookTrx, options: TransactionHookOptions): Promise<void> {
     const { trx } = options
     assert(trx.scope, 'transactionPostHook() trx.scope is empty')
-    return options
   }
 
   // #region beforeCommit
@@ -158,8 +157,8 @@ export class DbHookTrx<SourceName extends string = string> {
       return { events }
     },
   })
-  async beforeCommitHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<TransactionHookOptions> {
-    return options
+  async beforeCommitHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<void> {
+    void options
   }
 
   // #region afterCommit
@@ -178,8 +177,8 @@ export class DbHookTrx<SourceName extends string = string> {
       return processTrxCommitAndRollback(options, decoratorContext, data)
     },
   })
-  async afterCommitHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<TransactionHookOptions> {
-    return options
+  async afterCommitHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<void> {
+    void options
   }
 
   // #region beforeRollback
@@ -197,8 +196,8 @@ export class DbHookTrx<SourceName extends string = string> {
       return { events }
     },
   })
-  async beforeRollbackHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<TransactionHookOptions> {
-    return options
+  async beforeRollbackHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<void> {
+    void options
   }
 
   // #region afterRollback
@@ -217,8 +216,8 @@ export class DbHookTrx<SourceName extends string = string> {
       return processTrxCommitAndRollback(options, decoratorContext, data)
     },
   })
-  async afterRollbackHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<TransactionHookOptions> {
-    return options
+  async afterRollbackHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<void> {
+    void options
   }
 }
 

@@ -64,17 +64,15 @@ export class DbHookBuilder<SourceName extends string = string> {
 
   // #region builder hooks
 
-  builderPreHooks(options: BuilderHookOptions): BuilderHookOptions {
-    const ret = this.builderPrePropagating(options)
-    return ret
+  builderPreHooks(options: BuilderHookOptions): void {
+    this.builderPrePropagating(options)
   }
 
-  builderPostHook(options: BuilderHookOptions): Promise<BuilderHookOptions > {
-    const ret = this.builderPostPropagating(options)
-    return ret
+  async builderPostHook(options: BuilderHookOptions): Promise<void> {
+    await this.builderPostPropagating(options)
   }
 
-  protected builderPrePropagating(options: BuilderHookOptions): BuilderHookOptions {
+  protected builderPrePropagating(options: BuilderHookOptions): void {
     const { kmore, builder } = options
 
     if (! builder.scope) {
@@ -85,7 +83,7 @@ export class DbHookBuilder<SourceName extends string = string> {
     }
 
     if (builder.trxPropagated) {
-      return options
+      return
     }
 
     /* Call stack in bindBuilderPropagationData():
@@ -109,10 +107,9 @@ export class DbHookBuilder<SourceName extends string = string> {
       8 - TrxRepo.commit (101/101r.middle-trx-auto-action.repo.ts:33)
     */
     this.trxStatusSvc.bindBuilderPropagationData(kmore.dbId, builder, 6)
-    return options
   }
 
-  protected async builderPostPropagating(options: BuilderHookOptions): Promise<BuilderHookOptions> {
+  protected async builderPostPropagating(options: BuilderHookOptions): Promise<void> {
     const { builder } = options
 
     if (! builder.scope) {
@@ -120,18 +117,16 @@ export class DbHookBuilder<SourceName extends string = string> {
     }
 
     if (builder.trxPropagated) {
-      return options
+      return
     }
 
     await this.trxStatusSvc.propagating({
       builder,
       db: options.kmore,
     })
-
-    return options
   }
 
-  async builderResultPreHook(options: ResponseHookOptions): Promise<ResponseHookOptions> {
+  async builderResultPreHook(options: ResponseHookOptions): Promise<void> {
     if (options.kmoreTrxId && options.trxPropagated && options.trxPropagateOptions) {
       const { builder, rowLockLevel } = options
       if (rowLockLevel) {
@@ -146,8 +141,6 @@ export class DbHookBuilder<SourceName extends string = string> {
 
       // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
     }
-
-    return options
   }
 
 }
