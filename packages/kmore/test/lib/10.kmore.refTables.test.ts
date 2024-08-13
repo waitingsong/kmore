@@ -3,10 +3,9 @@ import assert from 'node:assert'
 import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '../src/index.js'
-
-import { config } from './test.config.js'
-import type { Db } from './test.model.js'
+import { CaseType, KmoreFactory } from '##/index.js'
+import { config } from '#@/test.config.js'
+import type { Db } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
@@ -25,7 +24,7 @@ describe(fileShortPath(import.meta.url), () => {
 
   describe('Should read table with tables param in object work', () => {
     it('tb_user', async () => {
-      const tbUser = km.snakeTables.tb_user()
+      const tbUser = km.refTables.tb_user()
       const ret = await tbUser.select('*')
 
       assert(ret && Array.isArray(ret))
@@ -33,7 +32,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('where', async () => {
-      const tbUser = km.snakeTables.tb_user()
+      const tbUser = km.refTables.tb_user()
       const ret = await tbUser.select('*')
         .where('uid', 1)
       assert(ret && Array.isArray(ret))
@@ -41,7 +40,7 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('case select', async () => {
-      const tbUser = km.snakeTables.tb_user()
+      const tbUser = km.refTables.tb_user()
       const ret = await tbUser.select('real_name')
         .where('uid', 1)
         .first()
@@ -51,13 +50,20 @@ describe(fileShortPath(import.meta.url), () => {
     })
 
     it('case where', async () => {
-      const tbUser = km.snakeTables.tb_user()
+      const tbUser = km.refTables.tb_user()
       const ret = await tbUser.select('real_name')
         .where('uid', 1)
         .where('real_name', Math.random().toString())
         .first()
+        .then((row) => {
+          return row
+        })
+        .catch((ex) => {
+          console.error(ex)
+          assert(false)
+        })
 
-      assert(! ret)
+      assert(! ret, JSON.stringify(ret))
     })
   })
 

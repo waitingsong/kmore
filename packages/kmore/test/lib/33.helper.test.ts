@@ -2,11 +2,10 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import type { Kmore } from '../src/index.js'
-import { KmoreFactory, getCurrentTime, EnumClient } from '../src/index.js'
-
-import { config, dbDict } from './test.config.js'
-import type { Db } from './test.model.js'
+import type { Kmore } from '##/index.js'
+import { KmoreFactory, getCurrentTime, EnumClient } from '##/index.js'
+import { config, dbDict } from '#@/test.config.js'
+import type { Db } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

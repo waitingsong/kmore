@@ -4,9 +4,8 @@ import { fileShortPath } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
 import { KmoreFactory, TrxControl } from '##/index.js'
-
-import { config } from './test.config.js'
-import type { Db } from './test.model.js'
+import { config } from '#@/test.config.js'
+import type { Db } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

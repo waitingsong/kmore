@@ -2,12 +2,11 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import type { Kmore } from '../src/index.js'
-import { KmoreFactory } from '../src/index.js'
-
-import { validateUserExtRows } from './helper.js'
-import { config, dbDict } from './test.config.js'
-import type { Db } from './test.model.js'
+import type { Kmore } from '##/index.js'
+import { KmoreFactory } from '##/index.js'
+import { validateUserExtRows } from '#@/helper.js'
+import { config, dbDict } from '#@/test.config.js'
+import type { Db } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

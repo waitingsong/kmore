@@ -2,9 +2,8 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory } from '../src/index.js'
-
-import { config } from './test.config.js'
+import { KmoreFactory } from '##/index.js'
+import { config } from '#@/test.config.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

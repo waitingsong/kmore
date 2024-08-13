@@ -3,10 +3,9 @@ import assert from 'node:assert'
 import { fileShortPath, sleep } from '@waiting/shared-core'
 import { genDbDict } from 'kmore-types'
 
-import { KmoreFactory } from '../src/index.js'
-
-import { config } from './test.config.js'
-import type { Db } from './test.model.js'
+import { KmoreFactory } from '##/index.js'
+import { config } from '#@/test.config.js'
+import type { Db } from '#@/test.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {
