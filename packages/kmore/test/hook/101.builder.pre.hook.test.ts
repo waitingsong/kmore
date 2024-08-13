@@ -2,7 +2,8 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { type BuilderHookOptions, type Kmore, KmoreFactory } from '##/index.js'
+import { KmoreFactory } from '##/index.js'
+import type { BuilderHookOptions, Kmore } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 

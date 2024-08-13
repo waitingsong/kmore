@@ -2,7 +2,8 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { type TransactionHookOptions, type Kmore, KmoreFactory } from '##/index.js'
+import { KmoreFactory } from '##/index.js'
+import type { TransactionHookOptions, Kmore } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
