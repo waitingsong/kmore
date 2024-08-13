@@ -32,7 +32,7 @@ export class DbManager<SourceName extends string = string, D extends object = ob
   }
 
   @Trace<DbManager['getDataSource']>({
-    spanName: () => `DbManager getDataSource`,
+    spanName: () => 'DbManager getDataSource',
     startActiveSpan: false,
     kind: SpanKind.INTERNAL,
     before([dataSourceName]) {
