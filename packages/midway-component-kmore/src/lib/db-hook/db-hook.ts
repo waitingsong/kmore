@@ -75,6 +75,8 @@ export class DbHook<SourceName extends string = string> {
     db.hookList.builderPreHooks.unshift(this.dbHookBuilder.builderPreHooks.bind(this.dbHookBuilder))
     db.hookList.builderPostHooks.unshift(this.dbHookBuilder.builderPostHook.bind(this.dbHookBuilder))
 
+    db.hookList.builderTransactingPostHooks.unshift(this.dbHookBuilder.builderTransactingPostHook.bind(this.dbHookBuilder))
+
     db.hookList.responsePreHooks.unshift(this.dbHookBuilder.builderResultPreHook.bind(this.dbHookBuilder))
     db.hookList.exceptionHooks.unshift(this.exceptionHook.bind(this))
 

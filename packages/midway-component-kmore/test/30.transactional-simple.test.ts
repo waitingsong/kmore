@@ -9,6 +9,7 @@ import {
 import { SEMATTRS_HTTP_TARGET, SEMATTRS_HTTP_ROUTE } from '@opentelemetry/semantic-conventions'
 import { fileShortPath } from '@waiting/shared-core'
 
+import { KmoreAttrNames } from '##/index.js'
 import { apiBase as apiPrefix, apiMethod as apiRoute } from '#@/api-test.js'
 import { initDb } from '#@/helper.js'
 import { testConfig } from '#@/root.config.js'
@@ -100,6 +101,8 @@ describe(fileShortPath(import.meta.url), () => {
         logs: [
           { event: 'trx.create.start' },
           { event: 'trx.create.end' },
+          { event: KmoreAttrNames.BuilderTransacting, method: 'select', table: 'tb_user' },
+          { event: KmoreAttrNames.BuilderTransacting, method: 'select', table: 'tb_user' },
           { event: 'trx.commit.start', dbId: 'master' },
           { event: 'trx.commit.end', dbId: 'master' },
         ],
@@ -229,6 +232,8 @@ describe(fileShortPath(import.meta.url), () => {
         logs: [
           { event: 'trx.create.start' },
           { event: 'trx.create.end' },
+          { event: KmoreAttrNames.BuilderTransacting, method: 'select', table: 'tb_user' },
+          { event: KmoreAttrNames.BuilderTransacting, method: 'select', table: 'tb_user' },
           { event: 'trx.commit.start', dbId: 'master' },
           { event: 'trx.commit.end', dbId: 'master' },
         ],

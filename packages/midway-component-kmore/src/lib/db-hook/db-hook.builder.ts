@@ -8,16 +8,19 @@ import {
   Inject,
   Singleton,
 } from '@midwayjs/core'
-import { TraceScopeType, TraceService } from '@mwcp/otel'
+import { TraceLog, TraceScopeType, TraceService } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import type {
   BuilderHookOptions,
+  BuilderTransactingHookOptions,
   ResponseHookOptions,
   KmoreTransaction,
+  Kmore,
 } from 'kmore'
 
+import { eventNeedTrace, genCommonAttr } from '../trace.helper.js'
 import { TrxStatusService } from '../trx-status.service.js'
-import { ConfigKey, KmoreSourceConfig, DbConfig } from '../types.js'
+import { ConfigKey, KmoreSourceConfig, DbConfig, KmoreAttrNames } from '../types.js'
 
 
 @Singleton()
@@ -35,38 +38,13 @@ export class DbHookBuilder<SourceName extends string = string> {
   @Inject() readonly traceService: TraceService
 
 
-  getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
-    assert(dbId)
-    const dbConfig = this.sourceConfig.dataSource[dbId]
-    return dbConfig
-  }
-
-  getWebContext(): Context | undefined {
-    return getWebContext(this.applicationContext)
-  }
-
-  getWebContextThenApp(): Context | Application {
-    try {
-      const webContext = getWebContext(this.applicationContext)
-      assert(webContext, 'getActiveContext() webContext should not be null, maybe this calling is not in a request context')
-      return webContext
-    }
-    catch (ex) {
-      console.warn('getWebContextThenApp() failed', ex)
-      return this.app
-    }
-  }
-
-  getTraceScopeByTrx(transaction: KmoreTransaction): TraceScopeType {
-    return transaction.kmoreTrxId
-  }
-
-
-  // #region builder hooks
+  // #region builderPreHooks
 
   builderPreHooks(options: BuilderHookOptions): void {
     this.builderPrePropagating(options)
   }
+
+  // #region builderPostHooks
 
   async builderPostHook(options: BuilderHookOptions): Promise<void> {
     await this.builderPostPropagating(options)
@@ -126,6 +104,8 @@ export class DbHookBuilder<SourceName extends string = string> {
     })
   }
 
+  // #region builderResultPreHook
+
   async builderResultPreHook(options: ResponseHookOptions): Promise<void> {
     if (options.kmoreTrxId && options.trxPropagated && options.trxPropagateOptions) {
       const { builder, rowLockLevel } = options
@@ -141,6 +121,78 @@ export class DbHookBuilder<SourceName extends string = string> {
 
       // const tkey = this.trxStatusSvc.retrieveUniqueTopCallerKey(callerKey)
     }
+  }
+
+  // #region builderTransactingPostHook
+
+  @TraceLog<DbHookBuilder['builderTransactingPostHook']>({
+    scope([options]) {
+      const { kmore, builder } = options
+      const traceScope = this.getTrxTraceScopeByQueryId(kmore, builder.kmoreQueryId)
+      if (traceScope) {
+        return traceScope
+      }
+      const traceScope2 = builder.kmoreQueryId
+      return traceScope2
+    },
+    after([options]) { // options.dbConfig not exists at before()
+      const dbConfig = this.getDbConfigByDbId(options.kmore.dbId)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.BuilderTransacting, dbConfig)) { return }
+
+      const { builder } = options
+      // @ts-expect-error builder._method
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      let method: string = builder._method ?? 'unknown'
+      if (method === 'del') {
+        method = 'delete'
+      }
+
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const table: string = builder._single?.table ?? '',
+
+      const events = genCommonAttr(KmoreAttrNames.BuilderTransacting, {
+        kmoreQueryId: builder.kmoreQueryId.toString(),
+        method,
+        table,
+      })
+      return { events }
+    },
+  })
+  builderTransactingPostHook(this: DbHookBuilder, options: BuilderTransactingHookOptions): void {
+    void options
+  }
+
+
+  protected getTrxTraceScopeByQueryId(db: Kmore, queryId: symbol): TraceScopeType | undefined {
+    const trx = db.getTrxByQueryId(queryId)
+    return trx?.kmoreTrxId
+  }
+
+  protected getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
+    assert(dbId)
+    const dbConfig = this.sourceConfig.dataSource[dbId]
+    return dbConfig
+  }
+
+  protected getWebContext(): Context | undefined {
+    return getWebContext(this.applicationContext)
+  }
+
+  protected getWebContextThenApp(): Context | Application {
+    try {
+      const webContext = getWebContext(this.applicationContext)
+      assert(webContext, 'getActiveContext() webContext should not be null, maybe this calling is not in a request context')
+      return webContext
+    }
+    catch (ex) {
+      console.warn('getWebContextThenApp() failed', ex)
+      return this.app
+    }
+  }
+
+  protected getTraceScopeByTrx(transaction: KmoreTransaction): TraceScopeType {
+    return transaction.kmoreTrxId
   }
 
 }

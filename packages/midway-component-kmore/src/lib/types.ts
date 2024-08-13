@@ -69,6 +69,8 @@ export interface DbConfig<T = any> extends KmoreFactoryOpts<T> {
 
 export enum KmoreAttrNames {
   BuilderCompile = 'builder.compile',
+  BuilderTransacting = 'builder.transacting',
+
   QueryStart = 'query.start',
   QueryQuerying = 'query.querying',
   QueryResponse = 'query.response',
@@ -86,7 +88,6 @@ export enum KmoreAttrNames {
   TrxRollbackStart = 'trx.rollback.start',
   TrxRollbackEnd = 'trx.rollback.end',
 
-  TrxTransacting = 'trx.transacting',
 
   // TrxHookPre = 'trx.hook.pre',
   // TrxHookPost = 'trx.hook.post',
