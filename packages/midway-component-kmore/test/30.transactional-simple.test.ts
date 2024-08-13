@@ -18,7 +18,7 @@ describe(fileShortPath(import.meta.url), () => {
   beforeEach(async () => { await initDb() })
   after(async () => { await initDb() })
 
-  describe('transactional()', () => {
+  describe('trace transactional()', () => {
     const prefix = apiPrefix.transactional_simple
 
     it(apiRoute.simple, async () => {
@@ -99,8 +99,8 @@ describe(fileShortPath(import.meta.url), () => {
         logs: [
           { event: 'trx.create.start' },
           { event: 'trx.create.end' },
-          { event: 'trx.commit.start', dbId: 'master', op: 'commit' },
-          { event: 'trx.commit.end', dbId: 'master', op: 'commit' },
+          { event: 'trx.commit.start', dbId: 'master' },
+          { event: 'trx.commit.end', dbId: 'master' },
         ],
       }
       assertsSpan(span2, opt2)

@@ -30,31 +30,32 @@ export class UserRepo {
 
   @Transactional()
   async userAll(): Promise<void> {
-    // const trx0 = await this.db.transaction()
-    // assert(trx0, 'trx0 should be defined')
-    // await trx0.rollback()
+    const trx0 = await this.db.transaction()
+    assert(trx0, 'trx0 should be defined')
+    await trx0.rollback()
 
-    // const trx1 = await this.db.transaction()
-    // assert(trx1, 'trx1 should be defined')
-    // await trx1.commit()
+    const trx1 = await this.db.transaction()
+    assert(trx1, 'trx1 should be defined')
+    await trx1.commit()
 
-    const [users, trx] = await this.getUsers()
-    assert(users && users.length === 3)
+    const [users, trx] = await this.getUserOne()
+    assert(users && users.length === 1)
     assert(trx, 'trx should be defined')
-
-    // const [, trx3] = await this.getUsers2()
-    // assert(trx3, 'trx3 should be defined')
-    // assert(trx === trx3, `trx !== trx3, trxId: ${trx.toString()}, trx3Id: ${trx3.toString()}`)
 
     const [users2, trx2] = await this.getUsers()
     assert(users2 && users2.length === 3)
     assert(trx === trx2)
+
+    const [users3, trx3] = await this.getUserOne()
+    assert(users3 && users3.length === 1)
+    assert(trx === trx3)
+
   }
 
   @Transactional()
-  protected async getUsers(): Promise<[UserDTO[], symbol]> {
+  protected async getUserOne(): Promise<[UserDTO[], symbol]> {
     const builder = this.tb_user()
-    const users = await builder
+    const users = await builder.where({ uid: 1 })
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
     assert(users)
 
@@ -66,7 +67,7 @@ export class UserRepo {
   }
 
   @Transactional()
-  protected async getUsers2(): Promise<[UserDTO[], symbol]> {
+  protected async getUsers(): Promise<[UserDTO[], symbol]> {
     const builder = this.db.camelTables.tb_user()
     const users = await builder
     const trxId = this.validateBuilderLinkedTrx(builder) // must after "await"
