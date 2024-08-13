@@ -28,8 +28,8 @@ export async function initDb(): Promise<void> {
   const km = KmoreFactory(opts)
   await dropTables(km.dbh, Object.values(km.dict.tables))
 
-  const iso = await getTransactionIsolation(km.dbh)
-  console.log(`transaction_isolation: ${iso}`)
+  // const iso = await getTransactionIsolation(km.dbh)
+  // console.log(`transaction_isolation: ${iso}`)
   await setTimeZone(km.dbh, 'Asia/Chongqing') // 'UTC'
 
   await initTable(km)
@@ -46,7 +46,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const time = await getCurrentTime(km.dbh, config.client)
   assert(time)
-  console.info(`CurrentTime: ${time}`)
+  // console.info(`CurrentTime: ${time}`)
 
   const { tables, scoped } = km.dict
   const { tb_user, tb_user_ext } = dict.columns
