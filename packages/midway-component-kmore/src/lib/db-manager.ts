@@ -56,6 +56,7 @@ export class DbManager<SourceName extends string = string, D extends object = ob
   getDataSource<Db extends object = D>(this: DbManager<SourceName, Db>, dataSourceName: SourceName): Kmore<Db> {
     const db = this.dbSourceManager.getDataSource(dataSourceName)
     assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
+    assert(db.dbId === dataSourceName, `[${ConfigKey.componentName}] getDataSource() db source id not match: "${dataSourceName}"`)
     return db as Kmore<Db>
   }
 
