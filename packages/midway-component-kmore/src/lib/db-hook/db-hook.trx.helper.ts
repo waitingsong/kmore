@@ -40,7 +40,6 @@ export function processTrxCommitAndRollback(
     dbId: kmore.dbId,
     time,
     kmoreTrxId: trx.kmoreTrxId.toString(),
-    op,
   }
 
   const ret: DecoratorTraceDataResp = { attrs, events }

@@ -154,7 +154,6 @@ export class DbHookTrx<SourceName extends string = string> {
       const events = genCommonAttr(KmoreAttrNames.TrxCommitStart, {
         dbId: kmore.dbId,
         kmoreTrxId: trx.kmoreTrxId.toString(),
-        op: 'commit',
       })
       return { events }
     },
@@ -194,7 +193,6 @@ export class DbHookTrx<SourceName extends string = string> {
       const events = genCommonAttr(KmoreAttrNames.TrxRollbackStart, {
         dbId: kmore.dbId,
         kmoreTrxId: trx.kmoreTrxId.toString(),
-        op: 'rollback',
       })
       return { events }
     },
