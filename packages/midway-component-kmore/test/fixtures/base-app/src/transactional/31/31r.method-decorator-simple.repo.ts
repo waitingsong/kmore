@@ -12,7 +12,7 @@ import type { Db, UserDTO } from '../../types/test.model.js'
 
 
 @Singleton()
-export class UserService {
+export class UserRepo {
 
   @Inject() dbManager: DbManager<'master', Db>
 
