@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [66.0.0](https://github.com/waitingsong/kmore/compare/v65.0.2...v66.0.0) (2024-08-13)
+
+
+### Features
+
+* **kmore:** add transacting hooks ([1517f33](https://github.com/waitingsong/kmore/commit/1517f3331d50590fcbddbdc81b1e58c88f0d68d9))
+* **kmore:** change return type of hooks to void or Promise<void> ([ffe9bf4](https://github.com/waitingsong/kmore/commit/ffe9bf4b829e0b15d5269bb94f796bc291ece9d8))
+* **mwcp:** trace log builder.transacting() by builderTransactingPostHooks ([298139d](https://github.com/waitingsong/kmore/commit/298139d64f7eccb77a806bce2ed63625109033e9))
+
+
+
+
+
 ## [65.0.2](https://github.com/waitingsong/kmore/compare/v65.0.1...v65.0.2) (2024-08-13)
 
 **Note:** Version bump only for package npm-mono-base
