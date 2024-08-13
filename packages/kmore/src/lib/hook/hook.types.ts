@@ -9,6 +9,10 @@ export interface HookList {
    * @default [pagingPreProcessor]
    */
   builderPostHooks: BuilderHook[]
+
+  builderTransactingPreHooks: BuilderTransactingHook[]
+  builderTransactingPostHooks: BuilderTransactingHook[]
+
   /**
    * @default [pagingPostProcessor]
    */
@@ -31,6 +35,7 @@ export interface HookList {
 
   beforeRollbackHooks: TrxCommitRollbackHook[]
   afterRollbackHooks: TrxCommitRollbackHook[]
+
 }
 
 export interface BuilderHookOptions {
@@ -88,4 +93,11 @@ export type TransactionPostHook = (options: TransactionHookOptions) => Promise<T
  * Run before/after commit or rollback
  */
 export type TrxCommitRollbackHook = (options: TransactionHookOptions) => Promise<TransactionHookOptions>
+
+export interface BuilderTransactingHookOptions {
+  kmore: Kmore
+  builder: KmoreQueryBuilder
+  trx: KmoreTransaction
+}
+export type BuilderTransactingHook = (options: BuilderTransactingHookOptions) => void
 

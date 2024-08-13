@@ -5,6 +5,7 @@ import type { MethodTypeUnknown } from '@waiting/shared-types'
 
 import type { KmoreQueryBuilder } from '../builder/builder.types.js'
 import { defaultPropDescriptor } from '../config.js'
+import type { BuilderTransactingHookOptions } from '../hook/hook.types.js'
 import type { CreateProxyThenOptions, ProxyThenRunnerOptions } from '../kmore.js'
 import type { KmoreTransaction } from '../types.js'
 import { KmoreProxyKey } from '../types.js'
@@ -43,6 +44,15 @@ function _proxyTransacting(options: ProxyThenRunnerOptions): KmoreQueryBuilder {
 
   assert(trx, 'proxyTransacting(): transaction must be provided')
 
+  const { builderTransactingPreHooks, builderTransactingPostHooks } = kmore.hookList
+  const opts: BuilderTransactingHookOptions = { kmore, builder, trx }
+
+  if (builderTransactingPreHooks.length) {
+    for (const hook of builderTransactingPreHooks) {
+      hook(opts)
+    }
+  }
+
   const { kmoreTrxId } = trx
   assert(kmoreTrxId, 'trx.kmoreTrxId must be provided when .transacting(trx)')
 
@@ -57,6 +67,16 @@ function _proxyTransacting(options: ProxyThenRunnerOptions): KmoreQueryBuilder {
   scope && kmore.linkTrxIdToScope(kmoreTrxId, scope)
 
   // @ts-ignore
-  return Reflect.apply(builder[KmoreProxyKey._ori_transacting] as MethodTypeUnknown, builder, [trx]) as KmoreQueryBuilder
+  const ret = Reflect.apply(builder[KmoreProxyKey._ori_transacting] as MethodTypeUnknown, builder, [trx]) as KmoreQueryBuilder
+  assert(builder === ret, 'transacting() must return the same builder object')
+  opts.builder = ret
+
+  if (builderTransactingPostHooks.length) {
+    for (const hook of builderTransactingPostHooks) {
+      hook(opts)
+    }
+  }
+
+  return ret
 }
 

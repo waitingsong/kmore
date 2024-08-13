@@ -41,13 +41,13 @@ async function _proxyCommit(options: ProxyCommitRunnerOptions): Promise<void> {
 
   const { beforeCommitHooks, afterCommitHooks } = kmore.hookList
   const opts: TransactionHookOptions = { kmore, trx: transaction, config: options.config }
+
   if (beforeCommitHooks.length) {
     for (const hook of beforeCommitHooks) {
       if (transaction.processingHooks.has(hook)) { return }
       transaction.processingHooks.add(hook)
       // eslint-disable-next-line no-await-in-loop
       await hook(opts)
-      void 0
     }
   }
 

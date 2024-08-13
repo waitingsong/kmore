@@ -7,6 +7,8 @@ import { pagingPreProcessor } from './paging.pre.hook.js'
 export const initHookList: HookList = {
   builderPreHooks: [],
   builderPostHooks: [pagingPreProcessor],
+  builderTransactingPreHooks: [],
+  builderTransactingPostHooks: [],
   responsePreHooks: [pagingPostProcessor],
   exceptionHooks: [trxOnExceptionProcessor],
   transactionPreHooks: [],
@@ -59,6 +61,14 @@ export function genHookList(input?: Partial<HookList> | undefined): HookList {
 
     if (input.afterRollbackHooks) {
       ret.afterRollbackHooks = input.afterRollbackHooks
+    }
+
+    if (input.builderTransactingPreHooks) {
+      ret.builderTransactingPreHooks = input.builderTransactingPreHooks
+    }
+
+    if (input.builderTransactingPostHooks) {
+      ret.builderTransactingPostHooks = input.builderTransactingPostHooks
     }
   }
 
