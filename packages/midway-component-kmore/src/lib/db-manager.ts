@@ -15,8 +15,6 @@ export class DbManager<SourceName extends string = string, D extends object = ob
 
   getName(): string { return 'dbManager' }
 
-  instCacheMap = new Map<SourceName, Kmore>()
-
   /**
    * Check the data source is connected
    */
@@ -30,14 +28,8 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     kind: SpanKind.INTERNAL,
   })
   getDataSource<Db extends object = D>(dataSourceName: SourceName): Kmore<Db> {
-    const cacheInst = this.instCacheMap.get(dataSourceName)
-    if (cacheInst) {
-      return cacheInst as Kmore<Db>
-    }
-
     const db = this.dbSourceManager.getDataSource(dataSourceName)
     assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
-    this.instCacheMap.set(dataSourceName, db)
     return db as Kmore<Db>
   }
 
