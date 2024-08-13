@@ -100,8 +100,7 @@ function createQueryBuilder(
 
   kmore.hookList.builderPreHooks.forEach((processor) => {
     assert(typeof processor === 'function', 'builderPreHook should be an array of functions')
-    // eslint-disable-next-line no-await-in-loop
-    builder = processor({ builder, kmore }).builder
+    processor({ builder, kmore })
   })
 
   return builder

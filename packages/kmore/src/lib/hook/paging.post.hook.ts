@@ -12,17 +12,17 @@ import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
 import type { ResponseHookOptions } from './hook.types.js'
 
 
-export async function pagingPostProcessor(options: ResponseHookOptions): Promise<unknown> {
+export async function pagingPostProcessor(options: ResponseHookOptions): Promise<void> {
   const { response, builder } = options
 
   if (! response || ! Array.isArray(response)) {
-    return response
+    return
   }
 
   const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
   if (! builderType || builderType !== KmoreBuilderType.pager) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return response
+    return
   }
   const total = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingMetaTotal)?.value as bigint | undefined
   assert(typeof total === 'bigint', 'total should be a bigint')
@@ -39,10 +39,9 @@ export async function pagingPostProcessor(options: ResponseHookOptions): Promise
     ? { ...initPageTypeMapping }
     : void 0
 
-  const ret = pagingOptions.wrapOutput
+  options.response = pagingOptions.wrapOutput
     ? genOutputData(response as unknown[], props, outputMapping)
     : addPagingMetaOnArray(response as unknown[], props)
-  return ret
 }
 
 function genOutputData<T = unknown>(

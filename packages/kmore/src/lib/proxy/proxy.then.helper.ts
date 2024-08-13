@@ -18,7 +18,7 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
   const { responsePreHooks: responsePreHook } = kmore.hookList
   assert(Array.isArray(responsePreHook), 'responsePreHook should be an array in Kmore')
 
-  let resp = await input
+  const resp = await input
   const opts: ResponseHookOptions = {
     ...options,
     response: resp,
@@ -28,11 +28,11 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
 
   for (const processor of responsePreHook) {
     // eslint-disable-next-line no-await-in-loop
-    resp = await processor(opts)
+    await processor(opts)
   }
 
-  updateRespProperties(resp)
-  return resp
+  updateRespProperties(opts.response)
+  return opts.response
 }
 
 

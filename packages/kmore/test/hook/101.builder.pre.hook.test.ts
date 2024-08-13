@@ -42,9 +42,9 @@ describe(fileShortPath(import.meta.url), () => {
 })
 
 
-function processor(options: BuilderHookOptions): BuilderHookOptions {
+function processor(options: BuilderHookOptions): void {
+  assert(options)
   assert(flag === 1)
   flag = 2
-  return options
 }
 

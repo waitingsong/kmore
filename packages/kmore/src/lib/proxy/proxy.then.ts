@@ -39,10 +39,9 @@ export function createProxyThen(options: CreateProxyThenOptions): void {
 
 async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
   const { kmore, done, reject } = options
-  let { builder } = options
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (! builder.kmoreQueryId) {
+  if (! options.builder.kmoreQueryId) {
     const errMsg = 'kmoreQueryId should be defined, builder may not be a KmoreQueryBuilder'
     console.error(errMsg)
     const err = new Error(errMsg)
@@ -50,28 +49,29 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
   }
 
   const { builderPostHooks: builderPostHook } = kmore.hookList
-  // const pagingOptions = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingOptions)?.value as PagingOptions
+  // const pagingOptions = Object.getOwnPropertyDescriptor(options.builder, KmorePageKey.PagingOptions)?.value as PagingOptions
   // assert(pagingOptions, 'pagingOptions missing defined in builder')
 
-  const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
+  const builderType = Object.getOwnPropertyDescriptor(options.builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
 
+  const opts = { kmore, builder: options.builder }
   try {
     if (builderType !== KmoreBuilderType.counter && Array.isArray(builderPostHook)) {
       for (const hook of builderPostHook) {
         assert(typeof hook === 'function', 'builderPostHook should be an array of functions')
         // eslint-disable-next-line no-await-in-loop
-        builder = (await hook({ kmore, builder })).builder
+        await hook(opts)
       }
     }
-    // must after all pre-processors executed!
-    const kmoreTrxId = kmore.getTrxByQueryId(builder.kmoreQueryId)?.kmoreTrxId
-    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
 
-    const total = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingMetaTotal)?.value as bigint | undefined
-    const opts = {
+    // must after all pre-processors executed!
+    const kmoreTrxId = kmore.getTrxByQueryId(opts.builder.kmoreQueryId)?.kmoreTrxId
+    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = opts.builder
+
+    const total = Object.getOwnPropertyDescriptor(opts.builder, KmorePageKey.PagingMetaTotal)?.value as bigint | undefined
+    const opts2 = {
+      ...opts,
       input: Promise.resolve([]),
-      builder,
-      kmore,
       kmoreTrxId,
       rowLockLevel,
       transactionalProcessed,
@@ -80,13 +80,13 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
     }
     let response: unknown
     if (total === 0n) {
-      response = await processThenRet(opts)
+      response = await processThenRet(opts2)
     }
     else {
       // query response or response data
       // @ts-ignore _ori_then
-      opts.input = Reflect.apply(builder[KmoreProxyKey._ori_then] as AsyncMethodType, builder, [])
-      response = await processThenRet(opts)
+      opts2.input = Reflect.apply(opts.builder[KmoreProxyKey._ori_then] as AsyncMethodType, opts.builder, [])
+      response = await processThenRet(opts2)
     }
     if (typeof done === 'function') {
       const res = done(response)
@@ -101,13 +101,12 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
   catch (ex) { // ex is Error or string
     const exception = genError({ error: ex })
 
-    const kmoreTrxId = kmore.getTrxByQueryId(builder.kmoreQueryId, builder.scope)?.kmoreTrxId
-    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = builder
-    const opts = {
+    const kmoreTrxId = kmore.getTrxByQueryId(opts.builder.kmoreQueryId, opts.builder.scope)?.kmoreTrxId
+    const { rowLockLevel, transactionalProcessed, trxPropagated, trxPropagateOptions } = opts.builder
+    const opts2 = {
+      ...opts,
       exception,
-      builder,
-      kmore,
-      kmoreQueryId: builder.kmoreQueryId,
+      kmoreQueryId: opts.builder.kmoreQueryId,
       kmoreTrxId,
       rowLockLevel,
       transactionalProcessed,
@@ -120,25 +119,25 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
       for (const processor of exceptionHook) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          await processor(opts)
+          await processor(opts2)
         }
         catch (ex2) {
-          if (opts.exception !== ex2 && ex2 instanceof Error) {
-            opts.exception = ex2
+          if (opts2.exception !== ex2 && ex2 instanceof Error) {
+            opts2.exception = ex2
           }
         }
       }
     }
 
-    if (opts.exception !== ex && ! opts.exception.cause) {
-      opts.exception.cause = ex
+    if (opts2.exception !== ex && ! opts2.exception.cause) {
+      opts2.exception.cause = ex
     }
 
     if (reject) {
-      reject(opts.exception)
+      reject(opts2.exception)
       return
     }
-    throw opts.exception
+    throw opts2.exception
   }
 }
 

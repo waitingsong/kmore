@@ -42,7 +42,7 @@ describe(fileShortPath(import.meta.url), () => {
 })
 
 
-async function processor(options: TransactionHookOptions): Promise<TransactionHookOptions> {
+async function processor(options: TransactionHookOptions): Promise<void> {
   const { kmore, trx } = options
   assert(kmore, 'kmore undefined')
   assert(trx, 'trx undefined')
@@ -55,18 +55,16 @@ async function processor(options: TransactionHookOptions): Promise<TransactionHo
   assert(! trx.isCompleted(), 'trx.isCompleted() not false')
   await trx.rollback()
   assert(! trx.isCompleted(), 'trx.isCompleted() not false') // <-- uncompleted yet !
-  return options
 }
 
-async function processor2(options: TransactionHookOptions): Promise<TransactionHookOptions> {
+async function processor2(options: TransactionHookOptions): Promise<void> {
   const { kmore, trx } = options
   assert(! trx.isCompleted(), 'trx.isCompleted() not false') // <-- uncompleted yet !
   await trx.rollback()
   assert(! trx.isCompleted(), 'trx.isCompleted() not false') // <-- uncompleted yet !
-  return options
 }
 
-async function processor3(options: TransactionHookOptions): Promise<TransactionHookOptions> {
+async function processor3(options: TransactionHookOptions): Promise<void> {
   const { kmore, trx } = options
   assert(kmore, 'kmore undefined')
   assert(trx, 'trx undefined')
@@ -76,6 +74,5 @@ async function processor3(options: TransactionHookOptions): Promise<TransactionH
   assert(scope === scope1 || scope === scope2, 'scope !== scope1 && scope !== scope2')
 
   assert(trx.isCompleted(), 'trx.isCompleted() not true')
-  return options
 }
 

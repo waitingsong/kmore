@@ -49,7 +49,7 @@ describe(fileShortPath(import.meta.url), () => {
 })
 
 
-async function processor(options: TransactionHookOptions): Promise<TransactionHookOptions> {
+async function processor(options: TransactionHookOptions): Promise<void> {
   const { kmore, trx } = options
   assert(kmore, 'kmore undefined')
   assert(kmore.dict, 'kmore.dict undefined')
@@ -59,10 +59,8 @@ async function processor(options: TransactionHookOptions): Promise<TransactionHo
   if (! trx.scope) {
     trx.scope = scope1
   }
-
-  return options
 }
-async function processor2(options: TransactionHookOptions): Promise<TransactionHookOptions> {
+async function processor2(options: TransactionHookOptions): Promise<void> {
   const { kmore, trx } = options
   assert(kmore, 'kmore undefined')
   assert(kmore.dict, 'kmore.dict undefined')
@@ -71,7 +69,5 @@ async function processor2(options: TransactionHookOptions): Promise<TransactionH
 
   const { scope } = trx
   assert(scope === scope1 || scope === scope2, 'scope !== scope1 && scope !== scope2')
-
-  return options
 }
 

@@ -42,17 +42,17 @@ export interface BuilderHookOptions {
   kmore: Kmore
   builder: KmoreQueryBuilder
 }
-export type BuilderSyncHook = (options: BuilderHookOptions) => BuilderHookOptions
+export type BuilderSyncHook = (options: BuilderHookOptions) => void
 
 /**
  * Run before the builder is executed (.then() is calling)
  * @returns builder as object key-value, avoid builder deferred execution when await builder
  */
-export type BuilderHook = (options: BuilderHookOptions) => Promise<BuilderHookOptions>
+export type BuilderHook = (options: BuilderHookOptions) => Promise<void>
 /**
  * Run after the builder is executed (.then() is called)
  */
-export type ResponseHook<T = unknown> = (options: ResponseHookOptions<T>) => Promise<T>
+export type ResponseHook<T = unknown> = (options: ResponseHookOptions<T>) => Promise<void>
 
 export type ExceptionHook = (options: ExceptionHookOptions) => Promise<never>
 
@@ -81,18 +81,18 @@ export interface TransactionPreHookOptions {
   kmore: Kmore
   config: KmoreTransactionConfig
 }
-export type TransactionPreHook = (options: TransactionPreHookOptions) => Promise<TransactionPreHookOptions>
+export type TransactionPreHook = (options: TransactionPreHookOptions) => Promise<void>
 
 export interface TransactionHookOptions {
   kmore: Kmore
   config: KmoreTransactionConfig
   trx: KmoreTransaction
 }
-export type TransactionPostHook = (options: TransactionHookOptions) => Promise<TransactionHookOptions>
+export type TransactionPostHook = (options: TransactionHookOptions) => Promise<void>
 /**
  * Run before/after commit or rollback
  */
-export type TrxCommitRollbackHook = (options: TransactionHookOptions) => Promise<TransactionHookOptions>
+export type TrxCommitRollbackHook = (options: TransactionHookOptions) => Promise<void>
 
 export interface BuilderTransactingHookOptions {
   kmore: Kmore

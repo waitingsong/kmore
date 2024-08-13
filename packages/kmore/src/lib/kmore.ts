@@ -292,7 +292,7 @@ export class Kmore<D extends object = any> {
 
     const config2 = Object.assign({ trxActionOnError: this.trxActionOnError }, config)
 
-    let opts: TransactionPreHookOptions = {
+    const opts: TransactionPreHookOptions = {
       kmore: this,
       config: config2,
     }
@@ -300,7 +300,7 @@ export class Kmore<D extends object = any> {
     if (transactionPreHooks.length) {
       for (const fn of transactionPreHooks) {
         // eslint-disable-next-line no-await-in-loop
-        opts = await fn(opts)
+        await fn(opts)
       }
     }
 
@@ -312,7 +312,7 @@ export class Kmore<D extends object = any> {
     })
 
     const { transactionPostHooks } = this.hookList
-    let opts2: TransactionHookOptions = {
+    const opts2: TransactionHookOptions = {
       kmore: this,
       trx: trx,
       config: opts.config,
@@ -320,7 +320,7 @@ export class Kmore<D extends object = any> {
     if (transactionPostHooks.length) {
       for (const fn of transactionPostHooks) {
         // eslint-disable-next-line no-await-in-loop
-        opts2 = await fn(opts2)
+        await fn(opts2)
       }
     }
 
