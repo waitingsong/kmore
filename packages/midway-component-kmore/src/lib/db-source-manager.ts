@@ -85,14 +85,14 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
   protected async createDataSource<Db extends object>(
     config: DbConfig<Db>,
     dataSourceName: SourceName,
-    cacheDataSource = true,
+    useCachedDataSource = true,
   ): Promise<Kmore<Db> | undefined> {
 
-    const cacheInst = cacheDataSource ? this.getDataSource(dataSourceName) : null
-    if (cacheDataSource && cacheInst) {
+    const cacheInst = useCachedDataSource ? this.getDataSource(dataSourceName) : null
+    if (useCachedDataSource && cacheInst) {
       return cacheInst
     }
-    const inst = await this._createDataSource(config, dataSourceName, cacheDataSource)
+    const inst = await this._createDataSource(config, dataSourceName, useCachedDataSource)
     assert(inst, `createDataSource() failed: ${dataSourceName}`)
     this.dbHook.createProxy(inst)
     return inst
