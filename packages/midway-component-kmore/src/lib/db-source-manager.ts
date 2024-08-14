@@ -53,8 +53,7 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
       this.logger.info('dataSourceConfig is not defined')
       return
     }
-    // 需要注意的是，这里第二个参数需要传入一个实体类扫描地址
-    await this.initDataSource(this.sourceConfig, this.baseDir)
+    await this.initDataSource(this.sourceConfig, '')
   }
 
   protected getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
