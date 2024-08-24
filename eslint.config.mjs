@@ -8,7 +8,6 @@ import { genCurrentDirname, genModuleAbsolutePathIfExists } from '@waiting/share
 const projectDir = genCurrentDirname(import.meta.url)
 
 const srcRules = {
-  '@typescript-eslint/prefer-ts-expect-error': 0,
   'import/no-extraneous-dependencies': [2, {
     devDependencies: false,
     optionalDependencies: false,

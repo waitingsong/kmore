@@ -3,6 +3,7 @@
 import assert from 'node:assert'
 
 import { createApp, close, createHttpRequest } from '@midwayjs/mock'
+import { ValidateService } from '@midwayjs/validate'
 import type { Application } from '@mwcp/share'
 import type { Suite } from 'mocha'
 
@@ -11,7 +12,6 @@ import { ConfigKey, TrxStatusService } from '##/index.js'
 import { kmoreConfig } from './config.unittest.js'
 import { initDb } from './helper.js'
 import { type TestConfig, testConfig } from './root.config.js'
-
 
 
 const globalConfig = {
@@ -69,6 +69,7 @@ async function updateConfig(mockApp: Application, config: TestConfig): Promise<v
   config.host = url
 
   config.container = mockApp.getApplicationContext()
+  config.validateService = await config.container.getAsync(ValidateService)
   // const svc = await testConfig.container.getAsync(TaskQueueService)
   config.trxStatusService = await testConfig.container.getAsync(TrxStatusService)
 }
