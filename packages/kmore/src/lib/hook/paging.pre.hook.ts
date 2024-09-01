@@ -12,7 +12,7 @@ import { createQueryBuilderProxy } from '##/lib/proxy/proxy.index.js'
 import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
 import { genKmoreTrxId } from '##/lib/util.js'
 
-import { createProxyTransacting } from '../proxy/proxy.transacting.js'
+// import { createProxyTransacting } from '../proxy/proxy.transacting.js'
 
 import type { BuilderHookOptions } from './hook.types.js'
 
@@ -23,7 +23,6 @@ export async function pagingPreProcessor(options: BuilderHookOptions): Promise<v
   const { builderPager } = await genBuilderForPaging(options)
   if (! builderPager) { return }
   options.builder = builderPager
-  createQueryBuilderProxy(options)
   // const builderPagerSql = builderPagerPatched.toQuery()
   // console.info({ builderPageSql: builderPagerSql })
 }
@@ -186,7 +185,7 @@ function cloneBuilder(
     builder: builderPager,
     caseConvert,
   })
-  createProxyTransacting({ kmore, builder: builderPager })
+  createQueryBuilderProxy({ kmore, builder: builderPager })
   extRefTableFnPropertySmartJoin(builderPager)
 
   const trx = kmore.getTrxByQueryId(kmoreQueryId)
