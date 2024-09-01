@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-types-dev": "^18.0.2"
+    "@waiting/shared-types-dev": "^18.0.4"
   },
   "engines": {
     "node": ">=18.12.0"
@@ -55,8 +55,6 @@
   },
   "scripts": {
     "build": "npm run tsc",
-    "build:unit": "tsc -p test/tsconfig.json",
-    "build:prod": "npm run tsc -- --declaration --declarationMap && tsc-alias && npm run rp",
     "build:unit": "tsc -p test/tsconfig.json",
     "clean": "npm run clean:lock && npm run clean:dist && npm run clean:log",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",

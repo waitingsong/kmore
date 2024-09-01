@@ -40,10 +40,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^23.20.2"
+    "@waiting/shared-core": "^23.21.0"
   },
   "devDependencies": {
-    "@mwcp/otel": "^37.2.0",
+    "@mwcp/otel": "^37.2.1",
     "kmore-cli": "^66.0.0",
     "kmore-types": "^66.0.0",
     "knex": "^3.1.0",
@@ -62,7 +62,7 @@
     "bin",
     "database",
     "dist",
-    "!**/*.spec.*",
+    "src",
     "!**/*.tsbuildinfo"
   ],
   "publishConfig": {
@@ -70,7 +70,6 @@
   },
   "scripts": {
     "build": "npm run tsc && tsc-alias && npm run rp",
-    "build:prod": "npm run tsc -- --declaration --declarationMap && tsc-alias && npm run rp",
     "build:unit": "tsc -p test/tsconfig.json",
     "clean": "npm run clean:lock && npm run clean:dist && npm run clean:log",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",

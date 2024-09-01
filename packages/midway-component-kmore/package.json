@@ -39,7 +39,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/otel": "^37.2.0",
+    "@mwcp/otel": "^37.2.1",
     "kmore": "^66.0.1",
     "knex": "^3.1.0"
   },
@@ -69,8 +69,6 @@
   },
   "scripts": {
     "build": "npm run tsc",
-    "build:unit": "tsc -p test/tsconfig.json",
-    "build:prod": "npm run tsc -- --declaration --declarationMap && tsc-alias",
     "build:unit": "tsc -p test/tsconfig.json",
     "clean": "npm run clean:lock && npm run clean:dist && npm run clean:log",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",

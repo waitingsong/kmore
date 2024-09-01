@@ -35,15 +35,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@waiting/shared-core": "^23.20.2",
-    "@waiting/shared-types": "^23.20.2",
-    "@waiting/shared-types-dev": "^18.0.2",
+    "@waiting/shared-core": "^23.21.0",
+    "@waiting/shared-types": "^23.21.0",
+    "@waiting/shared-types-dev": "^18.0.4",
     "kmore-types": "^66.0.0",
     "minimist": "^1.2.8",
     "rxjs": "^7.8.1",
     "rxwalker": "^7.0.1",
     "tsconfig-resolver": "^3.0.1",
-    "tsx": "^4.16.2"
+    "tsx": "^4.19.0"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5"
@@ -69,7 +69,6 @@
   },
   "scripts": {
     "build": "npm run tsc && tsc-alias && npm run rp",
-    "build:prod": "npm run tsc -- --declaration --declarationMap && tsc-alias && npm run rp",
     "build:unit": "tsc -p test/tsconfig.json",
     "clean": "npm run clean:lock && npm run clean:dist && npm run clean:log",
     "clean:cache": "rm -rf .eslintcache .tsbuildinfo",
