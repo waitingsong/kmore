@@ -22,7 +22,7 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
   // @ts-ignore
   // const queryContext = builder._queryContext as QueryContext | undefined
   // const caseConvert = queryContext?.postProcessResponseCaseConvert ?? CaseType.snake
-  const tablesJoin = new Set([...builder._tablesJoin])
+  const tablesJoin = new Set(builder._tablesJoin)
   const aliasMap = genColumnMapping(dbDict, tablesJoin)
 
   const aliasObject: Record<string, string> = {}
