@@ -15,15 +15,11 @@ import type { ResponseHookOptions } from './hook.types.js'
 export async function pagingPostProcessor(options: ResponseHookOptions): Promise<void> {
   const { response, builder } = options
 
-  if (! response || ! Array.isArray(response)) {
-    return
-  }
+  if (! response || ! Array.isArray(response)) { return }
 
   const builderType = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
-  if (! builderType || builderType !== KmoreBuilderType.pager) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return
-  }
+  if (! builderType || builderType !== KmoreBuilderType.pager) { return }
+
   const total = Object.getOwnPropertyDescriptor(builder, KmorePageKey.PagingMetaTotal)?.value as bigint | undefined
   assert(typeof total === 'bigint', 'total should be a bigint')
 

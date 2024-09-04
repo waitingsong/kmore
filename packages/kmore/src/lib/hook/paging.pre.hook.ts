@@ -120,44 +120,43 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
       return 0n
     })
 
-  void Object.defineProperty(builder, KmorePageKey.PagingMetaTotal, {
+  // eq builder
+  void Object.defineProperty(builderCounter, KmorePageKey.PagingMetaTotal, {
     ...defaultPropDescriptor,
     value: total,
   })
-  void Object.defineProperty(builder, KmorePageKey.PagingBuilderType, {
-    ...defaultPropDescriptor,
-    value: KmoreBuilderType.pager,
-  })
 
-  void Object.defineProperty(builderPager, KmorePageKey.PagingBuilderType, {
-    ...defaultPropDescriptor,
-    value: KmoreBuilderType.pager,
-  })
 
   const ret: GenBuilderForPagingRetType = {
     total,
   }
 
   if (! total) {
-    void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
+    // eq builder
+    void Object.defineProperty(builderCounter, KmorePageKey.PagingBuilderType, {
       ...defaultPropDescriptor,
-      value: total,
+      value: KmoreBuilderType.pager,
     })
     return ret
   }
+  void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
+    ...defaultPropDescriptor,
+    value: total,
+  })
+  void Object.defineProperty(builderPager, KmorePageKey.PagingBuilderType, {
+    ...defaultPropDescriptor,
+    value: KmoreBuilderType.pager,
+  })
 
   const offset = pagingOptions.pageSize * (pagingOptions.page - 1)
 
-  const b3 = builderPager
-    .limit(pagingOptions.pageSize)
-    .offset(offset >= 0 ? offset : 0) as unknown as KmoreQueryBuilder
-
-  void Object.defineProperty(b3, KmorePageKey.PagingMetaTotal, {
+  void builderPager.limit(pagingOptions.pageSize).offset(offset >= 0 ? offset : 0)
+  void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
     ...defaultPropDescriptor,
     value: total,
   })
 
-  ret.builderPager = b3
+  ret.builderPager = builderPager
   return ret
 }
 
