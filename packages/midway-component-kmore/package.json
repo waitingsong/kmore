@@ -39,7 +39,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@mwcp/otel": "^37.2.1",
+    "@mwcp/otel": "^37.3.0",
     "kmore": "^66.0.2",
     "knex": "^3.1.0"
   },
