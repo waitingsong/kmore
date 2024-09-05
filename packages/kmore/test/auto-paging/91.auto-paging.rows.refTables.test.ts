@@ -152,18 +152,18 @@ describe(fileShortPath(import.meta.url), () => {
       validatePagerRet(ret, 3)
     })
 
-    // it.skip('smartJoin', async () => {
-    //   const ret = await tables.tb_user()
-    //     .autoPaging()
-    //     .smartJoin(
-    //       'tb_user_ext.uid',
-    //       'tb_user.uid',
-    //     )
-    //     .where('tb_user_ext_uid', uid)
+    it('smartJoin', async () => {
+      const ret = await tables.tb_user()
+        .autoPaging()
+        .smartJoin(
+          'tb_user_ext.uid',
+          'tb_user.uid',
+        )
+        .where('tb_user_ext_uid', uid)
 
-    //   console.log({ ret })
-    //   assert(ret)
-    // })
+      console.log({ ret })
+      assert(ret)
+    })
 
   })
 })

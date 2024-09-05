@@ -190,7 +190,7 @@ describe(fileShortPath(import.meta.url), () => {
       await trx.rollback()
     })
 
-    it.skip('smartJoin', async () => {
+    it('smartJoin', async () => {
       const ret = await tables.tb_user()
         .smartJoin(
           'tb_user_ext.uid',
