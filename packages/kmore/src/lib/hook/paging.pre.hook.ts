@@ -150,7 +150,11 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
 
   const offset = pagingOptions.pageSize * (pagingOptions.page - 1)
 
-  void builderPager.limit(pagingOptions.pageSize).offset(offset >= 0 ? offset : 0)
+  const limit = pagingOptions.pageSize <= total
+    ? pagingOptions.pageSize
+    : total < Number.MAX_SAFE_INTEGER ? Number(total) : Number.MAX_SAFE_INTEGER
+  void builderPager.limit(limit).offset(offset >= 0 ? offset : 0)
+
   void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
     ...defaultPropDescriptor,
     value: total,
