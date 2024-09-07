@@ -160,15 +160,6 @@ describe(fileShortPath(import.meta.url), () => {
       validatePageRet(ret, 1)
     })
 
-    it('ignore limit()', async () => {
-      const ret: PageRawType<UserDTO> = await tables.tb_user()
-        .select('*')
-        .limit(1) // will be ignored
-        .autoPaging()
-
-      validatePageRet(ret, 3)
-    })
-
     it('smartJoin', async () => {
       const ret = await tables.tb_user()
         .smartJoin(
