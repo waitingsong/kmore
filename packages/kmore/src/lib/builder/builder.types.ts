@@ -56,6 +56,7 @@ export enum QueryBuilderExtKey {
   dbId = 'dbId',
   tablesJoin = '_tablesJoin',
   pagingType = 'pagingType',
+  pagingGroupKey = 'pagingGroupKey',
   transactionalProcessed = 'transactionalProcessed',
   trxPropagateOptions = 'trxPropagateOptions',
   trxPropagated = 'trxPropagated',
@@ -71,6 +72,7 @@ export interface QueryBuilderExtName<D extends object = object> {
   _tablesJoin: string[]
   callerKey: string | undefined
   pagingType?: 'counter' | 'pager'
+  pagingGroupKey?: symbol
   trxPropagateOptions?: TrxPropagateOptions
   trxPropagated?: boolean
   /**

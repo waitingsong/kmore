@@ -10,7 +10,7 @@ import { createQueryBuilderProxy } from '../proxy/proxy.index.js'
 import type { CaseType } from '../types.js'
 
 import { builderBindEvents } from './builder.event.js'
-import { UpdateBuilderProperties } from './builder.props.js'
+import { updateBuilderProperties } from './builder.props.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder.types.js'
 import { extRefTableFnPropertySmartJoin } from './smart-join.js'
 
@@ -76,12 +76,13 @@ function createQueryBuilder(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   let builder = kmore.dbh(refName) as KmoreQueryBuilder
 
-  UpdateBuilderProperties(
+  updateBuilderProperties(
     builder,
     caseConvert,
     kmoreQueryId,
     kmore.dict,
     kmore.dbId,
+    void 0,
   )
 
   builder = builderBindEvents({

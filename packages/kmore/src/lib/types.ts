@@ -167,6 +167,7 @@ export enum KmorePageKey {
    */
   PagingBuilderType = 'pagingType',
   PagingMetaTotal = 'pagingMetaTotal',
+  pagingGroupKey = 'pagingGroupKey',
 }
 export enum KmoreProxyKey {
   getThenProxyProcessed = 'KmoreGetThenProxyProcessed',

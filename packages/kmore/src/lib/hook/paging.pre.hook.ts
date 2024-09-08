@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 
 import { builderBindEvents } from '##/lib/builder/builder.event.js'
-import { UpdateBuilderProperties } from '##/lib/builder/builder.props.js'
+import { updateBuilderProperties } from '##/lib/builder/builder.props.js'
 import type { KmoreQueryBuilder } from '##/lib/builder/builder.types.js'
 import { extRefTableFnPropertySmartJoin } from '##/lib/builder/smart-join.js'
 import { defaultPropDescriptor } from '##/lib/config.js'
@@ -10,7 +10,6 @@ import type { PagingOptions } from '##/lib/paging.types.js'
 import { initPagingOptions, type _PagingOptions } from '##/lib/proxy/proxy.auto-paging.js'
 import { createQueryBuilderProxy } from '##/lib/proxy/proxy.index.js'
 import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
-import { genKmoreTrxId } from '##/lib/util.js'
 
 // import { createProxyTransacting } from '../proxy/proxy.transacting.js'
 
@@ -62,27 +61,18 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
     value: true,
   })
 
-  const builderPager = cloneBuilder(kmore, builder)
-  void Object.defineProperty(builderPager, KmorePageKey.PagingBuilderType, {
-    ...defaultPropDescriptor,
-    value: KmoreBuilderType.pager,
-  })
-
+  // clone
   const pagingOpts: PagingOptions = {
     ...initPagingOptions,
     ...pagingOptions,
   }
-  void Object.defineProperty(builderPager, KmorePageKey.PagingOptions, {
-    ...defaultPropDescriptor,
-    value: pagingOpts,
-  })
-
   // const queryCtxOpts: QueryContext = {
   //   wrapIdentifierCaseConvert: kmore.wrapIdentifierCaseConvert,
   //   postProcessResponseCaseConvert: caseConvert,
   //   kmoreQueryId,
   // }
 
+  const builderPager = cloneBuilder(kmore, builder) // must before builderCounter
   const builderCounter = builder
     .clearCounters()
     .clearGroup()
@@ -98,7 +88,7 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
     ...defaultPropDescriptor,
     value: {
       ...pagingOpts,
-      enable: false,
+      enable: false, // paging counter should not be paged
     },
   })
   void Object.defineProperty(builderCounter, KmorePageKey.PagingBuilderType, {
@@ -106,7 +96,10 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
     writable: true,
     value: KmoreBuilderType.counter,
   })
-
+  void Object.defineProperty(builderCounter, KmorePageKey.pagingGroupKey, {
+    ...defaultPropDescriptor,
+    value: builder.kmoreQueryId,
+  })
 
   const total = await builderCounter
     .then((rows: { total?: number | string, [k: string]: unknown }[]) => {
@@ -126,11 +119,9 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
     value: total,
   })
 
-
   const ret: GenBuilderForPagingRetType = {
     total,
   }
-
   if (! total) {
     // eq builder
     void Object.defineProperty(builderCounter, KmorePageKey.PagingBuilderType, {
@@ -139,26 +130,26 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
     })
     return ret
   }
-  void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
-    ...defaultPropDescriptor,
-    value: total,
-  })
+
   void Object.defineProperty(builderPager, KmorePageKey.PagingBuilderType, {
     ...defaultPropDescriptor,
     value: KmoreBuilderType.pager,
   })
-
-  const offset = pagingOptions.pageSize * (pagingOptions.page - 1)
-
-  const limit = pagingOptions.pageSize <= total
-    ? pagingOptions.pageSize
-    : total < Number.MAX_SAFE_INTEGER ? Number(total) : Number.MAX_SAFE_INTEGER
-  void builderPager.limit(limit).offset(offset >= 0 ? offset : 0)
+  void Object.defineProperty(builderPager, KmorePageKey.PagingOptions, {
+    ...defaultPropDescriptor,
+    value: pagingOpts,
+  })
 
   void Object.defineProperty(builderPager, KmorePageKey.PagingMetaTotal, {
     ...defaultPropDescriptor,
     value: total,
   })
+
+  const offset = pagingOptions.pageSize * (pagingOptions.page - 1)
+  const limit = pagingOptions.pageSize <= total
+    ? pagingOptions.pageSize
+    : total < Number.MAX_SAFE_INTEGER ? Number(total) : Number.MAX_SAFE_INTEGER
+  void builderPager.limit(limit).offset(offset >= 0 ? offset : 0)
 
   ret.builderPager = builderPager
   return ret
@@ -173,15 +164,22 @@ function cloneBuilder(
   const { caseConvert, kmoreQueryId, dbDict } = builder
   assert(kmoreQueryId, 'kmoreQueryId should be set on QueryBuilder')
 
-  const kmoreQueryId2 = genKmoreTrxId(kmoreQueryId, '-pager')
-
+  const kmoreQueryId2 = Symbol(kmoreQueryId.toString() + '-pager')
   let builderPager = builder.clone() as KmoreQueryBuilder
-  UpdateBuilderProperties(
+
+  const pagingGroupKey = builder[KmorePageKey.pagingGroupKey]
+  void Object.defineProperty(builderPager, KmorePageKey.pagingGroupKey, {
+    ...defaultPropDescriptor,
+    value: pagingGroupKey ?? kmoreQueryId,
+  })
+
+  updateBuilderProperties(
     builderPager,
     caseConvert,
     kmoreQueryId2,
     dbDict,
     kmore.dbId,
+    builder.scope,
   )
   builderPager = builderBindEvents({
     kmore,
