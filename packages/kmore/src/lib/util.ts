@@ -17,9 +17,9 @@ export function genKmoreTrxId(
   else {
     const str = idOrParentId.toString()
     let key2 = ''
-    if (str.startsWith('Symbol(trx-')) {
-      const key = str.match(/Symbol\((trx-\S+)\)/u)?.[1]
-      assert(key, 'retrieve key from id failed, input should like "Symbol(trx-1234567890)"')
+    if (str.startsWith('Symbol(')) {
+      const key = str.match(/Symbol\((\S+)\)/u)?.[1]
+      assert(key, 'retrieve key from id failed, input should like "Symbol(***-1234567890)"')
       key2 = `${key}-${Date.now().toString()}`
     }
     else if (str.startsWith('trx-')) {
