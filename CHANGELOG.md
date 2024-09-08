@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [66.1.0](https://github.com/waitingsong/kmore/compare/v66.0.4...v66.1.0) (2024-09-08)
+
+
+### Features
+
+* **kmore:** update auto paging functions with pagingGroupKey ([f0704fd](https://github.com/waitingsong/kmore/commit/f0704fd1ee68ca9ce85373acdf0bf551d93a995f))
+* **kmore:** update genKmoreTrxId() ([5a40bdc](https://github.com/waitingsong/kmore/commit/5a40bdc55b825dffc49204b8b73fc8333380aa29))
+* **kmore:** UpdateBuilderProperties() new param scope ([fa2533b](https://github.com/waitingsong/kmore/commit/fa2533bde4ca59292abc0152e31c51ce2267a379))
+* **mwcp:** start new trace span (group) on events when auto paging ([bbe3b55](https://github.com/waitingsong/kmore/commit/bbe3b558a2d0ba34fc59b9545226fb49734acac6))
+
+
+
+
+
 ## [66.0.4](https://github.com/waitingsong/kmore/compare/v66.0.3...v66.0.4) (2024-09-07)
 
 

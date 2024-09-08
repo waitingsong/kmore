@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [66.1.0](https://github.com/waitingsong/kmore/compare/v66.0.4...v66.1.0) (2024-09-08)
+
+
+### Features
+
+* **mwcp:** start new trace span (group) on events when auto paging ([bbe3b55](https://github.com/waitingsong/kmore/commit/bbe3b558a2d0ba34fc59b9545226fb49734acac6))
+
+
+
+
+
 ## [66.0.4](https://github.com/waitingsong/kmore/compare/v66.0.3...v66.0.4) (2024-09-07)
 
 **Note:** Version bump only for package @mwcp/kmore
