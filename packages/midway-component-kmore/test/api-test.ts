@@ -54,4 +54,5 @@ export const apiMethod = {
   cacheableBeforeMethodTransactional: 'cacheable_before_method_transactional',
 
   close_early: 'close_early',
+  paging: 'paging',
 }
