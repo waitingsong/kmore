@@ -1,5 +1,7 @@
 import assert from 'node:assert'
 
+import type { ScopeType } from '@mwcp/share'
+
 import { defaultPropDescriptor } from '../config.js'
 import type { PagingOptions } from '../paging.types.js'
 import { initPagingOptions } from '../proxy/proxy.auto-paging.js'
@@ -9,12 +11,13 @@ import type { KmoreQueryBuilder } from './builder.types.js'
 import { QueryBuilderExtKey } from './builder.types.js'
 
 
-export function UpdateBuilderProperties(
+export function updateBuilderProperties(
   refTable: KmoreQueryBuilder,
   caseConvert: CaseType,
   kmoreQueryId: symbol,
   dict: unknown,
   dbId: string,
+  scope: ScopeType | undefined,
 ): void {
 
   assert(caseConvert, 'caseConvert must be defined')
@@ -64,7 +67,7 @@ export function UpdateBuilderProperties(
   void Object.defineProperty(refTable, QueryBuilderExtKey.scope, {
     ...defaultPropDescriptor,
     writable: true,
-    value: void 0,
+    value: scope,
   })
 }
 
