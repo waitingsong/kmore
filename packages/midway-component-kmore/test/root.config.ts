@@ -39,6 +39,7 @@ export interface TestConfig {
   validateService: ValidateService
   host: string
   httpRequest: SuperTest<Test>
+  trxStatusService: TrxStatusService
 }
 
 const testAppDir = join(testDir, 'fixtures', 'base-app')
