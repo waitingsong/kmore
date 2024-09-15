@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import assert from 'assert/strict'
+import assert from 'node:assert/strict'
 
 import type { Kmore, KmoreFactoryOpts } from 'kmore'
 import { KmoreFactory, getCurrentTime, EnumClient } from 'kmore'

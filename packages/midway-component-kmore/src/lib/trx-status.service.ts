@@ -69,7 +69,7 @@ export class TrxStatusService {
     }
     if (this.dbInstanceList.size === 1) {
       const iterator = this.dbInstanceList.values()
-      const firstValue = iterator.next().value as Kmore
+      const firstValue = iterator.next().value
       return firstValue
     }
     throw new Error('getDbInstance(): dbId is undefined, but multiple instances exists')
