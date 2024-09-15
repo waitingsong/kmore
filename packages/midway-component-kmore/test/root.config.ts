@@ -36,10 +36,9 @@ export interface TestConfig {
   TEST: boolean
   app: Application
   container: IMidwayContainer
+  validateService: ValidateService
   host: string
   httpRequest: SuperTest<Test>
-  validateService: ValidateService
-  trxStatusService: TrxStatusService
 }
 
 const testAppDir = join(testDir, 'fixtures', 'base-app')

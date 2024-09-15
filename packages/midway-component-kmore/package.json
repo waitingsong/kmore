@@ -81,7 +81,6 @@
     "lint": "eslint --fix --cache src test",
     "lint:nofix": "eslint --cache src test",
     "postbuild": "tsc-alias",
-    "predev": "npm run build",
     "pretest": "npm run build:unit",
     "start": "cross-env NODE_ENV=production node ./bootstrap.js",
     "start:gc": "cross-env NODE_ENV=local node --trace_gc ./bootstrap.js",
