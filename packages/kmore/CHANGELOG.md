@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [67.0.0](https://github.com/waitingsong/kmore/compare/v66.1.0...v67.0.0) (2024-09-15)
+
+**Note:** Version bump only for package kmore
+
+
+
+
+
 # [66.1.0](https://github.com/waitingsong/kmore/compare/v66.0.4...v66.1.0) (2024-09-08)
 
 
