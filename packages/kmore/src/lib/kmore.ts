@@ -290,7 +290,7 @@ export class Kmore<D extends object = any> {
    */
   async transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction> {
 
-    const config2 = Object.assign({ trxActionOnError: this.trxActionOnError }, config)
+    const config2 = Object.assign({ trxActionOnError: this.trxActionOnError }, config) as TransactionPreHookOptions['config']
 
     const opts: TransactionPreHookOptions = {
       kmore: this,
