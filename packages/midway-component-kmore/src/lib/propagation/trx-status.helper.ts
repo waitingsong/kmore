@@ -160,6 +160,16 @@ function builderRowLock(
       break
     }
 
+    case RowLockLevel.ForShareSkipLocked: {
+      void builder.forShare().skipLocked()
+      break
+    }
+
+    case RowLockLevel.ForUpdateSkipLocked: {
+      void builder.forUpdate().skipLocked()
+      break
+    }
+
     default:
       break
   }

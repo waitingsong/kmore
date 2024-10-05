@@ -32,6 +32,8 @@ export interface TrxPropagateOptions extends RowLockOptions {
 export enum RowLockLevel {
   ForShare = 'FOR_SHARE',
   ForUpdate = 'FOR_UPDATE',
+  ForShareSkipLocked = 'FOR_SHARE_SKIP_LOCKED',
+  ForUpdateSkipLocked = 'FOR_UPDATE_SKIP_LOCKED',
   None = 'None',
 }
 
