@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [67.1.0](https://github.com/waitingsong/kmore/compare/v67.0.1...v67.1.0) (2024-10-05)
+
+
+### Features
+
+* update enum RowLockLevel ([9d9235a](https://github.com/waitingsong/kmore/commit/9d9235a494a3fd69b0aa8c6e9ab32945f3afc9eb))
+
+
+
+
+
 ## [67.0.1](https://github.com/waitingsong/kmore/compare/v67.0.0...v67.0.1) (2024-10-05)
 
 **Note:** Version bump only for package kmore
