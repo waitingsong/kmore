@@ -20,7 +20,7 @@ Declarative Transaction via decorator `@Transactional`
 - [Declarative transaction](#declarative-transaction)
 - OpenTelemetry trace
 
-## Install global dependencies
+## Install global deps for development
 ```sh
 npm i -g c8 lerna madge rollup tsx zx
 ```
