@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 import assert from 'node:assert'
 
 import { Inject, Singleton } from '@midwayjs/core'

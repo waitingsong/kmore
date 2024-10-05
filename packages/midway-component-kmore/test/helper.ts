@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import assert from 'node:assert/strict'
@@ -14,8 +15,9 @@ import type { Db, UserDO, UserDTO, UserExtDO } from './test.model.js'
 type TableName = string
 
 export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<void> {
-  for await (const tb of tbs) {
+  for (const tb of tbs) {
     // await dbh.schema.dropTableIfExists(tb).then()
+    // eslint-disable-next-line no-await-in-loop
     await dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
   }
 }

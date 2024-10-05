@@ -18,16 +18,6 @@ import {
   TraceScopeType,
 } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {
-  SEMATTRS_DB_NAME,
-  SEMATTRS_DB_OPERATION,
-  SEMATTRS_DB_STATEMENT,
-  SEMATTRS_DB_SYSTEM,
-  SEMATTRS_DB_USER,
-  SEMATTRS_NET_PEER_NAME,
-  SEMATTRS_NET_PEER_PORT,
-} from '@opentelemetry/semantic-conventions'
 import { humanMemoryUsage } from '@waiting/shared-core'
 import type { Kmore, KmoreEvent, KmoreQueryBuilder } from 'kmore'
 
@@ -168,7 +158,7 @@ export class DbEvent<SourceName extends string = string> {
 
       const attrs: Attributes = {}
       if (respRaw?.response?.command) {
-        attrs[SEMATTRS_DB_OPERATION] = respRaw.response.command
+        attrs['db.operation'] = respRaw.response.command
         attrs[AttrNames.QueryRowCount] = respRaw.response.rowCount ?? 0
         // attrs[AttrNames.QueryResponse] = JSON.stringify(respRaw.response.rows, null, 2)
       }
@@ -238,18 +228,18 @@ export class DbEvent<SourceName extends string = string> {
 
       const attrs: Attributes = {
         dbId,
-        [SEMATTRS_DB_SYSTEM]: typeof knexConfig.client === 'string'
+        ['db.system']: typeof knexConfig.client === 'string'
           ? knexConfig.client
           : JSON.stringify(knexConfig.client, null, 2),
-        [SEMATTRS_NET_PEER_NAME]: conn.host,
-        [SEMATTRS_DB_NAME]: conn.database,
-        [SEMATTRS_NET_PEER_PORT]: conn.port ?? '',
-        [SEMATTRS_DB_USER]: conn.user,
+        ['net.peer.name']: conn.host,
+        ['db.name']: conn.database,
+        ['net.peer.port']: conn.port ?? '',
+        ['db.user']: conn.user,
         // [AttrNames.QueryCostThrottleInMS]: sampleThrottleMs,
         kUid,
         queryUid,
         trxId: trxId ?? '',
-        [SEMATTRS_DB_STATEMENT]: data?.sql ?? '',
+        ['db.statement']: data?.sql ?? '',
       }
 
       const bindings = data?.bindings?.length ? JSON.stringify(data.bindings, null, 2) : void 0
