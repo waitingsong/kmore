@@ -19,7 +19,7 @@ import {
 } from '##/index.js'
 
 import { config, dbDict } from './test.config.js'
-import type { Db, UserDo, UserDTO, UserExtDo } from './test.model.js'
+import type { Db, UserDTO, UserDo, UserExtDo } from './test.model.js'
 
 
 type TableName = string
@@ -153,7 +153,7 @@ export function validateUserRows(rows: Partial<UserDo>[]): void {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
     }
   })
@@ -211,7 +211,7 @@ export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
     }
   })
@@ -277,7 +277,7 @@ export function validateUserExtRows(rows: Partial<UserExtDo>[]): void {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
     }
   })

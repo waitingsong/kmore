@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import {
@@ -11,11 +11,11 @@ import {
 import { TraceScopeType, TraceService } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import { genError } from '@waiting/shared-core'
-import type { Kmore, ExceptionHookOptions, KmoreTransaction } from 'kmore'
+import type { ExceptionHookOptions, Kmore, KmoreTransaction } from 'kmore'
 
 import { genCallerKey } from '../propagation/trx-status.helper.js'
 import { TrxStatusService } from '../trx-status.service.js'
-import { ConfigKey, KmoreSourceConfig, DbConfig } from '../types.js'
+import { ConfigKey, DbConfig, KmoreSourceConfig } from '../types.js'
 
 import { DbHookBuilder } from './db-hook.builder.js'
 import { DbHookTrx } from './db-hook.trx.js'

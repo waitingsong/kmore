@@ -1,4 +1,4 @@
-/* eslint-disable id-length */
+
 import type { CallerFuncNameSet } from 'kmore-types'
 
 import type { CliArgs, Options } from './types.js'

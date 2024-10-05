@@ -7,7 +7,7 @@ import { KmoreFactory, TrxControl } from '##/index.js'
 import { config } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'
 
-import { currCtime, newTime1, date1, nowTime } from './date.js'
+import { currCtime, date1, newTime1, nowTime } from './date.js'
 import { read, readInvalid, readWithoutThen, update, updateWithoutTrx } from './helper.js'
 
 

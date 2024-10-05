@@ -11,7 +11,7 @@ import {
 import type { CallExpressionPosKey, TransFormOptions } from '@waiting/shared-types-dev'
 import { createSourceFile, transformCallExpressionToLiteralType } from '@waiting/shared-types-dev'
 
-import { expectedDict, expectedDict2 } from '../demo-config.js'
+import { expectedDict2, expectedDict } from '../demo-config.js'
 
 
 const __dirname = genCurrentDirname(import.meta.url)

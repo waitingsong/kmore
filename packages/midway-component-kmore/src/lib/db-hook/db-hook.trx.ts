@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 import { relative } from 'node:path'
 
@@ -10,23 +10,23 @@ import {
   Singleton,
 } from '@midwayjs/core'
 import {
+  AttrNames,
   Attributes,
-  TraceScopeType,
   Trace,
   TraceLog,
-  AttrNames,
+  TraceScopeType,
 } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import {
   type KmoreTransaction,
-  type TransactionPreHookOptions,
   type TransactionHookOptions,
+  type TransactionPreHookOptions,
   genKmoreTrxId,
 } from 'kmore'
 
 import { genCommonAttr } from '../trace.helper.js'
 import { TrxStatusService } from '../trx-status.service.js'
-import { ConfigKey, KmoreSourceConfig, DbConfig, KmoreAttrNames } from '../types.js'
+import { ConfigKey, DbConfig, KmoreAttrNames, KmoreSourceConfig } from '../types.js'
 
 import { type ProcessTrxCommitAndRollbackData, processTrxCommitAndRollback } from './db-hook.trx.helper.js'
 

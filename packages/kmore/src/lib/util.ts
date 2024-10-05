@@ -18,7 +18,7 @@ export function genKmoreTrxId(
     const str = idOrParentId.toString()
     let key2 = ''
     if (str.startsWith('Symbol(')) {
-      const key = str.match(/Symbol\((\S+)\)/u)?.[1]
+      const key = /Symbol\((\S+)\)/u.exec(str)?.[1]
       assert(key, 'retrieve key from id failed, input should like "Symbol(***-1234567890)"')
       key2 = `${key}-${Date.now().toString()}`
     }

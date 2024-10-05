@@ -3,11 +3,11 @@
 import assert from 'node:assert/strict'
 
 import type { Kmore, KmoreFactoryOpts } from 'kmore'
-import { KmoreFactory, getCurrentTime, EnumClient } from 'kmore'
+import { EnumClient, KmoreFactory, getCurrentTime } from 'kmore'
 import type { Knex } from 'knex'
 
 
-import { knexConfig as config, dbDict } from './config.unittest.js'
+import { dbDict, knexConfig as config } from './config.unittest.js'
 import type { Db, UserDO, UserDTO, UserExtDO } from './test.model.js'
 
 
@@ -43,7 +43,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
   const { dict } = km
   assert(dict.tables && Object.keys(dict.tables).length > 0)
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
   const time = await getCurrentTime(km.dbh, config.client)
   assert(time)
   // console.info(`CurrentTime: ${time}`)
@@ -128,7 +128,7 @@ export function validateUserRows(rows: Partial<UserDO>[]): void {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
     }
   })
@@ -185,7 +185,7 @@ export function validateUserRowsDTO(rows: Partial<UserDTO>[]): void {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
     }
   })
@@ -247,7 +247,7 @@ export function validateUserExtRows(rows: Partial<UserExtDO>[]): void {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
         assert(false, `Should row.uid be 1 or 2, but got ${row.uid}`)
     }
   })

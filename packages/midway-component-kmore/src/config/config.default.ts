@@ -1,12 +1,12 @@
 import {
   initDbConfig,
-  initialMiddlewareConfig,
   initMiddlewareOptions,
   initPropagationConfig,
+  initialMiddlewareConfig,
 } from '##/lib/config.js'
 import type {
-  KmorePropagationConfig,
   Config,
+  KmorePropagationConfig,
   MiddlewareConfig,
 } from '##/lib/index.js'
 

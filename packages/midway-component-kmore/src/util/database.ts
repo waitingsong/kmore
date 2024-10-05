@@ -27,7 +27,7 @@ export async function processUnCommittedTransaction(ctx: Context): Promise<void>
         ctx.logger.info(msg)
       }
 
-      // eslint-disable-next-line no-await-in-loop
+
       await kmore.finishTransaction({ trx, scope: ctx })
 
       // // eslint-disable-next-line no-await-in-loop

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 // import { genError } from '@waiting/shared-core'
@@ -46,7 +46,7 @@ async function _proxyCommit(options: ProxyCommitRunnerOptions): Promise<void> {
     for (const hook of beforeCommitHooks) {
       if (transaction.processingHooks.has(hook)) { return }
       transaction.processingHooks.add(hook)
-      // eslint-disable-next-line no-await-in-loop
+
       await hook(opts)
     }
   }
@@ -60,7 +60,7 @@ async function _proxyCommit(options: ProxyCommitRunnerOptions): Promise<void> {
     for (const hook of afterCommitHooks) {
       if (transaction.processingHooks.has(hook)) { return }
       transaction.processingHooks.add(hook)
-      // eslint-disable-next-line no-await-in-loop
+
       await hook(opts)
     }
   }

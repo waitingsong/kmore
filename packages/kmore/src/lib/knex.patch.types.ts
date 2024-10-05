@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unified-signatures */
-/* eslint-disable max-len */
+
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
@@ -244,14 +244,14 @@ interface OrderBy<
 
   (
     columnName: keyof TRecord | QueryBuilder,
-    order?: 'asc' | 'desc' | undefined,
-    nulls?: 'first' | 'last' | undefined
+    order?: 'asc' | 'desc',
+    nulls?: 'first' | 'last'
   ): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
 
   (
     columnName: string | QueryBuilder,
-    order?: string | undefined,
-    nulls?: string | undefined
+    order?: string,
+    nulls?: string
   ): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
 
   (
@@ -290,7 +290,7 @@ interface Where<
 
   (object: Knex.DbRecord<Knex.ResolveTableType<TRecord>>): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
 
-  (object: Readonly<Object>): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
+  (object: Readonly<object>): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
 
   <T extends keyof Knex.ResolveTableType<TRecord>>(
     columnName: T,

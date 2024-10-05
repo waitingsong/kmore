@@ -1,4 +1,4 @@
-export const dict1 = /* eslint-disable */ {
+export const dict1 =   {
     "tables": {
         "tb_user": "tb_user",
         "tb_user_ext": "tb_user_ext"
@@ -75,8 +75,8 @@ export const dict1 = /* eslint-disable */ {
             }
         }
     }
-}; /* eslint-enable */
-export const dict2 = /* eslint-disable */ {
+};  
+export const dict2 =   {
     "tables": {
         "tb_user": "tb_user",
         "tb_user_ext": "tb_user_ext",
@@ -178,4 +178,4 @@ export const dict2 = /* eslint-disable */ {
             }
         }
     }
-}; /* eslint-enable */
+};  

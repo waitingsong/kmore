@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import type { AsyncMethodType } from '@waiting/shared-types'
@@ -23,7 +23,7 @@ export function createProxySavepoint(options: CreateProxyTrxOptions): KmoreTrans
 
   void Object.defineProperty(transaction, KmoreProxyKey._ori_savepoint, {
     ...defaultPropDescriptor,
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+
     value: transaction.savepoint,
   })
 

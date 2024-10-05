@@ -13,7 +13,7 @@ import {
   DbManager,
   MiddlewareConfig,
 } from './types/index.js'
-import type { Db, Db2, UserDTO, UserExtDTO } from './types/test.model.js'
+import type { Db2, Db, UserDTO, UserExtDTO } from './types/test.model.js'
 
 
 @Controller('/user2')

@@ -6,16 +6,16 @@ import { genDbDict } from 'kmore-types'
 
 import type {
   Config,
-  MiddlewareConfig,
-  MiddlewareOptions,
   DbConfig,
   KmoreEvent,
+  MiddlewareConfig,
+  MiddlewareOptions,
 } from '##/index.js'
 import {
-  initialMiddlewareConfig,
-  initMiddlewareOptions,
   KmoreSourceConfig,
   initDbConfig,
+  initMiddlewareOptions,
+  initialMiddlewareConfig,
 } from '##/index.js'
 import type { Db } from '#@/test.model.js'
 

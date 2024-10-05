@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 import { isPromise } from 'node:util/types'
 
@@ -59,7 +59,7 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
     if (builderType !== KmoreBuilderType.counter && Array.isArray(builderPostHook)) {
       for (const hook of builderPostHook) {
         assert(typeof hook === 'function', 'builderPostHook should be an array of functions')
-        // eslint-disable-next-line no-await-in-loop
+
         await hook(opts)
       }
     }
@@ -118,7 +118,7 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
     if (exceptionHook.length) {
       for (const processor of exceptionHook) {
         try {
-          // eslint-disable-next-line no-await-in-loop
+
           await processor(opts2)
         }
         catch (ex2) {

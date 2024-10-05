@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, type Kmore } from '##/index.js'
+import { type Kmore, KmoreFactory } from '##/index.js'
 import { validateUserRowsDTO } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { Db } from '#@/test.model.js'

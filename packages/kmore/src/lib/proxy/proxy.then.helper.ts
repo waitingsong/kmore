@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import { defaultPropDescriptor } from '../config.js'
@@ -27,7 +26,7 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
   delete opts['input']
 
   for (const processor of responsePreHook) {
-    // eslint-disable-next-line no-await-in-loop
+
     await processor(opts)
   }
 

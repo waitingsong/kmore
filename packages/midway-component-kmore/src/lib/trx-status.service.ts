@@ -1,11 +1,10 @@
 import assert from 'node:assert'
 
 import { ApplicationContext, IMidwayContainer, Inject, Singleton } from '@midwayjs/core'
-import { Attributes, AttrNames, TraceService } from '@mwcp/otel'
+import { AttrNames, Attributes, TraceService } from '@mwcp/otel'
 import type { ScopeType } from '@mwcp/share'
 import { CallerInfo, genISO8601String } from '@waiting/shared-core'
 import {
-  genKmoreTrxId,
   Kmore,
   KmoreQueryBuilder,
   KmoreTransaction,
@@ -15,6 +14,7 @@ import {
   TrxControl,
   // RowLockLevel,
   TrxPropagateOptions,
+  genKmoreTrxId,
 } from 'kmore'
 
 import { CallerService } from './caller.service.js'
@@ -27,9 +27,9 @@ import {
   PropagatingOptions,
   PropagatingRet,
   RegisterTrxPropagateOptions,
+  StartNewTrxOptions,
   // TraceEndOptions,
   TransactionalEntryType,
-  StartNewTrxOptions,
 } from './propagation/trx-status.types.js'
 import { ConfigKey, Msg } from './types.js'
 
@@ -267,7 +267,7 @@ export class TrxStatusService {
 
       assert(trx.dbId === dbSourceName, `trx.dbId "${trx.dbId}" not equal to dbSourceName2 "${dbSourceName}"`)
 
-      // eslint-disable-next-line no-await-in-loop
+
       await trx.commit()
       this.removeTrxFromEntryCallerKeyTrxMap(dbSourceName, scope, trx.kmoreTrxId)
       this.cleanAfterTrx(dbSourceName, scope, tkey)
@@ -300,7 +300,7 @@ export class TrxStatusService {
 
     for (const trx of trxs) {
       try {
-        // eslint-disable-next-line no-await-in-loop
+
         await trx.rollback()
       }
       catch (ex) {

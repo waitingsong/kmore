@@ -10,10 +10,9 @@ import {
 } from '@waiting/shared-types-dev'
 import type { CallerFuncNameSet } from 'kmore-types'
 import type { Observable } from 'rxjs'
-import { from as ofrom, of, iif, tap, lastValueFrom } from 'rxjs'
-import { map, mergeMap, filter } from 'rxjs/operators'
-import { walk, EntryType } from 'rxwalker'
-// eslint-disable-next-line import/named
+import { from as ofrom, iif, lastValueFrom, of, tap } from 'rxjs'
+import { filter, map, mergeMap } from 'rxjs/operators'
+import { EntryType, walk } from 'rxwalker'
 import type { TsConfigResolverOptions } from 'tsconfig-resolver'
 import { CacheStrategy, tsconfigResolver } from 'tsconfig-resolver'
 
@@ -64,7 +63,7 @@ export async function buildSource(options: Options): Promise<Set<FilePath>> {
   const ret = new Set<FilePath>()
   const paths = await walkDir(opts)
   for (const path of paths) {
-    // eslint-disable-next-line no-await-in-loop
+
     const file = await buildFile(
       path,
       opts.project,

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import type { KmoreQueryBuilder } from './builder/builder.types.js'

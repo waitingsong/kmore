@@ -78,7 +78,7 @@ exports.dict1 = {
             }
         }
     }
-}; /* eslint-enable */
+};  
 exports.dict2 = {
     "tables": {
         "tb_user": "tb_user",
@@ -181,4 +181,4 @@ exports.dict2 = {
             }
         }
     }
-}; /* eslint-enable */
+};  

@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, type PagingOptions, type PagingMeta } from '##/index.js'
+import { type PagingMeta, type PagingOptions, KmoreFactory } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
 

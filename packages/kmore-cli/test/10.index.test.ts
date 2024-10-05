@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import assert from 'node:assert/strict'
-import { stat, cp, rm } from 'node:fs/promises'
+import { cp, rm, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import {
@@ -199,7 +199,7 @@ async function assertsDemo1(
     dict2: null,
   }
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+
     const p1 = 'file://' + jsPath.replace(/\\+/ug, '/')
     mods = await import(p1)
   }

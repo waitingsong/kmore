@@ -32,7 +32,7 @@ describe(fileShortPath(import.meta.url), () => {
     it('should throw error when pass function', async () => {
       const trx = await km.transaction()
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       const trxPoint = await trx.savepoint<KmoreTransaction>(async (trx2) => {
         await trx2.rollback()
         assert(trx2.isCompleted(), 'trx2.isCompleted()')

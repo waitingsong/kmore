@@ -4,8 +4,8 @@ import { fileShortPath } from '@waiting/shared-core'
 
 import type { DbDict } from '../src/index.js'
 
-import { expectedDict, expectedDict3 } from './demo-config.js'
-import type { Db, Db3 } from './test3.model.js'
+import { expectedDict3, expectedDict } from './demo-config.js'
+import type { Db3, Db } from './test3.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

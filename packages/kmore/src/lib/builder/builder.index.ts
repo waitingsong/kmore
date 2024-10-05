@@ -1,4 +1,4 @@
-/* eslint-disable max-params */
+
 /* eslint-disable @typescript-eslint/ban-types */
 import assert from 'node:assert'
 
@@ -73,7 +73,7 @@ function createQueryBuilder(
   // @ts-ignore
   assert(kmore.dbh)
   // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
   let builder = kmore.dbh(refName) as KmoreQueryBuilder
 
   updateBuilderProperties(

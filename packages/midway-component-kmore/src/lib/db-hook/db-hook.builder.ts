@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import {
@@ -13,14 +13,14 @@ import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import type {
   BuilderHookOptions,
   BuilderTransactingHookOptions,
-  ResponseHookOptions,
-  KmoreTransaction,
   Kmore,
+  KmoreTransaction,
+  ResponseHookOptions,
 } from 'kmore'
 
 import { eventNeedTrace, genCommonAttr } from '../trace.helper.js'
 import { TrxStatusService } from '../trx-status.service.js'
-import { ConfigKey, KmoreSourceConfig, DbConfig, KmoreAttrNames } from '../types.js'
+import { ConfigKey, DbConfig, KmoreAttrNames, KmoreSourceConfig } from '../types.js'
 
 
 @Singleton()

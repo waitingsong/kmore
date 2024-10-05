@@ -7,7 +7,7 @@ import { extRefTableFnPropertySmartJoin } from '##/lib/builder/smart-join.js'
 import { defaultPropDescriptor } from '##/lib/config.js'
 import type { Kmore } from '##/lib/kmore.js'
 import type { PagingOptions } from '##/lib/paging.types.js'
-import { initPagingOptions, type _PagingOptions } from '##/lib/proxy/proxy.auto-paging.js'
+import { type _PagingOptions, initPagingOptions } from '##/lib/proxy/proxy.auto-paging.js'
 import { createQueryBuilderProxy } from '##/lib/proxy/proxy.index.js'
 import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
 
@@ -53,7 +53,7 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
   )
 
   // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
   // const pagingOptions: _PagingOptions = builder[KmorePageKey.PagingOptions]
   assert(pagingOptions, 'pagingOptions should be set')
   void Object.defineProperty(builder, KmorePageKey.PagingProcessed, {
@@ -149,7 +149,7 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
   const limit = pagingOptions.pageSize <= total
     ? pagingOptions.pageSize
     : total < Number.MAX_SAFE_INTEGER ? Number(total) : Number.MAX_SAFE_INTEGER
-  void builderPager.limit(limit).offset(offset >= 0 ? offset : 0)
+  void builderPager.limit(limit).offset(Math.max(offset, 0))
 
   ret.builderPager = builderPager
   return ret

@@ -19,7 +19,7 @@ export const initHookList: HookList = {
   afterRollbackHooks: [],
 }
 
-export function genHookList(input?: Partial<HookList> | undefined): HookList {
+export function genHookList(input?: Partial<HookList>): HookList {
   const ret: HookList = { ...initHookList }
 
   if (input) {

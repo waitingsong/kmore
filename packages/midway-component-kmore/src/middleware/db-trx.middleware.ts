@@ -1,4 +1,4 @@
-import { Middleware, Inject } from '@midwayjs/core'
+import { Inject, Middleware } from '@midwayjs/core'
 import type { Context, IMiddleware, NextFunction } from '@mwcp/share'
 
 import { ConfigKey, TrxStatusService } from '##/lib/index.js'

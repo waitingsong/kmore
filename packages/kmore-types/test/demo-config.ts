@@ -1,6 +1,6 @@
 import type { DbDict, DbDictType } from '../src/index.js'
 
-import type { Db, Db2, Db3 } from './test3.model.js'
+import type { Db2, Db3, Db } from './test3.model.js'
 
 
 export const expectedDict: DbDict<Db> = {

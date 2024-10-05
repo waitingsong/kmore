@@ -2,13 +2,12 @@
 import assert from 'node:assert'
 
 import {
-  camelToSnake,
   camelKeys,
+  camelToSnake,
   snakeKeys,
   snakeToCamel,
 } from '@waiting/shared-core'
 import type { RecordCamelKeys, RecordPascalKeys, RecordSnakeKeys } from '@waiting/shared-types'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import type { Knex } from 'knex'
 
 import type { QueryContext } from '##/index.js' // skip cyclic import check
@@ -174,7 +173,7 @@ export function postProcessResponse<T extends PostProcessInput = PostProcessInpu
       return postProcessResponseToCamel(result, queryContext)
 
     case CaseType.pascal:
-      throw Error('Not implemented yet for pascal case conversion')
+      throw new Error('Not implemented yet for pascal case conversion')
 
       // return postProcessResponseToPascal(result, queryContext)
     case CaseType.snake:

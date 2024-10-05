@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-import type { PageRawType, PagingMeta, PageWrapType } from '##/index.js'
+import type { PageRawType, PageWrapType, PagingMeta } from '##/index.js'
 import type { UserDTO } from '#@/test.model.js'
 
 

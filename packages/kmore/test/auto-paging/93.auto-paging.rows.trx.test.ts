@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import { KmoreFactory, type PageRawType } from '##/index.js'
+import { type PageRawType, KmoreFactory } from '##/index.js'
 import { initPagingMeta } from '##/lib/proxy/proxy.auto-paging.js'
 import { countTbUser, deleteRow } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'

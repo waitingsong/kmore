@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 
-import type { Kmore, EventCallbacks, KmoreEvent } from '##/index.js'
+import type { EventCallbacks, Kmore, KmoreEvent } from '##/index.js'
 import { KmoreFactory } from '##/index.js'
 import { validateUserRows } from '#@/helper.js'
 import { config, dbDict } from '#@/test.config.js'

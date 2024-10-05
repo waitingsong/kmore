@@ -15,9 +15,9 @@ import {
 } from 'kmore'
 
 import type {
-  TrxCallerInfo,
   CallerKey,
   RegisterTrxPropagateOptions,
+  TrxCallerInfo,
 } from './trx-status.types.js'
 
 
@@ -128,7 +128,7 @@ export function linkBuilderWithTrx(
   const trxPropagateOptions = builder[QueryBuilderExtKey.trxPropagateOptions]
   if (trxPropagateOptions) {
     // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const method = builder._method as string
     if (forShareMethods.includes(method)) {
       // avoid error: "for share - FOR SHARE is not allowed with aggregate functions"

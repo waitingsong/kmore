@@ -2,14 +2,14 @@ import assert from 'node:assert'
 
 import {
   type AsyncContextManager,
-  ApplicationContext,
   ASYNC_CONTEXT_KEY,
   ASYNC_CONTEXT_MANAGER_KEY,
+  ApplicationContext,
   IMidwayContainer,
   Inject,
   Singleton,
 } from '@midwayjs/core'
-import { MConfig, Application, Context, DecoratorExecutorParamBase, DecoratorHandlerBase, genError } from '@mwcp/share'
+import { Application, Context, DecoratorExecutorParamBase, DecoratorHandlerBase, MConfig, genError } from '@mwcp/share'
 
 import { TrxStatusService } from '##/lib/trx-status.service.js'
 import { ConfigKey, KmorePropagationConfig } from '##/lib/types.js'

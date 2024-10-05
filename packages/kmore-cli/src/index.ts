@@ -1,4 +1,4 @@
 
 export * from './lib/index.js'
-export * from './lib/types.js'
+export type * from './lib/types.js'
 

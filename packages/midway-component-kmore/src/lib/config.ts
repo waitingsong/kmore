@@ -3,9 +3,9 @@ import { PropagationType, RowLockLevel } from 'kmore'
 
 import type {
   DbConfig,
+  KmorePropagationConfig as PropagationConfig,
   MiddlewareConfig,
   MiddlewareOptions,
-  KmorePropagationConfig as PropagationConfig,
 } from './types.js'
 
 

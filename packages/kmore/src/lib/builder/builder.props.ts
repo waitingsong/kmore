@@ -5,7 +5,7 @@ import type { ScopeType } from '@mwcp/share'
 import { defaultPropDescriptor } from '../config.js'
 import type { PagingOptions } from '../paging.types.js'
 import { initPagingOptions } from '../proxy/proxy.auto-paging.js'
-import { KmorePageKey, type CaseType } from '../types.js'
+import { type CaseType, KmorePageKey } from '../types.js'
 
 import type { KmoreQueryBuilder } from './builder.types.js'
 import { QueryBuilderExtKey } from './builder.types.js'

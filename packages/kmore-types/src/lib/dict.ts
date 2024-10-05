@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+
 import { computeCallExpressionToLiteralObj } from '@waiting/shared-types-dev'
 
 import type {
-  DictTables,
-  DictColumns,
   DictAlias,
-  DictScoped,
   DictCamelAlias,
   DictCamelColumns,
+  DictColumns,
+  DictScoped,
+  DictTables,
 } from './types.js'
 
 
@@ -134,7 +134,7 @@ function genCamelColumnsFromCamelAlias<D>(data: DbDict<D>['camelAlias']): DbDict
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const row = cols[col]
         if (typeof row === 'object') {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           const firstKey = Object.keys(row)[0]
           if (typeof firstKey === 'string' && firstKey.length > 0) {
             // @ts-ignore

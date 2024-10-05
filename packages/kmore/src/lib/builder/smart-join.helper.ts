@@ -17,7 +17,7 @@ export function genColumnMapping(
 
   tablesJoin.forEach((tableName: string) => {
     // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const scopedCols = dbDict.scoped[tableName]
     if (typeof scopedCols === 'object') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

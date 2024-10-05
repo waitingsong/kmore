@@ -1,11 +1,11 @@
-import assert from 'assert/strict'
+import assert from 'node:assert/strict'
 
 import { fileShortPath } from '@waiting/shared-core'
 import type { Equals } from '@waiting/shared-types'
 
 import type { DbDict } from '../src/index.js'
 
-import type { Db, Db2 } from './test3.model.js'
+import type { Db2, Db } from './test3.model.js'
 
 
 describe(fileShortPath(import.meta.url), () => {

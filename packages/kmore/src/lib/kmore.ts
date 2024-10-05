@@ -1,4 +1,4 @@
-/* eslint-disable max-lines-per-function */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'node:assert'
@@ -6,7 +6,7 @@ import assert from 'node:assert'
 import type { ScopeType } from '@mwcp/share'
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
-// eslint-disable-next-line import/no-extraneous-dependencies, import/no-named-default
+// eslint-disable-next-line import/no-named-default
 import { default as _knex } from 'knex'
 
 import { createRefTables } from './builder/builder.index.js'
@@ -252,7 +252,7 @@ export class Kmore<D extends object = any> {
     this.trxIdQueryIdList.delete(trxId)
   }
 
-  getTrxByQueryId(queryId: symbol, scope?: ScopeType | undefined): KmoreTransaction | undefined {
+  getTrxByQueryId(queryId: symbol, scope?: ScopeType): KmoreTransaction | undefined {
     if (scope) {
       const st = this.getTrxIdsByScope(scope)
       if (st) {
@@ -299,7 +299,7 @@ export class Kmore<D extends object = any> {
     const { transactionPreHooks } = this.hookList
     if (transactionPreHooks.length) {
       for (const fn of transactionPreHooks) {
-        // eslint-disable-next-line no-await-in-loop
+
         await fn(opts)
       }
     }
@@ -319,7 +319,7 @@ export class Kmore<D extends object = any> {
     }
     if (transactionPostHooks.length) {
       for (const fn of transactionPostHooks) {
-        // eslint-disable-next-line no-await-in-loop
+
         await fn(opts2)
       }
     }

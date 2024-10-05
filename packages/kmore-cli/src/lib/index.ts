@@ -1,5 +1,5 @@
 import { buildSource } from './transformer.js'
-import type { RunCmdArgs, Options, FilePath } from './types.js'
+import type { FilePath, Options, RunCmdArgs } from './types.js'
 
 
 export async function runCmd(args: RunCmdArgs): Promise<FilePath[]> {
@@ -13,7 +13,7 @@ export async function runCmd(args: RunCmdArgs): Promise<FilePath[]> {
     }
 
     default:
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+
       throw new Error(`invalid cmd: "${cmd}"`)
   }
 

@@ -1,4 +1,4 @@
-import type { CreateProxyTrxOptions, CreateProxyThenOptions } from '../kmore.js'
+import type { CreateProxyThenOptions, CreateProxyTrxOptions } from '../kmore.js'
 import type { KmoreTransaction } from '../types.js'
 
 import { createProxyCommit } from './proxy.commit.js'

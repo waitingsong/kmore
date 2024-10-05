@@ -6,7 +6,7 @@ import type {
   PageWrapType,
   PagingMeta,
 } from '##/lib/paging.types.js'
-import { initPageTypeMapping, type _PagingOptions } from '##/lib/proxy/proxy.auto-paging.js'
+import { type _PagingOptions, initPageTypeMapping } from '##/lib/proxy/proxy.auto-paging.js'
 import { KmoreBuilderType, KmorePageKey } from '##/lib/types.js'
 
 import type { ResponseHookOptions } from './hook.types.js'

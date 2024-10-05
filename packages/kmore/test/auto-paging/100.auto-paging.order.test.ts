@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'
 import { RecordCamelKeys } from '@waiting/shared-types'
 
-import { KmoreFactory, type PageRawType } from '##/index.js'
+import { type PageRawType, KmoreFactory } from '##/index.js'
 import { config, dbDict } from '#@/test.config.js'
 import type { UserDTO } from '#@/test.model.js'
 

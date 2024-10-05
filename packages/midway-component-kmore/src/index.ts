@@ -9,8 +9,6 @@ export * from './decorator/index.decorator.js'
 
 
 export {
-  CaseType,
-  Kmore,
   type KmoreEvent,
   type KmoreQueryBuilder,
   type KmoreTransaction,
@@ -20,9 +18,11 @@ export {
   type PageWrapType,
   type PagingMeta,
   type PagingOptions,
+  type TrxPropagateOptions,
+  CaseType,
+  Kmore,
   PropagationType,
   RowLockLevel,
-  type TrxPropagateOptions,
   getCurrentTime,
   mergeDoWithInitData,
 } from 'kmore'

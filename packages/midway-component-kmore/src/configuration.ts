@@ -15,8 +15,8 @@ import {
   Application,
   IMidwayContainer,
   MConfig,
-  registerMiddleware,
   deleteRouter,
+  registerMiddleware,
 } from '@mwcp/share'
 import { sleep } from '@waiting/shared-core'
 

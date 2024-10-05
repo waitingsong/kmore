@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import type { AsyncMethodType } from '@waiting/shared-types'
@@ -47,7 +47,7 @@ async function _proxyRollback(options: ProxyCommitRunnerOptions): Promise<void> 
     for (const hook of beforeRollbackHooks) {
       if (transaction.processingHooks.has(hook)) { return }
       transaction.processingHooks.add(hook)
-      // eslint-disable-next-line no-await-in-loop
+
       await hook(opts)
     }
   }
@@ -60,7 +60,7 @@ async function _proxyRollback(options: ProxyCommitRunnerOptions): Promise<void> 
       for (const hook of afterRollbackHooks) {
         if (transaction.processingHooks.has(hook)) { return }
         transaction.processingHooks.add(hook)
-        // eslint-disable-next-line no-await-in-loop
+
         await hook(opts)
       }
     }
@@ -73,7 +73,7 @@ async function _proxyRollback(options: ProxyCommitRunnerOptions): Promise<void> 
       .then(async () => {
         if (afterRollbackHooks.length) {
           for (const hook of afterRollbackHooks) {
-            // eslint-disable-next-line no-await-in-loop
+
             await hook(opts)
           }
         }

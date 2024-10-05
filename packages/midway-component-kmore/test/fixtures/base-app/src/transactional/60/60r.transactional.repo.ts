@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-import { Inject, Init, Singleton } from '@midwayjs/core'
+import { Init, Inject, Singleton } from '@midwayjs/core'
 
 import {
   DbManager,

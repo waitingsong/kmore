@@ -8,14 +8,14 @@ import {
   Singleton,
 } from '@midwayjs/core'
 import {
-  Attributes,
-  TraceScopeType,
-  Trace,
-  TraceLog,
   AttrNames,
+  Attributes,
+  DecoratorTraceData,
   SpanStatusCode,
   StartScopeActiveSpanOptions,
-  DecoratorTraceData,
+  Trace,
+  TraceLog,
+  TraceScopeType,
 } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -29,11 +29,11 @@ import {
   SEMATTRS_NET_PEER_PORT,
 } from '@opentelemetry/semantic-conventions'
 import { humanMemoryUsage } from '@waiting/shared-core'
-import type { KmoreEvent, Kmore, KmoreQueryBuilder } from 'kmore'
+import type { Kmore, KmoreEvent, KmoreQueryBuilder } from 'kmore'
 
 import { eventNeedTrace, genCommonAttr } from './trace.helper.js'
 import { TrxStatusService } from './trx-status.service.js'
-import { ConfigKey, KmoreSourceConfig, DbConfig, KmoreAttrNames, ConnectionConfig } from './types.js'
+import { ConfigKey, ConnectionConfig, DbConfig, KmoreAttrNames, KmoreSourceConfig } from './types.js'
 
 
 @Singleton()

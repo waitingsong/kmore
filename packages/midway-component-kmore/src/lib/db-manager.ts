@@ -7,7 +7,7 @@ import type { Kmore } from 'kmore'
 
 import { DbSourceManager } from './db-source-manager.js'
 import { eventNeedTrace, genCommonAttr } from './trace.helper.js'
-import { ConfigKey, DbConfig, KmoreAttrNames, type KmoreSourceConfig } from './types.js'
+import { type KmoreSourceConfig, ConfigKey, DbConfig, KmoreAttrNames } from './types.js'
 
 
 @Singleton()

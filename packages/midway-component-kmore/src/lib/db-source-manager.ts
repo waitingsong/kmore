@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import assert from 'node:assert'
 
 import {
@@ -15,10 +15,10 @@ import { ILogger } from '@midwayjs/logger'
 import { Attributes, TraceInit } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import {
-  type KmoreFactoryOpts,
   type EventCallbacks,
-  type KmoreEvent,
   type Kmore,
+  type KmoreEvent,
+  type KmoreFactoryOpts,
   KmoreFactory,
   getCurrentTime,
 } from 'kmore'
@@ -26,7 +26,7 @@ import {
 import { DbEvent } from './db-event.js'
 import { DbHook } from './db-hook/index.db-hook.js'
 import { TrxStatusService } from './trx-status.service.js'
-import { ConfigKey, KmoreSourceConfig, DbConfig } from './types.js'
+import { ConfigKey, DbConfig, KmoreSourceConfig } from './types.js'
 
 
 @Singleton()

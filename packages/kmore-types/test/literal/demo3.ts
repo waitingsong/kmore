@@ -1,5 +1,5 @@
 import { type DbDict, genDbDict } from '../../src/lib/dict.js'
-import type { Db, Db2 } from '../test3.model.js'
+import type { Db2, Db } from '../test3.model.js'
 
 
 
