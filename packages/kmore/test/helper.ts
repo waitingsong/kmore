@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import assert from 'node:assert'
@@ -25,7 +26,7 @@ import type { Db, UserDTO, UserDo, UserExtDo } from './test.model.js'
 type TableName = string
 
 export async function dropTables(dbh: Knex, tbs: readonly TableName[]): Promise<void> {
-  for await (const tb of tbs) {
+  for (const tb of tbs) {
     // await dbh.schema.dropTableIfExists(tb).then()
     await dbh.raw(`DROP TABLE IF EXISTS "${tb}" CASCADE;`).then()
   }
@@ -72,6 +73,7 @@ async function initTable(km: Kmore<Db>): Promise<void> {
       tb.timestamp(tb_user.ctime, { useTz: false })
     })
     .createTable(tables.tb_user_ext, (tb) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       config.client === EnumClient.mysql || config.client === EnumClient.mysql2
         ? tb.integer(tb_user_ext.uid).unsigned()
           .primary()

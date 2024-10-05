@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import assert from 'node:assert'
 
 import { fileShortPath } from '@waiting/shared-core'

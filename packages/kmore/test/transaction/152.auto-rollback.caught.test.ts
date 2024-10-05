@@ -39,7 +39,7 @@ describe(fileShortPath(import.meta.url), () => {
         await update(km, trx, newTime1)
         await readWithoutThen(km, trx)
           .then(() => {
-            return Promise.reject(msg)
+            return Promise.reject(new Error(msg))
           })
       }
       catch (ex) {

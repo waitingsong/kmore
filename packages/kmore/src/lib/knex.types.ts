@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 
 export type ArrayIfAlready<T1, T2> = AnyToUnknown<T1> extends any[] ? T2[] : T2
 // If T is an array, get the type of member, else fall back to never
 export type ArrayMember<T> = T extends (infer M)[] ? M : never
 export type AnyToUnknown<T> = unknown extends T ? unknown : T
 export type CurlyCurlyToAny<T> = T extends unknown // distribute
-  ? (<U>() => U extends T ? 0 : 1) extends <U>() => U extends {} ? 0 : 1
+  ? (<U>() => U extends T ? 0 : 1) extends <U>() => U extends object ? 0 : 1
       ? any
       : T
   : never
@@ -27,7 +26,7 @@ export type UnknownOrCurlyCurlyToAny<T> = [UnknownToAny<T> | CurlyCurlyToAny<T>]
 export type UnknownToAny<T> = unknown extends T ? any : T
 // Intersection conditionally applied only when TParams is non-empty
 // This is primarily to keep the signatures more intuitive.
-export type AugmentParams<TTarget, TParams> = TParams extends {}
+export type AugmentParams<TTarget, TParams> = TParams extends object
   ? keyof TParams extends never
     ? TTarget
     : {} & TTarget & TParams
@@ -35,7 +34,7 @@ export type AugmentParams<TTarget, TParams> = TParams extends {}
 // Boxing is necessary to prevent distribution of conditional types:
 // https://lorefnon.tech/2019/05/02/using-boxing-to-prevent-distribution-of-conditional-types/
 export type PartialOrAny<TBase, TKeys> = Boxed<TKeys> extends Boxed<never>
-  ? {}
+  ? object
   : Boxed<TKeys> extends Boxed<keyof TBase>
     ? SafePick<TBase, TKeys & keyof TBase>
     : any
@@ -44,10 +43,10 @@ export type PartialOrAny<TBase, TKeys> = Boxed<TKeys> extends Boxed<never>
 export interface Boxed<T> {
   _value: T
 }
-export type SafePick<T, K extends keyof T> = T extends {} ? Pick<T, K> : any
+export type SafePick<T, K extends keyof T> = T extends object ? Pick<T, K> : any
 // This is primarily to prevent type incompatibilities where target can be unknown.
 // While unknown can be assigned to any, Partial<unknown> can't be.
-export type SafePartial<T> = Partial<AnyOrUnknownToOther<T, {}>>
+export type SafePartial<T> = Partial<AnyOrUnknownToOther<T, object>>
 export type AnyOrUnknownToOther<T1, T2> = unknown extends T1 ? T2 : T1
 
 

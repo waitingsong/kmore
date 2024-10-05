@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 /* eslint-disable @typescript-eslint/unified-signatures */
-
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-types */
 import type { CaseType, UnwrapArrayMember } from '@waiting/shared-types'
 import type { Knex } from 'knex'
 
@@ -96,7 +95,7 @@ interface Select<
 
   <
     TResult2 = ArrayIfAlready<TResult, any>,
-    TInnerRecord extends {} = any,
+    TInnerRecord extends object = any,
     TInnerResult = any,
   >(
     ...subQueryBuilders: readonly KmoreQueryBuilder<D, CaseConvert, TInnerRecord, TInnerResult>[]
@@ -104,7 +103,7 @@ interface Select<
 
   <
     TResult2 = ArrayIfAlready<TResult, any>,
-    TInnerRecord extends {} = any,
+    TInnerRecord extends object = any,
     TInnerResult = any,
   >(
     subQueryBuilders: readonly KmoreQueryBuilder<D, CaseConvert, TInnerRecord, TInnerResult>[]
@@ -113,9 +112,9 @@ interface Select<
 
 
 interface AliasQueryBuilder<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any,
+  TRecord extends object = any,
   TResult = unknown[],
 > {
 
@@ -174,9 +173,9 @@ interface AliasQueryBuilder<
 
 // commons
 interface ColumnNameQueryBuilder<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any,
+  TRecord extends object = any,
   TResult = unknown[],
 > {
 
@@ -236,9 +235,9 @@ interface ColumnNameQueryBuilder<
 
 
 interface OrderBy<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any,
+  TRecord extends object = any,
   TResult = unknown[],
 > {
 
@@ -278,9 +277,9 @@ interface OrderBy<
 
 
 interface Where<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any,
+  TRecord extends object = any,
   TResult = any,
 > extends WhereRaw<D, CaseConvert, TRecord, TResult> {
 
@@ -310,7 +309,7 @@ interface Where<
 
   <
     T extends keyof Knex.ResolveTableType<TRecord>,
-    TRecordInner extends {},
+    TRecordInner extends object,
     TResultInner,
   >(
     columnName: T,
@@ -318,7 +317,7 @@ interface Where<
     value: Knex.QueryBuilder<TRecordInner, TResultInner>
   ): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
 
-  <TRecordInner extends {}, TResultInner>(
+  <TRecordInner extends object, TResultInner>(
     columnName: string,
     operator: string,
     value: Knex.QueryBuilder<TRecordInner, TResultInner>
@@ -326,7 +325,7 @@ interface Where<
 
   (left: Knex.Raw, operator: string, right: Knex.Value | null): KmoreQueryBuilder<D, CaseConvert, TRecord, TResult>
 
-  <TRecordInner extends {}, TResultInner>(
+  <TRecordInner extends object, TResultInner>(
     left: Knex.Raw,
     operator: string,
     right: Knex.QueryBuilder<TRecordInner, TResultInner>
@@ -334,9 +333,9 @@ interface Where<
 }
 
 interface WhereRaw<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
-  TRecord extends {} = any,
+  TRecord extends object = any,
   TResult = unknown[],
 >
   extends Knex.RawQueryBuilder<TRecord, TResult> {

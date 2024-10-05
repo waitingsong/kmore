@@ -31,8 +31,7 @@ describe(fileShortPath(import.meta.url), () => {
           .select('uid')
           .where('uid', 1)
           .then(() => {
-            const res = Promise.reject(errorMsg)
-            return res
+            return Promise.reject(new Error(errorMsg))
           })
       }
       catch (ex) {

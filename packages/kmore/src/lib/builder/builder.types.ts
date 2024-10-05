@@ -1,6 +1,4 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-types */
 import type { ScopeType } from '@mwcp/share'
 import type {
   CaseConvertTable,
@@ -88,7 +86,7 @@ export interface QueryBuilderExtName<D extends object = object> {
 
 
 export type SmartJoin<
-  D extends {} = {},
+  D extends object = object,
   CaseConvert extends CaseType = CaseType,
   TResult = unknown[],
 > = <
@@ -149,7 +147,7 @@ export interface QueryBuilder<
   skipLocked(): QueryBuilder<D, CaseConvert, TRecord, TResult>
   noWait(): QueryBuilder<D, CaseConvert, TRecord, TResult>
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   on(event: string, callback: Function): QueryBuilder<D, CaseConvert, TRecord, TResult>
 
   queryContext(context: any): QueryBuilder<D, CaseConvert, TRecord, TResult>

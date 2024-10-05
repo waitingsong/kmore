@@ -43,7 +43,7 @@ describe(fileShortPath(import.meta.url), () => {
           .select('*')
           .where('uid', 1)
           .then(() => {
-            return Promise.reject(msg)
+            return Promise.reject(new Error(msg))
           })
       }
       catch (ex) {
