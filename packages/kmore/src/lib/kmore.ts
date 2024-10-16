@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'node:assert'
@@ -6,8 +5,7 @@ import assert from 'node:assert'
 import type { ScopeType } from '@mwcp/share'
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
-// eslint-disable-next-line import/no-named-default
-import { default as _knex } from 'knex'
+import _knex from 'knex'
 
 import { createRefTables } from './builder/builder.index.js'
 import type { DbQueryBuilder, KmoreQueryBuilder } from './builder/builder.types.js'
@@ -448,7 +446,7 @@ function defaultGlobalWrapIdentifier(value: string, origImpl: (input: string) =>
 
 
 export function createDbh(knexConfig: KnexConfig): Knex {
-  const inst = _knex.knex(knexConfig)
+  const inst = _knex(knexConfig)
   return inst
 }
 
