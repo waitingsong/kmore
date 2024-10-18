@@ -18,7 +18,6 @@ import {
   deleteRouter,
   registerMiddleware,
 } from '@mwcp/share'
-import { sleep } from '@waiting/shared-core'
 
 import * as DefaultConfig from './config/config.default.js'
 import * as LocalConfig from './config/config.local.js'
@@ -76,9 +75,7 @@ export class AutoConfiguration implements ILifeCycle {
   @TraceInit({ namespace: ConfigKey.namespace })
   async onStop(container: IMidwayContainer): Promise<void> {
     void container
-    const time = 2
-    await sleep(time * 1000)
-    this.logger.info(`[${ConfigKey.componentName}] onStop()`)
+    this.logger.info(`[${ConfigKey.componentName}] stopping`)
 
     // const { timeoutWhenDestroy } = this.kmoreComponentConfig
     const out = 10000
@@ -89,7 +86,7 @@ export class AutoConfiguration implements ILifeCycle {
       .catch((ex: Error) => {
         console.error(ex.message)
       })
-    this.logger.info(`[${ConfigKey.componentName}] onStop() done`)
+    this.logger.info(`[${ConfigKey.componentName}] stopped`)
   }
 
 }
