@@ -150,7 +150,7 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     return 'dbManager'
   }
 
-  protected async checkConnected(dataSource: Kmore): Promise<boolean> {
+  async checkConnected(dataSource: Kmore): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (! dataSource) {
       return false
