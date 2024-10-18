@@ -84,14 +84,9 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
   protected async createDataSource<Db extends object>(
     config: DbConfig<Db>,
     dataSourceName: SourceName,
-    useCachedDataSource = true,
   ): Promise<Kmore<Db> | undefined> {
 
-    const cacheInst = useCachedDataSource ? this.getDataSource(dataSourceName) : null
-    if (useCachedDataSource && cacheInst) {
-      return cacheInst
-    }
-    const inst = await this._createDataSource(config, dataSourceName, useCachedDataSource)
+    const inst = await this._createDataSource(config, dataSourceName)
     assert(inst, `createDataSource() failed: ${dataSourceName}`)
     this.dbHook.createProxy(inst)
     return inst
@@ -112,7 +107,6 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
       const events: Attributes = {
         event: 'createDataSource.before',
         config: JSON.stringify(config),
-        cacheDataSource: args[2],
         dataSourceName: args[1],
       }
       return { events }
@@ -121,7 +115,6 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
   protected async _createDataSource(
     config: DbConfig,
     dataSourceName: SourceName,
-    cacheDataSource = true,
   ): Promise<Kmore | undefined> {
 
     const globalEventCbs: EventCallbacks = {
@@ -145,17 +138,11 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
     }
 
     const inst = KmoreFactory(opts)
-    if (cacheDataSource) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (! this.sourceConfig.dataSource[dataSourceName]) {
-        this.sourceConfig.dataSource[dataSourceName] = config
-      }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (! this.sourceConfig.dataSource[dataSourceName]) {
+      this.sourceConfig.dataSource[dataSourceName] = config
     }
 
-    if (! cacheDataSource) {
-      // saved in initDataSource
-      this.dataSource.delete(dataSourceName)
-    }
     return inst
   }
 
