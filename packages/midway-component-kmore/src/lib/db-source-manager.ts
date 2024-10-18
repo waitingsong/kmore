@@ -78,6 +78,32 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     }
   }
 
+
+  getName(): string {
+    return 'dbManager'
+  }
+
+  // #region checkConnected
+
+  async checkConnected(dataSource: Kmore): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (! dataSource) {
+      return false
+    }
+    const { dbh, config } = dataSource
+
+    try {
+      const time = await getCurrentTime(dbh, config.client)
+      return !! time
+    }
+    catch (ex) {
+      this.logger.error('[KmoreDbSourceManager]: checkConnected(). error ignored', ex)
+    }
+    return false
+  }
+
+  // #region createDataSource
+
   /**
    * 创建单个实例
    */
@@ -91,6 +117,55 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     this.dbHook.createProxy(inst)
     return inst
   }
+
+  // #region getDataSource
+
+  @Trace<DbManager['getDataSource']>({
+    spanName: () => 'DbManager getDataSource',
+    startActiveSpan: false,
+    kind: SpanKind.INTERNAL,
+    before([dataSourceName]) {
+      const dbConfig = this.getDbConfigByDbId(dataSourceName)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
+
+      const attrs: Attributes = {
+        dbId: dataSourceName,
+      }
+      const events = genCommonAttr(KmoreAttrNames.getDataSourceStart)
+      return { attrs, events }
+    },
+    after([dataSourceName]) {
+      const dbConfig = this.getDbConfigByDbId(dataSourceName)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
+
+      const events = genCommonAttr(KmoreAttrNames.getDataSourceEnd)
+      return { events }
+    },
+  })
+  override getDataSource<Db extends object = D>(this: DbManager<SourceName, D>, dataSourceName: SourceName): Kmore<Db> {
+    const db = super.getDataSource(dataSourceName)
+    assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
+    assert(db.dbId === dataSourceName, `[${ConfigKey.componentName}] getDataSource() db source id not match: "${dataSourceName}"`)
+    return db as Kmore<Db>
+  }
+
+  // #region destroyDataSource
+
+  override async destroyDataSource(dataSource: Kmore): Promise<void> {
+    if (await this.checkConnected(dataSource)) {
+      try {
+        await dataSource.destroy()
+        this.dataSource.delete(dataSource.dbId)
+        this.trxStatusSvc.unregisterDbInstance(dataSource.dbId)
+      }
+      catch (ex: unknown) {
+        this.logger.error(`Destroy knex connection failed with identifier: "${dataSource.instanceId.toString()}" :
+          \n${(ex as Error).message}`)
+      }
+    }
+  }
+
+
 
   /**
    * 创建单个实例
@@ -112,7 +187,7 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       return { events }
     },
   })
-  protected async _createDataSource(
+  private async _createDataSource(
     config: DbConfig,
     dataSourceName: SourceName,
   ): Promise<Kmore | undefined> {
@@ -144,70 +219,6 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     }
 
     return inst
-  }
-
-  getName(): string {
-    return 'dbManager'
-  }
-
-  async checkConnected(dataSource: Kmore): Promise<boolean> {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (! dataSource) {
-      return false
-    }
-    const { dbh, config } = dataSource
-
-    try {
-      const time = await getCurrentTime(dbh, config.client)
-      return !! time
-    }
-    catch (ex) {
-      this.logger.error('[KmoreDbSourceManager]: checkConnected(). error ignored', ex)
-    }
-    return false
-  }
-
-  override async destroyDataSource(dataSource: Kmore): Promise<void> {
-    if (await this.checkConnected(dataSource)) {
-      try {
-        await dataSource.destroy()
-        this.dataSource.delete(dataSource.dbId)
-        this.trxStatusSvc.unregisterDbInstance(dataSource.dbId)
-      }
-      catch (ex: unknown) {
-        this.logger.error(`Destroy knex connection failed with identifier: "${dataSource.instanceId.toString()}" :
-          \n${(ex as Error).message}`)
-      }
-    }
-  }
-
-  @Trace<DbManager['getDataSource']>({
-    spanName: () => 'DbManager getDataSource',
-    startActiveSpan: false,
-    kind: SpanKind.INTERNAL,
-    before([dataSourceName]) {
-      const dbConfig = this.getDbConfigByDbId(dataSourceName)
-      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
-
-      const attrs: Attributes = {
-        dbId: dataSourceName,
-      }
-      const events = genCommonAttr(KmoreAttrNames.getDataSourceStart)
-      return { attrs, events }
-    },
-    after([dataSourceName]) {
-      const dbConfig = this.getDbConfigByDbId(dataSourceName)
-      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
-
-      const events = genCommonAttr(KmoreAttrNames.getDataSourceEnd)
-      return { events }
-    },
-  })
-  override getDataSource<Db extends object = D>(this: DbManager<SourceName, D>, dataSourceName: SourceName): Kmore<Db> {
-    const db = super.getDataSource(dataSourceName)
-    assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
-    assert(db.dbId === dataSourceName, `[${ConfigKey.componentName}] getDataSource() db source id not match: "${dataSourceName}"`)
-    return db as Kmore<Db>
   }
 
 }
