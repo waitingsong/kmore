@@ -1,4 +1,3 @@
-
 import assert from 'node:assert'
 
 import {
@@ -12,7 +11,7 @@ import {
   Singleton,
 } from '@midwayjs/core'
 import { ILogger } from '@midwayjs/logger'
-import { Attributes, TraceInit } from '@mwcp/otel'
+import { Attributes, SpanKind, Trace, TraceInit } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import {
   type EventCallbacks,
@@ -25,12 +24,13 @@ import {
 
 import { DbEvent } from './db-event.js'
 import { DbHook } from './db-hook/index.db-hook.js'
+import { eventNeedTrace, genCommonAttr } from './trace.helper.js'
 import { TrxStatusService } from './trx-status.service.js'
-import { ConfigKey, DbConfig, KmoreSourceConfig } from './types.js'
+import { type KmoreSourceConfig, ConfigKey, DbConfig, KmoreAttrNames } from './types.js'
 
 
 @Singleton()
-export class DbSourceManager<SourceName extends string = string> extends DataSourceManager<Kmore> {
+export class DbManager<SourceName extends string = string, D extends object = object> extends DataSourceManager<Kmore> {
 
   @MConfig(ConfigKey.config) private readonly sourceConfig: KmoreSourceConfig<SourceName>
 
@@ -39,11 +39,11 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
 
   @_Logger() private readonly logger: ILogger
 
-  @Inject() baseDir: string
+  @Inject() readonly baseDir: string
 
-  @Inject() readonly dbEvent: DbEvent
-  @Inject() readonly dbHook: DbHook
-  @Inject() readonly trxStatusSvc: TrxStatusService
+  @Inject() private readonly dbEvent: DbEvent
+  @Inject() private readonly dbHook: DbHook
+  @Inject() private readonly trxStatusSvc: TrxStatusService
 
   @TraceInit(`INIT ${ConfigKey.namespace}.DbSourceManager.init()`)
   @Init()
@@ -56,7 +56,7 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
     await this.initDataSource(this.sourceConfig, '')
   }
 
-  protected getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
+  getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
     assert(dbId)
     const dbConfig = this.sourceConfig.dataSource[dbId]
     return dbConfig
@@ -95,7 +95,7 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
   /**
    * 创建单个实例
    */
-  @TraceInit<DbSourceManager['_createDataSource']>({
+  @TraceInit<DbManager['_createDataSource']>({
     spanName: ([, dataSourceName]) => `INIT ${ConfigKey.namespace}.DbSourceManager._createDataSource():${dataSourceName}`,
     before: (args) => {
       if (! args[0].traceInitConnection) { return }
@@ -146,10 +146,8 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
     return inst
   }
 
-  // #region trxSpanMap
-
   getName(): string {
-    return 'dbSourceManager'
+    return 'dbManager'
   }
 
   protected async checkConnected(dataSource: Kmore): Promise<boolean> {
@@ -181,6 +179,35 @@ export class DbSourceManager<SourceName extends string = string> extends DataSou
           \n${(ex as Error).message}`)
       }
     }
+  }
+
+  @Trace<DbManager['getDataSource']>({
+    spanName: () => 'DbManager getDataSource',
+    startActiveSpan: false,
+    kind: SpanKind.INTERNAL,
+    before([dataSourceName]) {
+      const dbConfig = this.getDbConfigByDbId(dataSourceName)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
+
+      const attrs: Attributes = {
+        dbId: dataSourceName,
+      }
+      const events = genCommonAttr(KmoreAttrNames.getDataSourceStart)
+      return { attrs, events }
+    },
+    after([dataSourceName]) {
+      const dbConfig = this.getDbConfigByDbId(dataSourceName)
+      if (dbConfig && ! eventNeedTrace(KmoreAttrNames.getDataSourceStart, dbConfig)) { return }
+
+      const events = genCommonAttr(KmoreAttrNames.getDataSourceEnd)
+      return { events }
+    },
+  })
+  override getDataSource<Db extends object = D>(this: DbManager<SourceName, D>, dataSourceName: SourceName): Kmore<Db> {
+    const db = super.getDataSource(dataSourceName)
+    assert(db, `[${ConfigKey.componentName}] getDataSource() db source empty: "${dataSourceName}"`)
+    assert(db.dbId === dataSourceName, `[${ConfigKey.componentName}] getDataSource() db source id not match: "${dataSourceName}"`)
+    return db as Kmore<Db>
   }
 
 }

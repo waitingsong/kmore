@@ -23,7 +23,7 @@ import * as DefaultConfig from './config/config.default.js'
 import * as LocalConfig from './config/config.local.js'
 import * as UnittestConfig from './config/config.unittest.js'
 import { useComponents } from './imports.js'
-import { DbSourceManager } from './lib/db-source-manager.js'
+import { DbManager } from './lib/db-source-manager.js'
 import { Config, ConfigKey, KmorePropagationConfig, KmoreSourceConfig } from './lib/index.js'
 import { KmoreMiddleware } from './middleware/index.middleware.js'
 
@@ -54,7 +54,7 @@ export class AutoConfiguration implements ILifeCycle {
 
   @MConfig(ConfigKey.propagationConfig) protected readonly propagationConfig: KmorePropagationConfig
 
-  @Inject() readonly dbSourceManager: DbSourceManager
+  @Inject() readonly dbSourceManager: DbManager
 
   @Inject() decoratorService: MidwayDecoratorService
 

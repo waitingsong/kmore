@@ -1,6 +1,6 @@
 import type { Context } from '@mwcp/share'
 
-import { DbSourceManager } from '##/lib/db-source-manager.js'
+import { DbManager } from '##/lib/db-source-manager.js'
 
 
 /**
@@ -8,7 +8,7 @@ import { DbSourceManager } from '##/lib/db-source-manager.js'
  */
 export async function processUnCommittedTransaction(ctx: Context): Promise<void> {
   const container = ctx.app.getApplicationContext()
-  const dbSourceManager = await container.getAsync(DbSourceManager)
+  const dbSourceManager = await container.getAsync(DbManager)
 
   for (const [name, kmore] of dbSourceManager.getAllDataSources()) {
     const trxSet = kmore.getTrxListByScope(ctx)
