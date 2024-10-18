@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [67.1.3](https://github.com/waitingsong/kmore/compare/v67.1.2...v67.1.3) (2024-10-18)
+
+**Note:** Version bump only for package npm-mono-base
+
+
+
+
+
 ## [67.1.2](https://github.com/waitingsong/kmore/compare/v67.1.1...v67.1.2) (2024-10-16)
 
 **Note:** Version bump only for package npm-mono-base
