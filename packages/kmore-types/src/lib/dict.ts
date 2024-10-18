@@ -103,7 +103,10 @@ export interface DbDict<D> {
 /**
  * Transformer needle.
  * Should running expression only under development.
- * Will be transformed to js literal object in js file under production
+ * Will be transformed to js literal object in js file under production.
+ *
+ * Execute `kmore gen --path ./src/` or `kmore gen --path <file-path>` to generate js file for production.
+ * If command `kmore` not exists from cli, run `npm i -g kmore-cli`
  */
 export function genDbDict<D>(): DbDict<D> {
   const needle = 'genDbDict'
