@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [67.2.0](https://github.com/waitingsong/kmore/compare/v67.1.4...v67.2.0) (2024-10-18)
+
+
+### Features
+
+* **mwcp:** remove param useCachedDataSource of createDataSource() ([a247747](https://github.com/waitingsong/kmore/commit/a24774781a943e7037c00f13aa08c8366f07b045))
+
+
+
+
+
 ## [67.1.4](https://github.com/waitingsong/kmore/compare/v67.1.3...v67.1.4) (2024-10-18)
 
 **Note:** Version bump only for package npm-mono-base
