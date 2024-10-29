@@ -412,17 +412,17 @@ This repository contains all these packages. Below you will find a summary of ea
 [`kmore-cli`]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-cli
 [`@mwcp/kmore`]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore
 
-[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=7200
+[kmore-svg]: https://img.shields.io/npm/v/kmore.svg?maxAge=300
 [kmore-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore/CHANGELOG.md
 
-[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=7200
+[types-svg]: https://img.shields.io/npm/v/kmore-types.svg?maxAge=300
 [types-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-types/CHANGELOG.md
 
-[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=7200
+[cli-svg]: https://img.shields.io/npm/v/kmore-cli.svg?maxAge=300
 [cli-ch]: https://github.com/waitingsong/kmore/tree/main/packages/kmore-clie/CHANGELOG.md
 
 
-[mw-svg]: https://img.shields.io/npm/v/@mwcp/kmore.svg?maxAge=7200
+[mw-svg]: https://img.shields.io/npm/v/@mwcp/kmore.svg?maxAge=300
 [mw-ch]: https://github.com/waitingsong/kmore/tree/main/packages/midway-component-kmore/CHANGELOG.md
 
 
