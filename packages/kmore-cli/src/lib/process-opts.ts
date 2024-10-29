@@ -88,7 +88,17 @@ export function mergeOptions<T extends object>(
 
 
 export function parseMultiValue(arg: unknown): string[] {
-  const arr = arg ? String(arg).split(',') : []
+  let arr: string[] = []
+  if (typeof arg === 'string') {
+    arr = arg.split(',')
+  }
+  else if (typeof arg === 'object' && arg !== null) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    arr = Object.values(arg)
+  }
+  else {
+    throw new Error('Invalid path value')
+  }
   const ret: string[] = []
 
   if (arr.length) {

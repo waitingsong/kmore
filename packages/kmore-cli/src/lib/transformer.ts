@@ -224,7 +224,7 @@ async function ifFileContentContainsCallerFuncNames(
 
   void maxLines
 
-  const content = await readFile(path, 'utf-8')
+  const content = await readFile(path, 'utf8')
   const ret = hasContainsCallerFuncNames(matchFuncNameSet, content)
   return ret
 }
