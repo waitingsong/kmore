@@ -50,6 +50,7 @@ describe(fileShortPath(import.meta.url), () => {
         [SEMATTRS_HTTP_TARGET]: path,
         [SEMATTRS_HTTP_ROUTE]: path,
       },
+      mergeDefaultLogs: false,
     })
 
     assertJaegerParentSpanArray([

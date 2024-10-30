@@ -52,15 +52,22 @@ describe(fileShortPath(import.meta.url), () => {
         { parentSpan: span2, childSpan: span4 },
       ])
 
-      assertRootSpan({
-        path,
-        span: rootSpan,
-        traceId,
-        tags: {
-          [SEMATTRS_HTTP_TARGET]: path,
-          [SEMATTRS_HTTP_ROUTE]: path,
-        },
-      })
+      try {
+        assertRootSpan({
+          path,
+          span: rootSpan,
+          traceId,
+          tags: {
+            [SEMATTRS_HTTP_TARGET]: path,
+            [SEMATTRS_HTTP_ROUTE]: path,
+          },
+          mergeDefaultLogs: false,
+        })
+      }
+      catch (ex) {
+        console.log({ rootSpanLog: JSON.stringify(rootSpan.logs, null, 2) })
+        throw ex
+      }
 
       const opt1: AssertsOptions = {
         traceId,
@@ -199,6 +206,7 @@ describe(fileShortPath(import.meta.url), () => {
           [SEMATTRS_HTTP_TARGET]: path,
           [SEMATTRS_HTTP_ROUTE]: path,
         },
+        mergeDefaultLogs: false,
       })
 
       // const opt1: AssertsOptions = {
