@@ -13,6 +13,7 @@ import {
 import { ILogger } from '@midwayjs/logger'
 import { Attributes, SpanKind, Trace, TraceInit } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
+import { context } from '@opentelemetry/api'
 import {
   type EventCallbacks,
   type Kmore,
@@ -194,15 +195,42 @@ export class DbManager<SourceName extends string = string, D extends object = ob
 
     const globalEventCbs: EventCallbacks = {
       start: (event: KmoreEvent, kmore: Kmore) => {
+        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+        if (activeTraceCtx) {
+          context.with(activeTraceCtx, () => {
+            this.dbEvent.onStart({ dataSourceName, dbConfig: config, event, kmore })
+          })
+          return
+        }
         this.dbEvent.onStart({ dataSourceName, dbConfig: config, event, kmore })
       },
       query: (event: KmoreEvent, kmore: Kmore) => {
+        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+        if (activeTraceCtx) {
+          context.with(activeTraceCtx, () => {
+            this.dbEvent.onQuery({ dataSourceName, dbConfig: config, event, kmore })
+          })
+          return
+        }
         this.dbEvent.onQuery({ dataSourceName, dbConfig: config, event, kmore })
       },
       queryResponse: (event: KmoreEvent, kmore: Kmore) => {
+        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+        if (activeTraceCtx) {
+          context.with(activeTraceCtx, () => {
+            this.dbEvent.onResp({ dataSourceName, dbConfig: config, event, kmore })
+          })
+          return
+        }
         this.dbEvent.onResp({ dataSourceName, dbConfig: config, event, kmore })
       },
       queryError: (event: KmoreEvent, kmore: Kmore) => {
+        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+        if (activeTraceCtx) {
+          return context.with(activeTraceCtx, () => {
+            return this.dbEvent.onError({ dataSourceName, dbConfig: config, event, kmore })
+          })
+        }
         return this.dbEvent.onError({ dataSourceName, dbConfig: config, event, kmore })
       },
     }

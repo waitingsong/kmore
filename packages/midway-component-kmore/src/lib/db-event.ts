@@ -8,6 +8,7 @@ import {
   Singleton,
 } from '@midwayjs/core'
 import {
+  type TraceService,
   AttrNames,
   Attributes,
   DecoratorTraceData,
@@ -38,7 +39,7 @@ export class DbEvent<SourceName extends string = string> {
   @Inject() readonly baseDir: string
 
   @Inject() readonly trxStatusSvc: TrxStatusService
-
+  @Inject() readonly traceService: TraceService
 
   getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
     assert(dbId)
@@ -62,6 +63,7 @@ export class DbEvent<SourceName extends string = string> {
     }
   }
 
+
   // #region onStart
 
   @Trace<DbEvent['onStart']>({
@@ -77,19 +79,31 @@ export class DbEvent<SourceName extends string = string> {
       const name = `Kmore ${kmore.dbId} ${method}`
       return name
     },
-    scope([options]) {
-      const { kmore, event } = options
-      const { kmoreQueryId, queryBuilder } = event
-      const traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
-      return traceScope
-    },
-    before: ([options], decoratorContext) => {
+    // scope([options]) {
+    //   const { kmore, event } = options
+    //   const { kmoreQueryId, queryBuilder } = event
+    //   const traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+    //   return traceScope
+    // },
+    before([options], decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.BuilderCompile, options.dbConfig)) { return }
+      if (decoratorContext.traceContext) {
+        this.trxStatusSvc.setTraceContextByQueryId(options.event.kmoreQueryId, decoratorContext.traceContext)
+      }
+
+      if (! decoratorContext.traceScope) {
+        const { kmore } = options
+        const { kmoreQueryId, queryBuilder } = options.event
+        decoratorContext.traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+      }
       const { event } = options
       const { queryBuilder } = event
       const { pagingType } = queryBuilder
       const { traceSpan } = decoratorContext
       const ret: DecoratorTraceData = {}
+
+      const activeContext = this.traceService.getActiveContext()
+      void activeContext
 
       if (pagingType && traceSpan) {
         const { traceService, traceScope, traceContext } = decoratorContext
@@ -107,7 +121,7 @@ export class DbEvent<SourceName extends string = string> {
             traceContext,
           }
           assert(traceService, 'traceService is empty')
-          const { span, traceContext: traceCtx2 } = traceService.startScopeActiveSpan(opts)
+          const { span, traceContext: traceCtx2 } = traceService.startScopeSpan(opts)
           void span
           ret.traceContext = traceCtx2
         }
@@ -128,6 +142,9 @@ export class DbEvent<SourceName extends string = string> {
     assert(event.type === 'start', event.type)
     assert(event.queryBuilder)
 
+    const activeContext = this.traceService.getActiveContext()
+    void activeContext
+
     // if (event.queryBuilder) {
     //   void Object.defineProperty(event.queryBuilder, 'eventProcessed', {
     //     value: true,
@@ -141,18 +158,26 @@ export class DbEvent<SourceName extends string = string> {
   // #region onResp
 
   @TraceLog<DbEvent['onResp']>({
-    scope([options]) {
-      const { kmore, event } = options
-      // const traceScope = this.getTrxTraceScopeByQueryId(kmore, event.kmoreQueryId)
-      // if (traceScope) {
-      //   return traceScope
-      // }
-      // const traceScope2 = event.queryBuilder.kmoreQueryId
-      const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-      return traceScope
-    },
-    before: ([options]) => {
+    // scope([options]) {
+    //   const { kmore, event } = options
+    //   // const traceScope = this.getTrxTraceScopeByQueryId(kmore, event.kmoreQueryId)
+    //   // if (traceScope) {
+    //   //   return traceScope
+    //   // }
+    //   // const traceScope2 = event.queryBuilder.kmoreQueryId
+    //   const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+    //   return traceScope
+    // },
+    before([options], decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.QueryResponse, options.dbConfig)) { return }
+      if (! decoratorContext.traceScope) {
+        const { kmore } = options
+        const { kmoreQueryId, queryBuilder } = options.event
+        decoratorContext.traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+      }
+
+      const activeContext = this.traceService.getActiveContext()
+      void activeContext
 
       const { respRaw } = options.event
 
@@ -174,9 +199,9 @@ export class DbEvent<SourceName extends string = string> {
     after([options], _result, decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.QueryResponse, options.dbConfig)) { return }
 
-      const { traceService, traceScope, traceSpan } = decoratorContext
+      const { traceService, traceScope, traceSpan, traceContext } = decoratorContext
       assert(traceService, 'traceService is empty')
-      assert(traceScope, 'onResp.after() traceScope is empty')
+      // assert(traceScope, 'onResp.after() traceScope is empty')
       assert(traceSpan, 'traceSpan is empty')
 
       const ret: DecoratorTraceData = {}
@@ -186,13 +211,20 @@ export class DbEvent<SourceName extends string = string> {
         ret.endParentSpan = true
       }
 
-      const scopeRootSpan = traceService.getActiveSpanOnlyScope(traceScope)
-      // const foo = traceService.retrieveParentTraceInfoBySpan(traceSpan, traceScope)
-      // void foo
-
-      if (scopeRootSpan && scopeRootSpan === traceSpan) {
+      void traceScope
+      const ctx = this.trxStatusSvc.getActiveTraceContextByQueryId(options.event.kmoreQueryId)
+      if (ctx && ctx === traceContext) {
         ret.endSpanAfterTraceLog = true
       }
+
+      // if (traceScope) {
+      //   const scopeRootSpan = traceService.getRootSpan(traceScope)
+      //   // const foo = traceService.retrieveParentTraceInfoBySpan(traceSpan, traceScope)
+      //   // void foo
+      //   if (scopeRootSpan && scopeRootSpan === traceSpan) {
+      //     ret.endSpanAfterTraceLog = true
+      //   }
+      // }
       return ret
     },
   })
@@ -209,17 +241,24 @@ export class DbEvent<SourceName extends string = string> {
   // #region onQuery
 
   @TraceLog<DbEvent['onQuery']>({
-    scope([options]) {
-      const { kmore, event } = options
-      const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-      return traceScope
-    },
+    // scope([options]) {
+    //   const { kmore, event } = options
+    //   const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+    //   return traceScope
+    // },
     before([options], decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.QueryQuerying, options.dbConfig)) { return }
+      if (! decoratorContext.traceScope) {
+        const { kmore } = options
+        const { kmoreQueryId, queryBuilder } = options.event
+        decoratorContext.traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+      }
 
-      const { traceService, traceScope, traceSpan } = decoratorContext
+      const activeContext = this.traceService.getActiveContext()
+      void activeContext
+
+      const { traceService, traceSpan } = decoratorContext
       assert(traceService, 'traceService is empty')
-      assert(traceScope, 'onQuery.after() traceScope is empty')
       assert(traceSpan, 'traceSpan is empty')
 
       const { config: knexConfig } = options.dbConfig
@@ -262,13 +301,18 @@ export class DbEvent<SourceName extends string = string> {
   // #region onError
 
   @TraceLog<DbEvent['onError']>({
-    scope([options]) {
-      const { kmore, event } = options
-      const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-      return traceScope
-    },
-    before([options]) {
+    // scope([options]) {
+    //   const { kmore, event } = options
+    //   const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+    //   return traceScope
+    // },
+    before([options], decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.QueryError, options.dbConfig)) { return }
+      if (! decoratorContext.traceScope) {
+        const { kmore } = options
+        const { kmoreQueryId, queryBuilder } = options.event
+        decoratorContext.traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+      }
 
       const {
         dbId, kUid, queryUid, trxId, exData, exError,
@@ -296,13 +340,15 @@ export class DbEvent<SourceName extends string = string> {
 
       const { traceService, traceScope, traceSpan } = decoratorContext
       assert(traceService, 'traceService is empty')
-      assert(traceScope, 'onResp.after() traceScope is empty')
+      // assert(traceScope, 'onResp.after() traceScope is empty')
       assert(traceSpan, 'traceSpan is empty')
 
-      const scopeRootSpan = traceService.getActiveSpanOnlyScope(traceScope)
-      if (scopeRootSpan && scopeRootSpan === traceSpan) {
-        const spanStatusOptions = { code: SpanStatusCode.ERROR }
-        return { endSpanAfterTraceLog: true, spanStatusOptions }
+      if (traceScope) {
+        const scopeRootSpan = traceService.getRootSpan(traceScope)
+        if (scopeRootSpan && scopeRootSpan === traceSpan) {
+          const spanStatusOptions = { code: SpanStatusCode.ERROR }
+          return { endSpanAfterTraceLog: true, spanStatusOptions }
+        }
       }
 
       return null

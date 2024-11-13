@@ -20,7 +20,7 @@ describe(fileShortPath(import.meta.url), () => {
   beforeEach(async () => { await initDb() })
   after(async () => { await initDb() })
 
-  describe('trace transactional()', () => {
+  describe.only('trace transactional()', () => {
     const prefix = apiPrefix.transactional_simple
 
     it(apiRoute.simple, async () => {

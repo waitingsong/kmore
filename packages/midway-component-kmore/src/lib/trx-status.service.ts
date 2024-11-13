@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 
 import { ApplicationContext, IMidwayContainer, Inject, Singleton } from '@midwayjs/core'
-import { AttrNames, Attributes, TraceService } from '@mwcp/otel'
+import { type TraceContext, AttrNames, Attributes, TraceService } from '@mwcp/otel'
 import type { ScopeType } from '@mwcp/share'
 import { CallerInfo, genISO8601String } from '@waiting/shared-core'
 import {
@@ -45,6 +45,8 @@ export class TrxStatusService {
   // @Inject() readonly logger: TraceLogger
   @Inject() protected readonly traceSvc: TraceService
   @Inject() protected readonly callerSvc: CallerService
+
+  readonly queryId2TraceContextMap = new WeakMap<symbol, TraceContext[]>()
 
   protected readonly dbInstanceList = new Map<string, Kmore>()
   protected readonly callerKeyPropagationMapIndex: CallerKeyPropagationMapIndex = new Map()
@@ -667,5 +669,26 @@ export class TrxStatusService {
     }
   }
 
+  getActiveTraceContextByQueryId(queryId: symbol): TraceContext | undefined {
+    const traceContextArr = this.queryId2TraceContextMap.get(queryId)
+    return traceContextArr?.at(-1)
+  }
+
+  getTraceContextArrayByQueryId(queryId: symbol): TraceContext[] {
+    const traceContextArr = this.queryId2TraceContextMap.get(queryId)
+    return traceContextArr ?? []
+  }
+
+  setTraceContextByQueryId(queryId: symbol, traceContext: TraceContext): void {
+    const ctxArr = this.queryId2TraceContextMap.get(queryId)
+    if (! ctxArr) {
+      this.queryId2TraceContextMap.set(queryId, [traceContext])
+      return
+    }
+
+    if (ctxArr.at(-1) !== traceContext) {
+      this.queryId2TraceContextMap.set(queryId, [traceContext])
+    }
+  }
 }
 

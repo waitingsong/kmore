@@ -65,6 +65,7 @@ export const master: DbConfig<Db> = {
   dict: dbDict,
   eventCallbacks: eventCbs,
   traceInitConnection: true,
+  enableTrace: true,
 }
 export const kmoreConfig: Config<'master'> = {
   enableDefaultRoute: true,
