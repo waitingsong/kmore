@@ -106,7 +106,9 @@ export class Kmore<D extends object = any> {
   readonly wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
   readonly hookList: HookList
+
   enableTrace = false
+  readonly trx2TraceContextMap = new WeakMap<KmoreTransaction, TraceContext>()
 
   constructor(options: KmoreFactoryOpts<D>) {
     const dbId = options.dbId ? options.dbId : Date.now().toString()
@@ -332,6 +334,10 @@ export class Kmore<D extends object = any> {
       transaction: trx,
     })
 
+    if (this.enableTrace && ctx) {
+      this.trx2TraceContextMap.set(trx, ctx)
+    }
+
     const { transactionPostHooks } = this.hookList
     const opts2: TransactionHookOptions = {
       kmore: this,
@@ -352,6 +358,7 @@ export class Kmore<D extends object = any> {
 
         if (this.enableTrace && tmp?.traceContext) {
           ctx = tmp.traceContext
+          this.trx2TraceContextMap.set(trx, ctx)
         }
       }
     }
@@ -361,9 +368,6 @@ export class Kmore<D extends object = any> {
   }
 
   async finishTransaction(options: FinishTransactionOptions): Promise<void> {
-    if (this.enableTrace) {
-      return context.with(context.active(), () => this._finishTransaction(options))
-    }
     return this._finishTransaction(options)
   }
 
@@ -386,6 +390,7 @@ export class Kmore<D extends object = any> {
       default:
         break
     }
+    this.trx2TraceContextMap.delete(trx)
     // this.removeTrxIdCache(trx.kmoreTrxId, scope) // called by trx.rollback() or trx.commit()
   }
 

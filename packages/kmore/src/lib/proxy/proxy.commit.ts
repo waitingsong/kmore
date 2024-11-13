@@ -32,7 +32,8 @@ export function createProxyCommit(options: CreateProxyTrxOptions): KmoreTransact
     // value: (...args: unknown[]) => _proxyCommit({ ...options, args }),
     value: (...args: unknown[]) => {
       if (options.kmore.enableTrace) {
-        return context.with(context.active(), () => _proxyCommit({ ...options, args }))
+        const activeTraceCtx = options.kmore.trx2TraceContextMap.get(transaction)
+        return context.with(activeTraceCtx ?? context.active(), () => _proxyCommit({ ...options, args }))
       }
       return _proxyCommit({ ...options, args })
     },

@@ -30,7 +30,8 @@ export function createProxyRollback(options: CreateProxyTrxOptions): KmoreTransa
     writable: true,
     value: () => {
       if (options.kmore.enableTrace) {
-        return context.with(context.active(), () => _proxyRollback({ ...options, args: [] }))
+        const activeTraceCtx = options.kmore.trx2TraceContextMap.get(transaction)
+        return context.with(activeTraceCtx ?? context.active(), () => _proxyRollback({ ...options, args: [] }))
       }
       return _proxyRollback({ ...options, args: [] })
     },

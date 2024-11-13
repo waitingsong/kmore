@@ -33,7 +33,8 @@ export function createProxySavepoint(options: CreateProxyTrxOptions): KmoreTrans
     // value: (...args: unknown[]) => _proxySavepoint({ ...options, args }),
     value: (...args: unknown[]) => {
       if (options.kmore.enableTrace) {
-        return context.with(context.active(), () => _proxySavepoint({ ...options, args }))
+        const activeTraceCtx = options.kmore.trx2TraceContextMap.get(transaction)
+        return context.with(activeTraceCtx ?? context.active(), () => _proxySavepoint({ ...options, args }))
       }
       return _proxySavepoint({ ...options, args })
     },

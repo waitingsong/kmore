@@ -42,7 +42,8 @@ export function createProxyTransacting(options: CreateProxyThenOptions): void {
           reject: void 0,
         }
         if (options.kmore.enableTrace) {
-          return context.with(context.active(), () => _proxyTransacting(opts))
+          const activeTraceCtx = opts.kmore.trx2TraceContextMap.get(transaction)
+          return context.with(activeTraceCtx ?? context.active(), () => _proxyTransacting(opts))
         }
         return _proxyTransacting(opts)
       },
