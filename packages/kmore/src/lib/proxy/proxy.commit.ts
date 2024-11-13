@@ -1,6 +1,6 @@
-
 import assert from 'node:assert'
 
+import { context } from '@opentelemetry/api'
 // import { genError } from '@waiting/shared-core'
 import type { AsyncMethodType } from '@waiting/shared-types'
 
@@ -29,7 +29,14 @@ export function createProxyCommit(options: CreateProxyTrxOptions): KmoreTransact
   void Object.defineProperty(transaction, KmoreProxyKey.commit, {
     ...defaultPropDescriptor,
     writable: true,
-    value: (...args: unknown[]) => _proxyCommit({ ...options, args }),
+    // value: (...args: unknown[]) => _proxyCommit({ ...options, args }),
+    value: (...args: unknown[]) => {
+      if (options.kmore.enableTrace) {
+        const activeTraceCtx = options.kmore.trx2TraceContextMap.get(transaction)
+        return context.with(activeTraceCtx ?? context.active(), () => _proxyCommit({ ...options, args }))
+      }
+      return _proxyCommit({ ...options, args })
+    },
   })
 
   return transaction
@@ -46,7 +53,6 @@ async function _proxyCommit(options: ProxyCommitRunnerOptions): Promise<void> {
     for (const hook of beforeCommitHooks) {
       if (transaction.processingHooks.has(hook)) { return }
       transaction.processingHooks.add(hook)
-
       await hook(opts)
     }
   }
@@ -60,7 +66,6 @@ async function _proxyCommit(options: ProxyCommitRunnerOptions): Promise<void> {
     for (const hook of afterCommitHooks) {
       if (transaction.processingHooks.has(hook)) { return }
       transaction.processingHooks.add(hook)
-
       await hook(opts)
     }
   }
