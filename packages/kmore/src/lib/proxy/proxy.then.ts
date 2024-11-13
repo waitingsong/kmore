@@ -66,12 +66,6 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
     if (builderType !== KmoreBuilderType.counter && Array.isArray(builderPostHook)) {
       for (const hook of builderPostHook) {
         assert(typeof hook === 'function', 'builderPostHook should be an array of functions')
-
-        if (kmore.enableTrace) {
-          await context.with(context.active(), async () => {
-            await hook(opts)
-          })
-        }
         await hook(opts)
       }
     }
