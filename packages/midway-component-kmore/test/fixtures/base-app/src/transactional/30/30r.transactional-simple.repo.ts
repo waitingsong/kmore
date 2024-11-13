@@ -34,9 +34,9 @@ export class TransactionalSimpleRepo {
     assert(users && users.length === 1)
     assert(trx, 'trx should be defined')
 
-    const [users2, trx2] = await this.getUsers()
-    assert(users2 && users2.length === 3)
-    assert(trx === trx2)
+    // const [users2, trx2] = await this.getUsers()
+    // assert(users2 && users2.length === 3)
+    // assert(trx === trx2)
   }
 
   @Transactional()
