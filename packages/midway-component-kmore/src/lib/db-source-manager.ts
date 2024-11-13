@@ -195,9 +195,10 @@ export class DbManager<SourceName extends string = string, D extends object = ob
 
     const globalEventCbs: EventCallbacks = {
       start: (event: KmoreEvent, kmore: Kmore) => {
-        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
-        if (activeTraceCtx) {
-          context.with(activeTraceCtx, () => {
+        if (kmore.enableTrace) {
+          const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
+          const activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : null
+          context.with(activeTraceCtx ?? context.active(), () => {
             this.dbEvent.onStart({ dataSourceName, dbConfig: config, event, kmore })
           })
           return
@@ -205,9 +206,9 @@ export class DbManager<SourceName extends string = string, D extends object = ob
         this.dbEvent.onStart({ dataSourceName, dbConfig: config, event, kmore })
       },
       query: (event: KmoreEvent, kmore: Kmore) => {
-        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
-        if (activeTraceCtx) {
-          context.with(activeTraceCtx, () => {
+        if (kmore.enableTrace) {
+          const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+          context.with(activeTraceCtx ?? context.active(), () => {
             this.dbEvent.onQuery({ dataSourceName, dbConfig: config, event, kmore })
           })
           return
@@ -215,9 +216,9 @@ export class DbManager<SourceName extends string = string, D extends object = ob
         this.dbEvent.onQuery({ dataSourceName, dbConfig: config, event, kmore })
       },
       queryResponse: (event: KmoreEvent, kmore: Kmore) => {
-        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
-        if (activeTraceCtx) {
-          context.with(activeTraceCtx, () => {
+        if (kmore.enableTrace) {
+          const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+          context.with(activeTraceCtx ?? context.active(), () => {
             this.dbEvent.onResp({ dataSourceName, dbConfig: config, event, kmore })
           })
           return
@@ -225,9 +226,9 @@ export class DbManager<SourceName extends string = string, D extends object = ob
         this.dbEvent.onResp({ dataSourceName, dbConfig: config, event, kmore })
       },
       queryError: (event: KmoreEvent, kmore: Kmore) => {
-        const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
-        if (activeTraceCtx) {
-          return context.with(activeTraceCtx, () => {
+        if (kmore.enableTrace) {
+          const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+          return context.with(activeTraceCtx ?? context.active(), () => {
             return this.dbEvent.onError({ dataSourceName, dbConfig: config, event, kmore })
           })
         }

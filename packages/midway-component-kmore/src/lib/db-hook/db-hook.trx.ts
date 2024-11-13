@@ -218,8 +218,6 @@ export class DbHookTrx<SourceName extends string = string> {
     //   return this.getTraceScopeByTrx(options.trx)
     // },
     before([options], decoratorContext) {
-      const activeTraceCtx = this.traceService.getActiveContext()
-      void activeTraceCtx
       if (! decoratorContext.traceScope) {
         decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
       }
