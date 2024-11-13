@@ -669,17 +669,17 @@ export class TrxStatusService {
     }
   }
 
-  getActiveTraceContextByQueryId(scope: ScopeType): TraceContext | undefined {
+  getActiveTraceContextByScope(scope: ScopeType): TraceContext | undefined {
     const traceContextArr = this.scope2TraceContextMap.get(scope)
     return traceContextArr?.at(-1)
   }
 
-  getTraceContextArrayByQueryId(scope: ScopeType): TraceContext[] {
+  getTraceContextArrayByScope(scope: ScopeType): TraceContext[] {
     const traceContextArr = this.scope2TraceContextMap.get(scope)
     return traceContextArr ?? []
   }
 
-  setTraceContextByQueryId(scope: ScopeType, traceContext: TraceContext): void {
+  setTraceContextByScope(scope: ScopeType, traceContext: TraceContext): void {
     const ctxArr = this.scope2TraceContextMap.get(scope)
     if (! ctxArr) {
       this.scope2TraceContextMap.set(scope, [traceContext])
@@ -689,6 +689,16 @@ export class TrxStatusService {
     if (ctxArr.at(-1) !== traceContext) {
       ctxArr.push(traceContext)
     }
+  }
+
+  removeTraceContextByScope(scope: ScopeType, traceContext: TraceContext): void {
+    const ctxArr = this.scope2TraceContextMap.get(scope)
+    if (! ctxArr) { return }
+
+    const pos = ctxArr.indexOf(traceContext)
+    if (pos === -1) { return }
+
+    ctxArr.splice(pos, 1)
   }
 }
 

@@ -93,7 +93,7 @@ export class DbEvent<SourceName extends string = string> {
       if (decoratorContext.traceContext) {
         const { kmore, event } = options
         const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-        this.trxStatusSvc.setTraceContextByQueryId(traceScope, decoratorContext.traceContext)
+        this.trxStatusSvc.setTraceContextByScope(traceScope, decoratorContext.traceContext)
       }
 
       // if (! decoratorContext.traceScope) {
@@ -131,7 +131,7 @@ export class DbEvent<SourceName extends string = string> {
           assert(traceService, 'traceService is empty')
           const { span, traceContext: traceCtx2 } = traceService.startScopeSpan(opts)
           void span
-          this.trxStatusSvc.setTraceContextByQueryId(traceScope, traceCtx2)
+          this.trxStatusSvc.setTraceContextByScope(traceScope, traceCtx2)
           ret.traceContext = traceCtx2
         }
         else {
@@ -216,8 +216,9 @@ export class DbEvent<SourceName extends string = string> {
 
       switch (pagingType) {
         case 'counter': {
-          const ctx = this.trxStatusSvc.getActiveTraceContextByQueryId(traceScope)
+          const ctx = this.trxStatusSvc.getActiveTraceContextByScope(traceScope)
           if (ctx && ctx === traceContext) {
+            this.trxStatusSvc.removeTraceContextByScope(traceScope, ctx)
             ret.endSpanAfterTraceLog = true
           }
           break
@@ -225,7 +226,7 @@ export class DbEvent<SourceName extends string = string> {
 
         case 'pager': {
           const spans: Span[] = []
-          const ctxArr = this.trxStatusSvc.getTraceContextArrayByQueryId(traceScope)
+          const ctxArr = this.trxStatusSvc.getTraceContextArrayByScope(traceScope)
           ctxArr.forEach((ctx) => {
             const span = getSpan(ctx)
             if (span?.isRecording()) {
@@ -237,7 +238,7 @@ export class DbEvent<SourceName extends string = string> {
         }
 
         default: {
-          const ctx = this.trxStatusSvc.getActiveTraceContextByQueryId(traceScope)
+          const ctx = this.trxStatusSvc.getActiveTraceContextByScope(traceScope)
           if (ctx && ctx === traceContext) {
             ret.endSpanAfterTraceLog = true
           }
@@ -275,11 +276,11 @@ export class DbEvent<SourceName extends string = string> {
     // },
     before([options], decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.QueryQuerying, options.dbConfig)) { return }
-      if (! decoratorContext.traceScope) {
-        const { kmore } = options
-        const { kmoreQueryId, queryBuilder } = options.event
-        decoratorContext.traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
-      }
+      // if (! decoratorContext.traceScope) {
+      //   const { kmore } = options
+      //   const { kmoreQueryId, queryBuilder } = options.event
+      //   decoratorContext.traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+      // }
 
       const activeContext = this.traceService.getActiveContext()
       void activeContext

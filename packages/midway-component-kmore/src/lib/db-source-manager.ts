@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import assert from 'node:assert'
 
 import {
@@ -196,16 +197,16 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     const globalEventCbs: EventCallbacks = {
       start: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          let activeTraceCtx: TraceContext | null | undefined
+          let activeTraceCtx: TraceContext | undefined
 
           const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-          const [activeRoot] = this.trxStatusSvc.getTraceContextArrayByQueryId(traceScope)
+          const [activeRoot] = this.trxStatusSvc.getTraceContextArrayByScope(traceScope)
           if (activeRoot) {
             activeTraceCtx = activeRoot
           }
           else {
             const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
-            activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : null
+            activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : void 0
           }
 
           context.with(activeTraceCtx ?? context.active(), () => {
@@ -217,7 +218,18 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       },
       query: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+          let activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByScope(event.kmoreQueryId)
+          if (! activeTraceCtx) {
+            const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+            const active = this.trxStatusSvc.getTraceContextArrayByScope(traceScope).at(-1)
+            if (active) {
+              activeTraceCtx = active
+            }
+            else {
+              const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
+              activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : void 0
+            }
+          }
           context.with(activeTraceCtx ?? context.active(), () => {
             this.dbEvent.onQuery({ dataSourceName, dbConfig: config, event, kmore })
           })
@@ -227,7 +239,18 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       },
       queryResponse: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+          let activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByScope(event.kmoreQueryId)
+          if (! activeTraceCtx) {
+            const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+            const active = this.trxStatusSvc.getTraceContextArrayByScope(traceScope).at(-1)
+            if (active) {
+              activeTraceCtx = active
+            }
+            else {
+              const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
+              activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : void 0
+            }
+          }
           context.with(activeTraceCtx ?? context.active(), () => {
             this.dbEvent.onResp({ dataSourceName, dbConfig: config, event, kmore })
           })
@@ -237,7 +260,18 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       },
       queryError: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          const activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByQueryId(event.kmoreQueryId)
+          let activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByScope(event.kmoreQueryId)
+          if (! activeTraceCtx) {
+            const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+            const active = this.trxStatusSvc.getTraceContextArrayByScope(traceScope).at(-1)
+            if (active) {
+              activeTraceCtx = active
+            }
+            else {
+              const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
+              activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : void 0
+            }
+          }
           return context.with(activeTraceCtx ?? context.active(), () => {
             return this.dbEvent.onError({ dataSourceName, dbConfig: config, event, kmore })
           })
