@@ -1,5 +1,7 @@
 import assert from 'node:assert'
 
+import { context } from '@opentelemetry/api'
+
 import type { KmoreQueryBuilder } from '../builder/builder.types.js'
 import { defaultPropDescriptor } from '../config.js'
 import type { PageWrapType, PagingMeta, PagingOptions } from '../paging.types.js'
@@ -30,7 +32,7 @@ export interface _PagingOptions extends PagingOptions {
   wrapOutput: boolean
 }
 
-export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): void {
+export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder, enableTrace: boolean): void {
   assert(
     typeof refTable[KmorePageKey.AutoPaging] !== 'function',
     'extRefTableFnPropertyAutoPaging() can only be called once',
@@ -39,10 +41,19 @@ export function extRefTableFnPropertyAutoPaging(refTable: KmoreQueryBuilder): vo
   void Object.defineProperty(refTable, KmorePageKey.AutoPaging, {
     ...defaultPropDescriptor,
     writable: true,
+    // value: (
+    //   options?: Partial<PagingOptions>,
+    //   wrapOutput?: boolean,
+    // ) => autoPagingBuilder(options, wrapOutput ?? false, refTable),
     value: (
       options?: Partial<PagingOptions>,
       wrapOutput?: boolean,
-    ) => autoPagingBuilder(options, wrapOutput ?? false, refTable),
+    ) => {
+      if (enableTrace) {
+        return context.with(context.active(), () => autoPagingBuilder(options, wrapOutput ?? false, refTable))
+      }
+      return autoPagingBuilder(options, wrapOutput ?? false, refTable)
+    },
   })
 }
 

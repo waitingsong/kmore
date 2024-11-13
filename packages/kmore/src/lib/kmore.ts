@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import assert from 'node:assert'
 
+import type { TraceContext } from '@mwcp/otel'
 import type { ScopeType } from '@mwcp/share'
+import { context } from '@opentelemetry/api'
 import type { DbDict } from 'kmore-types'
 import type { Knex } from 'knex'
 import _knex from 'knex'
@@ -13,7 +16,7 @@ import { initialConfig } from './config.js'
 import type { PostProcessInput } from './helper.js'
 import { defaultWrapIdentifierIgnoreRule, postProcessResponse, wrapIdentifier } from './helper.js'
 import { genHookList } from './hook/hook.helper.js'
-import type { HookList, TransactionHookOptions, TransactionPreHookOptions } from './hook/hook.types.js'
+import type { HookList, HookReturn, TransactionHookOptions, TransactionPreHookOptions } from './hook/hook.types.js'
 import { createTrxProxy } from './proxy/proxy.index.js'
 import { TrxControl } from './trx.types.js'
 import type {
@@ -103,6 +106,7 @@ export class Kmore<D extends object = any> {
   readonly wrapIdentifierIgnoreRule: WrapIdentifierIgnoreRule
 
   readonly hookList: HookList
+  enableTrace = false
 
   constructor(options: KmoreFactoryOpts<D>) {
     const dbId = options.dbId ? options.dbId : Date.now().toString()
@@ -129,6 +133,7 @@ export class Kmore<D extends object = any> {
     }
 
     this.hookList = genHookList(options.hookList)
+    this.enableTrace = !! options.enableTrace
 
     /**
      * Table identifier case conversion,
@@ -287,18 +292,36 @@ export class Kmore<D extends object = any> {
    * Start a transaction.
    */
   async transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction> {
+    if (this.enableTrace) {
+      return context.with(context.active(), () => this._transaction(config))
+    }
+    return this._transaction(config)
+  }
 
+  async _transaction(config?: KmoreTransactionConfig): Promise<KmoreTransaction> {
     const config2 = Object.assign({ trxActionOnError: this.trxActionOnError }, config) as TransactionPreHookOptions['config']
 
     const opts: TransactionPreHookOptions = {
       kmore: this,
       config: config2,
     }
+    let ctx: TraceContext | undefined = this.enableTrace ? context.active() : void 0
     const { transactionPreHooks } = this.hookList
     if (transactionPreHooks.length) {
       for (const fn of transactionPreHooks) {
+        let tmp: HookReturn | void
+        if (this.enableTrace && ctx) {
+          tmp = await context.with(ctx, async () => {
+            return fn(opts)
+          })
+        }
+        else {
+          tmp = await fn(opts)
+        }
 
-        await fn(opts)
+        if (this.enableTrace && tmp?.traceContext) {
+          ctx = tmp.traceContext
+        }
       }
     }
 
@@ -317,8 +340,19 @@ export class Kmore<D extends object = any> {
     }
     if (transactionPostHooks.length) {
       for (const fn of transactionPostHooks) {
+        let tmp: HookReturn | void
+        if (this.enableTrace && ctx) {
+          tmp = await context.with(ctx, async () => {
+            return fn(opts2)
+          })
+        }
+        else {
+          tmp = await fn(opts2)
+        }
 
-        await fn(opts2)
+        if (this.enableTrace && tmp?.traceContext) {
+          ctx = tmp.traceContext
+        }
       }
     }
 
@@ -327,6 +361,13 @@ export class Kmore<D extends object = any> {
   }
 
   async finishTransaction(options: FinishTransactionOptions): Promise<void> {
+    if (this.enableTrace) {
+      return context.with(context.active(), () => this._finishTransaction(options))
+    }
+    return this._finishTransaction(options)
+  }
+
+  async _finishTransaction(options: FinishTransactionOptions): Promise<void> {
     const { trx, action } = options
     if (! trx) { return }
 
@@ -484,6 +525,10 @@ export interface KmoreFactoryOpts<D> {
    */
   trxActionOnError?: KmoreTransactionConfig['trxActionOnError']
   hookList?: Partial<HookList> | undefined
+  /**
+   * @default false
+   */
+  enableTrace?: boolean
 }
 
 /**

@@ -1,6 +1,6 @@
-
 import assert from 'node:assert'
 
+import { context } from '@opentelemetry/api'
 import type { MethodTypeUnknown } from '@waiting/shared-types'
 
 import type { KmoreQueryBuilder } from '../builder/builder.types.js'
@@ -28,12 +28,24 @@ export function createProxyTransacting(options: CreateProxyThenOptions): void {
     void Object.defineProperty(builder, KmoreProxyKey.transacting, {
       ...defaultPropDescriptor,
       writable: true,
-      value: (transaction: KmoreTransaction) => _proxyTransacting({
-        ...options,
-        transaction,
-        done: void 0,
-        reject: void 0,
-      }),
+      // value: (transaction: KmoreTransaction) => _proxyTransacting({
+      //   ...options,
+      //   transaction,
+      //   done: void 0,
+      //   reject: void 0,
+      // }),
+      value: (transaction: KmoreTransaction) => {
+        const opts = {
+          ...options,
+          transaction,
+          done: void 0,
+          reject: void 0,
+        }
+        if (options.kmore.enableTrace) {
+          return context.with(context.active(), () => _proxyTransacting(opts))
+        }
+        return _proxyTransacting(opts)
+      },
     })
   }
 }

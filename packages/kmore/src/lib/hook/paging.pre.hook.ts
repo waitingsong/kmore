@@ -187,7 +187,7 @@ function cloneBuilder(
     caseConvert,
   })
   createQueryBuilderProxy({ kmore, builder: builderPager })
-  extRefTableFnPropertySmartJoin(builderPager)
+  extRefTableFnPropertySmartJoin(builderPager, kmore.enableTrace)
 
   const trx = kmore.getTrxByQueryId(kmoreQueryId)
   if (trx) {

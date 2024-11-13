@@ -1,5 +1,7 @@
 import assert from 'node:assert'
 
+import { context } from '@opentelemetry/api'
+
 import { defaultPropDescriptor } from '../config.js'
 import { KmoreBuilderType, KmorePageKey, SmartKey } from '../types.js'
 
@@ -47,16 +49,25 @@ export function processJoinTableColumnAlias(builder: KmoreQueryBuilder): KmoreQu
 }
 
 
-export function extRefTableFnPropertySmartJoin(refTable: KmoreQueryBuilder): void {
+export function extRefTableFnPropertySmartJoin(refTable: KmoreQueryBuilder, enableTrace: boolean): void {
   Object.values(SmartKey).forEach((joinType) => {
     if (typeof refTable[joinType] === 'function') { return }
 
     void Object.defineProperty(refTable, joinType, {
       ...defaultPropDescriptor,
+      // value: (
+      //   scopedColumnBeJoined: string,
+      //   scopedColumn: string,
+      // ) => smartJoinBuilder(refTable, joinType, scopedColumnBeJoined, scopedColumn),
       value: (
         scopedColumnBeJoined: string,
         scopedColumn: string,
-      ) => smartJoinBuilder(refTable, joinType, scopedColumnBeJoined, scopedColumn),
+      ) => {
+        if (enableTrace) {
+          return context.with(context.active(), () => smartJoinBuilder(refTable, joinType, scopedColumnBeJoined, scopedColumn))
+        }
+        return smartJoinBuilder(refTable, joinType, scopedColumnBeJoined, scopedColumn)
+      },
     })
   })
 }
