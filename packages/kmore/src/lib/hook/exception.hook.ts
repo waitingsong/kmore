@@ -10,7 +10,7 @@ export async function trxOnExceptionProcessor(options: ExceptionHookOptions): Pr
 
   const { kmoreQueryId, scope } = builder
   assert(kmoreQueryId, 'kmoreQueryId undefined')
-  console.warn('trxOnExceptionProcessor()', kmoreQueryId, exception)
+  console.warn('Error: trxOnExceptionProcessor()', kmoreQueryId, exception)
 
   const trx = kmore.getTrxByQueryId(kmoreQueryId, scope)
   if (trx) { // also processed on event `query-error`
