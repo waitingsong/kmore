@@ -15,7 +15,7 @@ import { testConfig } from '#@/root.config.js'
 import type { UserDTO } from '#@/test.model.js'
 
 
-describe(fileShortPath(import.meta.url), () => {
+describe.only(fileShortPath(import.meta.url), () => {
 
   const path1 = `${apiBase.user}/${apiMethod.paging}`
   it(path1, async () => {
