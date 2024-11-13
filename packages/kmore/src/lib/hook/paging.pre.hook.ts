@@ -19,6 +19,7 @@ import type { BuilderHookOptions } from './hook.types.js'
 // #region Pre Processor
 
 export async function pagingPreProcessor(options: BuilderHookOptions): Promise<void> {
+  if (options.builder.pagingType === KmoreBuilderType.counter) { return } // must compare with counter
   const { builderPager } = await genBuilderForPaging(options)
   if (! builderPager) { return }
   options.builder = builderPager
@@ -164,7 +165,9 @@ function cloneBuilder(
   const { caseConvert, kmoreQueryId, dbDict } = builder
   assert(kmoreQueryId, 'kmoreQueryId should be set on QueryBuilder')
 
-  const kmoreQueryId2 = Symbol(kmoreQueryId.toString() + '-pager')
+  const pid = kmoreQueryId.toString()// Symbol(master-123)
+  const key = /Symbol\((.*)\)/.exec(pid)?.[1] ?? pid
+  const kmoreQueryId2 = Symbol(key + '-pager')
   let builderPager = builder.clone() as KmoreQueryBuilder
 
   const pagingGroupKey = builder[KmorePageKey.pagingGroupKey]

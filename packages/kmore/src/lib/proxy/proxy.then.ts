@@ -7,7 +7,8 @@ import type { AsyncMethodType } from '@waiting/shared-types'
 
 import { defaultPropDescriptor } from '../config.js'
 import type { CreateProxyThenOptions, ProxyThenRunnerOptions } from '../kmore.js'
-import { KmoreBuilderType, KmorePageKey, KmoreProxyKey } from '../types.js'
+// import type { KmoreBuilderType } from '../types.js'
+import { KmorePageKey, KmoreProxyKey } from '../types.js'
 
 import { processThenRet } from './proxy.then.helper.js'
 
@@ -55,23 +56,26 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
     throw err
   }
 
+  const activeTraceCtx = context.active()
+  void activeTraceCtx
+
   const { builderPostHooks: builderPostHook } = kmore.hookList
   // const pagingOptions = Object.getOwnPropertyDescriptor(options.builder, KmorePageKey.PagingOptions)?.value as PagingOptions
   // assert(pagingOptions, 'pagingOptions missing defined in builder')
 
-  const builderType = Object.getOwnPropertyDescriptor(options.builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
+  // const builderType = Object.getOwnPropertyDescriptor(options.builder, KmorePageKey.PagingBuilderType)?.value as KmoreBuilderType | undefined
 
   const opts = { kmore, builder: options.builder }
   try {
-    if (builderType !== KmoreBuilderType.counter && Array.isArray(builderPostHook)) {
+    // if (builderType !== KmoreBuilderType.counter && Array.isArray(builderPostHook)) {
+    //   for (const hook of builderPostHook) {
+    //     assert(typeof hook === 'function', 'builderPostHook should be an array of functions')
+    //     await hook(opts)
+    //   }
+    // }
+    if (Array.isArray(builderPostHook)) {
       for (const hook of builderPostHook) {
         assert(typeof hook === 'function', 'builderPostHook should be an array of functions')
-
-        if (kmore.enableTrace) {
-          await context.with(context.active(), async () => {
-            await hook(opts)
-          })
-        }
         await hook(opts)
       }
     }
