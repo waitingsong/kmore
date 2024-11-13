@@ -46,7 +46,7 @@ export class TrxStatusService {
   @Inject() protected readonly traceSvc: TraceService
   @Inject() protected readonly callerSvc: CallerService
 
-  readonly queryId2TraceContextMap = new WeakMap<symbol, TraceContext[]>()
+  readonly scope2TraceContextMap = new WeakMap<ScopeType, TraceContext[]>()
 
   protected readonly dbInstanceList = new Map<string, Kmore>()
   protected readonly callerKeyPropagationMapIndex: CallerKeyPropagationMapIndex = new Map()
@@ -669,25 +669,25 @@ export class TrxStatusService {
     }
   }
 
-  getActiveTraceContextByQueryId(queryId: symbol): TraceContext | undefined {
-    const traceContextArr = this.queryId2TraceContextMap.get(queryId)
+  getActiveTraceContextByQueryId(scope: ScopeType): TraceContext | undefined {
+    const traceContextArr = this.scope2TraceContextMap.get(scope)
     return traceContextArr?.at(-1)
   }
 
-  getTraceContextArrayByQueryId(queryId: symbol): TraceContext[] {
-    const traceContextArr = this.queryId2TraceContextMap.get(queryId)
+  getTraceContextArrayByQueryId(scope: ScopeType): TraceContext[] {
+    const traceContextArr = this.scope2TraceContextMap.get(scope)
     return traceContextArr ?? []
   }
 
-  setTraceContextByQueryId(queryId: symbol, traceContext: TraceContext): void {
-    const ctxArr = this.queryId2TraceContextMap.get(queryId)
+  setTraceContextByQueryId(scope: ScopeType, traceContext: TraceContext): void {
+    const ctxArr = this.scope2TraceContextMap.get(scope)
     if (! ctxArr) {
-      this.queryId2TraceContextMap.set(queryId, [traceContext])
+      this.scope2TraceContextMap.set(scope, [traceContext])
       return
     }
 
     if (ctxArr.at(-1) !== traceContext) {
-      this.queryId2TraceContextMap.set(queryId, [traceContext])
+      ctxArr.push(traceContext)
     }
   }
 }
