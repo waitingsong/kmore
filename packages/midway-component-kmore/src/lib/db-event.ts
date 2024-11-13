@@ -396,7 +396,7 @@ export class DbEvent<SourceName extends string = string> {
     return trx?.kmoreTrxId
   }
 
-  protected retrieveTraceScope(kmore: Kmore, kmoreQueryId: symbol, builder: KmoreQueryBuilder): TraceScopeType {
+  retrieveTraceScope(kmore: Kmore, kmoreQueryId: symbol, builder: KmoreQueryBuilder): TraceScopeType {
     const { pagingGroupKey, pagingType } = builder
 
     const traceScope = this.getTrxTraceScopeByQueryId(kmore, kmoreQueryId)

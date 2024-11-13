@@ -11,7 +11,7 @@ import {
   Singleton,
 } from '@midwayjs/core'
 import { ILogger } from '@midwayjs/logger'
-import { Attributes, SpanKind, Trace, TraceInit } from '@mwcp/otel'
+import { type TraceContext, Attributes, SpanKind, Trace, TraceInit } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import { context } from '@opentelemetry/api'
 import {
@@ -196,8 +196,18 @@ export class DbManager<SourceName extends string = string, D extends object = ob
     const globalEventCbs: EventCallbacks = {
       start: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
-          const activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : null
+          let activeTraceCtx: TraceContext | null | undefined
+
+          const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+          const [activeRoot] = this.trxStatusSvc.getTraceContextArrayByQueryId(traceScope)
+          if (activeRoot) {
+            activeTraceCtx = activeRoot
+          }
+          else {
+            const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
+            activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : null
+          }
+
           context.with(activeTraceCtx ?? context.active(), () => {
             this.dbEvent.onStart({ dataSourceName, dbConfig: config, event, kmore })
           })
