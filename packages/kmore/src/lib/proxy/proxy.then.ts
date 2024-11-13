@@ -1,7 +1,7 @@
-
 import assert from 'node:assert'
 import { isPromise } from 'node:util/types'
 
+import { context } from '@opentelemetry/api'
 import { genError } from '@waiting/shared-core'
 import type { AsyncMethodType } from '@waiting/shared-types'
 
@@ -32,7 +32,14 @@ export function createProxyThen(options: CreateProxyThenOptions): void {
     value: (
       done?: (data: unknown) => unknown, // valid when chain next then()
       reject?: (data: unknown) => Error,
-    ) => _proxyThen({ ...options, done, reject }),
+    // ) => _proxyThen({ ...options, done, reject }),
+    ) => {
+      const { kmore } = options
+      if (kmore.enableTrace) {
+        return context.with(context.active(), () => _proxyThen({ ...options, done, reject }))
+      }
+      return _proxyThen({ ...options, done, reject })
+    },
   })
 }
 
@@ -60,6 +67,11 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
       for (const hook of builderPostHook) {
         assert(typeof hook === 'function', 'builderPostHook should be an array of functions')
 
+        if (kmore.enableTrace) {
+          await context.with(context.active(), async () => {
+            await hook(opts)
+          })
+        }
         await hook(opts)
       }
     }
@@ -118,7 +130,6 @@ async function _proxyThen(options: ProxyThenRunnerOptions): Promise<unknown> {
     if (exceptionHook.length) {
       for (const processor of exceptionHook) {
         try {
-
           await processor(opts2)
         }
         catch (ex2) {

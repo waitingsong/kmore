@@ -1,6 +1,6 @@
-
 import assert from 'node:assert'
 
+import { context } from '@opentelemetry/api'
 import type { AsyncMethodType } from '@waiting/shared-types'
 
 import { createTrxProxy } from '##/lib/proxy/proxy.index.js' // use ## alias prevent from circular dependency checking
@@ -30,7 +30,14 @@ export function createProxySavepoint(options: CreateProxyTrxOptions): KmoreTrans
   void Object.defineProperty(transaction, KmoreProxyKey.savepoint, {
     ...defaultPropDescriptor,
     writable: true,
-    value: (...args: unknown[]) => _proxySavepoint({ ...options, args }),
+    // value: (...args: unknown[]) => _proxySavepoint({ ...options, args }),
+    value: (...args: unknown[]) => {
+      if (options.kmore.enableTrace) {
+        const activeTraceCtx = options.kmore.trx2TraceContextMap.get(transaction)
+        return context.with(activeTraceCtx ?? context.active(), () => _proxySavepoint({ ...options, args }))
+      }
+      return _proxySavepoint({ ...options, args })
+    },
   })
 
   return transaction

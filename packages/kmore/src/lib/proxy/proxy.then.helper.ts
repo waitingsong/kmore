@@ -1,5 +1,6 @@
-
 import assert from 'node:assert'
+
+import { context } from '@opentelemetry/api'
 
 import { defaultPropDescriptor } from '../config.js'
 import type { ResponseHookOptions } from '../hook/hook.types.js'
@@ -26,7 +27,12 @@ export async function processThenRet(options: ProcessThenRetOptions): Promise<un
   delete opts['input']
 
   for (const processor of responsePreHook) {
-
+    if (kmore.enableTrace) {
+      await context.with(context.active(), async () => {
+        await processor(opts)
+      })
+      continue
+    }
     await processor(opts)
   }
 

@@ -93,9 +93,9 @@ function createQueryBuilder(
     kmore,
     builder,
   })
-  extRefTableFnPropertySmartJoin(builder)
+  extRefTableFnPropertySmartJoin(builder, kmore.enableTrace)
   extRefTableFnPropertyDummy(builder)
-  extRefTableFnPropertyAutoPaging(builder)
+  extRefTableFnPropertyAutoPaging(builder, kmore.enableTrace)
 
   kmore.hookList.builderPreHooks.forEach((processor) => {
     assert(typeof processor === 'function', 'builderPreHook should be an array of functions')

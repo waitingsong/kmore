@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
+import type { TraceContext } from '@mwcp/otel'
+
 import type { Kmore, KmoreQueryBuilder, KmoreTransaction, KmoreTransactionConfig } from '##/lib/index.js'
 
 import type { RowLockLevel, TrxPropagateOptions } from '../trx.types.js'
@@ -80,24 +83,28 @@ export interface ExceptionHookOptions extends Omit<ResponseHookOptions, 'respons
 export interface TransactionPreHookOptions {
   kmore: Kmore
   config: KmoreTransactionConfig
+  traceContext?: TraceContext
 }
-export type TransactionPreHook = (options: TransactionPreHookOptions) => Promise<void>
+export type TransactionPreHook = (options: TransactionPreHookOptions) => Promise<void | HookReturn>
 
 export interface TransactionHookOptions {
   kmore: Kmore
   config: KmoreTransactionConfig
   trx: KmoreTransaction
 }
-export type TransactionPostHook = (options: TransactionHookOptions) => Promise<void>
+export type TransactionPostHook = (options: TransactionHookOptions) => Promise<void | HookReturn>
 /**
  * Run before/after commit or rollback
  */
-export type TrxCommitRollbackHook = (options: TransactionHookOptions) => Promise<void>
+export type TrxCommitRollbackHook = (options: TransactionHookOptions) => Promise<void | HookReturn>
 
 export interface BuilderTransactingHookOptions {
   kmore: Kmore
   builder: KmoreQueryBuilder
   trx: KmoreTransaction
 }
-export type BuilderTransactingHook = (options: BuilderTransactingHookOptions) => void
+export type BuilderTransactingHook = (options: BuilderTransactingHookOptions) => void | HookReturn
 
+export interface HookReturn {
+  traceContext?: TraceContext
+}
