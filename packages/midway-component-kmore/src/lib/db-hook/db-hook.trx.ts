@@ -68,7 +68,7 @@ export class DbHookTrx<SourceName extends string = string> {
     spanName([options]) {
       const { config } = options
       const { kmoreTrxId } = config
-      assert(kmoreTrxId, 'transactionPreHook() kmoreTrxId is empty')
+      assert(kmoreTrxId, 'transactionPreHook() spanName: kmoreTrxId is empty')
       // if (! decoratorContext.traceScope) {
       //   if (config.kmoreTrxId) {
       //     decoratorContext.traceScope = config.kmoreTrxId
@@ -104,7 +104,7 @@ export class DbHookTrx<SourceName extends string = string> {
     after([options]: [TransactionPreHookOptions]) {
       const { kmore, config } = options
       const { kmoreTrxId } = config
-      assert(kmoreTrxId, 'transactionPreHook() kmoreTrxId is empty')
+      assert(kmoreTrxId, 'transactionPreHook() after: kmoreTrxId is empty')
 
       const activeTraceCtx = this.traceService.getActiveContext()
       void activeTraceCtx
