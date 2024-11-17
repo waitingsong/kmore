@@ -108,7 +108,7 @@ describe.only(fileShortPath(import.meta.url), () => {
     assertsSpan(span4, opt4)
   })
 
-  it('Should work with transaction', async () => {
+  it.only('Should work with transaction', async () => {
     const { httpRequest } = testConfig
 
     const path = '/user/paging_trx'
