@@ -66,6 +66,14 @@ export class DbHookTrx<SourceName extends string = string> {
   @Trace<DbHookTrx['transactionPreHook']>({
     autoEndSpan: false, // end span in DbHook.afterCommitHook/afterRollbackHook
     spanName([options]) {
+      const { kmore, config } = options
+      if (config.kmoreTrxId) {
+        return config.kmoreTrxId
+      }
+      const entryKey = config.trxPropagateOptions?.entryKey ?? ''
+      const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
+      config.kmoreTrxId = kmoreTrxId
+
       // if (! decoratorContext.traceScope) {
       //   if (config.kmoreTrxId) {
       //     decoratorContext.traceScope = config.kmoreTrxId
