@@ -15,7 +15,7 @@ import { testConfig } from '#@/root.config.js'
 import type { UserDTO } from '#@/test.model.js'
 
 
-describe.only(fileShortPath(import.meta.url), () => {
+describe(fileShortPath(import.meta.url), () => {
 
   const path1 = `${apiBase.user}/${apiMethod.paging}`
   it(path1, async () => {
@@ -108,7 +108,7 @@ describe.only(fileShortPath(import.meta.url), () => {
     assertsSpan(span4, opt4)
   })
 
-  it.only('Should work with transaction', async () => {
+  it('Should work with transaction', async () => {
     const { httpRequest } = testConfig
 
     const path = '/user/paging_trx'
