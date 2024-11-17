@@ -66,9 +66,6 @@ export class DbHookTrx<SourceName extends string = string> {
   @Trace<DbHookTrx['transactionPreHook']>({
     autoEndSpan: false, // end span in DbHook.afterCommitHook/afterRollbackHook
     spanName([options]) {
-      const { config } = options
-      const { kmoreTrxId } = config
-      assert(kmoreTrxId, 'transactionPreHook() spanName: kmoreTrxId is empty')
       // if (! decoratorContext.traceScope) {
       //   if (config.kmoreTrxId) {
       //     decoratorContext.traceScope = config.kmoreTrxId
