@@ -126,29 +126,11 @@ export class DbHookBuilder<SourceName extends string = string> {
   // #region builderTransactingPostHook
 
   @TraceLog<DbHookBuilder['builderTransactingPostHook']>({
-    // scope([options]) {
-    //   const { kmore, builder } = options
-    //   const traceScope = this.getTrxTraceScopeByQueryId(kmore, builder.kmoreQueryId)
-    //   if (traceScope) {
-    //     return traceScope
-    //   }
-    //   const traceScope2 = builder.kmoreQueryId
-    //   return traceScope2
-    // },
-    after([options], _res) { // options.dbConfig not exist at before()
+    after([options]) { // options.dbConfig not exist at before()
       const dbConfig = this.getDbConfigByDbId(options.kmore.dbId)
       if (dbConfig && ! eventNeedTrace(KmoreAttrNames.BuilderTransacting, dbConfig)) { return }
 
       const { builder } = options
-      // if (! decoratorContext.traceScope) {
-      //   const traceScope = this.getTrxTraceScopeByQueryId(kmore, builder.kmoreQueryId)
-      //   if (traceScope) {
-      //     decoratorContext.traceScope = traceScope
-      //   }
-      //   else {
-      //     decoratorContext.traceScope = builder.kmoreQueryId
-      //   }
-      // }
 
       // @ts-expect-error builder._method
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

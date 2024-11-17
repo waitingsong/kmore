@@ -73,31 +73,9 @@ export class DbHookTrx<SourceName extends string = string> {
         config.kmoreTrxId = kmoreTrxId
       }
 
-      // if (! decoratorContext.traceScope) {
-      //   if (config.kmoreTrxId) {
-      //     decoratorContext.traceScope = config.kmoreTrxId
-      //   }
-      //   else {
-      //     const entryKey = config.trxPropagateOptions?.entryKey ?? ''
-      //     const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
-      //     config.kmoreTrxId = kmoreTrxId
-      //     decoratorContext.traceScope = kmoreTrxId
-      //   }
-      // }
-
       const dbSourceName = options.kmore.dbId
       return `Kmore ${dbSourceName} transaction`
     },
-    // scope: ([options]: [TransactionPreHookOptions]) => {
-    //   const { kmore, config } = options
-    //   if (config.kmoreTrxId) {
-    //     return config.kmoreTrxId
-    //   }
-    //   const entryKey = config.trxPropagateOptions?.entryKey ?? ''
-    //   const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
-    //   config.kmoreTrxId = kmoreTrxId
-    //   return kmoreTrxId
-    // },
     before([options]: [TransactionPreHookOptions]) {
       const activeTraceCtx = this.traceService.getActiveContext()
       if (! options.traceContext) {
@@ -143,11 +121,6 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region transactionPostHook
 
   @TraceLog<DbHookTrx['transactionPostHook']>({
-    // scope: ([options]: [TransactionPreHookOptions]) => {
-    //   const { kmoreTrxId } = options.config
-    //   assert(kmoreTrxId, 'transactionPostHook() kmoreTrxId is empty')
-    //   return kmoreTrxId
-    // },
     before([options], decoratorContext) {
       const { kmore, config, trx } = options
       const { kmoreTrxId } = config
@@ -192,9 +165,6 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region beforeCommit
 
   @TraceLog<DbHookTrx['beforeCommitHook']>({
-    // scope([options]) {
-    //   return this.getTraceScopeByTrx(options.trx)
-    // },
     after([options], _res, decoratorContext) {
       if (! decoratorContext.traceScope) {
         decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
@@ -218,9 +188,6 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region afterCommit
 
   @TraceLog<DbHookTrx['afterCommitHook']>({
-    // scope([options]) {
-    //   return this.getTraceScopeByTrx(options.trx)
-    // },
     before([options], decoratorContext) {
       if (! decoratorContext.traceScope) {
         decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
@@ -241,9 +208,6 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region beforeRollback
 
   @TraceLog<DbHookTrx['beforeRollbackHook']>({
-    // scope([options]) {
-    //   return this.getTraceScopeByTrx(options.trx)
-    // },
     after([options], _res, decoratorContext) {
       if (! decoratorContext.traceScope) {
         decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
@@ -263,9 +227,6 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region afterRollback
 
   @TraceLog<DbHookTrx['afterRollbackHook']>({
-    // scope([options]) {
-    //   return this.getTraceScopeByTrx(options.trx)
-    // },
     before([options], decoratorContext) {
       if (! decoratorContext.traceScope) {
         decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
