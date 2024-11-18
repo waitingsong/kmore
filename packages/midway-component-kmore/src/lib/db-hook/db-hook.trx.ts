@@ -76,26 +76,25 @@ export class DbHookTrx<SourceName extends string = string> {
       const dbSourceName = options.kmore.dbId
       return `Kmore ${dbSourceName} transaction`
     },
-    before([options]: [TransactionPreHookOptions]) {
-      const activeTraceCtx = this.traceService.getActiveContext()
-      if (! options.traceContext) {
-        options.traceContext = activeTraceCtx
-      }
+    before([options], decoratorContext) {
+      options.traceContext = decoratorContext.traceContext ?? this.traceService.getActiveContext() // necessary for update trace context correctly
       return null
     },
-    after([options]: [TransactionPreHookOptions]) {
+    after([options]: [TransactionPreHookOptions], _res, decoratorContext) {
       const { kmore, config } = options
-      const { kmoreTrxId } = config
-      assert(kmoreTrxId, 'transactionPreHook() after: kmoreTrxId is empty')
-
-      const activeTraceCtx = this.traceService.getActiveContext()
-      void activeTraceCtx
 
       if (! config.kmoreTrxId) {
         const entryKey = config.trxPropagateOptions?.entryKey ?? ''
         const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
         config.kmoreTrxId = kmoreTrxId
       }
+
+      const { kmoreTrxId } = config
+      assert(config.kmoreTrxId, 'transactionPreHook() after: kmoreTrxId is empty')
+
+      const activeTraceCtx = decoratorContext.traceContext ?? this.traceService.getActiveContext()
+      assert(activeTraceCtx, 'transactionPostHook() before: activeTraceCtx is empty')
+      this.trxStatusSvc.setTraceContextByScope(kmoreTrxId, activeTraceCtx)
 
       if (! config.scope) {
         config.scope = this.getWebContext() ?? this.app
@@ -113,7 +112,7 @@ export class DbHookTrx<SourceName extends string = string> {
   async transactionPreHook(this: DbHookTrx, options: TransactionPreHookOptions): Promise<HookReturn | undefined> {
     const { traceContext } = options
     if (traceContext) {
-      return { traceContext }
+      return { traceContext } // necessary for update trace context correctly
     }
     return
   }
@@ -126,12 +125,7 @@ export class DbHookTrx<SourceName extends string = string> {
       const { kmoreTrxId } = config
       assert(kmoreTrxId, 'transactionPostHook() kmoreTrxId is empty')
 
-      const activeTraceCtx = this.traceService.getActiveContext()
-      void activeTraceCtx
-
-      if (! decoratorContext.traceScope) {
-        decoratorContext.traceScope = kmoreTrxId
-      }
+      void decoratorContext
 
       let attrs: Attributes = {
         dbId: kmore.dbId,
@@ -243,5 +237,6 @@ export class DbHookTrx<SourceName extends string = string> {
   async afterRollbackHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<void> {
     void options
   }
+
 }
 

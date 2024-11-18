@@ -200,7 +200,8 @@ export class DbManager<SourceName extends string = string, D extends object = ob
           let activeTraceCtx: TraceContext | undefined
 
           const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-          const [activeRoot] = this.trxStatusSvc.getTraceContextArrayByScope(traceScope)
+          const arr = this.trxStatusSvc.getTraceContextArrayByScope(traceScope)
+          const [activeRoot] = arr
           if (activeRoot) {
             activeTraceCtx = activeRoot
           }
@@ -208,8 +209,11 @@ export class DbManager<SourceName extends string = string, D extends object = ob
             const trx = kmore.getTrxByQueryId(event.kmoreQueryId)
             activeTraceCtx = trx ? kmore.trx2TraceContextMap.get(trx) : void 0
           }
+          if (! activeTraceCtx) {
+            activeTraceCtx = context.active()
+          }
 
-          context.with(activeTraceCtx ?? context.active(), () => {
+          context.with(activeTraceCtx, () => {
             this.dbEvent.onStart({ dataSourceName, dbConfig: config, event, kmore })
           })
           return
