@@ -160,24 +160,19 @@ export class DbEvent<SourceName extends string = string> {
     },
     after([options], _result, decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.QueryResponse, options.dbConfig)) { return }
-
-      const { traceService, traceSpan, traceContext } = decoratorContext
-      assert(traceService, 'traceService is empty')
-      assert(traceSpan, 'traceSpan is empty')
+      const traceContext = decoratorContext.traceContext ?? this.traceService.getActiveContext()
 
       const ret: DecoratorTraceData = {}
       const { pagingType } = options.event.queryBuilder
 
       const { kmore, event } = options
-      const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
+      const { kmoreQueryId } = event
+      const traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, event.queryBuilder)
 
       switch (pagingType) {
         case 'counter': {
-          const ctx = this.trxStatusSvc.getTraceContextByScope(event.kmoreQueryId)
-          if (ctx && ctx === traceContext) {
-            this.trxStatusSvc.removeTraceContextByScope(traceScope)
-            ret.endSpanAfterTraceLog = true
-          }
+          this.trxStatusSvc.removeTraceContextByScope(kmoreQueryId)
+          ret.endSpanAfterTraceLog = true
           break
         }
 
@@ -197,6 +192,9 @@ export class DbEvent<SourceName extends string = string> {
               spans.push(span)
             }
           }
+
+          this.trxStatusSvc.removeTraceContextByScope(kmoreQueryId)
+          this.trxStatusSvc.removeTraceContextByScope(traceScope)
           ret.endSpanAfterTraceLog = spans
           break
         }
