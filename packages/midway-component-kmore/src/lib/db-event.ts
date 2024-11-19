@@ -182,9 +182,9 @@ export class DbEvent<SourceName extends string = string> {
 
       switch (pagingType) {
         case 'counter': {
-          const ctx = this.trxStatusSvc.getActiveTraceContextByScope(traceScope)
+          const ctx = this.trxStatusSvc.getTraceContextByScope(event.kmoreQueryId)
           if (ctx && ctx === traceContext) {
-            this.trxStatusSvc.removeTraceContextByScope(traceScope, ctx)
+            this.trxStatusSvc.removeTraceContextByScope(traceScope)
             ret.endSpanAfterTraceLog = true
           }
           break
@@ -192,19 +192,26 @@ export class DbEvent<SourceName extends string = string> {
 
         case 'pager': {
           const spans: Span[] = []
-          const ctxArr = this.trxStatusSvc.getTraceContextArrayByScope(traceScope)
-          ctxArr.forEach((ctx) => {
-            const span = getSpan(ctx)
+          const scopeCtx = this.trxStatusSvc.getTraceContextByScope(traceScope)
+          if (scopeCtx) {
+            const span = getSpan(scopeCtx)
             if (span?.isRecording()) {
               spans.push(span)
             }
-          })
+          }
+          const activeCtx = this.trxStatusSvc.getTraceContextByScope(event.kmoreQueryId)
+          if (activeCtx) {
+            const span = getSpan(activeCtx)
+            if (span?.isRecording()) {
+              spans.push(span)
+            }
+          }
           ret.endSpanAfterTraceLog = spans
           break
         }
 
         default: {
-          const ctx = this.trxStatusSvc.getActiveTraceContextByScope(traceScope)
+          const ctx = this.trxStatusSvc.getTraceContextByScope(traceScope)
           if (ctx && ctx === traceContext) {
             ret.endSpanAfterTraceLog = true
           }

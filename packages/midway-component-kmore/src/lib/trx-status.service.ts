@@ -46,7 +46,7 @@ export class TrxStatusService {
   @Inject() protected readonly traceSvc: TraceService
   @Inject() protected readonly callerSvc: CallerService
 
-  readonly scope2TraceContextMap = new WeakMap<ScopeType, TraceContext[]>()
+  readonly scope2TraceContextMap = new WeakMap<ScopeType, TraceContext>()
 
   protected readonly dbInstanceList = new Map<string, Kmore>()
   protected readonly callerKeyPropagationMapIndex: CallerKeyPropagationMapIndex = new Map()
@@ -669,36 +669,20 @@ export class TrxStatusService {
     }
   }
 
-  getActiveTraceContextByScope(scope: ScopeType): TraceContext | undefined {
+  getTraceContextByScope(scope: ScopeType): TraceContext | undefined {
     const traceContextArr = this.scope2TraceContextMap.get(scope)
-    return traceContextArr?.at(-1)
+    return traceContextArr
   }
 
-  getTraceContextArrayByScope(scope: ScopeType): TraceContext[] {
-    const traceContextArr = this.scope2TraceContextMap.get(scope)
-    return traceContextArr ?? []
-  }
-
+  /**
+   * @param scope kmoreTrxId or kmoreQueryId
+   */
   setTraceContextByScope(scope: ScopeType, traceContext: TraceContext): void {
-    const ctxArr = this.scope2TraceContextMap.get(scope)
-    if (! ctxArr) {
-      this.scope2TraceContextMap.set(scope, [traceContext])
-      return
-    }
-
-    if (ctxArr.at(-1) !== traceContext) {
-      ctxArr.push(traceContext)
-    }
+    this.scope2TraceContextMap.set(scope, traceContext)
   }
 
-  removeTraceContextByScope(scope: ScopeType, traceContext: TraceContext): void {
-    const ctxArr = this.scope2TraceContextMap.get(scope)
-    if (! ctxArr) { return }
-
-    const pos = ctxArr.indexOf(traceContext)
-    if (pos === -1) { return }
-
-    ctxArr.splice(pos, 1)
+  removeTraceContextByScope(scope: ScopeType): void {
+    this.scope2TraceContextMap.delete(scope)
   }
 }
 

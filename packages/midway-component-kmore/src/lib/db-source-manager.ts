@@ -14,6 +14,7 @@ import {
 import { ILogger } from '@midwayjs/logger'
 import { type TraceContext, Attributes, SpanKind, Trace, TraceInit } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { context } from '@opentelemetry/api'
 import {
   type EventCallbacks,
@@ -200,8 +201,7 @@ export class DbManager<SourceName extends string = string, D extends object = ob
           let activeTraceCtx: TraceContext | undefined
 
           const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-          const arr = this.trxStatusSvc.getTraceContextArrayByScope(traceScope)
-          const [activeRoot] = arr
+          const activeRoot = this.trxStatusSvc.getTraceContextByScope(traceScope)
           if (activeRoot) {
             activeTraceCtx = activeRoot
           }
@@ -222,10 +222,10 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       },
       query: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          let activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByScope(event.kmoreQueryId)
+          let activeTraceCtx = this.trxStatusSvc.getTraceContextByScope(event.kmoreQueryId)
           if (! activeTraceCtx) {
             const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-            const active = this.trxStatusSvc.getTraceContextArrayByScope(traceScope).at(-1)
+            const active = this.trxStatusSvc.getTraceContextByScope(traceScope)
             if (active) {
               activeTraceCtx = active
             }
@@ -243,10 +243,10 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       },
       queryResponse: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          let activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByScope(event.kmoreQueryId)
+          let activeTraceCtx = this.trxStatusSvc.getTraceContextByScope(event.kmoreQueryId)
           if (! activeTraceCtx) {
             const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-            const active = this.trxStatusSvc.getTraceContextArrayByScope(traceScope).at(-1)
+            const active = this.trxStatusSvc.getTraceContextByScope(traceScope)
             if (active) {
               activeTraceCtx = active
             }
@@ -264,10 +264,10 @@ export class DbManager<SourceName extends string = string, D extends object = ob
       },
       queryError: (event: KmoreEvent, kmore: Kmore) => {
         if (kmore.enableTrace) {
-          let activeTraceCtx = this.trxStatusSvc.getActiveTraceContextByScope(event.kmoreQueryId)
+          let activeTraceCtx = this.trxStatusSvc.getTraceContextByScope(event.kmoreQueryId)
           if (! activeTraceCtx) {
             const traceScope = this.dbEvent.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-            const active = this.trxStatusSvc.getTraceContextArrayByScope(traceScope).at(-1)
+            const active = this.trxStatusSvc.getTraceContextByScope(traceScope)
             if (active) {
               activeTraceCtx = active
             }
