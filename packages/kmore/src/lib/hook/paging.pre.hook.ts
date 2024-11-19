@@ -97,9 +97,12 @@ async function genBuilderForPaging(options: BuilderHookOptions): Promise<GenBuil
     writable: true,
     value: KmoreBuilderType.counter,
   })
+
+  const key = builder.pagingGroupKey ? '' : builder.kmoreQueryId.toString().replace('Symbol(', '').replace(')', '')
+  const pagingGroupKey = builder.pagingGroupKey ?? Symbol(key + '-paging-group')
   void Object.defineProperty(builderCounter, KmorePageKey.pagingGroupKey, {
     ...defaultPropDescriptor,
-    value: builder.kmoreQueryId,
+    value: pagingGroupKey,
   })
 
   const total = await builderCounter
