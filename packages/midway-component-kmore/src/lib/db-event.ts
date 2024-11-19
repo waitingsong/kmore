@@ -86,16 +86,24 @@ export class DbEvent<SourceName extends string = string> {
       const traceContext = decoratorContext.traceContext ?? this.traceService.getActiveContext()
       const { kmore, event } = options
       const { kmoreQueryId, queryBuilder } = event
+
       const traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
-      this.trxStatusSvc.setTraceContextByScope(traceScope, traceContext)
+      if (! this.trxStatusSvc.getTraceContextByScope(traceScope)) {
+        this.trxStatusSvc.setTraceContextByScope(traceScope, traceContext)
+      }
       this.trxStatusSvc.setTraceContextByScope(kmoreQueryId, traceContext)
 
       const { pagingType } = queryBuilder
-      const { traceSpan } = decoratorContext
+      const traceSpan = getSpan(traceContext)
       const ret: DecoratorTraceData = {}
 
       if (pagingType && traceSpan) {
         if (pagingType === 'counter') {
+          assert(queryBuilder.pagingGroupKey, 'queryBuilder.pagingGroupKey is empty')
+          if (! this.trxStatusSvc.getTraceContextByScope(queryBuilder.pagingGroupKey)) {
+            this.trxStatusSvc.setTraceContextByScope(queryBuilder.pagingGroupKey, traceContext)
+          }
+
           // @ts-expect-error name
           const spanName = traceSpan.name as string
           const spanName2 = `${spanName} AutoPaging`
@@ -109,7 +117,7 @@ export class DbEvent<SourceName extends string = string> {
           }
           const { traceContext: traceCtx2 } = this.traceService.startScopeSpan(opts)
           this.trxStatusSvc.setTraceContextByScope(kmoreQueryId, traceCtx2)
-          ret.traceContext = traceCtx2
+          ret.traceContext = traceCtx2 // necessary
         }
         else {
           const spanName2 = 'Kmore Pager'
@@ -195,6 +203,10 @@ export class DbEvent<SourceName extends string = string> {
           }
 
           this.trxStatusSvc.removeTraceContextByScope(kmoreQueryId)
+          const { pagingGroupKey } = event.queryBuilder
+          if (pagingGroupKey) {
+            this.trxStatusSvc.removeTraceContextByScope(pagingGroupKey)
+          }
           this.trxStatusSvc.removeTraceContextByScope(traceScope)
           ret.endSpanAfterTraceLog = spans
           break
