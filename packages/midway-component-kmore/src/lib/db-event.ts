@@ -83,20 +83,17 @@ export class DbEvent<SourceName extends string = string> {
     },
     before([options], decoratorContext) {
       if (! eventNeedTrace(KmoreAttrNames.BuilderCompile, options.dbConfig)) { return }
-      if (decoratorContext.traceContext) {
-        const { kmore, event } = options
-        const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-        this.trxStatusSvc.setTraceContextByScope(traceScope, decoratorContext.traceContext)
-      }
+      const traceContext = decoratorContext.traceContext ?? this.traceService.getActiveContext()
+      const { kmore, event } = options
+      const { kmoreQueryId, queryBuilder } = event
+      const traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
+      this.trxStatusSvc.setTraceContextByScope(traceScope, traceContext)
 
-      const { event } = options
-      const { queryBuilder } = event
       const { pagingType } = queryBuilder
       const { traceSpan } = decoratorContext
       const ret: DecoratorTraceData = {}
 
       if (pagingType && traceSpan) {
-        const { traceService, traceContext } = decoratorContext
         if (pagingType === 'counter') {
           // @ts-expect-error name
           const spanName = traceSpan.name as string
@@ -104,19 +101,13 @@ export class DbEvent<SourceName extends string = string> {
           if (! spanName.endsWith('AutoPaging')) {
             traceSpan.updateName(spanName2)
           }
-
-          const { kmore, event } = options
-          const traceScope = this.retrieveTraceScope(kmore, event.kmoreQueryId, event.queryBuilder)
-
           const opts: StartScopeActiveSpanOptions = {
             name: 'Kmore Counter',
             scope: traceScope,
             traceContext,
           }
-          assert(traceService, 'traceService is empty')
-          const { span, traceContext: traceCtx2 } = traceService.startScopeSpan(opts)
-          void span
-          this.trxStatusSvc.setTraceContextByScope(traceScope, traceCtx2)
+          const { traceContext: traceCtx2 } = this.traceService.startScopeSpan(opts)
+          this.trxStatusSvc.setTraceContextByScope(kmoreQueryId, traceCtx2)
           ret.traceContext = traceCtx2
         }
         else {
