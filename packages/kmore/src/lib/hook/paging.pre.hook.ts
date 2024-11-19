@@ -173,8 +173,11 @@ function cloneBuilder(
   const kmoreQueryId2 = Symbol(key + '-pager')
   let builderPager = builder.clone() as KmoreQueryBuilder
 
-  const key2 = builder.pagingGroupKey ? '' : builder.kmoreQueryId.toString().replace('Symbol(', '').replace(')', '')
-  const pagingGroupKey = builder.pagingGroupKey ?? Symbol(key2 + '-paging-group')
+  let { pagingGroupKey } = builder
+  if (! pagingGroupKey) {
+    const key2 = builder.kmoreQueryId.toString().replace('Symbol(', '').replace(')', '')
+    pagingGroupKey = Symbol(key2 + '-paging-group')
+  }
 
   void Object.defineProperty(builderPager, KmorePageKey.pagingGroupKey, {
     ...defaultPropDescriptor,
