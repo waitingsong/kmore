@@ -88,6 +88,7 @@ export class DbEvent<SourceName extends string = string> {
       const { kmoreQueryId, queryBuilder } = event
       const traceScope = this.retrieveTraceScope(kmore, kmoreQueryId, queryBuilder)
       this.trxStatusSvc.setTraceContextByScope(traceScope, traceContext)
+      this.trxStatusSvc.setTraceContextByScope(kmoreQueryId, traceContext)
 
       const { pagingType } = queryBuilder
       const { traceSpan } = decoratorContext
