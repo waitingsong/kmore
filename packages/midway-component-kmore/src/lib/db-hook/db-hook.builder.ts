@@ -65,9 +65,9 @@ export class DbHookBuilder<SourceName extends string = string> {
     }
 
     /* Call stack in bindBuilderPropagationData():
-      1 - TrxStatusService.bindBuilderPropagationData(trx - status.service.ts: 389)
-      2 - DbSourceManager.builderPrePropagating(db - source - manager.ts: 377)
-      3 - DbSourceManager.builderPreProcessor(db - source - manager.ts: 378)
+      1 - TrxStatusService.bindBuilderPropagationData(trx-status.service.ts: 389)
+      2 - DbSourceManager.builderPrePropagating(db- source-manager.ts: 377)
+      3 - DbSourceManager.builderPreProcessor(db-source-manager.ts: 378)
       4 - <anonymous>(builder.index.js: 67)
       5 - extRefTableFnProperty(builder.index.js: 64)
       6 - tb_user(builder.index.js: 28)
@@ -84,7 +84,20 @@ export class DbHookBuilder<SourceName extends string = string> {
       7 - TrxRepo._update (101/101r.middle-trx-auto-action.repo.ts:46)  <-- call from here 6+1
       8 - TrxRepo.commit (101/101r.middle-trx-auto-action.repo.ts:33)
     */
-    this.trxStatusSvc.bindBuilderPropagationData(kmore.dbId, builder, 6)
+    /*
+      1 - TrxStatusService.bindBuilderPropagationData(src\lib\trx-status.service.ts: 342)
+      2 - DbHookBuilder.builderPrePropagating(src\lib\db-hook\db-hook.builder.ts: 87)
+      3 - DbHookBuilder.builderPreHooks(src\lib\db-hook\db-hook.builder.ts: 44)
+      4 - <anonymous>(kmore\dist\lib\builder\builder.index.js: 57)
+      5 - createQueryBuilder(kmore\dist\lib\builder\builder.index.js: 55)
+      6 - tb_user(kmore\dist\lib\builder\builder.index.js: 25)
+      7 - TransactionalSimpleRepo.getUserOne(test\fixtures\base-app\src\transactional\30\30r.transactional - simple.repo.ts: 51)
+      8 - Clz.<computed>(kmore\node_modules\@midwayjs\core\dist\service\aspectService.js: 92)
+      9 - process.processTicksAndRejections(<node_internals> /internal/process / task_queues: 105)
+      10 - await(未知源: 0)
+      11 - user(test\fixtures\base - app\src\transactional\30\30r.transactional - simple.repo.ts: 33)
+    */
+    this.trxStatusSvc.bindBuilderPropagationData(kmore.dbId, builder, 5)
   }
 
   protected async builderPostPropagating(options: BuilderHookOptions): Promise<void> {

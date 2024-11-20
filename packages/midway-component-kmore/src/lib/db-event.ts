@@ -213,10 +213,7 @@ export class DbEvent<SourceName extends string = string> {
         }
 
         default: {
-          const ctx = this.trxStatusSvc.getTraceContextByScope(traceScope)
-          if (ctx && ctx === traceContext) {
-            ret.endSpanAfterTraceLog = true
-          }
+          ret.endSpanAfterTraceLog = true
         }
       }
 

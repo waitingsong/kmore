@@ -18,7 +18,7 @@ import {
 } from 'kmore'
 
 import { CallerService } from './caller.service.js'
-import { genCallerKey, linkBuilderWithTrx } from './propagation/trx-status.helper.js'
+import { genCallerKey, getSimpleCallers, linkBuilderWithTrx } from './propagation/trx-status.helper.js'
 import {
   CallerKey,
   CallerKeyPropagationMapIndex,
@@ -340,6 +340,7 @@ export class TrxStatusService {
     try {
       callerInfo = this.callerSvc.retrieveCallerInfo(distance + 1)
       if (! callerInfo.className || ! callerInfo.funcName) {
+        console.warn('Warn [@mwcp/kmore] retrieveCallerInfo() failed' + JSON.stringify(callerInfo))
         return
       }
     }
