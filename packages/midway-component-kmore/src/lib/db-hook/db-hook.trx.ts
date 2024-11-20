@@ -120,12 +120,10 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region transactionPostHook
 
   @TraceLog<DbHookTrx['transactionPostHook']>({
-    before([options], decoratorContext) {
+    before([options]) {
       const { kmore, config, trx } = options
       const { kmoreTrxId } = config
       assert(kmoreTrxId, 'transactionPostHook() kmoreTrxId is empty')
-
-      void decoratorContext
 
       let attrs: Attributes = {
         dbId: kmore.dbId,
@@ -159,11 +157,7 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region beforeCommit
 
   @TraceLog<DbHookTrx['beforeCommitHook']>({
-    after([options], _res, decoratorContext) {
-      if (! decoratorContext.traceScope) {
-        decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
-      }
-
+    after([options]) {
       const activeTraceCtx = this.traceService.getActiveContext()
       void activeTraceCtx
 
@@ -202,10 +196,7 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region beforeRollback
 
   @TraceLog<DbHookTrx['beforeRollbackHook']>({
-    after([options], _res, decoratorContext) {
-      if (! decoratorContext.traceScope) {
-        decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
-      }
+    after([options]) {
       const { kmore, trx } = options
       const events = genCommonAttr(KmoreAttrNames.TrxRollbackStart, {
         dbId: kmore.dbId,
