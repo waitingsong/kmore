@@ -167,9 +167,8 @@ export class DbEvent<SourceName extends string = string> {
 
       return { attrs, events }
     },
-    after([options], _result, decoratorContext) {
+    after([options]) {
       if (! eventNeedTrace(KmoreAttrNames.QueryResponse, options.dbConfig)) { return }
-      const traceContext = decoratorContext.traceContext ?? this.traceService.getActiveContext()
 
       const ret: DecoratorTraceData = {}
       const { pagingType } = options.event.queryBuilder
