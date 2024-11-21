@@ -29,6 +29,13 @@ export class TransactionalSimpleRepo {
   }
 
   @Transactional()
+  async user(): Promise<void> {
+    const [users, trx] = await this.getUserOne()
+    assert(users && users.length === 1)
+    assert(trx, 'trx should be defined')
+  }
+
+  @Transactional()
   async userAll(): Promise<void> {
     const [users, trx] = await this.getUserOne()
     assert(users && users.length === 1)

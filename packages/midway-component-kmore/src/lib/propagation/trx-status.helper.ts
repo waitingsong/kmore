@@ -78,7 +78,7 @@ export function trxTrace(options: TrxTraceOptions): void {
     traceSvc.addEvent(span, attrs)
   }
   else {
-    traceSvc.setAttributesLater(span, attrs)
+    traceSvc.otel.setAttributesLater(span, attrs)
   }
 }
 
