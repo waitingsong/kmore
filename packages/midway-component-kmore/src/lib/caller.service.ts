@@ -46,8 +46,8 @@ export class CallerService {
 
   // #region Call stack
 
-  retrieveCallerInfo(distance = 0): CallerInfo {
-    const callerInfo = getCallerStack(distance + 1, false)
+  retrieveCallerInfo(distance = 0, retrievePosition = false): CallerInfo {
+    const callerInfo = getCallerStack(distance + 1, retrievePosition)
     return callerInfo
   }
 

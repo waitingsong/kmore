@@ -17,6 +17,13 @@ export class TransactionalSimpleController {
   @Get(`/${apiRoute.simple}`)
   async simple(): Promise<string> {
     const traceId = this.traceSvc.getTraceId()
+    await this.repo.user()
+    return traceId
+  }
+
+  @Get(`/${apiRoute.hello}`)
+  async hello(): Promise<string> {
+    const traceId = this.traceSvc.getTraceId()
     await this.repo.userAll()
     return traceId
   }

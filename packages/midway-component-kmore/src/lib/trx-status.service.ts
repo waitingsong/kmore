@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 
 import { ApplicationContext, IMidwayContainer, Inject, Singleton } from '@midwayjs/core'
-import { AttrNames, Attributes, TraceService } from '@mwcp/otel'
+import { type TraceContext, AttrNames, Attributes, TraceService } from '@mwcp/otel'
 import type { ScopeType } from '@mwcp/share'
 import { CallerInfo, genISO8601String } from '@waiting/shared-core'
 import {
@@ -45,6 +45,8 @@ export class TrxStatusService {
   // @Inject() readonly logger: TraceLogger
   @Inject() protected readonly traceSvc: TraceService
   @Inject() protected readonly callerSvc: CallerService
+
+  readonly scope2TraceContextMap = new WeakMap<ScopeType, TraceContext>()
 
   protected readonly dbInstanceList = new Map<string, Kmore>()
   protected readonly callerKeyPropagationMapIndex: CallerKeyPropagationMapIndex = new Map()
@@ -338,6 +340,7 @@ export class TrxStatusService {
     try {
       callerInfo = this.callerSvc.retrieveCallerInfo(distance + 1)
       if (! callerInfo.className || ! callerInfo.funcName) {
+        console.warn('Warn [@mwcp/kmore] retrieveCallerInfo() failed' + JSON.stringify(callerInfo))
         return
       }
     }
@@ -667,5 +670,20 @@ export class TrxStatusService {
     }
   }
 
+  getTraceContextByScope(scope: ScopeType): TraceContext | undefined {
+    const traceContextArr = this.scope2TraceContextMap.get(scope)
+    return traceContextArr
+  }
+
+  /**
+   * @param scope kmoreTrxId or kmoreQueryId
+   */
+  setTraceContextByScope(scope: ScopeType, traceContext: TraceContext): void {
+    this.scope2TraceContextMap.set(scope, traceContext)
+  }
+
+  removeTraceContextByScope(scope: ScopeType): void {
+    this.scope2TraceContextMap.delete(scope)
+  }
 }
 

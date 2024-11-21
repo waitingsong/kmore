@@ -51,8 +51,13 @@ export function processTrxCommitAndRollback(
 
   const { traceScope } = decoratorContext
   if (traceScope) {
-    const scopeRootSpan2 = traceService.getActiveSpanOnlyScope(traceScope)
-    if (scopeRootSpan2 && scopeRootSpan2 === traceSpan) {
+    const scopeRootSpan2 = traceService.getRootSpan(traceScope)
+    if (scopeRootSpan2) {
+      if (scopeRootSpan2 === traceSpan) {
+        ret.endSpanAfterTraceLog = true
+      }
+    }
+    else {
       ret.endSpanAfterTraceLog = true
     }
     return ret
@@ -60,8 +65,13 @@ export function processTrxCommitAndRollback(
 
   const { scope } = trx
   assert(scope, `${hook}.${stage}-${op.toUpperCase()} trx.scope is empty`)
-  const scopeRootSpan = traceService.getActiveSpanOnlyScope(scope)
-  if (scopeRootSpan && scopeRootSpan === traceSpan) {
+  const scopeRootSpan = traceService.getRootSpan(scope)
+  if (scopeRootSpan) {
+    if (scopeRootSpan === traceSpan) {
+      ret.endSpanAfterTraceLog = true
+    }
+  }
+  else {
     ret.endSpanAfterTraceLog = true
   }
 

@@ -1,4 +1,3 @@
-
 import assert from 'node:assert'
 import { relative } from 'node:path'
 
@@ -15,9 +14,11 @@ import {
   Trace,
   TraceLog,
   TraceScopeType,
+  TraceService,
 } from '@mwcp/otel'
 import { Application, Context, MConfig, getWebContext } from '@mwcp/share'
 import {
+  type HookReturn,
   type KmoreTransaction,
   type TransactionHookOptions,
   type TransactionPreHookOptions,
@@ -43,7 +44,7 @@ export class DbHookTrx<SourceName extends string = string> {
   @Inject() readonly baseDir: string
 
   @Inject() readonly trxStatusSvc: TrxStatusService
-
+  @Inject() readonly traceService: TraceService
 
   getDbConfigByDbId(dbId: SourceName): DbConfig | undefined {
     assert(dbId)
@@ -64,24 +65,36 @@ export class DbHookTrx<SourceName extends string = string> {
 
   @Trace<DbHookTrx['transactionPreHook']>({
     autoEndSpan: false, // end span in DbHook.afterCommitHook/afterRollbackHook
-    spanName: ([options]) => {
+    spanName([options]) {
+      const { kmore, config } = options
+      if (! config.kmoreTrxId) {
+        const entryKey = config.trxPropagateOptions?.entryKey ?? ''
+        const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
+        config.kmoreTrxId = kmoreTrxId
+      }
+
       const dbSourceName = options.kmore.dbId
       return `Kmore ${dbSourceName} transaction`
     },
-    scope: ([options]: [TransactionPreHookOptions]) => {
-      const { kmore, config } = options
-      if (config.kmoreTrxId) {
-        return config.kmoreTrxId
-      }
-      const entryKey = config.trxPropagateOptions?.entryKey ?? ''
-      const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
-      config.kmoreTrxId = kmoreTrxId
-      return kmoreTrxId
+    before([options], decoratorContext) {
+      options.traceContext = decoratorContext.traceContext ?? this.traceService.getActiveContext() // necessary for update trace context correctly
+      return null
     },
-    after([options]: [TransactionPreHookOptions]) {
+    after([options]: [TransactionPreHookOptions], _res, decoratorContext) {
       const { kmore, config } = options
+
+      if (! config.kmoreTrxId) {
+        const entryKey = config.trxPropagateOptions?.entryKey ?? ''
+        const kmoreTrxId = genKmoreTrxId(`trx-${kmore.dbId}-`, entryKey)
+        config.kmoreTrxId = kmoreTrxId
+      }
+
       const { kmoreTrxId } = config
-      assert(kmoreTrxId, 'transactionPreHook() kmoreTrxId is empty')
+      assert(config.kmoreTrxId, 'transactionPreHook() after: kmoreTrxId is empty')
+
+      const activeTraceCtx = decoratorContext.traceContext ?? this.traceService.getActiveContext()
+      assert(activeTraceCtx, 'transactionPostHook() before: activeTraceCtx is empty')
+      this.trxStatusSvc.setTraceContextByScope(kmoreTrxId, activeTraceCtx)
 
       if (! config.scope) {
         config.scope = this.getWebContext() ?? this.app
@@ -96,18 +109,17 @@ export class DbHookTrx<SourceName extends string = string> {
       return { attrs, events }
     },
   })
-  async transactionPreHook(this: DbHookTrx, options: TransactionPreHookOptions): Promise<void> {
-    void options
+  async transactionPreHook(this: DbHookTrx, options: TransactionPreHookOptions): Promise<HookReturn | undefined> {
+    const { traceContext } = options
+    if (traceContext) {
+      return { traceContext } // necessary for update trace context correctly
+    }
+    return
   }
 
   // #region transactionPostHook
 
   @TraceLog<DbHookTrx['transactionPostHook']>({
-    scope: ([options]: [TransactionPreHookOptions]) => {
-      const { kmoreTrxId } = options.config
-      assert(kmoreTrxId, 'transactionPostHook() kmoreTrxId is empty')
-      return kmoreTrxId
-    },
     before([options]) {
       const { kmore, config, trx } = options
       const { kmoreTrxId } = config
@@ -145,10 +157,10 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region beforeCommit
 
   @TraceLog<DbHookTrx['beforeCommitHook']>({
-    scope([options]) {
-      return this.getTraceScopeByTrx(options.trx)
-    },
     after([options]) {
+      const activeTraceCtx = this.traceService.getActiveContext()
+      void activeTraceCtx
+
       const { kmore, trx } = options
       const events = genCommonAttr(KmoreAttrNames.TrxCommitStart, {
         dbId: kmore.dbId,
@@ -164,10 +176,10 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region afterCommit
 
   @TraceLog<DbHookTrx['afterCommitHook']>({
-    scope([options]) {
-      return this.getTraceScopeByTrx(options.trx)
-    },
     before([options], decoratorContext) {
+      if (! decoratorContext.traceScope) {
+        decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
+      }
       const data: ProcessTrxCommitAndRollbackData = {
         eventName: KmoreAttrNames.TrxCommitEnd,
         hook: 'afterCommitHook',
@@ -184,10 +196,7 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region beforeRollback
 
   @TraceLog<DbHookTrx['beforeRollbackHook']>({
-    scope([options]) {
-      return this.getTraceScopeByTrx(options.trx)
-    },
-    after: ([options]) => {
+    after([options]) {
       const { kmore, trx } = options
       const events = genCommonAttr(KmoreAttrNames.TrxRollbackStart, {
         dbId: kmore.dbId,
@@ -203,10 +212,10 @@ export class DbHookTrx<SourceName extends string = string> {
   // #region afterRollback
 
   @TraceLog<DbHookTrx['afterRollbackHook']>({
-    scope([options]) {
-      return this.getTraceScopeByTrx(options.trx)
-    },
     before([options], decoratorContext) {
+      if (! decoratorContext.traceScope) {
+        decoratorContext.traceScope = this.getTraceScopeByTrx(options.trx)
+      }
       const data: ProcessTrxCommitAndRollbackData = {
         eventName: KmoreAttrNames.TrxRollbackEnd,
         hook: 'afterRollbackHook',
@@ -219,5 +228,6 @@ export class DbHookTrx<SourceName extends string = string> {
   async afterRollbackHook(this: DbHookTrx<SourceName>, options: TransactionHookOptions): Promise<void> {
     void options
   }
+
 }
 
